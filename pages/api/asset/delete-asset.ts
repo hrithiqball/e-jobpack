@@ -1,7 +1,11 @@
+import { supabase } from "@/lib/initSupabase";
 import { Asset, uidAsset } from "@/models/asset";
 import { NextApiRequest, NextApiResponse } from "next";
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+	req: NextApiRequest,
+	res: NextApiResponse
+) {
 	if (req.method !== "DELETE") {
 		res.setHeader("Allow", ["DELETE"]);
 		res.status(405).end(`Method ${req.method} Not Allowed`);
@@ -9,31 +13,33 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 	}
 
 	try {
-		const { error, value: request } = uidAsset.validate(req.body);
+		const result = uidAsset.safeParse(req.body);
 
-		if (error) {
+		if (!result.success) {
 			res.status(400).json({
-				error: error.details.map((detail) => detail.message).join(", "),
+				error: result.error.issues.map((issue) => issue.message).join(", "),
 			});
 		} else {
-			// find the asset and delete it (await)
+			const { data, error } = await supabase
+				.from("asset")
+				.delete()
+				.eq("uid", result.data.uid);
 
-			// if fail error
-			// if (!deletedAsset) {
-			// 	res.status(404).json({ error: "Asset not found" });
-			// 	return;
-			// }
+			if (error) {
+				res.status(500).json({ error: error.message });
+				return;
+			}
 
-			const asset: Asset = {
-				uid: request.uid,
-				name: "Oil filter",
-				type: "machine",
-			};
+			console.log(data);
+			if (!data) {
+				res.status(404).json({ error: "Asset not found" });
+				return;
+			}
 
 			res.status(200).json({
 				status: "OK",
 				message: `Asset ${req.body.uid} has been deleted`,
-				data: asset,
+				data: data,
 			});
 		}
 	} catch (error) {

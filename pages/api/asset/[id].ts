@@ -1,7 +1,10 @@
-import { Asset } from "@/models/asset";
 import { NextApiRequest, NextApiResponse } from "next";
+import { supabase } from "@/lib/initSupabase";
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+	req: NextApiRequest,
+	res: NextApiResponse
+) {
 	if (req.method !== "GET") {
 		res.setHeader("Allow", ["GET"]);
 		res.status(405).end(`Method ${req.method} Not Allowed`);
@@ -9,20 +12,22 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 	}
 
 	try {
-		console.log(req.query.id);
-		// use this value to query and find the asset
-		// if not found return error
+		const { data, error } = await supabase
+			.from("asset")
+			.select("*")
+			.eq("uid", req.query.id)
+			.single();
 
-		const asset: Asset = {
-			uid: req.query.id as string,
-			name: "Oil filter",
-			type: "machine",
-		};
+		if (error) {
+			console.error(error);
+			res.status(500).json({ error: error.message });
+			return;
+		}
 
 		res.status(200).json({
 			status: "OK",
 			message: `Asset ${req.query.id} found`,
-			data: asset,
+			data: data,
 		});
 	} catch (error) {
 		console.error(error);

@@ -1,4 +1,5 @@
 import Joi from "joi";
+import { z } from "zod";
 
 export interface Asset {
 	uid: string;
@@ -7,8 +8,8 @@ export interface Asset {
 	type: string;
 }
 
-export const uidAsset = Joi.object({
-	uid: Joi.string().required(),
+export const uidAsset = z.object({
+	uid: z.string().min(15),
 });
 
 export const postAssetReq = Joi.object({
