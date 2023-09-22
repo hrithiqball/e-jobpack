@@ -23,16 +23,11 @@ export default async function handler(
 			const { data, error } = await supabase
 				.from("asset")
 				.delete()
-				.eq("uid", result.data.uid);
+				.eq("uid", result.data.uid)
+				.single();
 
 			if (error) {
 				res.status(500).json({ error: error.message });
-				return;
-			}
-
-			console.log(data);
-			if (!data) {
-				res.status(404).json({ error: "Asset not found" });
 				return;
 			}
 

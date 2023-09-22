@@ -16,7 +16,6 @@ export default async function handler(
 	try {
 		const { error, value: request } = postAssetReq.validate(req.body);
 
-		console.log(request);
 		if (error) {
 			res.status(400).json({
 				error: error.details.map((detail) => detail.message).join(", "),
