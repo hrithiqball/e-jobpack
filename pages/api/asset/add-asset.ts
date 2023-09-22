@@ -24,19 +24,23 @@ export default async function handler(
 			request.uid = `ASSET-${moment().format("YYMMDDHHmmssSSS")}`;
 			const { error } = await supabase.from("asset").insert([request]).single();
 			if (error) {
-				res.status(500).json({ error: error.message });
+				res.status(500).json({
+					message: error.message,
+					details: error.details,
+					hint: error.hint,
+					code: error.code,
+				});
 				return;
 			}
 
-			res.status(200).json({
-				status: "OK",
+			res.status(201).json({
+				status: "Created",
 				message: `Asset ${request.uid} have been saved into database`,
 				data: request,
 			});
 		}
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ error: "Internal server error" });
-		return;
+		res.status(500).json({ code: 500, error: "Internal server error" });
 	}
 }

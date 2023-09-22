@@ -1,7 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { Asset, updateAssetReq } from "../../../models/asset";
+import { supabase } from "@/lib/initSupabase";
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+	req: NextApiRequest,
+	res: NextApiResponse
+) {
 	if (req.method !== "PUT" && req.method !== "PATCH") {
 		res.setHeader("Allow", ["PUT", "PATCH"]);
 		res.status(405).end(`Method ${req.method} Not Allowed`);
@@ -11,20 +15,40 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 	try {
 		const { error, value: request } = updateAssetReq.validate(req.body);
 
+		console.log(request);
 		if (error) {
 			res.status(400).json({
 				error: error.details.map((detail) => detail.message).join(", "),
 			});
 		} else {
-			const updatedAsset: Asset = {
+			const updatedAsset: Partial<Asset> = {
 				uid: request.uid,
-				name: request.name ?? "Oil filter",
-				type: request.type ?? "machine",
-				description: request.description ?? "Oil filter for machine",
 			};
 
-			if (!updatedAsset) {
-				res.status(404).json({ error: "Asset not found" });
+			if (request.name !== undefined) {
+				updatedAsset.name = request.name;
+			}
+			if (request.description !== undefined) {
+				updatedAsset.description = request.description;
+			}
+			if (request.type !== undefined) {
+				updatedAsset.type = request.type;
+			}
+
+			console.log(updatedAsset);
+			const { data, error } = await supabase
+				.from("asset")
+				.update([updatedAsset])
+				.eq("uid", request.uid)
+				.single();
+
+			console.log(data, error);
+			if (error) {
+				res.status(500).json({
+					code: error.code,
+					error: "Internal server error",
+					message: error.message,
+				});
 				return;
 			}
 

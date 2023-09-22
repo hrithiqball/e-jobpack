@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/initSupabase";
-import { Asset, uidAsset } from "@/models/asset";
+import { uidAsset } from "@/models/asset";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -17,7 +17,7 @@ export default async function handler(
 
 		if (!result.success) {
 			res.status(400).json({
-				error: result.error.issues.map((issue) => issue.message).join(", "),
+				message: result.error.issues.map((issue) => issue.message).join(", "),
 			});
 		} else {
 			const { data, error } = await supabase
@@ -27,7 +27,12 @@ export default async function handler(
 				.single();
 
 			if (error) {
-				res.status(500).json({ error: error.message });
+				res.status(418).json({
+					message: error.message,
+					details: error.details,
+					hint: error.hint,
+					code: error.code,
+				});
 				return;
 			}
 
@@ -39,6 +44,6 @@ export default async function handler(
 		}
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ error: "Internal server error" });
+		res.status(500).json({ error: "Internal Server Error" });
 	}
 }
