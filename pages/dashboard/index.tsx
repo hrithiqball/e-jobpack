@@ -1,12 +1,8 @@
-import "@/styles/styles.scss";
-
 export default function Dashboard() {
   return (
-    <div className="container">
-      <h1>Dashboard</h1>
-      <div className="alert alert-success">
-        <p>Here is the place where the graph and charts will be display</p>
-      </div>
+    <div className="text-white">
+      This is a div with a dark emerald green background and white text.
+      <h1 className="text-3xl font-bold underline">Hello world!</h1>
     </div>
   );
 }
