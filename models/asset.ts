@@ -3,9 +3,19 @@ import { z } from "zod";
 
 export interface Asset {
 	uid: string;
+	type: string;
+	status_uid?: string;
 	name: string;
 	description?: string;
-	type: string;
+	checklist_uid?: string;
+	created_on: Date;
+	created_by: string;
+	updated_on: Date;
+	updated_by: string;
+	last_maintenance?: Date;
+	next_maintenance?: Date;
+	lastMaintainee?: string;
+	location?: string;
 }
 
 export const uidAsset = z.object({
