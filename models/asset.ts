@@ -32,3 +32,11 @@ export const UpdateAssetSchema = z.object({
 });
 
 export type UpdateAsset = z.infer<typeof UpdateAssetSchema>;
+
+export const FilterAsset = z.object({
+	type: z.string().optional(),
+	location: z.string().optional(),
+	upcoming_maintenance: z.date().optional(),
+	sort_by: z.string().optional(),
+	is_ascending: z.boolean().optional(),
+});

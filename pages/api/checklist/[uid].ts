@@ -15,7 +15,7 @@ export default async function handler(
 		const { data, error } = await supabase
 			.from("asset")
 			.select("*")
-			.eq("uid", req.query.id)
+			.eq("uid", req.query.uid)
 			.single();
 
 		if (error) {
@@ -26,7 +26,7 @@ export default async function handler(
 
 		res.status(200).json({
 			status: "OK",
-			message: `Asset ${req.query.id} found`,
+			message: `Asset ${req.query.uid} found`,
 			data: data,
 		});
 	} catch (error) {

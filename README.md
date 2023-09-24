@@ -61,5 +61,5 @@ DATABASE_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=pub
 ```
 
 2. Set the provider of the datasource block in schema.prisma to match your database: postgresql, mysql, sqlite, sqlserver, mongodb or cockroachdb.
-3. Run prisma db pull to turn your database schema into a Prisma schema. (`npm i -g prisma` if pulling without running the server)
-4. Run prisma generate to generate the Prisma Client. You can then start querying your database.
+3. Run `prisma db pull` to turn your database schema into a Prisma schema. (`npm i -g prisma` if pulling without running the server)
+4. Run `prisma generate` to generate the Prisma Client. You can then start querying your database.
