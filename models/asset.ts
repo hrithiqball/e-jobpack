@@ -19,7 +19,7 @@ export interface Asset {
 }
 
 export const uidAsset = z.object({
-	uid: z.string().min(15),
+	uid: z.string().min(3),
 });
 
 export const postAssetReq = Joi.object({
