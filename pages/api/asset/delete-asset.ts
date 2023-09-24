@@ -1,5 +1,5 @@
-import { supabase } from "@/lib/initSupabase";
-import { uidAsset } from "@/models/asset";
+import { UidAsset } from "@/models/asset";
+import { PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -12,38 +12,52 @@ export default async function handler(
 		return;
 	}
 
-	try {
-		const result = uidAsset.safeParse(req.body);
+	const result = UidAsset.safeParse(req.body);
 
-		if (!result.success) {
-			res.status(400).json({
-				message: result.error.issues.map((issue) => issue.message).join(", "),
+	if (!result.success) {
+		res.status(400).json({
+			status: "Bad Request",
+			message: result.error.issues.map((issue) => issue.message).join(", "),
+			hint: result.error.issues.map((issue) => issue.code),
+		});
+
+		return;
+	} else {
+		const prisma = new PrismaClient();
+		const request = result.data.uid;
+
+		try {
+			const asset = await prisma.asset.delete({
+				where: {
+					uid: request,
+				},
 			});
-		} else {
-			const { data, error } = await supabase
-				.from("asset")
-				.delete()
-				.eq("uid", result.data.uid)
-				.single();
 
-			if (error) {
-				res.status(418).json({
-					message: error.message,
-					details: error.details,
-					hint: error.hint,
-					code: error.code,
+			if (asset) {
+				const message = `Asset ${asset.uid} deleted`;
+				console.info(message);
+				res.status(200).json({
+					status: "OK",
+					message: message,
+					data: asset,
 				});
+
+				return;
+			} else {
+				const message = `Asset ${request} not found`;
+				console.error(message);
+				res.status(404).json({
+					status: "Not Found",
+					message: message,
+				});
+
 				return;
 			}
-
-			res.status(200).json({
-				status: "OK",
-				message: `Asset ${req.body.uid} has been deleted`,
-				data: data,
-			});
+		} catch (error) {
+			console.error(error);
+			res.status(500).json({ error: "Internal server error" });
+		} finally {
+			await prisma.$disconnect();
 		}
-	} catch (error) {
-		console.error(error);
-		res.status(500).json({ error: "Internal Server Error" });
 	}
 }

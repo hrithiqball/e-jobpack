@@ -1,7 +1,7 @@
-import moment from "moment";
 import { NextApiRequest, NextApiResponse } from "next";
-import { postAssetReq } from "@/models/asset";
-import { supabase } from "@/lib/initSupabase";
+import { AddAssetSchema, AddAsset } from "@/models/asset";
+import { PrismaClient } from "@prisma/client";
+import moment from "moment";
 
 export default async function handler(
 	req: NextApiRequest,
@@ -13,34 +13,42 @@ export default async function handler(
 		return;
 	}
 
+	const result = AddAssetSchema.safeParse(req.body);
+
+	if (!result.success) {
+		res.status(400).json({
+			status: "Bad Request",
+			message: result.error.issues.map((issue) => issue.message).join(", "),
+			hint: result.error.issues.map((issue) => issue.code),
+		});
+		return;
+	}
+
+	const prisma = new PrismaClient();
+	const request: AddAsset = {
+		...result.data,
+		uid: `ASSET-${moment().format("YYMMDDHHmmssSSS")}`,
+		updated_on: new Date(),
+		created_on: new Date(),
+		updated_by: result.data.created_by,
+	};
+
 	try {
-		const { error, value: request } = postAssetReq.validate(req.body);
+		const target = await prisma.asset.create({
+			data: request,
+		});
 
-		if (error) {
-			res.status(400).json({
-				error: error.details.map((detail) => detail.message).join(", "),
-			});
-		} else {
-			request.uid = `ASSET-${moment().format("YYMMDDHHmmssSSS")}`;
-			const { error } = await supabase.from("asset").insert([request]).single();
-			if (error) {
-				res.status(500).json({
-					message: error.message,
-					details: error.details,
-					hint: error.hint,
-					code: error.code,
-				});
-				return;
-			}
+		console.info(`Created asset ${JSON.stringify(target)}`);
 
-			res.status(201).json({
-				status: "Created",
-				message: `Asset ${request.uid} have been saved into database`,
-				data: request,
-			});
-		}
+		res.status(201).json({
+			status: "Created",
+			message: `Asset ${target.uid} has been saved into the database`,
+			data: target,
+		});
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ code: 500, error: "Internal server error" });
+		res.status(500).json({ status: "Internal server error", message: error });
+	} finally {
+		await prisma.$disconnect();
 	}
 }
