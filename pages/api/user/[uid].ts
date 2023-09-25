@@ -23,9 +23,7 @@ export default async function handler(
 		console.log(data);
 
 		if (error) {
-			console.error(error);
-			res.status(500).json({ error: error.message });
-			return;
+			throw new Error(error.message);
 		}
 
 		res.status(200).json({
@@ -35,6 +33,6 @@ export default async function handler(
 		});
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ error: "Internal server error" });
+		res.status(500).json({ status: "Internal server error", error: error });
 	}
 }
