@@ -1,5 +1,9 @@
 import { z } from "zod";
 
+export const UidUser = z.object({
+	uid: z.string().min(3),
+});
+
 export const SignUpUserSchema = z.object({
 	name: z.string(),
 	email: z.string().email(),

@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/initSupabase";
+import ResponseMessage from "@/lib/result";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -19,10 +20,7 @@ export default async function handler(
 			throw new Error(error.message);
 		}
 
-		res.status(200).json({
-			status: "OK",
-			message: "User has been signed out",
-		});
+		res.status(200).json(ResponseMessage(200, "Sign out successfully"));
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ status: "Internal server error", message: error });
