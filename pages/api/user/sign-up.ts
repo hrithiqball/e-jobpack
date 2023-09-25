@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
-import { AddUser, AddUserSchema } from "@/models/user";
+import { PrismaClient, user } from "@prisma/client";
+import { SignUpUser, SignUpUserSchema } from "@/models/user";
 import { encryptPassword } from "@/lib/encryptPassword";
 import { supabase } from "@/lib/initSupabase";
 import moment from "moment";
@@ -15,7 +15,7 @@ export default async function handler(
 		return;
 	}
 
-	const result = AddUserSchema.safeParse(req.body);
+	const result = SignUpUserSchema.safeParse(req.body);
 
 	if (!result.success) {
 		res.status(400).json({
@@ -23,29 +23,32 @@ export default async function handler(
 			message: result.error.issues.map((issue) => issue.message).join(", "),
 			hint: result.error.issues.map((issue) => issue.code),
 		});
+
 		return;
 	}
 
 	const prisma = new PrismaClient();
 
 	try {
-		const request: AddUser = {
+		const request: SignUpUser = {
 			...result.data,
 			uid: `USER-${moment().format("YYMMDDHHmmssSSS")}`,
 			password: await encryptPassword(result.data.password),
 			first_page: 0,
 			enable_dashboard: false,
 			is_dark_mode: false,
+			created_on: new Date(),
+			updated_on: new Date(),
 		};
 
-		const target = await prisma.user.create({
+		const target: user = await prisma.user.create({
 			data: request,
 		});
 
 		const { error } = await supabase.auth.signUp({
 			email: request.email,
 			password: request.password,
-			// phone: request.phone,
+			phone: request.phone,
 		});
 
 		if (error) throw new Error(error.message);
