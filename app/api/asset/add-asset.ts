@@ -1,7 +1,9 @@
-import moment from "moment";
 import { NextApiRequest, NextApiResponse } from "next";
-import { postAssetReq } from "@/models/asset";
-import { supabase } from "@/lib/initSupabase";
+import { AddAssetSchema } from "@/models/asset";
+import { asset } from "@prisma/client";
+import { prisma } from "@/lib/initPrisma";
+import ResponseMessage from "@/lib/result";
+import moment from "moment";
 
 export default async function handler(
 	req: NextApiRequest,
@@ -10,37 +12,58 @@ export default async function handler(
 	if (req.method !== "POST") {
 		res.setHeader("Allow", ["POST"]);
 		res.status(405).end(`Method ${req.method} Not Allowed`);
+
 		return;
 	}
 
-	try {
-		const { error, value: request } = postAssetReq.validate(req.body);
+	const result = AddAssetSchema.safeParse(req.body);
 
-		if (error) {
-			res.status(400).json({
-				error: error.details.map((detail) => detail.message).join(", "),
-			});
-		} else {
-			request.uid = `ASSET-${moment().format("YYMMDDHHmmssSSS")}`;
-			const { error } = await supabase.from("asset").insert([request]).single();
-			if (error) {
-				res.status(500).json({
-					message: error.message,
-					details: error.details,
-					hint: error.hint,
-					code: error.code,
-				});
-				return;
-			}
-
-			res.status(201).json({
-				status: "Created",
-				message: `Asset ${request.uid} have been saved into database`,
+	if (result.success) {
+		try {
+			const request: asset = {
+				...result.data,
+				uid: `ASSET-${moment().format("YYMMDDHHmmssSSS")}`,
+				updated_on: new Date(),
+				created_on: new Date(),
+				updated_by: result.data.created_by,
+			};
+			const target: asset = await prisma.asset.create({
 				data: request,
 			});
+
+			console.info(`Created asset ${JSON.stringify(target)}`);
+
+			res
+				.status(201)
+				.json(
+					ResponseMessage(
+						201,
+						`Asset ${target.uid} has been saved into the database`,
+						target
+					)
+				);
+		} catch (error) {
+			console.error(error);
+			if (error instanceof Error) {
+				res.status(500).json(ResponseMessage(500, error.message));
+			} else {
+				res.status(500);
+			}
+		} finally {
+			await prisma.$disconnect();
 		}
-	} catch (error) {
-		console.error(error);
-		res.status(500).json({ code: 500, error: "Internal server error" });
+	} else {
+		res
+			.status(400)
+			.json(
+				ResponseMessage(
+					400,
+					result.error.issues.map((issue) => issue.message).join(", "),
+					null,
+					result.error.issues.map((issue) => issue.code.toString()).join("")
+				)
+			);
+
+		return;
 	}
 }

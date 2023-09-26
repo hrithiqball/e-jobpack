@@ -1,8 +1,7 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { UpdateAsset, UpdateAssetSchema } from "../../../models/asset";
-import { Prisma, asset } from "@prisma/client";
-import { prisma } from "@/lib/initPrisma";
 import ResponseMessage from "@/lib/result";
+import { UpdateUser, UpdateUserSchema } from "@/models/user";
+import { prisma } from "@/lib/initPrisma";
+import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
 	req: NextApiRequest,
@@ -15,30 +14,33 @@ export default async function handler(
 		return;
 	}
 
-	const result = UpdateAssetSchema.safeParse(req.body);
+	const result = UpdateUserSchema.safeParse(req.body);
 
 	if (result.success) {
 		try {
-			const request: UpdateAsset = result.data as UpdateAsset;
-			const target: asset = await prisma.asset.update({
+			const request: UpdateUser = result.data as UpdateUser;
+			const target = await prisma.user.update({
 				where: {
 					uid: request.uid,
 				},
 				data: {
 					...request,
 					uid: undefined,
+					email: undefined,
 				},
 			});
 
-			res.status(200).json({
-				status: "OK",
-				message: `Asset ${target.uid} has been updated`,
-				data: target,
-			});
+			res
+				.status(200)
+				.json(
+					ResponseMessage(200, `User ${target.uid} has been updated`, target)
+				);
 		} catch (error: unknown) {
 			console.error(error);
 			if (error instanceof Error) {
 				res.status(500).json(ResponseMessage(500, error.message));
+			} else {
+				res.status(500);
 			}
 		} finally {
 			await prisma.$disconnect();

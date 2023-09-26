@@ -1,44 +1,48 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { UpdateAsset, UpdateAssetSchema } from "../../../models/asset";
-import { Prisma, asset } from "@prisma/client";
 import { prisma } from "@/lib/initPrisma";
 import ResponseMessage from "@/lib/result";
+import { UidUser } from "@/models/user";
+import { user } from "@prisma/client";
+import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
 	req: NextApiRequest,
 	res: NextApiResponse
 ) {
-	if (req.method !== "PATCH") {
-		res.setHeader("Allow", ["PATCH"]);
+	if (req.method !== "GET") {
+		res.setHeader("Allow", ["GET"]);
 		res.status(405).end(`Method ${req.method} Not Allowed`);
 
 		return;
 	}
 
-	const result = UpdateAssetSchema.safeParse(req.body);
+	const result = UidUser.safeParse(req.query);
 
 	if (result.success) {
 		try {
-			const request: UpdateAsset = result.data as UpdateAsset;
-			const target: asset = await prisma.asset.update({
+			const user: user | null = await prisma.user.findUnique({
 				where: {
-					uid: request.uid,
-				},
-				data: {
-					...request,
-					uid: undefined,
+					uid: result.data.uid,
 				},
 			});
 
-			res.status(200).json({
-				status: "OK",
-				message: `Asset ${target.uid} has been updated`,
-				data: target,
-			});
+			if (user) {
+				const message = `User ${user.uid} found`;
+				console.info(message);
+				res.status(200).json(ResponseMessage(200, message, user));
+
+				return;
+			} else {
+				const message = `User ${result.data.uid} not found`;
+				console.error(message);
+				res.status(404).json(ResponseMessage(404, message));
+
+				return;
+			}
 		} catch (error: unknown) {
-			console.error(error);
 			if (error instanceof Error) {
 				res.status(500).json(ResponseMessage(500, error.message));
+			} else {
+				res.status(500);
 			}
 		} finally {
 			await prisma.$disconnect();

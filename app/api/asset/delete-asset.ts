@@ -1,6 +1,8 @@
-import { supabase } from "@/lib/initSupabase";
-import { uidAsset } from "@/models/asset";
+import { UidAsset } from "@/models/asset";
+import { prisma } from "@/lib/initPrisma";
 import { NextApiRequest, NextApiResponse } from "next";
+import ResponseMessage from "@/lib/result";
+import { asset } from "@prisma/client";
 
 export default async function handler(
 	req: NextApiRequest,
@@ -9,41 +11,55 @@ export default async function handler(
 	if (req.method !== "DELETE") {
 		res.setHeader("Allow", ["DELETE"]);
 		res.status(405).end(`Method ${req.method} Not Allowed`);
+
 		return;
 	}
 
-	try {
-		const result = uidAsset.safeParse(req.body);
+	const result = UidAsset.safeParse(req.body);
 
-		if (!result.success) {
-			res.status(400).json({
-				message: result.error.issues.map((issue) => issue.message).join(", "),
+	if (result.success) {
+		try {
+			const asset: asset = await prisma.asset.delete({
+				where: {
+					uid: result.data.uid,
+				},
 			});
-		} else {
-			const { data, error } = await supabase
-				.from("asset")
-				.delete()
-				.eq("uid", result.data.uid)
-				.single();
 
-			if (error) {
-				res.status(418).json({
-					message: error.message,
-					details: error.details,
-					hint: error.hint,
-					code: error.code,
-				});
+			if (asset) {
+				const message = `Asset ${asset.uid} deleted`;
+				console.info(message);
+				res.status(200).json(ResponseMessage(200, message, asset));
+
+				return;
+			} else {
+				const message = `Asset ${result.data.uid} not found`;
+				console.error(message);
+				res.status(404).json(ResponseMessage(404, message));
+
 				return;
 			}
-
-			res.status(200).json({
-				status: "OK",
-				message: `Asset ${req.body.uid} has been deleted`,
-				data: data,
-			});
+		} catch (error: unknown) {
+			console.error(error);
+			if (error instanceof Error) {
+				res.status(500).json(ResponseMessage(500, error.message));
+			} else {
+				res.status(500);
+			}
+		} finally {
+			await prisma.$disconnect();
 		}
-	} catch (error) {
-		console.error(error);
-		res.status(500).json({ error: "Internal Server Error" });
+	} else {
+		res
+			.status(400)
+			.json(
+				ResponseMessage(
+					400,
+					result.error.issues.map((issue) => issue.message).join(", "),
+					null,
+					result.error.issues.map((issue) => issue.code.toString()).join("")
+				)
+			);
+
+		return;
 	}
 }

@@ -1,26 +1,42 @@
-import Joi from "joi";
 import { z } from "zod";
 
-export interface Asset {
+export const UidAsset = z.object({
+	uid: z.string().min(3),
+});
+
+export const AddAssetSchema = z.object({
+	name: z.string(),
+	description: z.string(),
+	type: z.string().nullable(),
+	created_by: z.string(),
+	last_maintenance: z.date().nullable(),
+	next_maintenance: z.date().nullable(),
+	last_maintainee: z.array(z.string()),
+	location: z.string().nullable(),
+	status_uid: z.string().nullable(),
+	person_in_charge: z.string().nullable(),
+});
+
+export type AddAsset = z.infer<typeof AddAssetSchema> & {
 	uid: string;
-	name: string;
-	description?: string;
-	type: string;
-}
+	updated_on: Date;
+	created_on: Date;
+	updated_by: string;
+};
 
-export const uidAsset = z.object({
-	uid: z.string().min(15),
+export const UpdateAssetSchema = z.object({
+	uid: z.string(),
+	name: z.string().optional(),
+	type: z.string().optional(),
+	description: z.string().optional(),
 });
 
-export const postAssetReq = Joi.object({
-	name: Joi.string().required(),
-	type: Joi.string().required(),
-	description: Joi.string().optional(),
-});
+export type UpdateAsset = z.infer<typeof UpdateAssetSchema>;
 
-export const updateAssetReq = Joi.object({
-	uid: Joi.string().required(),
-	name: Joi.string().optional(),
-	type: Joi.string().optional(),
-	description: Joi.string().optional(),
+export const FilterAsset = z.object({
+	type: z.string().optional(),
+	location: z.string().optional(),
+	upcoming_maintenance: z.date().optional(),
+	sort_by: z.string().optional(),
+	is_ascending: z.boolean().optional(),
 });
