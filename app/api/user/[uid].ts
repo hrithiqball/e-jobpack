@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/initPrisma";
-import ResponseMessage from "@/lib/result";
+import { ResponseMessage } from "@/lib/result";
 import { UidUser } from "@/models/user";
 import { user } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";

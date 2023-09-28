@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/initSupabase";
-import ResponseMessage from "@/lib/result";
+import { ResponseMessage } from "@/lib/result";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(

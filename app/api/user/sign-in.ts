@@ -1,6 +1,6 @@
 import { comparePassword } from "@/lib/comparePassword";
 import { supabase } from "@/lib/initSupabase";
-import ResponseMessage from "@/lib/result";
+import { ResponseMessage } from "@/lib/result";
 import { SignInUser, SignInUserSchema } from "@/models/user";
 import { user } from "@prisma/client";
 import { prisma } from "@/lib/initPrisma";

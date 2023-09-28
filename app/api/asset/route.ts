@@ -1,10 +1,12 @@
 import { Prisma, asset } from "@prisma/client";
 import { prisma } from "@/lib/initPrisma";
-import { UidAsset, FilterAsset } from "@/models/asset";
-import ResponseMessage from "@/lib/result";
+import { ResponseMessage } from "@/lib/result";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import moment from "moment";
 
 export async function GET(request: NextRequest) {
+	// filter params (all optional)
 	const page_str = request.nextUrl.searchParams.get("page");
 	const limit_str = request.nextUrl.searchParams.get("limit");
 	const type = request.nextUrl.searchParams.get("type");
@@ -54,7 +56,7 @@ export async function GET(request: NextRequest) {
 		});
 	}
 
-	const asset = await prisma.asset.findMany({
+	const assets: asset[] = await prisma.asset.findMany({
 		skip,
 		take: limit,
 		orderBy: {
@@ -64,8 +66,8 @@ export async function GET(request: NextRequest) {
 
 	let json_response = {
 		status: "success",
-		results: asset.length,
-		data: asset,
+		results: assets.length,
+		data: assets,
 	};
 	return NextResponse.json(json_response);
 }
@@ -74,101 +76,92 @@ export async function POST(request: Request) {
 	try {
 		const json = await request.json();
 
-		const asset = await prisma.asset.create({
-			data: json,
-		});
+		const result = AddAssetSchema.safeParse(json);
+		if (result.success) {
+			const req: AddAsset = {
+				...result.data,
+				uid: `ASSET-${moment().format("YYMMDDHHmmssSSS")}`,
+				updated_on: new Date(),
+				created_on: new Date(),
+				updated_by: result.data.created_by,
+			};
 
-		let json_response = {
-			status: "success",
-			asset,
-		};
+			const asset: asset = await prisma.asset.create({
+				data: req,
+			});
 
-		return new NextResponse(JSON.stringify(json_response), {
-			status: 201,
-			headers: { "Content-Type": "application/json" },
-		});
+			return new NextResponse(
+				JSON.stringify(
+					ResponseMessage(
+						201,
+						`Asset ${req.uid} has been successfully created`,
+						asset
+					)
+				),
+				{
+					status: 201,
+					headers: { "Content-Type": "application/json" },
+				}
+			);
+		} else {
+			return new NextResponse(
+				JSON.stringify(
+					ResponseMessage(
+						400,
+						result.error.issues.map((issue) => issue.message).join(", "),
+						null,
+						result.error.issues.map((issue) => issue.code.toString()).join("")
+					)
+				),
+				{
+					status: 400,
+					headers: { "Content-Type": "application/json" },
+				}
+			);
+		}
 	} catch (error: any) {
 		if (error.code === "P2002") {
-			let error_response = {
-				status: "fail",
-				message: "Feedback with title already exists",
-			};
-			return new NextResponse(JSON.stringify(error_response), {
-				status: 409,
-				headers: { "Content-Type": "application/json" },
-			});
+			return new NextResponse(
+				JSON.stringify(ResponseMessage(409, `Asset already existed`)),
+				{
+					status: 409,
+					headers: { "Content-Type": "application/json" },
+				}
+			);
 		}
 
-		let error_response = {
-			status: "error",
-			message: error.message,
-		};
-		return new NextResponse(JSON.stringify(error_response), {
-			status: 500,
-			headers: { "Content-Type": "application/json" },
-		});
+		return new NextResponse(
+			JSON.stringify(ResponseMessage(500, error.message)),
+			{
+				status: 500,
+				headers: { "Content-Type": "application/json" },
+			}
+		);
 	}
 }
 
-// export default async function handler(
-// 	req: NextApiRequest,
-// 	res: NextApiResponse
-// ) {
-// 	if (req.method !== "POST") {
-// 		res.setHeader("Allow", ["POST"]);
-// 		res.status(405).end(`Method ${req.method} Not Allowed`);
+/**
+ * Schema for adding a new asset
+ */
+const AddAssetSchema = z.object({
+	name: z.string(),
+	description: z.string(),
+	type: z.string().nullable(),
+	created_by: z.string(),
+	last_maintenance: z.date().nullable(),
+	next_maintenance: z.date().nullable(),
+	last_maintainee: z.array(z.string()),
+	location: z.string().nullable(),
+	status_uid: z.string().nullable(),
+	person_in_charge: z.string().nullable(),
+});
 
-// 		return;
-// 	}
-
-// 	const result = AddAssetSchema.safeParse(req.body);
-
-// 	if (result.success) {
-// 		try {
-// 			const request: asset = {
-// 				...result.data,
-// 				uid: `ASSET-${moment().format("YYMMDDHHmmssSSS")}`,
-// 				updated_on: new Date(),
-// 				created_on: new Date(),
-// 				updated_by: result.data.created_by,
-// 			};
-// 			const target: asset = await prisma.asset.create({
-// 				data: request,
-// 			});
-
-// 			console.info(`Created asset ${JSON.stringify(target)}`);
-
-// 			res
-// 				.status(201)
-// 				.json(
-// 					ResponseMessage(
-// 						201,
-// 						`Asset ${target.uid} has been saved into the database`,
-// 						target
-// 					)
-// 				);
-// 		} catch (error) {
-// 			console.error(error);
-// 			if (error instanceof Error) {
-// 				res.status(500).json(ResponseMessage(500, error.message));
-// 			} else {
-// 				res.status(500);
-// 			}
-// 		} finally {
-// 			await prisma.$disconnect();
-// 		}
-// 	} else {
-// 		res
-// 			.status(400)
-// 			.json(
-// 				ResponseMessage(
-// 					400,
-// 					result.error.issues.map((issue) => issue.message).join(", "),
-// 					null,
-// 					result.error.issues.map((issue) => issue.code.toString()).join("")
-// 				)
-// 			);
-
-// 		return;
-// 	}
-// }
+/**
+ * Type for adding a new asset
+ */
+type AddAsset = z.infer<typeof AddAssetSchema> & {
+	uid: string;
+	updated_on: Date;
+	created_on: Date;
+	updated_by: string;
+};

@@ -6,6 +6,7 @@ enum StatusCode {
 	Unauthorized = 401,
 	Forbidden = 403,
 	NotFound = 404,
+	Conflict = 409,
 	InternalServerError = 500,
 }
 
@@ -16,7 +17,7 @@ export type Result = {
 	hint?: string;
 };
 
-export default function ResponseMessage<T>(
+export function ResponseMessage<T>(
 	statusCode: StatusCode,
 	message: string,
 	data?: T,

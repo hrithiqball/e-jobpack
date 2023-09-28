@@ -5,7 +5,7 @@ import { SignUpUser, SignUpUserSchema } from "@/models/user";
 import { encryptPassword } from "@/lib/encryptPassword";
 import { supabase } from "@/lib/initSupabase";
 import moment from "moment";
-import ResponseMessage from "@/lib/result";
+import { ResponseMessage } from "@/lib/result";
 import { AuthResponse } from "@supabase/supabase-js";
 
 export default async function handler(

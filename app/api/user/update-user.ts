@@ -1,4 +1,4 @@
-import ResponseMessage from "@/lib/result";
+import { ResponseMessage } from "@/lib/result";
 import { UpdateUser, UpdateUserSchema } from "@/models/user";
 import { prisma } from "@/lib/initPrisma";
 import { NextApiRequest, NextApiResponse } from "next";
