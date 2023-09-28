@@ -104,7 +104,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
 /**
  * This asynchronous function handles POST requests.
- * @param {Request} request - The incoming HTTP request. The body must contain the {@link asset}
+ * @param {Request} request - The incoming HTTP request. @type {asset}
  * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset.
  */
 export async function POST(request: Request): Promise<NextResponse> {

@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 
-export async function comparePassword(
+export async function decryptPassword(
 	plainPassword: string,
 	hashedPassword: string
 ): Promise<boolean> {
