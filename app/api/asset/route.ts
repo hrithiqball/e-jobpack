@@ -5,7 +5,40 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import moment from "moment";
 
-export async function GET(request: NextRequest) {
+/**
+ * @description Validate the request body for adding a new asset
+ */
+const AddAssetSchema = z.object({
+	name: z.string(),
+	description: z.string(),
+	type: z.string().nullable(),
+	created_by: z.string(),
+	last_maintenance: z.date().nullable(),
+	next_maintenance: z.date().nullable(),
+	last_maintainee: z.array(z.string()),
+	location: z.string().nullable(),
+	status_uid: z.string().nullable(),
+	person_in_charge: z.string().nullable(),
+});
+
+/**
+ * @description Type for adding a new asset
+ */
+type AddAsset = z.infer<typeof AddAssetSchema> & {
+	uid: string;
+	updated_on: Date;
+	created_on: Date;
+	updated_by: string;
+};
+
+/**
+ * This asynchronous function handles GET requests.
+ * @param {NextRequest} request - The incoming HTTP request.
+ * @param params - Available params: `page`, `limit`, `type`, `location`, `sort_by`, `is_ascending`, `upcoming_maintenance`
+ *
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset.
+ */
+export async function GET(request: NextRequest): Promise<NextResponse> {
 	// filter params (all optional)
 	const page_str = request.nextUrl.searchParams.get("page");
 	const limit_str = request.nextUrl.searchParams.get("limit");
@@ -64,15 +97,17 @@ export async function GET(request: NextRequest) {
 		},
 	});
 
-	let json_response = {
-		status: "success",
-		results: assets.length,
-		data: assets,
-	};
-	return NextResponse.json(json_response);
+	return NextResponse.json(
+		ResponseMessage(200, "Successfully fetched assets", assets)
+	);
 }
 
-export async function POST(request: Request) {
+/**
+ * This asynchronous function handles POST requests.
+ * @param {Request} request - The incoming HTTP request. The body must contain the {@link asset}
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset.
+ */
+export async function POST(request: Request): Promise<NextResponse> {
 	try {
 		const json = await request.json();
 
@@ -139,29 +174,3 @@ export async function POST(request: Request) {
 		);
 	}
 }
-
-/**
- * Schema for adding a new asset
- */
-const AddAssetSchema = z.object({
-	name: z.string(),
-	description: z.string(),
-	type: z.string().nullable(),
-	created_by: z.string(),
-	last_maintenance: z.date().nullable(),
-	next_maintenance: z.date().nullable(),
-	last_maintainee: z.array(z.string()),
-	location: z.string().nullable(),
-	status_uid: z.string().nullable(),
-	person_in_charge: z.string().nullable(),
-});
-
-/**
- * Type for adding a new asset
- */
-type AddAsset = z.infer<typeof AddAssetSchema> & {
-	uid: string;
-	updated_on: Date;
-	created_on: Date;
-	updated_by: string;
-};

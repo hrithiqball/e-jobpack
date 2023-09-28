@@ -1,5 +1,6 @@
 "use client";
 
+import { Result } from "@/lib/result";
 import { asset } from "@prisma/client";
 import React, { useState } from "react";
 
@@ -9,18 +10,16 @@ export default function Dashboard() {
 
 	const fetchData = async () => {
 		setIsLoading(true);
-		const result = await fetch("/api/asset", { method: "GET" });
-		// TODO use standardized response from /lib/result
-		const response = await result.json();
+		const response: Response = await fetch("/api/asset", { method: "GET" });
+		const result: Result<asset[]> = await response.json();
 
-		if (result.ok) {
-			setAsset(response.data);
-			// TODO use message as alert
-			console.log(response.message);
+		if (response.status === 200) {
+			setAsset(result.data!);
+			console.log(result.message);
 			setIsLoading(false);
 		} else {
 			setIsLoading(false);
-			console.log(response.message);
+			console.log(result.message);
 		}
 	};
 

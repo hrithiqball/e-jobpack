@@ -10,10 +10,10 @@ enum StatusCode {
 	InternalServerError = 500,
 }
 
-export type Result = {
+export type Result<T> = {
 	statusMessage: string;
 	message: string;
-	data?: any;
+	data?: T;
 	hint?: string;
 };
 
@@ -22,7 +22,7 @@ export function ResponseMessage<T>(
 	message: string,
 	data?: T,
 	hint?: string
-): Result {
+): Result<T> {
 	const statusMessage =
 		`${StatusCode[statusCode]}(${statusCode})` || "Unknown Status Code";
 	const result = {

@@ -1,44 +1,50 @@
 import { prisma } from "@/lib/initPrisma";
-import { ResponseMessage } from "@/lib/result";
-import { asset } from "@prisma/client";
+import { ResponseMessage, Result } from "@/lib/result";
+import { user } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
 /**
- * @description Validator for updating an asset
+ * @description Validate the request body for updating an user
  */
-const UpdateAssetSchema = z.object({
+const UpdateUserSchema = z.object({
 	uid: z.string(),
 	name: z.string().optional(),
-	type: z.string().optional(),
-	description: z.string().optional(),
+	phone: z.string().optional(),
+	password: z.string().min(8).optional(),
+	first_page: z.number().optional(),
+	enable_dashboard: z.boolean().optional(),
+	is_dark_mode: z.boolean().optional(),
 });
 
 /**
- * @description Type for updating an asset
+ * @description Type for updating an user
  */
-type UpdateAsset = z.infer<typeof UpdateAssetSchema>;
+type UpdateUser = z.infer<typeof UpdateUserSchema> & {
+	updated_on: Date;
+};
 
 /**
  * This asynchronous function handles GET requests.
- * @param {Request} request - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the asset.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset.
+ * @param {Request} request - The incoming HTTP request.
+ * @param {string} uid - The unique identifier of the user.
+ *
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the user.
  */
 export async function GET(
 	request: Request,
 	{ params }: { params: { uid: string } }
 ): Promise<NextResponse> {
 	const uid = params.uid;
-	const asset = await prisma.asset.findUnique({
+	const user = await prisma.user.findUnique({
 		where: { uid },
 	});
 
-	if (asset) {
+	if (user) {
 		return new NextResponse(
 			JSON.stringify(
-				ResponseMessage(200, `Successfully fetched asset for ${uid}!`, asset)
+				ResponseMessage(200, `Successfully fetched user ${uid}!`, user)
 			),
 			{
 				status: 200,
@@ -47,9 +53,7 @@ export async function GET(
 		);
 	} else {
 		return new NextResponse(
-			JSON.stringify(
-				ResponseMessage(404, `Asset with ${params.uid} not found`)
-			),
+			JSON.stringify(ResponseMessage(404, `User with ${params.uid} not found`)),
 			{
 				status: 404,
 				headers: { "Content-Type": "application/json" },
@@ -61,9 +65,9 @@ export async function GET(
 /**
  *
  * @param {Request} request - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the asset.
+ * @param {string} uid - The unique identifier of the user.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the user.
  */
 export async function PATCH(
 	request: Request,
@@ -73,22 +77,21 @@ export async function PATCH(
 		const uid = params.uid;
 		let json = await request.json();
 
-		const result = UpdateAssetSchema.safeParse(json);
+		const result = UpdateUserSchema.safeParse(json);
 
 		if (result.success) {
-			const updateAssetValue: UpdateAsset = result.data;
-			const updatedAsset: asset = await prisma.asset.update({
+			const updateUserValue: UpdateUser = {
+				...result.data,
+				updated_on: new Date(),
+			};
+			const updatedUser: user = await prisma.user.update({
 				where: { uid },
-				data: updateAssetValue,
+				data: updateUserValue,
 			});
 
 			return new NextResponse(
 				JSON.stringify(
-					ResponseMessage(
-						200,
-						`Successfully updated asset ${uid}`,
-						updatedAsset
-					)
+					ResponseMessage(200, `Successfully updated user ${uid}`, updatedUser)
 				),
 				{
 					status: 200,
@@ -117,7 +120,7 @@ export async function PATCH(
 				JSON.stringify(
 					ResponseMessage(
 						404,
-						`Asset uid ${params.uid} not found.`,
+						`User uid ${params.uid} not found.`,
 						null,
 						error.message
 					)
@@ -142,9 +145,9 @@ export async function PATCH(
 /**
  *
  * @param {Request} request - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the asset.
+ * @param {string} uid - The unique identifier of the user.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the user.
  */
 export async function DELETE(
 	request: Request,
@@ -152,9 +155,10 @@ export async function DELETE(
 ): Promise<NextResponse> {
 	try {
 		const uid = params.uid;
-		await prisma.asset.delete({
+		await prisma.user.delete({
 			where: { uid },
 		});
+		//TODO delete user in supabase auth
 
 		return new NextResponse(
 			JSON.stringify(ResponseMessage(204, `No uid provided`)),
@@ -166,7 +170,7 @@ export async function DELETE(
 				JSON.stringify(
 					ResponseMessage(
 						404,
-						`Asset uid ${params.uid} not found`,
+						`User uid ${params.uid} not found`,
 						null,
 						error.message
 					)
