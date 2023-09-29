@@ -52,9 +52,9 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
 			);
 		} else {
 			return new NextResponse(
-				JSON.stringify(ResponseMessage(404, `No asset tags found`)),
+				JSON.stringify(ResponseMessage(204, `No asset tags found`)),
 				{
-					status: 404,
+					status: 204,
 					headers: { "Content-Type": "application/json" },
 				}
 			);

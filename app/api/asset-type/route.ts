@@ -51,9 +51,9 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
 			);
 		} else {
 			return new NextResponse(
-				JSON.stringify(ResponseMessage(404, `No asset-types found`)),
+				JSON.stringify(ResponseMessage(204, `No asset-types found`)),
 				{
-					status: 404,
+					status: 204,
 					headers: { "Content-Type": "application/json" },
 				}
 			);

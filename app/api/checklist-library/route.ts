@@ -1,4 +1,4 @@
-import { checklist } from "@prisma/client";
+import { checklist_library } from "@prisma/client";
 import { prisma } from "@/lib/initPrisma";
 import { ResponseMessage } from "@/lib/result";
 import { NextRequest, NextResponse } from "next/server";
@@ -6,21 +6,20 @@ import { z } from "zod";
 import moment from "moment";
 
 /**
- * @description Validate the request body for adding a new checklist
+ * @description Validate the request body for adding a new checklist library
  */
-const AddChecklistSchema = z.object({
+const AddChecklistLibrarySchema = z.object({
 	title: z.string(),
-	maintenance_uid: z.string(),
 	description: z.string().optional(),
-	color: z.string().optional(),
 	icon: z.string().optional(),
+	color: z.string().optional(),
 	created_by: z.string(),
 });
 
 /**
- * @description Type for adding a new checklist
+ * @description Type for adding a new checklist library
  */
-type AddChecklist = z.infer<typeof AddChecklistSchema> & {
+type AddChecklistLibrary = z.infer<typeof AddChecklistLibrarySchema> & {
 	uid: string;
 	updated_on: Date;
 	created_on: Date;
@@ -31,19 +30,20 @@ type AddChecklist = z.infer<typeof AddChecklistSchema> & {
  * This asynchronous function handles GET requests.
  * @param {NextRequest} nextRequest - The incoming HTTP request.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the checklist.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the checklist library.
  */
 export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
 	try {
-		const checklists: checklist[] = await prisma.checklist.findMany();
+		const checklistLibraries: checklist_library[] =
+			await prisma.checklist_library.findMany();
 
-		if (checklists.length > 0) {
+		if (checklistLibraries.length > 0) {
 			return new NextResponse(
 				JSON.stringify(
 					ResponseMessage(
 						200,
-						`Successfully fetched ${checklists.length} checklist`,
-						checklists
+						`Successfully fetched ${checklistLibraries.length} checklist library`,
+						checklistLibraries
 					)
 				),
 				{
@@ -53,7 +53,7 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
 			);
 		} else {
 			return new NextResponse(
-				JSON.stringify(ResponseMessage(204, `No checklists found`)),
+				JSON.stringify(ResponseMessage(204, `No checklist-library found`)),
 				{
 					status: 204,
 					headers: { "Content-Type": "application/json" },
@@ -73,34 +73,35 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
 
 /**
  * This asynchronous function handles POST requests.
- * @param {NextRequest} nextRequest - The incoming HTTP request. @type {checklist}
+ * @param {NextRequest} nextRequest - The incoming HTTP request. @type {checklist_library}
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the checklist.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the checklist-library.
  */
 export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
 	try {
 		const json = await nextRequest.json();
 
-		const result = AddChecklistSchema.safeParse(json);
+		const result = AddChecklistLibrarySchema.safeParse(json);
 		if (result.success) {
-			const request: AddChecklist = {
+			const request: AddChecklistLibrary = {
 				...result.data,
-				uid: `CL-${moment().format("YYMMDDHHmmssSSS")}`,
+				uid: `CLLIB-${moment().format("YYMMDDHHmmssSSS")}`,
 				updated_on: new Date(),
 				created_on: new Date(),
 				updated_by: result.data.created_by,
 			};
 
-			const checklist: checklist = await prisma.checklist.create({
-				data: request,
-			});
+			const checklistLibrary: checklist_library =
+				await prisma.checklist_library.create({
+					data: request,
+				});
 
 			return new NextResponse(
 				JSON.stringify(
 					ResponseMessage(
 						201,
-						`Checklist ${checklist.uid} has been successfully created`,
-						checklist
+						`Checklist library ${checklistLibrary.uid} has been successfully created`,
+						checklistLibrary
 					)
 				),
 				{
@@ -127,7 +128,9 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
 	} catch (error: any) {
 		if (error.code === "P2002") {
 			return new NextResponse(
-				JSON.stringify(ResponseMessage(409, `Checklist already existed`)),
+				JSON.stringify(
+					ResponseMessage(409, `Checklist library already existed`)
+				),
 				{
 					status: 409,
 					headers: { "Content-Type": "application/json" },
