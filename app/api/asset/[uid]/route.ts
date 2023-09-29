@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/initPrisma";
 import { ResponseMessage } from "@/lib/result";
 import { asset } from "@prisma/client";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 /**
@@ -21,24 +21,24 @@ type UpdateAsset = z.infer<typeof UpdateAssetSchema>;
 
 /**
  * This asynchronous function handles GET requests.
- * @param {Request} request - The incoming HTTP request.
+ * @param {NextRequest} nextRequest - The incoming HTTP request.
  * @param {string} uid - The unique identifier of the asset.
  *
  * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset.
  */
 export async function GET(
-	request: Request,
+	nextRequest: NextRequest,
 	{ params }: { params: { uid: string } }
 ): Promise<NextResponse> {
 	const uid = params.uid;
-	const asset = await prisma.asset.findUnique({
+	const asset: asset | null = await prisma.asset.findUnique({
 		where: { uid },
 	});
 
 	if (asset) {
 		return new NextResponse(
 			JSON.stringify(
-				ResponseMessage(200, `Successfully fetched asset for ${uid}!`, asset)
+				ResponseMessage(200, `Successfully fetched asset ${uid}`, asset)
 			),
 			{
 				status: 200,
@@ -47,9 +47,7 @@ export async function GET(
 		);
 	} else {
 		return new NextResponse(
-			JSON.stringify(
-				ResponseMessage(404, `Asset with ${params.uid} not found`)
-			),
+			JSON.stringify(ResponseMessage(404, `Asset ${uid} not found`)),
 			{
 				status: 404,
 				headers: { "Content-Type": "application/json" },
@@ -59,19 +57,18 @@ export async function GET(
 }
 
 /**
- *
- * @param {Request} request - The incoming HTTP request.
+ * @param {NextRequest} nextRequest - The incoming HTTP request.
  * @param {string} uid - The unique identifier of the asset.
  *
  * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset.
  */
 export async function PATCH(
-	request: Request,
+	nextRequest: NextRequest,
 	{ params }: { params: { uid: string } }
 ): Promise<NextResponse> {
 	try {
 		const uid = params.uid;
-		let json = await request.json();
+		let json = await nextRequest.json();
 
 		const result = UpdateAssetSchema.safeParse(json);
 
@@ -117,7 +114,7 @@ export async function PATCH(
 				JSON.stringify(
 					ResponseMessage(
 						404,
-						`Asset uid ${params.uid} not found.`,
+						`Asset ${params.uid} not found.`,
 						null,
 						error.message
 					)
@@ -140,14 +137,13 @@ export async function PATCH(
 }
 
 /**
- *
- * @param {Request} request - The incoming HTTP request.
+ * @param {NextRequest} nextRequest - The incoming HTTP request.
  * @param {string} uid - The unique identifier of the asset.
  *
  * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset.
  */
 export async function DELETE(
-	request: Request,
+	nextRequest: NextRequest,
 	{ params }: { params: { uid: string } }
 ): Promise<NextResponse> {
 	try {
@@ -157,8 +153,8 @@ export async function DELETE(
 		});
 
 		return new NextResponse(
-			JSON.stringify(ResponseMessage(204, `No uid provided`)),
-			{ status: 204 }
+			JSON.stringify(ResponseMessage(200, `Asset ${uid} deleted`)),
+			{ status: 200, headers: { "Content-Type": "application/json" } }
 		);
 	} catch (error: any) {
 		if (error.code === "P2025") {
@@ -166,7 +162,7 @@ export async function DELETE(
 				JSON.stringify(
 					ResponseMessage(
 						404,
-						`Asset uid ${params.uid} not found`,
+						`Asset ${params.uid} not found`,
 						null,
 						error.message
 					)
