@@ -24,12 +24,12 @@ import {
 } from "react-icons/lia";
 import clientIcon from "../../public/client-icon.svg";
 
-export default function Nav() {
+export default function Navigation() {
 	const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 	const pathname = usePathname();
 	const navLinks = [
 		{ href: "/dashboard", label: "Dashboard" },
-		{ href: "/asset-page", label: "Asset" },
+		{ href: "/asset", label: "Asset" },
 	];
 	const user = {
 		name: "Harith Iqbal",

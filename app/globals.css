@@ -4,11 +4,11 @@
 
 @layer base {
     :root {
-        --black: hsl(0, 0%, 20%);
-        --white: hsl(0, 0%, 100%);
-        --silver: hsl(200, 3.8%, 79.6%);
-        --emerald-green-dark: hsl(174, 100%, 19.4%);
-        --emerald-green-light: hsl(177, 100%, 31.6%);
-        --deep-gray: hsl(24, 7%, 22.4%);
+        --black: #333333;
+        --white: #ffffff;
+        --silver: #c9cccd;
+        --emerald-green-dark: #006359;
+        --emerald-green-light: #00a199;
+        --deep-gray: #3d3835;
     }
 }

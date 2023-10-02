@@ -4,7 +4,8 @@ import { Result } from "@/lib/result";
 import { asset } from "@prisma/client";
 import React, { useState } from "react";
 import { Button } from "@nextui-org/button";
-import Nav from "../components/Nav";
+import Navigation from "../components/Navigation";
+import NavigationDashboard from "../components/DashboardNavigation";
 
 export default function Dashboard() {
 	const [asset, setAsset] = useState<asset[]>([]);
@@ -27,8 +28,14 @@ export default function Dashboard() {
 
 	return (
 		<div>
-			<Nav />
-			<Button
+			<Navigation />
+			<NavigationDashboard />
+		</div>
+	);
+}
+
+{
+	/* <Button
 				color="primary"
 				radius="sm"
 				onClick={fetchData}
@@ -41,7 +48,5 @@ export default function Dashboard() {
 				{asset.map((asset) => (
 					<li key={asset.uid}>{asset.name}</li>
 				))}
-			</ul>
-		</div>
-	);
+			</ul> */
 }

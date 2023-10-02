@@ -1,12 +1,12 @@
 "use client";
 
 import React from "react";
-import Nav from "../components/Nav";
+import Navigation from "../components/Navigation";
 
 export default function AssetPage() {
 	return (
 		<div>
-			<Nav />
+			<Navigation />
 			<h1>Asset Page</h1>
 		</div>
 	);
