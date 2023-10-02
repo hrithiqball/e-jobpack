@@ -324,4 +324,3 @@ CREATE TABLE subtask (
 );
 
 COMMENT ON TABLE public.subtask IS 'Sub task of main task in order';
-
