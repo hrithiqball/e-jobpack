@@ -6,14 +6,23 @@ import {
 	NavbarItem,
 	NavbarMenuToggle,
 	Button,
-	Avatar,
 	NavbarMenu,
 	NavbarMenuItem,
 	Link,
+	DropdownTrigger,
+	DropdownMenu,
+	Dropdown,
+	DropdownItem,
+	User,
 } from "@nextui-org/react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import petronasIcon from "../../public/petronas.svg";
+import {
+	LiaUserCogSolid,
+	LiaUserTieSolid,
+	LiaUserLockSolid,
+} from "react-icons/lia";
+import clientIcon from "../../public/client-icon.svg";
 
 export default function Nav() {
 	const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -22,168 +31,104 @@ export default function Nav() {
 		{ href: "/dashboard", label: "Dashboard" },
 		{ href: "/asset-page", label: "Asset" },
 	];
+	const user = {
+		name: "Harith Iqbal",
+		role: "supervisor",
+		department: "Software",
+		email: "harith@gmail.com",
+		userId: "PET-0001",
+	};
 
 	return (
 		<Navbar
 			disableAnimation={true}
 			onMenuOpenChange={setIsMenuOpen}
 			isBordered
-			className="flex items-center justify-between p-1"
+			className="flex relative w-full items-center justify-between"
+			maxWidth="full"
 		>
-			{/* <NavbarBrand>
-				<Image
-					priority
-					src={petronasIcon}
-					alt="Petronas Logo"
-					className="w-8 mr-3"
-				/>
-				<p className="font-bold text-inherit">ACME</p>
-			</NavbarBrand>
-			<NavbarContent className="hidden sm:flex gap-4" justify="center">
-				<NavbarItem>
-					<Link color="foreground" href="#">
-						Features
-					</Link>
-				</NavbarItem>
-				<NavbarItem isActive>
-					<Link href="#" aria-current="page">
-						Customers
-					</Link>
-				</NavbarItem>
-				<NavbarItem>
-					<Link color="foreground" href="#">
-						Integrations
-					</Link>
-				</NavbarItem>
-			</NavbarContent>
-			<NavbarContent justify="end">
-				<NavbarItem className="hidden lg:flex">
-					<Link href="#">Login</Link>
-				</NavbarItem>
-				<NavbarItem>
-					<Button as={Link} color="primary" href="#" variant="flat">
-						Sign Up
-					</Button>
-				</NavbarItem>
-			</NavbarContent> */}
-			<NavbarContent>
+			<NavbarContent justify="start">
 				<NavbarMenuToggle
 					aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+					className="pr-8 sm:hidden"
 				/>
+				<NavbarBrand>
+					<Image
+						priority
+						src={clientIcon}
+						alt="Petronas Logo"
+						className="w-6 mr-3"
+					/>
+					<p className="font-bold text-inherit">Asset Management System</p>
+				</NavbarBrand>
 			</NavbarContent>
+			<NavbarContent className="hidden sm:flex gap-4" justify="center">
+				{navLinks.map((link) => {
+					const isCurrentPage = pathname === link.href;
+					const ariaProps: { "aria-current"?: "page" } = isCurrentPage
+						? { "aria-current": "page" }
+						: {};
 
-			<NavbarBrand>
-				<Image
-					priority
-					src={petronasIcon}
-					alt="Petronas Logo"
-					className="w-5 mr-3"
-				/>
-				<p className="font-bold text-inherit text-emeraldGreenDark">
-					Asset Management System
-				</p>
-			</NavbarBrand>
-
-			<NavbarContent>
-				<div className="hidden sm:flex gap-4">
-					{navLinks.map((link) => {
-						const isCurrentPage = pathname === link.href;
-						const ariaProps: { "aria-current"?: "page" } = isCurrentPage
-							? { "aria-current": "page" }
-							: {};
-
-						return (
-							<NavbarItem key={link.href} isActive={isCurrentPage}>
-								<Link color="foreground" href={link.href} {...ariaProps}>
-									{link.label}
-								</Link>
-							</NavbarItem>
-						);
-					})}
-				</div>
+					return (
+						<NavbarItem key={link.href} isActive={isCurrentPage}>
+							<Link color="foreground" href={link.href} {...ariaProps}>
+								{link.label}
+							</Link>
+						</NavbarItem>
+					);
+				})}
 			</NavbarContent>
-
-			<NavbarContent>
-				<Button variant="ghost" size="sm">
-					<Avatar size="sm" src="/profile-image.png" alt="Profile" />
-				</Button>
+			<NavbarContent justify="end">
+				<Dropdown placement="bottom-end">
+					<DropdownTrigger>
+						<Button
+							variant="ghost"
+							size="sm"
+							endContent={
+								<>
+									{user.role === "admin" && <LiaUserLockSolid size={25} />}
+									{(user.role === "supervisor" || user.role === "manager") && (
+										<LiaUserTieSolid size={25} />
+									)}
+									{(user.role === "maintainer" || user.role === "worker") && (
+										<LiaUserCogSolid size={25} />
+									)}
+								</>
+							}
+						>
+							{user.name}
+						</Button>
+					</DropdownTrigger>
+					<DropdownMenu aria-label="Profile Actions" variant="flat">
+						<DropdownItem key="profile" className="h-14 gap-2">
+							<p className="font-semibold">zoey@example.com</p>
+						</DropdownItem>
+						<DropdownItem key="settings">My Settings</DropdownItem>
+						<DropdownItem key="logout" color="danger">
+							Log Out
+						</DropdownItem>
+					</DropdownMenu>
+				</Dropdown>
 			</NavbarContent>
+			<NavbarMenu>
+				{navLinks.map((item) => {
+					const isCurrentPage = pathname === item.href;
+					const linkColor = isCurrentPage ? "primary" : "foreground";
+
+					return (
+						<NavbarMenuItem key={item.href}>
+							<Link
+								color={linkColor}
+								className="w-full"
+								href={item.href}
+								size="lg"
+							>
+								{item.label}
+							</Link>
+						</NavbarMenuItem>
+					);
+				})}
+			</NavbarMenu>
 		</Navbar>
-		// <Navbar
-		// 	disableAnimation={true}
-		// 	onMenuOpenChange={setIsMenuOpen}
-		// 	isBordered
-		// 	classNames={{
-		// 		item: [
-		// 			"flex",
-		// 			"relative",
-		// 			"h-full",
-		// 			"items-center",
-		// 			"data-[active=true]:after:content-['']",
-		// 			"data-[active=true]:after:absolute",
-		// 			"data-[active=true]:after:bottom-0",
-		// 			"data-[active=true]:after:left-0",
-		// 			"data-[active=true]:after:right-0",
-		// 			"data-[active=true]:after:h-[2px]",
-		// 			"data-[active=true]:after:rounded-[2px]",
-		// 			"data-[active=true]:after:bg-primary",
-		// 		],
-		// 	}}
-		// >
-		// 	<NavbarContent>
-		// 		<NavbarMenuToggle
-		// 			aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-		// 			// className="sm:hidden"
-		// 		/>
-		// 		<NavbarBrand>
-		// 			<Image
-		// 				priority
-		// 				src={petronasIcon}
-		// 				alt="Petronas Logo"
-		// 				className="w-8 mr-3"
-		// 			/>
-		// 			<article className="prose">
-		// 				<h3 className="text-emeraldGreenDark">Asset Management System</h3>
-		// 			</article>
-		// 		</NavbarBrand>
-		// 	</NavbarContent>
-
-		// 	<NavbarContent className="hidden sm:flex gap-4" justify="start">
-		// 		{navLinks.map((link) => {
-		// 			const isCurrentPage = pathname === link.href;
-		// 			const ariaProps: { "aria-current"?: "page" } = isCurrentPage
-		// 				? { "aria-current": "page" }
-		// 				: {};
-
-		// 			return (
-		// 				<NavbarItem key={link.href} isActive={isCurrentPage}>
-		// 					<Link color="foreground" href={link.href} {...ariaProps}>
-		// 						{link.label}
-		// 					</Link>
-		// 				</NavbarItem>
-		// 			);
-		// 		})}
-		// 	</NavbarContent>
-
-		// 	<NavbarMenu>
-		// 		{navLinks.map((item) => {
-		// 			const isCurrentPage = pathname === item.href;
-		// 			const linkColor = isCurrentPage ? "primary" : "foreground";
-
-		// 			return (
-		// 				<NavbarMenuItem key={item.href}>
-		// 					<Link
-		// 						color={linkColor}
-		// 						className="w-full"
-		// 						href={item.href}
-		// 						size="lg"
-		// 					>
-		// 						{item.label}
-		// 					</Link>
-		// 				</NavbarMenuItem>
-		// 			);
-		// 		})}
-		// 	</NavbarMenu>
-		// </Navbar>
 	);
 }
