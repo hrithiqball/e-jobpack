@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Asset Management System
+
+### This is a web based asset management system that will fully automate your job in maintaining an asset in your property
+
+#### Core features
+
+- Manage asset details
+- Create and configure asset checklist and workflow
+- Able to attach graphic or files to a task
+- Fully up to date information of an asset
+
+Project Manager
+
+- epi
+
+Software Quality Assurance and Documentation
+
+- icam
+
+Software Engineer and Developer
+
+- kyziq
+- mishu
 
 ## Getting Started
 
-First, run the development server:
+1. Install packages using
+
+```bash
+npm i
+# or
+npm install
+```
+
+2. Create a new file `.env.local` on root directory
+3. Copy the content of `.env.development` into the file and fill out the information needed inside
+4. Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+5. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-## Learn More
+## Prisma
 
-To learn more about Next.js, take a look at the following resources:
+1. Set the DATABASE_URL in the .env file to point to your existing database. If your database has no tables yet, read https://pris.ly/d/getting-started
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Get the url from supabase dashboard, open settings, open database tab, find connection string, switch to NodeJS tab, copy the url
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+```sh
+# Environment variables declared in this file are automatically made available to Prisma.
+# See the documentation for more detail: https://pris.ly/d/prisma-schema#accessing-environment-variables-from-the-schema
 
-## Deploy on Vercel
+# Prisma supports the native connection string format for PostgreSQL, MySQL, SQLite, SQL Server, MongoDB and CockroachDB.
+# See the documentation for all the connection string options: https://pris.ly/d/connection-strings
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+DATABASE_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+2. Set the provider of the datasource block in schema.prisma to match your database: postgresql, mysql, sqlite, sqlserver, mongodb or cockroachdb.
+3. Run prisma (`npm run prisma`) for pulling db and generate schema from prisma. _Install prisma globally to use outside terminal `npm i -g prisma`_
