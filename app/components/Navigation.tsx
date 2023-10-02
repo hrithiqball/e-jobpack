@@ -43,7 +43,6 @@ export default function Navigation() {
 		<Navbar
 			disableAnimation={true}
 			onMenuOpenChange={setIsMenuOpen}
-			isBordered
 			className="flex relative w-full items-center justify-between"
 			maxWidth="full"
 		>
