@@ -8,9 +8,9 @@ import moment from "moment";
 /**
  * @description Validate the request body for adding a new asset
  */
-const AddAssetSchema = z.object({
+export const AddAssetSchema = z.object({
 	name: z.string(),
-	description: z.string(),
+	description: z.string().nullable(),
 	type: z.string().nullable(),
 	created_by: z.string(),
 	last_maintenance: z.date().nullable(),
@@ -20,6 +20,8 @@ const AddAssetSchema = z.object({
 	status_uid: z.string().nullable(),
 	person_in_charge: z.string().nullable(),
 });
+
+export type AddAssetClient = z.infer<typeof AddAssetSchema>;
 
 /**
  * @description Type for adding a new asset
