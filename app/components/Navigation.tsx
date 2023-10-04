@@ -30,6 +30,7 @@ export default function Navigation() {
 	const navLinks = [
 		{ href: "/dashboard", label: "Dashboard" },
 		{ href: "/asset", label: "Asset" },
+		{ href: "/task", label: "Task" },
 	];
 	const user = {
 		name: "Harith Iqbal",

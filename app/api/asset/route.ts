@@ -45,10 +45,11 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
 		// filter params (all optional)
 		const page_str = nextRequest.nextUrl.searchParams.get("page");
 		const limit_str = nextRequest.nextUrl.searchParams.get("limit");
-		const type = nextRequest.nextUrl.searchParams.get("type");
-		const location = nextRequest.nextUrl.searchParams.get("location");
 		const sort_by = nextRequest.nextUrl.searchParams.get("sort_by");
 		const is_ascending = nextRequest.nextUrl.searchParams.get("is_ascending");
+
+		const type = nextRequest.nextUrl.searchParams.get("type");
+		const location = nextRequest.nextUrl.searchParams.get("location");
 		const upcoming_maintenance = nextRequest.nextUrl.searchParams.get(
 			"upcoming_maintenance"
 		);

@@ -8,24 +8,17 @@ import {
 	Card,
 	Accordion,
 	AccordionItem,
-	Skeleton,
 	Button,
 	useDisclosure,
-	Modal,
-	ModalContent,
-	ModalHeader,
-	ModalBody,
-	ModalFooter,
 } from "@nextui-org/react";
 import SkeletonList from "../components/SkeletonList";
 import AssetMaintenance from "../components/AssetMaintenance";
-import { AddAssetClient } from "../api/asset/route";
+import AddAssetForm from "../components/AddAssetForm";
 
 export default function AssetPage() {
 	const [assets, setAssets] = useState<asset[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
-	const [isSaving, setIsSaving] = useState(false);
-	const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+	const { isOpen, onOpen, onClose } = useDisclosure();
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -36,7 +29,6 @@ export default function AssetPage() {
 
 				if (response.status === 200) {
 					setAssets(result.data!);
-					console.log(result.message);
 				} else {
 					console.log(result.message);
 				}
@@ -48,44 +40,7 @@ export default function AssetPage() {
 		};
 
 		fetchData();
-		console.log("fetching data");
 	}, []);
-
-	async function addAsset(asset: AddAssetClient) {
-		setIsSaving(true);
-		try {
-			const response: Response = await fetch("/api/asset", {
-				method: "POST",
-				body: JSON.stringify(asset),
-			});
-			console.log(response);
-			// const result: Result<asset[]> = await response.json();
-
-			// if (response.status === 200) {
-			// 	setAssets(result.data!);
-			// 	console.log(result.message);
-			// } else {
-			// 	console.log(result.message);
-			// }
-		} catch (error) {
-			console.error("Error fetching data:", error);
-		} finally {
-			setIsSaving(false);
-		}
-	}
-
-	const dummy: AddAssetClient = {
-		name: "Testing",
-		created_by: "USER-230925140418609",
-		last_maintainee: [],
-		description: null,
-		type: null,
-		last_maintenance: null,
-		next_maintenance: null,
-		location: null,
-		status_uid: null,
-		person_in_charge: null,
-	};
 
 	return (
 		<div className="flex flex-col h-screen">
@@ -99,21 +54,7 @@ export default function AssetPage() {
 				>
 					Add New Asset
 				</Button>
-				<Modal backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
-					<ModalContent>
-						{(onClose) => (
-							<>
-								<ModalHeader>Adding New Asset</ModalHeader>
-								<ModalBody>Should be form i think</ModalBody>
-								<ModalFooter>
-									<Button color="danger" variant="light" onPress={onClose}>
-										Action
-									</Button>
-								</ModalFooter>
-							</>
-						)}
-					</ModalContent>
-				</Modal>
+				<AddAssetForm isOpen={isOpen} onClose={onClose} />
 				{isLoading ? (
 					<>
 						{Array(6)
@@ -130,7 +71,6 @@ export default function AssetPage() {
 								aria-label={asset.name}
 								title={asset.name}
 							>
-								{asset.name} {asset.type}
 								<AssetMaintenance {...asset} />
 							</AccordionItem>
 						))}
