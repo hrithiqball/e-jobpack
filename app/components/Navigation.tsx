@@ -14,6 +14,7 @@ import {
 	Dropdown,
 	DropdownItem,
 	User,
+	Switch,
 } from "@nextui-org/react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -23,6 +24,8 @@ import {
 	LiaUserLockSolid,
 } from "react-icons/lia";
 import clientIcon from "../../public/client-icon.svg";
+import { BsSun } from "react-icons/bs";
+import { RiMoonClearFill } from "react-icons/ri";
 
 export default function Navigation() {
 	const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -59,7 +62,7 @@ export default function Navigation() {
 						alt="Petronas Logo"
 						className="w-6 mr-3"
 					/>
-					<p className="font-bold text-inherit">Asset Management System</p>
+					<p className="font-bold text-inherit">AMS</p>
 				</NavbarBrand>
 			</NavbarContent>
 			<NavbarContent className="hidden sm:flex gap-4" justify="center">
@@ -79,6 +82,13 @@ export default function Navigation() {
 				})}
 			</NavbarContent>
 			<NavbarContent justify="end">
+				<Switch
+					defaultSelected
+					size="lg"
+					color="secondary"
+					startContent={<RiMoonClearFill />}
+					endContent={<BsSun />}
+				/>
 				<Dropdown placement="bottom-end">
 					<DropdownTrigger>
 						<Button

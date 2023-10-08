@@ -1,5 +1,6 @@
 import {
 	Button,
+	Input,
 	Modal,
 	ModalBody,
 	ModalContent,
@@ -8,9 +9,19 @@ import {
 	Spinner,
 } from "@nextui-org/react";
 import React, { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 
 function AddNewTask(props: { isOpen: boolean; onClose: () => void }) {
 	const [isSaving, setIsSaving] = useState(false);
+	const {
+		handleSubmit,
+		control,
+		formState: { errors },
+	} = useForm();
+
+	async function onSubmit(data: any) {
+		console.log("submit");
+	}
 
 	return (
 		<Modal backdrop="blur" isOpen={props.isOpen} onOpenChange={props.onClose}>
@@ -22,12 +33,32 @@ function AddNewTask(props: { isOpen: boolean; onClose: () => void }) {
 								<Spinner></Spinner>
 							</div>
 						) : (
-							<form action="">
+							<form onSubmit={handleSubmit(onSubmit)}>
 								<ModalHeader>Add New Task</ModalHeader>
-								<ModalBody>Should be a form</ModalBody>
+								<ModalBody>
+									<div className="mb-4">
+										<Controller
+											name="taskActivity"
+											control={control}
+											defaultValue=""
+											render={({ field }) => (
+												<Input
+													isRequired
+													label="Task Activity"
+													variant="faded"
+													{...field}
+													className="w-full"
+												/>
+											)}
+										/>
+										<p className="text-red-500">{errors.root?.message}</p>
+									</div>
+								</ModalBody>
 								<ModalFooter>
 									<Button onPress={onClose}>Cancel</Button>
-									<Button>Save</Button>
+									<Button type="submit" color="secondary" variant="light">
+										Save
+									</Button>
 								</ModalFooter>
 							</form>
 						)}

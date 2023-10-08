@@ -20,7 +20,7 @@ import { Result } from "@/lib/result";
 
 function AddAssetForm(props: { isOpen: boolean; onClose: () => void }) {
 	const sessionUser = "USER-230925140418609";
-	const [type, setType] = useState<asset_type[]>([]);
+	const [assetType, setAssetType] = useState<asset_type[]>([]);
 	const [isSaving, setIsSaving] = useState(false);
 	const {
 		handleSubmit,
@@ -52,7 +52,7 @@ function AddAssetForm(props: { isOpen: boolean; onClose: () => void }) {
 			},
 		];
 		return () => {
-			setType(sampleChoices);
+			setAssetType(sampleChoices);
 		};
 	}, []);
 
@@ -153,7 +153,7 @@ function AddAssetForm(props: { isOpen: boolean; onClose: () => void }) {
 														variant="faded"
 														label="Type"
 													>
-														{type.map((type) => (
+														{assetType.map((type) => (
 															<SelectItem key={type.uid} value={type.uid}>
 																{type.title}
 															</SelectItem>
