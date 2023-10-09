@@ -14,6 +14,7 @@ import {
 import SkeletonList from "../components/SkeletonList";
 import AssetMaintenance from "../components/AssetMaintenance";
 import AddAssetForm from "../components/AddAssetForm";
+import AssetChecklist from "../components/AssetChecklistUse";
 
 export default function AssetPage() {
 	const [assets, setAssets] = useState<asset[]>([]);
@@ -52,7 +53,7 @@ export default function AssetPage() {
 					color="primary"
 					variant="shadow"
 				>
-					Add New Asset
+					<span>Add New Asset</span>
 				</Button>
 				<AddAssetForm isOpen={isOpen} onClose={onClose} />
 				{isLoading ? (
@@ -70,7 +71,9 @@ export default function AssetPage() {
 								key={asset.uid}
 								aria-label={asset.name}
 								title={asset.name}
+								className="font-bold"
 							>
+								<AssetChecklist {...asset} />
 								<AssetMaintenance {...asset} />
 							</AccordionItem>
 						))}
