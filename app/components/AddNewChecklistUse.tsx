@@ -1,16 +1,22 @@
 import { Button, Input, Select, SelectItem, Spinner } from "@nextui-org/react";
-import { asset, checklist_use } from "@prisma/client";
+import { asset, checklist_use, subtask, task } from "@prisma/client";
 import React, { useState } from "react";
 import { Result } from "@/lib/result";
 import { Controller, useForm } from "react-hook-form";
 import { AddChecklistUseClient } from "../api/checklist-use/route";
 import { IconChoice, iconChoice } from "@/public/icon-choice";
 
+interface NestedTask {
+	task: task;
+	subtask?: subtask[];
+}
+
 function AddNewChecklistUse(props: {
 	asset: asset;
 	onCloseModal: (checklistUse?: checklist_use) => void;
 }) {
 	const [isSaving, setIsSaving] = useState(false);
+	const [tasks, setTasks] = useState<NestedTask[]>([]);
 	const {
 		handleSubmit,
 		control,
@@ -139,6 +145,12 @@ function AddNewChecklistUse(props: {
 							)}
 						/>
 					</div>
+					<div className="mb-4">
+						<Button variant="ghost" className="w-100">
+							Add Task
+						</Button>
+					</div>
+					<div className=""></div>
 					<div className="flex justify-end">
 						<Button variant="light" onPress={() => props.onCloseModal()}>
 							Cancel
