@@ -16,6 +16,13 @@ const AddSubtaskUseSchema = z.object({
 	task_use_uid: z.string(),
 });
 
+export type AddSubtaskUseClient = Omit<
+	z.infer<typeof AddSubtaskUseSchema>,
+	"task_use_uid"
+>;
+
+export type AddSubtaskUseServer = z.infer<typeof AddSubtaskUseSchema>;
+
 /**
  * @description Type for adding a new subtask_use
  */

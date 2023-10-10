@@ -217,7 +217,7 @@ model subtask_use {
   task_activity       String
   description         String?
   task_use_uid        String
-  task_order          BigInt
+  task_order          Int              @db.SmallInt
   subtask_library_uid String?
   subtask_library     subtask_library? @relation(fields: [subtask_library_uid], references: [uid], onDelete: Cascade)
   task_use            task_use         @relation(fields: [task_use_uid], references: [uid], onDelete: Cascade)
@@ -263,7 +263,7 @@ model task_use {
   uid               String        @id
   task_activity     String
   description       String?
-  task_order        BigInt
+  task_order        Int           @db.SmallInt
   have_subtask      Boolean       @default(false)
   checklist_use_uid String
   task_library_uid  String?

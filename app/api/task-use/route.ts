@@ -8,7 +8,7 @@ import moment from "moment";
 /**
  * @description Validate the request body for adding a new task_use
  */
-const AddTaskSchema = z.object({
+const AddTaskUseSchema = z.object({
 	task_activity: z.string(),
 	description: z.string().optional(),
 	task_order: z.number(),
@@ -17,18 +17,17 @@ const AddTaskSchema = z.object({
 	task_library_uid: z.string().optional(),
 });
 
-//  uid: string;
-//  task_activity: string;
-//  description: string | null;
-//  task_order: bigint;
-//  have_subtask: boolean;
-//  checklist_use_uid: string;
-//  task_library_uid: string | null;
+export type AddTaskUseClient = Omit<
+	z.infer<typeof AddTaskUseSchema>,
+	"checklist_use_uid"
+>;
+
+export type AddTaskUseServer = z.infer<typeof AddTaskUseSchema>;
 
 /**
  * @description Type for adding a new task_use
  */
-type AddTask = z.infer<typeof AddTaskSchema> & {
+type AddTaskUse = z.infer<typeof AddTaskUseSchema> & {
 	uid: string;
 };
 
@@ -60,7 +59,7 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
 			return new NextResponse(
 				JSON.stringify(ResponseMessage(204, `No tasks found`)),
 				{
-					status: 204,
+					status: 200,
 					headers: { "Content-Type": "application/json" },
 				}
 			);
@@ -86,23 +85,31 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
 	try {
 		const json = await nextRequest.json();
 
-		const result = AddTaskSchema.safeParse(json);
+		const result = AddTaskUseSchema.safeParse(json);
 		if (result.success) {
-			const request: AddTask = {
+			result.data.task_library_uid =
+				result.data.task_library_uid == ""
+					? undefined
+					: result.data.task_library_uid;
+			const request: AddTaskUse = {
 				...result.data,
 				uid: `TSUSE-${moment().format("YYMMDDHHmmssSSS")}`,
 			};
 
-			const task_use: task_use = await prisma.task_use.create({
+			console.log(request);
+
+			const taskUse: task_use = await prisma.task_use.create({
 				data: request,
 			});
+
+			console.log(taskUse);
 
 			return new NextResponse(
 				JSON.stringify(
 					ResponseMessage(
 						201,
-						`Task ${task_use.uid} has been successfully created`,
-						task_use
+						`Task ${taskUse.uid} has been successfully created`,
+						taskUse
 					)
 				),
 				{
@@ -127,6 +134,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
 			);
 		}
 	} catch (error: any) {
+		console.log(error);
 		if (error.code === "P2002") {
 			return new NextResponse(
 				JSON.stringify(ResponseMessage(409, `Task already existed`)),
