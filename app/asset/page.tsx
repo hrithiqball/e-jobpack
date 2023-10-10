@@ -6,20 +6,38 @@ import Navigation from "../components/Navigation";
 import { Result } from "@/lib/result";
 import {
 	Card,
-	Accordion,
-	AccordionItem,
 	Button,
 	useDisclosure,
+	Modal,
+	ModalContent,
+	ModalHeader,
+	ModalBody,
 } from "@nextui-org/react";
 import SkeletonList from "../components/SkeletonList";
 import AssetMaintenance from "../components/AssetMaintenance";
 import AddAssetForm from "../components/AddAssetForm";
-import AssetChecklist from "../components/AssetChecklistUse";
+import AssetChecklistUse from "../components/AssetChecklistUse";
+import {
+	Collapsible,
+	CollapsibleContent,
+	CollapsibleTrigger,
+} from "../components/ui/Collapsible";
+
+type OpenCollapsibles = Record<string, boolean>;
 
 export default function AssetPage() {
 	const [assets, setAssets] = useState<asset[]>([]);
+	const [currentAsset, setCurrentAsset] = useState<asset>();
 	const [isLoading, setIsLoading] = useState(false);
 	const { isOpen, onOpen, onClose } = useDisclosure();
+	const [openChecklistModal, setOpenChecklistModal] = useState(false);
+	const [openMaintenanceModal, setOpenMaintenanceModal] = useState(false);
+	const [openEditAssetModal, setOpenEditAssetModal] = useState(false);
+	const [openDeleteAssetModal, setOpenDeleteAssetModal] = useState(false);
+
+	const [openCollapsibles, setOpenCollapsibles] = useState<OpenCollapsibles>(
+		{}
+	);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -43,6 +61,13 @@ export default function AssetPage() {
 		fetchData();
 	}, []);
 
+	const toggleCollapsible = (assetUid: string) => {
+		setOpenCollapsibles((prevState: OpenCollapsibles) => ({
+			...prevState,
+			[assetUid]: !prevState[assetUid],
+		}));
+	};
+
 	return (
 		<div className="flex flex-col h-screen">
 			<Navigation />
@@ -65,38 +90,120 @@ export default function AssetPage() {
 							))}
 					</>
 				) : (
-					<Accordion variant="splitted">
+					<>
+						{/* collapsible will be used only if the asset have tree based. display icon to differentiate */}
 						{assets.map((asset) => (
-							<AccordionItem
+							<Collapsible
 								key={asset.uid}
-								aria-label={asset.name}
-								title={asset.name}
-								className="font-bold"
+								open={openCollapsibles[asset.uid]}
+								onChange={() => toggleCollapsible(asset.uid)}
 							>
-								<AssetChecklist {...asset} />
-								<AssetMaintenance {...asset} />
-							</AccordionItem>
+								<CollapsibleTrigger>
+									<Button onPress={() => toggleCollapsible(asset.uid)}>
+										{asset.name}
+									</Button>
+								</CollapsibleTrigger>
+								<CollapsibleContent>
+									<Button>View</Button>
+									<Button
+										onPress={() => {
+											setOpenEditAssetModal(true);
+										}}
+									>
+										Edit
+									</Button>
+									<Button
+										onPress={() => {
+											setOpenDeleteAssetModal(true);
+										}}
+									>
+										Delete
+									</Button>
+									<Button
+										onPress={() => {
+											setOpenChecklistModal(true);
+											setCurrentAsset(asset);
+										}}
+									>
+										Checklist
+									</Button>
+									<Button
+										onPress={() => {
+											setOpenMaintenanceModal(true);
+										}}
+									>
+										Maintenance
+									</Button>
+								</CollapsibleContent>
+							</Collapsible>
 						))}
-					</Accordion>
+					</>
+				)}
+
+				{currentAsset && (
+					<>
+						{/* Checklist Modal */}
+						<Modal
+							backdrop="blur"
+							isOpen={openChecklistModal}
+							onClose={() => {
+								setOpenChecklistModal(false);
+							}}
+						>
+							<ModalContent>
+								<ModalHeader>{currentAsset.name} Checklists</ModalHeader>
+								<ModalBody>
+									<AssetChecklistUse {...currentAsset} />
+								</ModalBody>
+							</ModalContent>
+						</Modal>
+
+						{/* Maintenance Modal */}
+						<Modal
+							backdrop="blur"
+							isOpen={openMaintenanceModal}
+							onClose={() => {
+								setOpenMaintenanceModal(false);
+							}}
+						>
+							<ModalContent>
+								<ModalHeader>{currentAsset.name} Maintenances</ModalHeader>
+								<ModalBody>
+									<AssetMaintenance {...currentAsset} />
+								</ModalBody>
+							</ModalContent>
+						</Modal>
+
+						{/* Edit Modal */}
+						<Modal
+							backdrop="blur"
+							isOpen={openEditAssetModal}
+							onClose={() => {
+								setOpenEditAssetModal(false);
+							}}
+						>
+							<ModalContent>
+								<ModalHeader>Edit {currentAsset.name}</ModalHeader>
+								<ModalBody>{/* TODO: edit asset content */}</ModalBody>
+							</ModalContent>
+						</Modal>
+
+						{/* Delete Modal */}
+						<Modal
+							backdrop="blur"
+							isOpen={openDeleteAssetModal}
+							onClose={() => {
+								setOpenDeleteAssetModal(false);
+							}}
+						>
+							<ModalContent>
+								<ModalHeader>Edit {currentAsset.name}</ModalHeader>
+								<ModalBody>{/* TODO: delete asset content */}</ModalBody>
+							</ModalContent>
+						</Modal>
+					</>
 				)}
 			</Card>
 		</div>
 	);
-}
-
-{
-	/* <Button
-				color="primary"
-				radius="sm"
-				onClick={fetchData}
-				disabled={isLoading}
-			>
-				{isLoading ? "Loading..." : "Fetch Assets"}
-			</Button>
-
-			<ul>
-				{asset.map((asset) => (
-					<li key={asset.uid}>{asset.name}</li>
-				))}
-			</ul> */
 }

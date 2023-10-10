@@ -1,14 +1,21 @@
 import { Result } from "@/lib/result";
-import { Button, useDisclosure } from "@nextui-org/react";
+import {
+	Button,
+	Modal,
+	ModalBody,
+	ModalContent,
+	ModalHeader,
+	useDisclosure,
+} from "@nextui-org/react";
 import { asset, checklist_use } from "@prisma/client";
 import React, { useEffect, useState } from "react";
 import AddNewChecklistUse from "./AddNewChecklistUse";
 
-function AssetChecklistUse(props: asset) {
+function AssetChecklistUse(asset: asset) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [checklistUses, setChecklistUses] = useState<checklist_use[]>([]);
 	const [isError, setIsError] = useState(false);
-	const { isOpen, onOpen, onClose } = useDisclosure();
+	const [addChecklistUse, setAddChecklistUse] = useState(false);
 
 	useEffect(() => {
 		async function fetchData() {
@@ -35,6 +42,13 @@ function AssetChecklistUse(props: asset) {
 		fetchData();
 	}, []);
 
+	function handleChecklistModalClose(checklistUse?: checklist_use) {
+		if (checklistUse) {
+			checklistUses.push(checklistUse);
+		}
+		setAddChecklistUse(false);
+	}
+
 	return (
 		<>
 			{checklistUses.length > 0 ? (
@@ -46,8 +60,24 @@ function AssetChecklistUse(props: asset) {
 					No checklist is set for this asset yet. Create one now!
 				</p>
 			)}
-			<Button>Add New Checklist</Button>
-			<AddNewChecklistUse asset={props} isOpen={isOpen} onClose={onClose} />
+			<Button
+				onPress={() => {
+					setAddChecklistUse(true);
+				}}
+			>
+				Add New Checklist
+			</Button>
+			<Modal isOpen={addChecklistUse} onClose={() => setAddChecklistUse(false)}>
+				<ModalContent>
+					<ModalHeader>Add New Checklist</ModalHeader>
+					<ModalBody>
+						<AddNewChecklistUse
+							asset={asset}
+							onCloseModal={handleChecklistModalClose}
+						/>
+					</ModalBody>
+				</ModalContent>
+			</Modal>
 		</>
 	);
 }

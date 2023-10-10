@@ -16,6 +16,8 @@ const AddChecklistUseSchema = z.object({
 	created_by: z.string(),
 });
 
+export type AddChecklistUseClient = z.infer<typeof AddChecklistUseSchema>;
+
 /**
  * @description Type for adding a new checklist-use
  */
