@@ -77,19 +77,13 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
 		const sortBy = sort_by || "updated_on";
 		const skip = (page - 1) * limit;
 
-		if (sortBy) {
-			if (isAscending) {
-				orderBy.push({
-					[sortBy]: "asc",
-				});
-			} else {
-				orderBy.push({
-					[sortBy]: "desc",
-				});
-			}
+		if (isAscending) {
+			orderBy.push({
+				[sortBy]: "asc",
+			});
 		} else {
 			orderBy.push({
-				updated_on: "desc",
+				[sortBy]: "desc",
 			});
 		}
 

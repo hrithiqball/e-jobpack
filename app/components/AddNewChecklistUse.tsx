@@ -15,11 +15,7 @@ import {
 	AddSubtaskUseClient,
 	AddSubtaskUseServer,
 } from "../api/subtask-use/route";
-
-interface NestedTask {
-	taskUse: AddTaskUseClient;
-	subtaskUse?: AddSubtaskUseClient[];
-}
+import { NestedTask } from "@/model/nested-task";
 
 function AddNewChecklistUse(props: {
 	asset: asset;

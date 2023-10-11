@@ -1,4 +1,4 @@
-import { subtask_use } from "@prisma/client";
+import { Prisma, subtask_use } from "@prisma/client";
 import { prisma } from "@/lib/initPrisma";
 import { ResponseMessage } from "@/lib/result";
 import { NextRequest, NextResponse } from "next/server";
@@ -38,7 +38,40 @@ type AddSubtaskUse = z.infer<typeof AddSubtaskUseSchema> & {
  */
 export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
 	try {
-		const subtasksUse: subtask_use[] = await prisma.subtask_use.findMany();
+		const page_str = nextRequest.nextUrl.searchParams.get("page");
+		const limit_str = nextRequest.nextUrl.searchParams.get("limit");
+		const sort_by = nextRequest.nextUrl.searchParams.get("sortBy");
+		const is_ascending = nextRequest.nextUrl.searchParams.get("isAscending");
+
+		const taskUseUid = nextRequest.nextUrl.searchParams.get("taskUseUid");
+
+		const filters: Prisma.subtask_useWhereInput[] = [];
+		const orderBy: Prisma.subtask_useOrderByWithRelationInput[] = [];
+
+		if (taskUseUid) {
+			filters.push({ task_use_uid: taskUseUid });
+		}
+
+		const page = page_str ? parseInt(page_str, 10) : 1;
+		const limit = limit_str ? parseInt(limit_str, 10) : 10;
+		const isAscending = !!is_ascending;
+		const sortBy = sort_by || "task_order";
+		const skip = (page - 1) * limit;
+
+		if (isAscending) {
+			orderBy.push({ [sortBy]: "asc" });
+		} else {
+			orderBy.push({ [sortBy]: "desc" });
+		}
+
+		const subtasksUse: subtask_use[] = await prisma.subtask_use.findMany({
+			where: {
+				AND: filters,
+			},
+			orderBy,
+			skip,
+			take: limit,
+		});
 
 		if (subtasksUse.length > 0) {
 			return new NextResponse(
