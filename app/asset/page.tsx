@@ -30,9 +30,14 @@ import { BsFillPersonBadgeFill } from "react-icons/bs";
 import { AiOutlineEdit } from "react-icons/ai";
 import { AiOutlinePlusSquare } from "react-icons/ai";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import {
+	LiaUserCogSolid,
+	LiaUserTieSolid,
+	LiaUserLockSolid,
+} from "react-icons/lia";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import "moment/locale/en-gb";
 
 type OpenCollapsibles = Record<string, boolean>;
 
@@ -234,15 +239,28 @@ export default function AssetPage() {
 											</div>
 										))}
 
-									<LocalizationProvider dateAdapter={AdapterMoment}>
-										<DemoContainer components={["DatePicker"]}>
+									<div className="mt-4">
+										<LocalizationProvider
+											dateAdapter={AdapterMoment}
+											adapterLocale="en-gb"
+										>
 											<DatePicker label="Deadline" />
-										</DemoContainer>
-									</LocalizationProvider>
+										</LocalizationProvider>
+									</div>
+
+									<Button
+										className="mr-4 mt-4"
+										color="primary"
+										variant="bordered"
+										startContent={<LiaUserCogSolid />}
+									>
+										Assign Maintainer
+									</Button>
 
 									<Button
 										onClick={() => setNewMaintenance(!newMaintenance)}
-										className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md"
+										color="primary"
+										variant="bordered"
 									>
 										Create
 									</Button>
