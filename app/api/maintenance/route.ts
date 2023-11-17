@@ -1,4 +1,4 @@
-import { maintenance } from "@prisma/client";
+import { Prisma, maintenance } from "@prisma/client";
 import { prisma } from "@/lib/initPrisma";
 import { ResponseMessage } from "@/lib/result";
 import { NextRequest, NextResponse } from "next/server";
@@ -32,7 +32,47 @@ type AddMaintenance = z.infer<typeof AddMaintenanceSchema> & {
  */
 export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
 	try {
-		const maintenances: maintenance[] = await prisma.maintenance.findMany();
+		const page_str = nextRequest.nextUrl.searchParams.get("page");
+		const limit_str = nextRequest.nextUrl.searchParams.get("limit");
+		const sort_by = nextRequest.nextUrl.searchParams.get("sort_by");
+		const is_ascending = nextRequest.nextUrl.searchParams.get("is_ascending");
+		const asset_uid = nextRequest.nextUrl.searchParams.get("asset_uid");
+
+		const filters: Prisma.maintenanceWhereInput[] = [];
+		const orderBy: Prisma.maintenanceOrderByWithRelationInput[] = [];
+
+		if (asset_uid) {
+			filters.push({ asset_uid });
+		}
+
+		const page = page_str ? parseInt(page_str, 10) : 1;
+		const limit = limit_str ? parseInt(limit_str, 10) : 10;
+		const isAscending = !!is_ascending;
+		const sortBy = sort_by || "uid";
+		const skip = (page - 1) * limit;
+
+		if (sortBy) {
+			if (isAscending) {
+				orderBy.push({
+					[sortBy]: "asc",
+				});
+			} else {
+				orderBy.push({
+					[sortBy]: "desc",
+				});
+			}
+		} else {
+			orderBy.push({
+				uid: "desc",
+			});
+		}
+
+		const maintenances: maintenance[] = await prisma.maintenance.findMany({
+			skip,
+			take: limit,
+			orderBy,
+			where: { AND: filters },
+		});
 
 		if (maintenances.length > 0) {
 			return new NextResponse(

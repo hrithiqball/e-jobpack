@@ -16,6 +16,8 @@ const AddChecklistUseSchema = z.object({
 	created_by: z.string(),
 });
 
+export type AddChecklistUseClient = z.infer<typeof AddChecklistUseSchema>;
+
 /**
  * @description Type for adding a new checklist-use
  */
@@ -52,9 +54,9 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
 			);
 		} else {
 			return new NextResponse(
-				JSON.stringify(ResponseMessage(404, `No checklist-use found`)),
+				JSON.stringify(ResponseMessage(204, `No checklist-use found`)),
 				{
-					status: 404,
+					status: 200,
 					headers: { "Content-Type": "application/json" },
 				}
 			);

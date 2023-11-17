@@ -8,9 +8,9 @@ import moment from "moment";
 /**
  * @description Validate the request body for adding a new asset
  */
-const AddAssetSchema = z.object({
+export const AddAssetSchema = z.object({
 	name: z.string(),
-	description: z.string(),
+	description: z.string().nullable(),
 	type: z.string().nullable(),
 	created_by: z.string(),
 	last_maintenance: z.date().nullable(),
@@ -20,6 +20,8 @@ const AddAssetSchema = z.object({
 	status_uid: z.string().nullable(),
 	person_in_charge: z.string().nullable(),
 });
+
+export type AddAssetClient = z.infer<typeof AddAssetSchema>;
 
 /**
  * @description Type for adding a new asset
@@ -43,10 +45,11 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
 		// filter params (all optional)
 		const page_str = nextRequest.nextUrl.searchParams.get("page");
 		const limit_str = nextRequest.nextUrl.searchParams.get("limit");
-		const type = nextRequest.nextUrl.searchParams.get("type");
-		const location = nextRequest.nextUrl.searchParams.get("location");
 		const sort_by = nextRequest.nextUrl.searchParams.get("sort_by");
 		const is_ascending = nextRequest.nextUrl.searchParams.get("is_ascending");
+
+		const type = nextRequest.nextUrl.searchParams.get("type");
+		const location = nextRequest.nextUrl.searchParams.get("location");
 		const upcoming_maintenance = nextRequest.nextUrl.searchParams.get(
 			"upcoming_maintenance"
 		);
@@ -74,19 +77,13 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
 		const sortBy = sort_by || "updated_on";
 		const skip = (page - 1) * limit;
 
-		if (sortBy) {
-			if (isAscending) {
-				orderBy.push({
-					[sortBy]: "asc",
-				});
-			} else {
-				orderBy.push({
-					[sortBy]: "desc",
-				});
-			}
+		if (isAscending) {
+			orderBy.push({
+				[sortBy]: "asc",
+			});
 		} else {
 			orderBy.push({
-				updated_on: "desc",
+				[sortBy]: "desc",
 			});
 		}
 

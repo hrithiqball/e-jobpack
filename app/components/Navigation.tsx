@@ -30,6 +30,7 @@ export default function Navigation() {
 	const navLinks = [
 		{ href: "/dashboard", label: "Dashboard" },
 		{ href: "/asset", label: "Asset" },
+		{ href: "/task", label: "Task" },
 	];
 	const user = {
 		name: "Harith Iqbal",
@@ -43,7 +44,6 @@ export default function Navigation() {
 		<Navbar
 			disableAnimation={true}
 			onMenuOpenChange={setIsMenuOpen}
-			isBordered
 			className="flex relative w-full items-center justify-between"
 			maxWidth="full"
 		>

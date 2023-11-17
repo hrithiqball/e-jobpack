@@ -11,6 +11,7 @@ enum StatusCode {
 }
 
 export type Result<T> = {
+	statusCode: StatusCode;
 	statusMessage: string;
 	message: string;
 	data?: T;
@@ -26,6 +27,7 @@ export function ResponseMessage<T>(
 	const statusMessage =
 		`${StatusCode[statusCode]}(${statusCode})` || "Unknown Status Code";
 	const result = {
+		statusCode,
 		statusMessage,
 		message,
 		data,
