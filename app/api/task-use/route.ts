@@ -1,4 +1,4 @@
-import { task_use } from "@prisma/client";
+import { Prisma, task_use } from "@prisma/client";
 import { prisma } from "@/lib/initPrisma";
 import { ResponseMessage } from "@/lib/result";
 import { NextRequest, NextResponse } from "next/server";
@@ -8,7 +8,7 @@ import moment from "moment";
 /**
  * @description Validate the request body for adding a new task_use
  */
-const AddTaskSchema = z.object({
+const AddTaskUseSchema = z.object({
 	task_activity: z.string(),
 	description: z.string().optional(),
 	task_order: z.number(),
@@ -17,18 +17,17 @@ const AddTaskSchema = z.object({
 	task_library_uid: z.string().optional(),
 });
 
-//  uid: string;
-//  task_activity: string;
-//  description: string | null;
-//  task_order: bigint;
-//  have_subtask: boolean;
-//  checklist_use_uid: string;
-//  task_library_uid: string | null;
+export type AddTaskUseClient = Omit<
+	z.infer<typeof AddTaskUseSchema>,
+	"checklist_use_uid"
+>;
+
+export type AddTaskUseServer = z.infer<typeof AddTaskUseSchema>;
 
 /**
  * @description Type for adding a new task_use
  */
-type AddTask = z.infer<typeof AddTaskSchema> & {
+type AddTaskUse = z.infer<typeof AddTaskUseSchema> & {
 	uid: string;
 };
 
@@ -40,7 +39,45 @@ type AddTask = z.infer<typeof AddTaskSchema> & {
  */
 export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
 	try {
-		const tasks: task_use[] = await prisma.task_use.findMany();
+		const page_str = nextRequest.nextUrl.searchParams.get("page");
+		const limit_str = nextRequest.nextUrl.searchParams.get("limit");
+		const sort_by = nextRequest.nextUrl.searchParams.get("sortBy");
+		const is_ascending = nextRequest.nextUrl.searchParams.get("isAscending");
+
+		const checklistUid =
+			nextRequest.nextUrl.searchParams.get("checklistUseUid");
+
+		const filters: Prisma.task_useWhereInput[] = [];
+		const orderBy: Prisma.task_useOrderByWithRelationInput[] = [];
+
+		if (checklistUid) {
+			filters.push({ checklist_use_uid: checklistUid });
+		}
+
+		console.log(filters);
+
+		const page = page_str ? parseInt(page_str, 10) : 1;
+		const limit = limit_str ? parseInt(limit_str, 10) : 10;
+		const isAscending = !!is_ascending;
+		const sortBy = sort_by || "task_order";
+		const skip = (page - 1) * limit;
+
+		if (isAscending) {
+			orderBy.push({ [sortBy]: "asc" });
+		} else {
+			orderBy.push({ [sortBy]: "desc" });
+		}
+
+		const tasks: task_use[] = await prisma.task_use.findMany({
+			skip,
+			take: limit,
+			orderBy: {
+				task_order: "asc",
+			},
+			where: {
+				AND: filters,
+			},
+		});
 
 		if (tasks.length > 0) {
 			return new NextResponse(
@@ -60,7 +97,7 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
 			return new NextResponse(
 				JSON.stringify(ResponseMessage(204, `No tasks found`)),
 				{
-					status: 204,
+					status: 200,
 					headers: { "Content-Type": "application/json" },
 				}
 			);
@@ -86,23 +123,31 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
 	try {
 		const json = await nextRequest.json();
 
-		const result = AddTaskSchema.safeParse(json);
+		const result = AddTaskUseSchema.safeParse(json);
 		if (result.success) {
-			const request: AddTask = {
+			result.data.task_library_uid =
+				result.data.task_library_uid == ""
+					? undefined
+					: result.data.task_library_uid;
+			const request: AddTaskUse = {
 				...result.data,
 				uid: `TSUSE-${moment().format("YYMMDDHHmmssSSS")}`,
 			};
 
-			const task_use: task_use = await prisma.task_use.create({
+			console.log(request);
+
+			const taskUse: task_use = await prisma.task_use.create({
 				data: request,
 			});
+
+			console.log(taskUse);
 
 			return new NextResponse(
 				JSON.stringify(
 					ResponseMessage(
 						201,
-						`Task ${task_use.uid} has been successfully created`,
-						task_use
+						`Task ${taskUse.uid} has been successfully created`,
+						taskUse
 					)
 				),
 				{
@@ -127,6 +172,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
 			);
 		}
 	} catch (error: any) {
+		console.log(error);
 		if (error.code === "P2002") {
 			return new NextResponse(
 				JSON.stringify(ResponseMessage(409, `Task already existed`)),
