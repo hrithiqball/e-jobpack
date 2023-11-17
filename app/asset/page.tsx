@@ -29,6 +29,10 @@ import { BiSolidBookAdd } from "react-icons/bi";
 import { BsFillPersonBadgeFill } from "react-icons/bs";
 import { AiOutlineEdit } from "react-icons/ai";
 import { AiOutlinePlusSquare } from "react-icons/ai";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 
 type OpenCollapsibles = Record<string, boolean>;
 
@@ -78,7 +82,7 @@ export default function AssetPage() {
 			updated_by: "1",
 			updated_on: new Date(),
 			maintenance_uid: "1",
-			title: "title",
+			title: "Checklist A",
 			description: "description",
 			icon: "electric",
 			color: "red",
@@ -214,18 +218,33 @@ export default function AssetPage() {
 								</div>
 							</div>
 							<Divider className="mt-3" />
+
 							{newMaintenance && currentChecklist && (
-								<div>
-									<span>{currentChecklist.title}</span>
+								<div className="p-4 h-80 mt-4">
+									<span className="font-bold text-lg">
+										{currentChecklist.title}
+									</span>
 									{taskList
 										.filter((t) => t.checklist_uid === currentChecklist.uid)
 										.map((task, index) => (
-											<div key={index}>
-												<span>{task.task_activity}</span>
+											<div key={index} className="mt-2">
+												<span className="text-base">
+													{index + 1}. {task.task_activity}
+												</span>
 											</div>
 										))}
-									<Button onClick={() => setNewMaintenance(!newMaintenance)}>
-										Oi
+
+									<LocalizationProvider dateAdapter={AdapterMoment}>
+										<DemoContainer components={["DatePicker"]}>
+											<DatePicker label="Deadline" />
+										</DemoContainer>
+									</LocalizationProvider>
+
+									<Button
+										onClick={() => setNewMaintenance(!newMaintenance)}
+										className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md"
+									>
+										Create
 									</Button>
 								</div>
 							)}
