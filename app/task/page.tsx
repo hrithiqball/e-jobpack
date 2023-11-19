@@ -15,6 +15,7 @@ import {
 	Divider,
 	Link,
 	Checkbox,
+	Input,
 } from "@nextui-org/react";
 import AddNewTask from "../components/AddNewTask";
 import { asset, checklist, maintenance, task } from "@prisma/client";
@@ -29,7 +30,7 @@ import { base64Image } from "@/public/client-icon";
 
 const taskList: task[] = [
 	{
-		uid: "1",
+		uid: "TK-23487623452523",
 		task_activity: "Do this First Task",
 		description: null,
 		is_complete: true,
@@ -42,7 +43,7 @@ const taskList: task[] = [
 		checklist_uid: "1",
 	},
 	{
-		uid: "2",
+		uid: "TK-2389457692392",
 		task_activity: "Then this this second task",
 		description: "You should remove the green wire",
 		is_complete: false,
@@ -55,7 +56,7 @@ const taskList: task[] = [
 		checklist_uid: "1",
 	},
 	{
-		uid: "3",
+		uid: "TK-827426324653253",
 		task_activity: "Then this third task",
 		description: "string",
 		is_complete: false,
@@ -163,13 +164,16 @@ type NestedChecklist = checklist & {
 
 type SimplifiedTask = {
 	no: number;
+	uid: string;
 	taskActivity: string | null;
 	remarks: string | null;
+	isComplete: string | null;
 };
 
 function Task() {
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const [selectedTaskMode, setSelectedTaskMode] = useState<string>("My Tasks");
+	const [selectedFile, setSelectedFile] = useState(null);
 
 	const nestedMaintenanceList: NestedMaintenance[] = maintenanceList.map(
 		(maintenance: maintenance) => {
@@ -198,61 +202,7 @@ function Task() {
 		}
 	);
 
-	function testMe() {
-		console.log(nestedMaintenanceList);
-	}
-
-	function exportToExcel(
-		checklist: NestedChecklist,
-		asset: asset,
-		maintenanceUid: string
-	) {
-		const workbook = XLSX.utils.book_new();
-
-		let simplifyTasks = checklist.tasks.map((task: task) => {
-			return {
-				no: Number(task.task_order),
-				taskActivity: task.task_activity,
-				remarks: task.remarks,
-			};
-		});
-
-		const customSort = (a: SimplifiedTask, b: SimplifiedTask) => a.no - b.no;
-		simplifyTasks = simplifyTasks.sort(customSort);
-
-		const titleCell = XLSX.utils.format_cell({
-			v: `Maintenance for asset ${asset.name}`,
-			t: "s",
-			s: { font: { bold: true } },
-		});
-		const title = [[titleCell, "", "", "", ""]];
-		const emptyRow = [[]];
-		const labels = [["No.", "Task Activity", "Remarks"]];
-		const merges = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 4 } }];
-		const worksheetData = [
-			...title,
-			...emptyRow,
-			...labels,
-			...simplifyTasks.map(Object.values),
-		];
-
-		const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
-		worksheet["!cols"] = [{ wch: 5 }, { wch: 40 }];
-		worksheet["!merges"] = merges;
-
-		XLSX.utils.book_append_sheet(
-			workbook,
-			worksheet,
-			`Checklist Asset ${asset.name}`
-		);
-
-		XLSX.writeFile(
-			workbook,
-			`Maintenance-${asset.name}-${maintenanceUid}.xlsx`
-		);
-	}
-
-	async function exportToExcel2(
+	async function exportToExcel(
 		checklist: NestedChecklist,
 		asset: asset,
 		maintenanceUid: string
@@ -263,15 +213,19 @@ function Task() {
 		const title = `Maintenance for asset ${asset.name}`;
 		const columns: Partial<Excel.Column>[] = [
 			{ key: "no", width: 5 },
+			{ key: "uid", width: 20 },
 			{ key: "taskActivity", width: 40 },
 			{ key: "remarks", width: 20 },
+			{ key: "isComplete", width: 13, alignment: { horizontal: "center" } },
 		];
 
 		let simplifyTasks = checklist.tasks.map((task: task) => {
 			return {
 				no: Number(task.task_order),
-				taskActivity: task.task_activity,
-				remarks: task.remarks,
+				uid: task.uid,
+				taskActivity: task.task_activity ?? "",
+				remarks: task.remarks ?? "",
+				isComplete: task.is_complete ? "/" : "",
 			};
 		});
 
@@ -283,42 +237,64 @@ function Task() {
 				const worksheet = workbook.addWorksheet(workSheetName);
 				worksheet.columns = columns;
 
-				worksheet.mergeCells("A1:C1");
+				worksheet.mergeCells("A1:D1");
 				const titleCell: Excel.Cell = worksheet.getCell("A1");
 				titleCell.value = title;
 				titleCell.font = { bold: true, size: 16 };
-				titleCell.alignment = { horizontal: "center" };
+				titleCell.alignment = { horizontal: "center", vertical: "middle" };
 
 				const imageId = workbook.addImage({
 					base64: base64Image,
 					extension: "png",
 				});
-				worksheet.addImage(imageId, "D1:E1");
-				worksheet.getRow(1).height = 50;
+				worksheet.addImage(imageId, {
+					tl: { col: 4.99, row: 0.1 },
+					ext: { width: 53, height: 55 },
+				});
+				worksheet.getRow(1).height = 45;
 
 				worksheet.addRow([]);
 
-				worksheet.addRow(["No.", "Task Activity", "Remarks"]);
+				worksheet.addRow(["No.", "Id", "Task Activity", "Remarks", "Complete"]);
 				worksheet.getRow(3).font = { bold: true };
 
 				simplifyTasks.forEach((task: SimplifiedTask) => {
 					worksheet.addRow(task);
 				});
 
-				worksheet.eachRow({ includeEmpty: false }, (row: any) => {
-					const currentCell = row._cells;
-
-					currentCell.forEach((singleCell: any) => {
-						const cellAddress = singleCell._address;
-
-						worksheet.getCell(cellAddress).border = {
+				for (let index = 3; index <= simplifyTasks.length + 3; index++) {
+					worksheet.getRow(index).eachCell((cell: Excel.Cell) => {
+						cell.border = {
 							top: { style: "thin" },
 							left: { style: "thin" },
 							bottom: { style: "thin" },
 							right: { style: "thin" },
 						};
 					});
-				});
+				}
+
+				worksheet.getRow(1).getCell(1).border = {
+					top: { style: "thin" },
+					left: { style: "thin" },
+					bottom: { style: "thin" },
+				};
+				worksheet.getRow(1).getCell(2).border = {
+					top: { style: "thin" },
+					bottom: { style: "thin" },
+				};
+				worksheet.getRow(1).getCell(3).border = {
+					top: { style: "thin" },
+					bottom: { style: "thin" },
+				};
+				worksheet.getRow(1).getCell(4).border = {
+					top: { style: "thin" },
+					bottom: { style: "thin" },
+				};
+				worksheet.getRow(1).getCell(5).border = {
+					top: { style: "thin" },
+					right: { style: "thin" },
+					bottom: { style: "thin" },
+				};
 
 				const buf = await workbook.xlsx.writeBuffer();
 				saveAs(new Blob([buf]), `${fileName}.xlsx`);
@@ -330,6 +306,52 @@ function Task() {
 		};
 
 		await saveExcel();
+	}
+
+	async function importExcel() {
+		if (selectedFile) {
+			const workbook = new Excel.Workbook();
+			const reader = new FileReader();
+
+			reader.onload = async (event: any) => {
+				const buffer = event.target.result;
+				await workbook.xlsx.load(buffer);
+				const sheets = workbook.worksheets[0];
+
+				let simplifiedChecklist: SimplifiedTask[] = [];
+
+				for (let index = 4; index <= sheets.rowCount; index++) {
+					const row = sheets.getRow(index);
+					console.log(index);
+
+					const no = row.getCell(1).value;
+					const taskActivity = row.getCell(2).value;
+					const remarks = row.getCell(3).value;
+
+					console.log(no, taskActivity, remarks);
+					const checklistItem: SimplifiedTask = {
+						no: row.getCell(1).value as number,
+						uid: row.getCell(2).value as string,
+						taskActivity: row.getCell(3).value as string,
+						remarks: row.getCell(4).value as string,
+						isComplete: row.getCell(5).value as string,
+					};
+
+					simplifiedChecklist.push(checklistItem);
+				}
+
+				console.log(simplifiedChecklist);
+				//onFileUpload(sheets);
+			};
+
+			reader.readAsArrayBuffer(selectedFile);
+			setSelectedFile(null);
+		}
+	}
+
+	function handleFileChange(event: any) {
+		const file = event.target.files[0];
+		setSelectedFile(file);
 	}
 
 	return (
@@ -383,7 +405,7 @@ function Task() {
 															</Button>
 															<Button
 																onClick={() =>
-																	exportToExcel2(
+																	exportToExcel(
 																		checklist,
 																		nestedMaintenance.asset,
 																		nestedMaintenance.uid
@@ -418,6 +440,10 @@ function Task() {
 										)}
 									</CardBody>
 									<Divider />
+									<CardFooter>
+										<input type="file" onChange={handleFileChange} />
+										<button onClick={importExcel}>Import Excel</button>
+									</CardFooter>
 								</Card>
 							)
 						)}
