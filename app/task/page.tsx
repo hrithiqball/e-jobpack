@@ -27,6 +27,7 @@ import Excel from "exceljs";
 import { saveAs } from "file-saver";
 // import fs from "fs";
 import { base64Image } from "@/public/client-icon";
+import moment from "moment";
 
 const taskList: task[] = [
 	{
@@ -204,13 +205,12 @@ function Task() {
 
 	async function exportToExcel(
 		checklist: NestedChecklist,
-		asset: asset,
-		maintenanceUid: string
+		nestedMaintenance: NestedMaintenance
 	) {
 		const workbook = new Excel.Workbook();
-		const workSheetName = `Maintenance Checklist Asset ${asset.name}`;
-		const fileName = `Maintenance-${asset.name}-${maintenanceUid}`;
-		const title = `Maintenance for asset ${asset.name}`;
+		const workSheetName = `${nestedMaintenance.asset.name}`;
+		const fileName = `Maintenance-${nestedMaintenance.asset.name}-${nestedMaintenance.uid}`;
+		const title = `Maintenance for asset ${nestedMaintenance.asset.name}`;
 		const columns: Partial<Excel.Column>[] = [
 			{ key: "no", width: 5 },
 			{ key: "uid", width: 20 },
@@ -238,6 +238,7 @@ function Task() {
 				worksheet.columns = columns;
 
 				worksheet.mergeCells("A1:D1");
+				// Row 1
 				const titleCell: Excel.Cell = worksheet.getCell("A1");
 				titleCell.value = title;
 				titleCell.font = { bold: true, size: 16 };
@@ -253,16 +254,47 @@ function Task() {
 				});
 				worksheet.getRow(1).height = 45;
 
+				// Row 3
+				worksheet.mergeCells("A3:B3");
+				worksheet.mergeCells("C3:E3");
+				worksheet.getCell("A3").value = "Date";
+				worksheet.getCell("C3").value = moment(nestedMaintenance.date).format(
+					"DD/MM/YYYY"
+				);
+
+				// Row 4
+				worksheet.mergeCells("A4:B4");
+				worksheet.mergeCells("C4:E4");
+				worksheet.getCell("A4").value = "Location";
+				worksheet.getCell("C4").value = nestedMaintenance.asset.location;
+
+				// Row 5
+				worksheet.mergeCells("A5:B5");
+				worksheet.mergeCells("C5:E5");
+				worksheet.getCell("A5").value = "Tag No.";
+				worksheet.getCell("C5").value = nestedMaintenance.asset.uid;
+
+				// Row 6
+				worksheet.mergeCells("A6:B6");
+				worksheet.mergeCells("C6:E6");
+				worksheet.getCell("A6").value = "Work Order No.";
+				worksheet.getCell("C6").value = 3;
+
+				// Row 7
 				worksheet.addRow([]);
 
+				// Row 8
 				worksheet.addRow(["No.", "Id", "Task Activity", "Remarks", "Complete"]);
-				worksheet.getRow(3).font = { bold: true };
+				worksheet.getRow(8).font = { bold: true };
 
+				// Row 9 till end
 				simplifyTasks.forEach((task: SimplifiedTask) => {
 					worksheet.addRow(task);
 				});
 
-				for (let index = 3; index <= simplifyTasks.length + 3; index++) {
+				const borderWidth: Partial<Excel.Border> = { style: "thin" };
+
+				for (let index = 8; index <= simplifyTasks.length + 8; index++) {
 					worksheet.getRow(index).eachCell((cell: Excel.Cell) => {
 						cell.border = {
 							top: { style: "thin" },
@@ -273,28 +305,30 @@ function Task() {
 					});
 				}
 
-				worksheet.getRow(1).getCell(1).border = {
-					top: { style: "thin" },
-					left: { style: "thin" },
-					bottom: { style: "thin" },
-				};
-				worksheet.getRow(1).getCell(2).border = {
-					top: { style: "thin" },
-					bottom: { style: "thin" },
-				};
-				worksheet.getRow(1).getCell(3).border = {
-					top: { style: "thin" },
-					bottom: { style: "thin" },
-				};
-				worksheet.getRow(1).getCell(4).border = {
-					top: { style: "thin" },
-					bottom: { style: "thin" },
-				};
-				worksheet.getRow(1).getCell(5).border = {
-					top: { style: "thin" },
-					right: { style: "thin" },
-					bottom: { style: "thin" },
-				};
+				for (let index = 3; index <= 6; index++) {
+					worksheet.getRow(index).eachCell((cell: Excel.Cell) => {
+						cell.border = {
+							top: { style: "thin" },
+							left: { style: "thin" },
+							bottom: { style: "thin" },
+							right: { style: "thin" },
+						};
+					});
+				}
+
+				for (let i = 1; i <= 5; i++) {
+					const cell = worksheet.getRow(1).getCell(i);
+					cell.border = {
+						top: borderWidth,
+						bottom: borderWidth,
+					};
+
+					if (i === 1) {
+						cell.border.left = borderWidth;
+					} else if (i === 5) {
+						cell.border.right = borderWidth;
+					}
+				}
 
 				const buf = await workbook.xlsx.writeBuffer();
 				saveAs(new Blob([buf]), `${fileName}.xlsx`);
@@ -320,15 +354,9 @@ function Task() {
 
 				let simplifiedChecklist: SimplifiedTask[] = [];
 
-				for (let index = 4; index <= sheets.rowCount; index++) {
+				for (let index = 9; index <= sheets.rowCount; index++) {
 					const row = sheets.getRow(index);
-					console.log(index);
 
-					const no = row.getCell(1).value;
-					const taskActivity = row.getCell(2).value;
-					const remarks = row.getCell(3).value;
-
-					console.log(no, taskActivity, remarks);
 					const checklistItem: SimplifiedTask = {
 						no: row.getCell(1).value as number,
 						uid: row.getCell(2).value as string,
@@ -405,11 +433,7 @@ function Task() {
 															</Button>
 															<Button
 																onClick={() =>
-																	exportToExcel(
-																		checklist,
-																		nestedMaintenance.asset,
-																		nestedMaintenance.uid
-																	)
+																	exportToExcel(checklist, nestedMaintenance)
 																}
 																variant="ghost"
 																isIconOnly
