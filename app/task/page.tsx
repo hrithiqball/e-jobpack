@@ -20,6 +20,12 @@ import AddNewTask from "../components/AddNewTask";
 import { asset, checklist, maintenance, task } from "@prisma/client";
 import { GoIssueDraft } from "react-icons/go";
 import { AiOutlineIssuesClose } from "react-icons/ai";
+import { FaRegFileExcel, FaRegFilePdf } from "react-icons/fa";
+import * as XLSX from "xlsx";
+import Excel from "exceljs";
+import { saveAs } from "file-saver";
+// import fs from "fs";
+import { base64Image } from "@/public/client-icon";
 
 const taskList: task[] = [
 	{
@@ -44,7 +50,7 @@ const taskList: task[] = [
 		issue: "string",
 		deadline: new Date(),
 		completed_by: "string",
-		task_order: BigInt(1),
+		task_order: BigInt(2),
 		have_subtask: false,
 		checklist_uid: "1",
 	},
@@ -155,6 +161,12 @@ type NestedChecklist = checklist & {
 	tasks: task[];
 };
 
+type SimplifiedTask = {
+	no: number;
+	taskActivity: string | null;
+	remarks: string | null;
+};
+
 function Task() {
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const [selectedTaskMode, setSelectedTaskMode] = useState<string>("My Tasks");
@@ -190,6 +202,136 @@ function Task() {
 		console.log(nestedMaintenanceList);
 	}
 
+	function exportToExcel(
+		checklist: NestedChecklist,
+		asset: asset,
+		maintenanceUid: string
+	) {
+		const workbook = XLSX.utils.book_new();
+
+		let simplifyTasks = checklist.tasks.map((task: task) => {
+			return {
+				no: Number(task.task_order),
+				taskActivity: task.task_activity,
+				remarks: task.remarks,
+			};
+		});
+
+		const customSort = (a: SimplifiedTask, b: SimplifiedTask) => a.no - b.no;
+		simplifyTasks = simplifyTasks.sort(customSort);
+
+		const titleCell = XLSX.utils.format_cell({
+			v: `Maintenance for asset ${asset.name}`,
+			t: "s",
+			s: { font: { bold: true } },
+		});
+		const title = [[titleCell, "", "", "", ""]];
+		const emptyRow = [[]];
+		const labels = [["No.", "Task Activity", "Remarks"]];
+		const merges = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 4 } }];
+		const worksheetData = [
+			...title,
+			...emptyRow,
+			...labels,
+			...simplifyTasks.map(Object.values),
+		];
+
+		const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+		worksheet["!cols"] = [{ wch: 5 }, { wch: 40 }];
+		worksheet["!merges"] = merges;
+
+		XLSX.utils.book_append_sheet(
+			workbook,
+			worksheet,
+			`Checklist Asset ${asset.name}`
+		);
+
+		XLSX.writeFile(
+			workbook,
+			`Maintenance-${asset.name}-${maintenanceUid}.xlsx`
+		);
+	}
+
+	async function exportToExcel2(
+		checklist: NestedChecklist,
+		asset: asset,
+		maintenanceUid: string
+	) {
+		const workbook = new Excel.Workbook();
+		const workSheetName = `Maintenance Checklist Asset ${asset.name}`;
+		const fileName = `Maintenance-${asset.name}-${maintenanceUid}`;
+		const title = `Maintenance for asset ${asset.name}`;
+		const columns: Partial<Excel.Column>[] = [
+			{ key: "no", width: 5 },
+			{ key: "taskActivity", width: 40 },
+			{ key: "remarks", width: 20 },
+		];
+
+		let simplifyTasks = checklist.tasks.map((task: task) => {
+			return {
+				no: Number(task.task_order),
+				taskActivity: task.task_activity,
+				remarks: task.remarks,
+			};
+		});
+
+		const customSort = (a: SimplifiedTask, b: SimplifiedTask) => a.no - b.no;
+		simplifyTasks = simplifyTasks.sort(customSort);
+
+		const saveExcel = async () => {
+			try {
+				const worksheet = workbook.addWorksheet(workSheetName);
+				worksheet.columns = columns;
+
+				worksheet.mergeCells("A1:C1");
+				const titleCell: Excel.Cell = worksheet.getCell("A1");
+				titleCell.value = title;
+				titleCell.font = { bold: true, size: 16 };
+				titleCell.alignment = { horizontal: "center" };
+
+				const imageId = workbook.addImage({
+					base64: base64Image,
+					extension: "png",
+				});
+				worksheet.addImage(imageId, "D1:E1");
+				worksheet.getRow(1).height = 50;
+
+				worksheet.addRow([]);
+
+				worksheet.addRow(["No.", "Task Activity", "Remarks"]);
+				worksheet.getRow(3).font = { bold: true };
+
+				simplifyTasks.forEach((task: SimplifiedTask) => {
+					worksheet.addRow(task);
+				});
+
+				worksheet.eachRow({ includeEmpty: false }, (row: any) => {
+					const currentCell = row._cells;
+
+					currentCell.forEach((singleCell: any) => {
+						const cellAddress = singleCell._address;
+
+						worksheet.getCell(cellAddress).border = {
+							top: { style: "thin" },
+							left: { style: "thin" },
+							bottom: { style: "thin" },
+							right: { style: "thin" },
+						};
+					});
+				});
+
+				const buf = await workbook.xlsx.writeBuffer();
+				saveAs(new Blob([buf]), `${fileName}.xlsx`);
+			} catch (error: any) {
+				console.log(error.message);
+			} finally {
+				workbook.removeWorksheet(workSheetName);
+			}
+		};
+
+		await saveExcel();
+	}
+
 	return (
 		<div className="flex flex-col h-screen">
 			<Navigation />
@@ -206,7 +348,7 @@ function Task() {
 				</Tabs>
 				{selectedTaskMode === "My Tasks" && (
 					<div className="py-4">
-						<Button onClick={testMe}>Click me</Button>
+						{/* <Button onClick={testMe}>Click me</Button> */}
 						{nestedMaintenanceList.map(
 							(nestedMaintenance: NestedMaintenance) => (
 								<Card
@@ -229,7 +371,31 @@ function Task() {
 										{nestedMaintenance.checklists.map(
 											(checklist: NestedChecklist) => (
 												<div key={checklist.uid}>
-													<p>{checklist.title}</p>
+													<div className="flex justify-between items-center">
+														<p>{checklist.title}</p>
+														<div className="flex items-center">
+															<Button
+																className="mr-1"
+																variant="ghost"
+																isIconOnly
+															>
+																<FaRegFilePdf />
+															</Button>
+															<Button
+																onClick={() =>
+																	exportToExcel2(
+																		checklist,
+																		nestedMaintenance.asset,
+																		nestedMaintenance.uid
+																	)
+																}
+																variant="ghost"
+																isIconOnly
+															>
+																<FaRegFileExcel />
+															</Button>
+														</div>
+													</div>
 													{checklist.tasks.map((task: task) => (
 														<div
 															className="flex gap-3 items-center mb-1"
