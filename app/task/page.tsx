@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Key, useState } from "react";
+import React, { Key, useEffect, useRef, useState } from "react";
 import Navigation from "../components/Navigation";
 import {
 	Button,
@@ -16,12 +16,14 @@ import {
 	Link,
 	Checkbox,
 	Input,
+	ButtonGroup,
 } from "@nextui-org/react";
 import AddNewTask from "../components/AddNewTask";
 import { asset, checklist, maintenance, task } from "@prisma/client";
 import { GoIssueDraft } from "react-icons/go";
 import { AiOutlineIssuesClose } from "react-icons/ai";
 import { FaRegFileExcel, FaRegFilePdf } from "react-icons/fa";
+import { AiOutlineCloudSync } from "react-icons/ai";
 import * as XLSX from "xlsx";
 import Excel from "exceljs";
 import { saveAs } from "file-saver";
@@ -157,6 +159,8 @@ const assetList: asset[] = [
 type NestedMaintenance = maintenance & {
 	checklists: NestedChecklist[];
 	asset: asset;
+	fileName: string | null;
+	loadingReadExcel: boolean;
 };
 
 type NestedChecklist = checklist & {
@@ -175,33 +179,55 @@ function Task() {
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const [selectedTaskMode, setSelectedTaskMode] = useState<string>("My Tasks");
 	const [selectedFile, setSelectedFile] = useState(null);
+	const [loadingReadExcel, setLoadingReadExcel] = useState(false);
+	const [selectedMaintenance, setSelectedMaintenance] =
+		useState<NestedMaintenance | null>(null);
+	const [nestedMaintenanceList, setNestedMaintenanceList] = useState<
+		NestedMaintenance[]
+	>([]);
+	const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-	const nestedMaintenanceList: NestedMaintenance[] = maintenanceList.map(
-		(maintenance: maintenance) => {
-			const checklistLists: checklist[] = checklistList.filter(
-				(checklist: checklist) => checklist.maintenance_uid === maintenance.uid
-			);
+	useEffect(() => {
+		const newNestedMaintenanceList: NestedMaintenance[] = maintenanceList.map(
+			(maintenance: maintenance) => {
+				const checklistLists: checklist[] = checklistList.filter(
+					(checklist: checklist) =>
+						checklist.maintenance_uid === maintenance.uid
+				);
 
-			const nestedMaintenance: NestedMaintenance = {
-				...maintenance,
-				asset: assetList.find(
-					(asset: asset) => asset.uid === maintenance.asset_uid
-				)!,
-				checklists: checklistLists.map((checklist: checklist) => {
-					const tasks: task[] = taskList.filter(
-						(task: task) => task.checklist_uid === checklist.uid
-					);
+				const nestedMaintenance: NestedMaintenance = {
+					fileName: null,
+					loadingReadExcel: false,
+					...maintenance,
+					asset: assetList.find(
+						(asset: asset) => asset.uid === maintenance.asset_uid
+					)!,
+					checklists: checklistLists.map((checklist: checklist) => {
+						const tasks: task[] = taskList.filter(
+							(task: task) => task.checklist_uid === checklist.uid
+						);
 
-					return {
-						...checklist,
-						tasks: tasks,
-					};
-				}),
-			};
+						return {
+							...checklist,
+							tasks: tasks,
+						};
+					}),
+				};
 
-			return nestedMaintenance;
+				return nestedMaintenance;
+			}
+		);
+
+		return () => {
+			setNestedMaintenanceList(newNestedMaintenanceList);
+		};
+	}, []);
+
+	function handleButtonClick() {
+		if (fileInputRef.current) {
+			fileInputRef.current.click();
 		}
-	);
+	}
 
 	async function exportToExcel(
 		checklist: NestedChecklist,
@@ -343,43 +369,97 @@ function Task() {
 	}
 
 	async function importExcel() {
-		if (selectedFile) {
-			const workbook = new Excel.Workbook();
-			const reader = new FileReader();
-
-			reader.onload = async (event: any) => {
-				const buffer = event.target.result;
-				await workbook.xlsx.load(buffer);
-				const sheets = workbook.worksheets[0];
-
-				let simplifiedChecklist: SimplifiedTask[] = [];
-
-				for (let index = 9; index <= sheets.rowCount; index++) {
-					const row = sheets.getRow(index);
-
-					const checklistItem: SimplifiedTask = {
-						no: row.getCell(1).value as number,
-						uid: row.getCell(2).value as string,
-						taskActivity: row.getCell(3).value as string,
-						remarks: row.getCell(4).value as string,
-						isComplete: row.getCell(5).value as string,
-					};
-
-					simplifiedChecklist.push(checklistItem);
+		console.log(selectedMaintenance);
+		if (selectedMaintenance) {
+			const updatedNestedMaintenanceList = nestedMaintenanceList.map(
+				(nestedMaintenance: NestedMaintenance) => {
+					if (nestedMaintenance.uid === selectedMaintenance.uid) {
+						return { ...nestedMaintenance, loadingReadExcel: true };
+					}
+					return nestedMaintenance;
 				}
+			);
 
-				console.log(simplifiedChecklist);
-				//onFileUpload(sheets);
-			};
+			setNestedMaintenanceList(updatedNestedMaintenanceList);
 
-			reader.readAsArrayBuffer(selectedFile);
-			setSelectedFile(null);
+			if (selectedFile) {
+				const workbook = new Excel.Workbook();
+				const reader = new FileReader();
+
+				reader.onload = async (event: any) => {
+					const buffer = event.target.result;
+					await workbook.xlsx.load(buffer);
+					const sheets = workbook.worksheets[0];
+
+					let simplifiedChecklist: SimplifiedTask[] = [];
+
+					for (let index = 9; index <= sheets.rowCount; index++) {
+						const row = sheets.getRow(index);
+
+						const checklistItem: SimplifiedTask = {
+							no: row.getCell(1).value as number,
+							uid: row.getCell(2).value as string,
+							taskActivity: row.getCell(3).value as string,
+							remarks: row.getCell(4).value as string,
+							isComplete: row.getCell(5).value as string,
+						};
+
+						simplifiedChecklist.push(checklistItem);
+					}
+
+					console.log(simplifiedChecklist);
+					setTimeout(() => {
+						const updatedNestedMaintenanceList = nestedMaintenanceList.map(
+							(nestedMaintenance: NestedMaintenance) => {
+								if (nestedMaintenance.uid === selectedMaintenance.uid) {
+									return { ...nestedMaintenance, loadingReadExcel: false };
+								}
+								return nestedMaintenance;
+							}
+						);
+
+						setNestedMaintenanceList(updatedNestedMaintenanceList);
+					}, 3000);
+					//onFileUpload(sheets);
+				};
+
+				reader.readAsArrayBuffer(selectedFile);
+				setSelectedFile(null);
+			} else {
+				const updatedNestedMaintenanceList = nestedMaintenanceList.map(
+					(nestedMaintenance: NestedMaintenance) => {
+						if (nestedMaintenance.uid === selectedMaintenance.uid) {
+							return { ...nestedMaintenance, loadingReadExcel: false };
+						}
+						return nestedMaintenance;
+					}
+				);
+
+				setNestedMaintenanceList(updatedNestedMaintenanceList);
+			}
 		}
 	}
 
 	function handleFileChange(event: any) {
 		const file = event.target.files[0];
-		setSelectedFile(file);
+
+		if (file) {
+			setSelectedFile(file);
+			if (selectedMaintenance) {
+				const updatedNestedMaintenanceList = nestedMaintenanceList.map(
+					(nestedMaintenance: NestedMaintenance) => {
+						if (nestedMaintenance.uid === selectedMaintenance.uid) {
+							return { ...nestedMaintenance, fileName: file.name };
+						}
+						return nestedMaintenance;
+					}
+				);
+
+				setNestedMaintenanceList(updatedNestedMaintenanceList);
+			}
+		}
+
+		setSelectedMaintenance(null);
 	}
 
 	return (
@@ -398,7 +478,6 @@ function Task() {
 				</Tabs>
 				{selectedTaskMode === "My Tasks" && (
 					<div className="py-4">
-						{/* <Button onClick={testMe}>Click me</Button> */}
 						{nestedMaintenanceList.map(
 							(nestedMaintenance: NestedMaintenance) => (
 								<Card
@@ -465,8 +544,45 @@ function Task() {
 									</CardBody>
 									<Divider />
 									<CardFooter>
-										<input type="file" onChange={handleFileChange} />
-										<button onClick={importExcel}>Import Excel</button>
+										<ButtonGroup>
+											<Button
+												color="primary"
+												variant="ghost"
+												onClick={() => {
+													handleButtonClick();
+													setSelectedMaintenance(nestedMaintenance);
+												}}
+												startContent={<FaRegFileExcel />}
+											>
+												{nestedMaintenance.fileName ?? "Upload Excel"}
+											</Button>
+											<input
+												type="file"
+												ref={fileInputRef}
+												className="hidden"
+												accept=".xlsx, .xls"
+												onChange={handleFileChange}
+											/>
+											<Button
+												isIconOnly
+												color="primary"
+												variant="ghost"
+												isDisabled={!nestedMaintenance.fileName}
+												isLoading={nestedMaintenance.loadingReadExcel}
+												onClick={() => {
+													console.log("Clicked");
+													setSelectedMaintenance(nestedMaintenance);
+													console.log("done update state", selectedMaintenance);
+													importExcel();
+												}}
+											>
+												{nestedMaintenance.loadingReadExcel ? (
+													<></>
+												) : (
+													<AiOutlineCloudSync />
+												)}
+											</Button>
+										</ButtonGroup>
 									</CardFooter>
 								</Card>
 							)
