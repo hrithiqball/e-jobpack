@@ -234,7 +234,7 @@ model task {
   issue         String?
   deadline      DateTime? @db.Timestamptz(6)
   completed_by  String?
-  task_order    BigInt
+  task_order    Int       @db.SmallInt
   have_subtask  Boolean   @default(false)
   checklist_uid String
   subtask       subtask[]

@@ -9,153 +9,22 @@ import {
 	CardHeader,
 	Tab,
 	Tabs,
-	useDisclosure,
-	Image,
 	CardFooter,
 	Divider,
-	Link,
 	Checkbox,
-	Input,
 	ButtonGroup,
 } from "@nextui-org/react";
-import AddNewTask from "../components/AddNewTask";
 import { asset, checklist, maintenance, task } from "@prisma/client";
-import { GoIssueDraft } from "react-icons/go";
 import { AiOutlineIssuesClose } from "react-icons/ai";
 import { FaRegFileExcel, FaRegFilePdf } from "react-icons/fa";
 import { AiOutlineCloudSync } from "react-icons/ai";
-import * as XLSX from "xlsx";
 import { Workbook, Cell, Column, Border } from "exceljs";
 import { saveAs } from "file-saver";
-// import fs from "fs";
 import { base64Image } from "@/public/client-icon";
 import moment from "moment";
 import { useTheme } from "next-themes";
-
-const taskList: task[] = [
-	{
-		uid: "TK-23487623452523",
-		task_activity: "Do this First Task",
-		description: null,
-		is_complete: true,
-		remarks: null,
-		issue: null,
-		deadline: new Date(),
-		completed_by: null,
-		task_order: BigInt(1),
-		have_subtask: false,
-		checklist_uid: "1",
-	},
-	{
-		uid: "TK-2389457692392",
-		task_activity: "Then this this second task",
-		description: "You should remove the green wire",
-		is_complete: false,
-		remarks: null,
-		issue: "string",
-		deadline: new Date(),
-		completed_by: "string",
-		task_order: BigInt(2),
-		have_subtask: false,
-		checklist_uid: "1",
-	},
-	{
-		uid: "TK-827426324653253",
-		task_activity: "Then this third task",
-		description: "string",
-		is_complete: false,
-		remarks: "string",
-		issue: "string",
-		deadline: new Date(),
-		completed_by: "string",
-		task_order: BigInt(1),
-		have_subtask: false,
-		checklist_uid: "123",
-	},
-];
-
-const maintenanceList: maintenance[] = [
-	{
-		uid: "1",
-		asset_uid: "1",
-		date: new Date(),
-		maintainee: null,
-		attachment_path: null,
-		approved_by: null,
-		approved_on: null,
-	},
-	{
-		uid: "13",
-		asset_uid: "2",
-		date: new Date(),
-		maintainee: null,
-		attachment_path: null,
-		approved_by: null,
-		approved_on: null,
-	},
-];
-
-const checklistList: checklist[] = [
-	{
-		uid: "1",
-		created_on: new Date(),
-		created_by: "Harith",
-		updated_on: new Date(),
-		updated_by: "Harith",
-		title: "Manifold Checklist",
-		description: null,
-		color: null,
-		icon: null,
-		maintenance_uid: "1",
-	},
-	{
-		uid: "123",
-		created_on: new Date(),
-		created_by: "Harith",
-		updated_on: new Date(),
-		updated_by: "Harith",
-		title: "Transmitter Checklist",
-		description: null,
-		color: null,
-		icon: null,
-		maintenance_uid: "13",
-	},
-];
-
-const assetList: asset[] = [
-	{
-		uid: "1",
-		name: "Asset 1",
-		description: null,
-		type: null,
-		created_by: "Iqbal",
-		created_on: new Date(),
-		updated_by: "Iqbal",
-		last_maintenance: null,
-		last_maintainee: [],
-		location: null,
-		next_maintenance: null,
-		status_uid: null,
-		updated_on: new Date(),
-		person_in_charge: null,
-	},
-	{
-		uid: "2",
-		name: "Asset 2",
-		description: null,
-		type: null,
-		created_by: "Iqbal",
-		created_on: new Date(),
-		updated_by: "Iqbal",
-		last_maintenance: null,
-		last_maintainee: [],
-		location: null,
-		next_maintenance: null,
-		status_uid: null,
-		updated_on: new Date(),
-		person_in_charge: null,
-	},
-];
+import { Result } from "@/lib/result";
+import { useQuery } from "@tanstack/react-query";
 
 type NestedMaintenance = maintenance & {
 	checklists: NestedChecklist[];
@@ -178,11 +47,13 @@ type SimplifiedTask = {
 
 function Task() {
 	const { theme } = useTheme();
-	const { isOpen, onOpen, onClose } = useDisclosure();
 	const [selectedTaskMode, setSelectedTaskMode] = useState<string>("My Tasks");
 	const [mounted, setMounted] = useState(false);
+	const [maintenanceList, setMaintenanceList] = useState<maintenance[]>([]);
+	const [checklistList, setChecklistList] = useState<checklist[]>([]);
+	const [assetList, setAssetList] = useState<asset[]>([]);
+	const [taskList, setTaskList] = useState<task[]>([]);
 	const [selectedFile, setSelectedFile] = useState(null);
-	const [loadingReadExcel, setLoadingReadExcel] = useState(false);
 	const [selectedMaintenance, setSelectedMaintenance] =
 		useState<NestedMaintenance | null>(null);
 	const [nestedMaintenanceList, setNestedMaintenanceList] = useState<
@@ -190,41 +61,150 @@ function Task() {
 	>([]);
 	const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+	const { isLoading } = useQuery({
+		queryKey: ["maintenanceList"],
+		queryFn: async () => {
+			const { data }: Result<maintenance[]> = await fetchMaintenanceList();
+			setMaintenanceList(data as maintenance[]);
+			console.log(maintenanceList);
+
+			// const checklistListResult: Result<checklist[]> =
+			// 	await fetchChecklistList();
+			// if (checklistListResult.statusCode === 200 && checklistListResult.data) {
+			// 	setChecklistList(checklistListResult.data);
+			// 	console.log(checklistList);
+			// }
+
+			// const assetListResult: Result<asset[]> = await fetchAssetList();
+			// if (assetListResult.statusCode === 200 && assetListResult.data) {
+			// 	setAssetList(assetListResult.data);
+			// 	console.log(assetList);
+			// }
+
+			// const taskListResult: Result<task[]> = await fetchTaskList();
+			// if (taskListResult.statusCode === 200 && taskListResult.data) {
+			// 	setTaskList(taskListResult.data);
+			// 	console.log(taskList);
+			// }
+
+			// const newNestedMaintenanceList: NestedMaintenance[] = maintenanceList.map(
+			// 	(maintenance: maintenance) => {
+			// 		const checklistLists: checklist[] = checklistList.filter(
+			// 			(checklist: checklist) =>
+			// 				checklist.maintenance_uid === maintenance.uid
+			// 		);
+
+			// 		const nestedMaintenance: NestedMaintenance = {
+			// 			fileName: null,
+			// 			loadingReadExcel: false,
+			// 			...maintenance,
+			// 			asset: assetList.find(
+			// 				(asset: asset) => asset.uid === maintenance.asset_uid
+			// 			)!,
+			// 			checklists: checklistLists.map((checklist: checklist) => {
+			// 				const tasks: task[] = taskList.filter(
+			// 					(task: task) => task.checklist_uid === checklist.uid
+			// 				);
+
+			// 				return {
+			// 					...checklist,
+			// 					tasks: tasks,
+			// 				};
+			// 			}),
+			// 		};
+
+			// 		return nestedMaintenance;
+			// 	}
+			// );
+
+			// setNestedMaintenanceList(newNestedMaintenanceList);
+
+			console.log(nestedMaintenanceList);
+		},
+	});
+
 	useEffect(() => {
-		const newNestedMaintenanceList: NestedMaintenance[] = maintenanceList.map(
-			(maintenance: maintenance) => {
-				const checklistLists: checklist[] = checklistList.filter(
-					(checklist: checklist) =>
-						checklist.maintenance_uid === maintenance.uid
-				);
-
-				const nestedMaintenance: NestedMaintenance = {
-					fileName: null,
-					loadingReadExcel: false,
-					...maintenance,
-					asset: assetList.find(
-						(asset: asset) => asset.uid === maintenance.asset_uid
-					)!,
-					checklists: checklistLists.map((checklist: checklist) => {
-						const tasks: task[] = taskList.filter(
-							(task: task) => task.checklist_uid === checklist.uid
-						);
-
-						return {
-							...checklist,
-							tasks: tasks,
-						};
-					}),
-				};
-
-				return nestedMaintenance;
-			}
-		);
-
-		return () => {
-			setNestedMaintenanceList(newNestedMaintenanceList);
-		};
+		setMounted(true);
 	}, []);
+
+	if (!mounted) return null;
+	if (isLoading) return <p>Loading...</p>;
+
+	async function fetchMaintenanceList(): Promise<Result<maintenance[]>> {
+		try {
+			const response: Response = await fetch("/api/maintenance", {
+				method: "GET",
+			});
+			const result: Result<maintenance[]> = await response.json();
+
+			if (response.status === 200) {
+				return result;
+			} else {
+				console.error(result.message);
+				throw new Error(result.message);
+			}
+		} catch (error) {
+			console.error("Error fetching maintenance list", error);
+			throw error;
+		}
+	}
+
+	async function fetchChecklistList(): Promise<Result<checklist[]>> {
+		try {
+			const response: Response = await fetch("/api/checklist", {
+				method: "GET",
+			});
+			const result: Result<checklist[]> = await response.json();
+
+			if (response.status === 200) {
+				return result;
+			} else {
+				console.error(result.message);
+				throw new Error(result.message);
+			}
+		} catch (error) {
+			console.error("Error fetching maintenance list", error);
+			throw error;
+		}
+	}
+
+	async function fetchAssetList(): Promise<Result<asset[]>> {
+		try {
+			const response: Response = await fetch("/api/asset", {
+				method: "GET",
+			});
+			const result: Result<asset[]> = await response.json();
+
+			if (response.status === 200) {
+				return result;
+			} else {
+				console.error(result.message);
+				throw new Error(result.message);
+			}
+		} catch (error) {
+			console.error("Error fetching maintenance list", error);
+			throw error;
+		}
+	}
+
+	async function fetchTaskList(): Promise<Result<task[]>> {
+		try {
+			const response: Response = await fetch("/api/task", {
+				method: "GET",
+			});
+			const result: Result<task[]> = await response.json();
+
+			if (response.status === 200) {
+				return result;
+			} else {
+				console.error(result.message);
+				throw new Error(result.message);
+			}
+		} catch (error) {
+			console.error("Error fetching maintenance list", error);
+			throw error;
+		}
+	}
 
 	function handleButtonClick() {
 		if (fileInputRef.current) {
@@ -464,12 +444,6 @@ function Task() {
 		setSelectedMaintenance(null);
 	}
 
-	useEffect(() => {
-		setMounted(true);
-	}, []);
-
-	if (!mounted) return null;
-
 	return (
 		<div className="flex flex-col h-screen">
 			<Navigation />
@@ -502,7 +476,10 @@ function Task() {
 										</Button>
 										<div className="flex flex-col">
 											<p className="text-md">
-												{nestedMaintenance.asset.name} Maintenance
+												{nestedMaintenance.asset
+													? nestedMaintenance.asset.name
+													: "No Asset"}
+												Maintenance
 											</p>
 											<p className="text-small text-default-500">nextui.org</p>
 										</div>
@@ -547,7 +524,6 @@ function Task() {
 															>
 																{task.task_activity}
 															</Checkbox>
-															{task.is_complete ? "Done" : "Not Done"}
 														</div>
 													))}
 												</div>
@@ -603,15 +579,6 @@ function Task() {
 				)}
 				{selectedTaskMode === "Completed Tasks" && <p>Hello Completed</p>}
 				{selectedTaskMode === "Upcoming Tasks" && <p>Hello Upcoming Task</p>}
-				{/* <Button
-					className="mb-4"
-					color="primary"
-					variant="shadow"
-					onPress={onOpen}
-				>
-					Assign New Task
-				</Button>
-				<AddNewTask isOpen={isOpen} onClose={onClose} /> */}
 			</Card>
 		</div>
 	);

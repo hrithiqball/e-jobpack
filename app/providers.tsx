@@ -3,11 +3,14 @@
 
 import { NextUIProvider } from "@nextui-org/react";
 import { ThemeProvider as NextThemeProvider } from "next-themes";
+import TanStackProvider from "./components/providers/TanStackProvider";
 
 export function Providers({ children }: { children: React.ReactNode }) {
 	return (
 		<NextUIProvider>
-			<NextThemeProvider attribute="class">{children}</NextThemeProvider>
+			<TanStackProvider>
+				<NextThemeProvider attribute="class">{children}</NextThemeProvider>
+			</TanStackProvider>
 		</NextUIProvider>
 	);
 }
