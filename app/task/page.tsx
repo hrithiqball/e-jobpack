@@ -25,11 +25,12 @@ import { AiOutlineIssuesClose } from "react-icons/ai";
 import { FaRegFileExcel, FaRegFilePdf } from "react-icons/fa";
 import { AiOutlineCloudSync } from "react-icons/ai";
 import * as XLSX from "xlsx";
-import Excel from "exceljs";
+import { Workbook, Cell, Column, Border } from "exceljs";
 import { saveAs } from "file-saver";
 // import fs from "fs";
 import { base64Image } from "@/public/client-icon";
 import moment from "moment";
+import { useTheme } from "next-themes";
 
 const taskList: task[] = [
 	{
@@ -176,8 +177,10 @@ type SimplifiedTask = {
 };
 
 function Task() {
+	const { theme } = useTheme();
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const [selectedTaskMode, setSelectedTaskMode] = useState<string>("My Tasks");
+	const [mounted, setMounted] = useState(false);
 	const [selectedFile, setSelectedFile] = useState(null);
 	const [loadingReadExcel, setLoadingReadExcel] = useState(false);
 	const [selectedMaintenance, setSelectedMaintenance] =
@@ -233,11 +236,11 @@ function Task() {
 		checklist: NestedChecklist,
 		nestedMaintenance: NestedMaintenance
 	) {
-		const workbook = new Excel.Workbook();
+		const workbook = new Workbook();
 		const workSheetName = `${nestedMaintenance.asset.name}`;
 		const fileName = `Maintenance-${nestedMaintenance.asset.name}-${nestedMaintenance.uid}`;
 		const title = `Maintenance for asset ${nestedMaintenance.asset.name}`;
-		const columns: Partial<Excel.Column>[] = [
+		const columns: Partial<Column>[] = [
 			{ key: "no", width: 5 },
 			{ key: "uid", width: 20 },
 			{ key: "taskActivity", width: 40 },
@@ -265,7 +268,7 @@ function Task() {
 
 				worksheet.mergeCells("A1:D1");
 				// Row 1
-				const titleCell: Excel.Cell = worksheet.getCell("A1");
+				const titleCell: Cell = worksheet.getCell("A1");
 				titleCell.value = title;
 				titleCell.font = { bold: true, size: 16 };
 				titleCell.alignment = { horizontal: "center", vertical: "middle" };
@@ -318,10 +321,10 @@ function Task() {
 					worksheet.addRow(task);
 				});
 
-				const borderWidth: Partial<Excel.Border> = { style: "thin" };
+				const borderWidth: Partial<Border> = { style: "thin" };
 
 				for (let index = 8; index <= simplifyTasks.length + 8; index++) {
-					worksheet.getRow(index).eachCell((cell: Excel.Cell) => {
+					worksheet.getRow(index).eachCell((cell: Cell) => {
 						cell.border = {
 							top: { style: "thin" },
 							left: { style: "thin" },
@@ -332,7 +335,7 @@ function Task() {
 				}
 
 				for (let index = 3; index <= 6; index++) {
-					worksheet.getRow(index).eachCell((cell: Excel.Cell) => {
+					worksheet.getRow(index).eachCell((cell: Cell) => {
 						cell.border = {
 							top: { style: "thin" },
 							left: { style: "thin" },
@@ -369,7 +372,6 @@ function Task() {
 	}
 
 	async function importExcel() {
-		console.log(selectedMaintenance);
 		if (selectedMaintenance) {
 			const updatedNestedMaintenanceList = nestedMaintenanceList.map(
 				(nestedMaintenance: NestedMaintenance) => {
@@ -383,7 +385,7 @@ function Task() {
 			setNestedMaintenanceList(updatedNestedMaintenanceList);
 
 			if (selectedFile) {
-				const workbook = new Excel.Workbook();
+				const workbook = new Workbook();
 				const reader = new FileReader();
 
 				reader.onload = async (event: any) => {
@@ -462,10 +464,20 @@ function Task() {
 		setSelectedMaintenance(null);
 	}
 
+	useEffect(() => {
+		setMounted(true);
+	}, []);
+
+	if (!mounted) return null;
+
 	return (
 		<div className="flex flex-col h-screen">
 			<Navigation />
-			<Card className="rounded-md bg-gray-200 p-4 m-4 flex-grow">
+			<Card
+				className={`rounded-md p-4 m-4 flex-grow ${
+					theme === "dark" ? "bg-gray-800" : "bg-gray-200"
+				}`}
+			>
 				<Tabs
 					radius="md"
 					color="primary"

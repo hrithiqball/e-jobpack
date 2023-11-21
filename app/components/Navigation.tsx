@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
 	Navbar,
 	NavbarBrand,
@@ -26,15 +26,20 @@ import {
 import clientIcon from "../../public/client-icon.svg";
 import { BsSun } from "react-icons/bs";
 import { RiMoonClearFill } from "react-icons/ri";
+import { useTheme } from "next-themes";
 
 export default function Navigation() {
-	const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
+	const [mounted, setMounted] = useState(false);
 	const pathname = usePathname();
+	const { theme, setTheme } = useTheme();
+
 	const navLinks = [
 		{ href: "/dashboard", label: "Dashboard" },
 		{ href: "/asset", label: "Asset" },
 		{ href: "/task", label: "Task" },
 	];
+
 	const user = {
 		name: "Harith Iqbal",
 		role: "supervisor",
@@ -42,6 +47,12 @@ export default function Navigation() {
 		email: "harith@gmail.com",
 		userId: "PET-0001",
 	};
+
+	useEffect(() => {
+		setMounted(true);
+	}, []);
+
+	if (!mounted) return null;
 
 	return (
 		<Navbar
@@ -82,13 +93,14 @@ export default function Navigation() {
 				})}
 			</NavbarContent>
 			<NavbarContent justify="end">
-				<Switch
-					defaultSelected
-					size="lg"
-					color="secondary"
-					startContent={<RiMoonClearFill />}
-					endContent={<BsSun />}
-				/>
+				<Button
+					isIconOnly
+					onClick={() => {
+						setTheme(theme === "dark" ? "light" : "dark");
+					}}
+				>
+					{theme === "dark" ? <RiMoonClearFill /> : <BsSun />}
+				</Button>
 				<Dropdown placement="bottom-end">
 					<DropdownTrigger>
 						<Button
