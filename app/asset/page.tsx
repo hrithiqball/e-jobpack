@@ -38,10 +38,13 @@ import {
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import "moment/locale/en-gb";
+import { useTheme } from "next-themes";
 
 type OpenCollapsibles = Record<string, boolean>;
 
 export default function AssetPage() {
+	const { theme } = useTheme();
+	const [mounted, setMounted] = useState(false);
 	const [assets, setAssets] = useState<asset[]>([]);
 	const [currentAsset, setCurrentAsset] = useState<asset>();
 	const [currentChecklist, setCurrentChecklist] = useState<checklist>();
@@ -179,10 +182,20 @@ export default function AssetPage() {
 		}));
 	};
 
+	useEffect(() => {
+		setMounted(true);
+	}, []);
+
+	if (!mounted) return null;
+
 	return (
 		<div className="flex flex-col h-screen">
 			<Navigation />
-			<Card className="rounded-md bg-gray-200 p-4 m-4 flex-grow">
+			<Card
+				className={`rounded-md p-4 m-4 flex-grow ${
+					theme === "dark" ? "bg-gray-800" : "bg-gray-200"
+				}`}
+			>
 				{/* <Button
 					onPress={onOpen}
 					className="mb-4"

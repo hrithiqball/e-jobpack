@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { Key, useState } from "react";
 import Overview from "./Overview";
 import Report from "./Report";
 import Calendar from "./Calendar";
 import { Button } from "@nextui-org/button";
-import { ButtonGroup } from "@nextui-org/react";
+import { ButtonGroup, Tab, Tabs } from "@nextui-org/react";
 import { BsCalendarRangeFill } from "react-icons/bs";
 
 const NavigationDashboard = () => {
@@ -24,7 +24,18 @@ const NavigationDashboard = () => {
 
 	return (
 		<div>
-			<div className="flex space-x-4">
+			<Tabs
+				radius="md"
+				color="primary"
+				aria-label="Tabs radius"
+				onSelectionChange={(key: Key) => setActiveComponent(key as string)}
+			>
+				<Tab key="overview" title="Overview" />
+				<Tab key="report" title="Report" />
+				<Tab key="calendar" title="Calendar" />
+			</Tabs>
+			{renderComponent()}
+			{/* <div className="flex space-x-4">
 				<ButtonGroup className="m-4">
 					<Button
 						variant="ghost"
@@ -61,7 +72,7 @@ const NavigationDashboard = () => {
 					</Button>
 				</ButtonGroup>
 			</div>
-			{renderComponent()}
+			{renderComponent()} */}
 		</div>
 	);
 };
