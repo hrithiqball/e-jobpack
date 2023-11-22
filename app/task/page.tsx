@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import React, { Key, useEffect, useRef, useState } from "react";
@@ -24,7 +25,7 @@ import { base64Image } from "@/public/client-icon";
 import moment from "moment";
 import { useTheme } from "next-themes";
 import { Result } from "@/lib/result";
-import { useQuery } from "@tanstack/react-query";
+import Loading from "../components/Loading";
 
 type NestedMaintenance = maintenance & {
 	checklists: NestedChecklist[];
@@ -49,10 +50,6 @@ function Task() {
 	const { theme } = useTheme();
 	const [selectedTaskMode, setSelectedTaskMode] = useState<string>("My Tasks");
 	const [mounted, setMounted] = useState(false);
-	const [maintenanceList, setMaintenanceList] = useState<maintenance[]>([]);
-	const [checklistList, setChecklistList] = useState<checklist[]>([]);
-	const [assetList, setAssetList] = useState<asset[]>([]);
-	const [taskList, setTaskList] = useState<task[]>([]);
 	const [selectedFile, setSelectedFile] = useState(null);
 	const [selectedMaintenance, setSelectedMaintenance] =
 		useState<NestedMaintenance | null>(null);
@@ -61,74 +58,12 @@ function Task() {
 	>([]);
 	const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-	const { isLoading } = useQuery({
-		queryKey: ["maintenanceList"],
-		queryFn: async () => {
-			const { data }: Result<maintenance[]> = await fetchMaintenanceList();
-			setMaintenanceList(data as maintenance[]);
-			console.log(maintenanceList);
-
-			// const checklistListResult: Result<checklist[]> =
-			// 	await fetchChecklistList();
-			// if (checklistListResult.statusCode === 200 && checklistListResult.data) {
-			// 	setChecklistList(checklistListResult.data);
-			// 	console.log(checklistList);
-			// }
-
-			// const assetListResult: Result<asset[]> = await fetchAssetList();
-			// if (assetListResult.statusCode === 200 && assetListResult.data) {
-			// 	setAssetList(assetListResult.data);
-			// 	console.log(assetList);
-			// }
-
-			// const taskListResult: Result<task[]> = await fetchTaskList();
-			// if (taskListResult.statusCode === 200 && taskListResult.data) {
-			// 	setTaskList(taskListResult.data);
-			// 	console.log(taskList);
-			// }
-
-			// const newNestedMaintenanceList: NestedMaintenance[] = maintenanceList.map(
-			// 	(maintenance: maintenance) => {
-			// 		const checklistLists: checklist[] = checklistList.filter(
-			// 			(checklist: checklist) =>
-			// 				checklist.maintenance_uid === maintenance.uid
-			// 		);
-
-			// 		const nestedMaintenance: NestedMaintenance = {
-			// 			fileName: null,
-			// 			loadingReadExcel: false,
-			// 			...maintenance,
-			// 			asset: assetList.find(
-			// 				(asset: asset) => asset.uid === maintenance.asset_uid
-			// 			)!,
-			// 			checklists: checklistLists.map((checklist: checklist) => {
-			// 				const tasks: task[] = taskList.filter(
-			// 					(task: task) => task.checklist_uid === checklist.uid
-			// 				);
-
-			// 				return {
-			// 					...checklist,
-			// 					tasks: tasks,
-			// 				};
-			// 			}),
-			// 		};
-
-			// 		return nestedMaintenance;
-			// 	}
-			// );
-
-			// setNestedMaintenanceList(newNestedMaintenanceList);
-
-			console.log(nestedMaintenanceList);
-		},
-	});
-
 	useEffect(() => {
+		fetchMaintenanceList();
 		setMounted(true);
 	}, []);
 
-	if (!mounted) return null;
-	if (isLoading) return <p>Loading...</p>;
+	if (!mounted) return <Loading label="Hang on tight!" />;
 
 	async function fetchMaintenanceList(): Promise<Result<maintenance[]>> {
 		try {
@@ -137,7 +72,8 @@ function Task() {
 			});
 			const result: Result<maintenance[]> = await response.json();
 
-			if (response.status === 200) {
+			if (result.statusCode === 200) {
+				await fetchChecklistList(result.data);
 				return result;
 			} else {
 				console.error(result.message);
@@ -149,14 +85,17 @@ function Task() {
 		}
 	}
 
-	async function fetchChecklistList(): Promise<Result<checklist[]>> {
+	async function fetchChecklistList(
+		maintenanceList: any
+	): Promise<Result<checklist[]>> {
 		try {
 			const response: Response = await fetch("/api/checklist", {
 				method: "GET",
 			});
 			const result: Result<checklist[]> = await response.json();
 
-			if (response.status === 200) {
+			if (result.statusCode === 200) {
+				await fetchAssetList(maintenanceList, result.data);
 				return result;
 			} else {
 				console.error(result.message);
@@ -168,14 +107,18 @@ function Task() {
 		}
 	}
 
-	async function fetchAssetList(): Promise<Result<asset[]>> {
+	async function fetchAssetList(
+		maintenanceList: any,
+		checklistList: any
+	): Promise<Result<asset[]>> {
 		try {
 			const response: Response = await fetch("/api/asset", {
 				method: "GET",
 			});
 			const result: Result<asset[]> = await response.json();
 
-			if (response.status === 200) {
+			if (result.statusCode === 200) {
+				await fetchTaskList(maintenanceList, checklistList, result.data);
 				return result;
 			} else {
 				console.error(result.message);
@@ -187,14 +130,48 @@ function Task() {
 		}
 	}
 
-	async function fetchTaskList(): Promise<Result<task[]>> {
+	async function fetchTaskList(
+		maintenanceList: any,
+		checklistList: any,
+		assetList: any
+	): Promise<Result<task[]>> {
 		try {
 			const response: Response = await fetch("/api/task", {
 				method: "GET",
 			});
 			const result: Result<task[]> = await response.json();
 
-			if (response.status === 200) {
+			if (result.statusCode === 200) {
+				const newNestedMaintenanceList: NestedMaintenance[] =
+					maintenanceList.map((maintenance: maintenance) => {
+						const checklistLists2: checklist[] = checklistList.filter(
+							(checklist: checklist) =>
+								checklist.maintenance_uid === maintenance.uid
+						);
+
+						const nestedMaintenance: NestedMaintenance = {
+							fileName: null,
+							loadingReadExcel: false,
+							...maintenance,
+							asset: assetList.find(
+								(asset: asset) => asset.uid === maintenance.asset_uid
+							)!,
+							checklists: checklistLists2.map((checklist: checklist) => {
+								const tasks: task[] = result.data!.filter(
+									(task: task) => task.checklist_uid === checklist.uid
+								);
+
+								return {
+									...checklist,
+									tasks: tasks,
+								};
+							}),
+						};
+
+						return nestedMaintenance;
+					});
+
+				setNestedMaintenanceList(newNestedMaintenanceList);
 				return result;
 			} else {
 				console.error(result.message);
