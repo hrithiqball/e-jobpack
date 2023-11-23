@@ -1,7 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { asset, checklist, task } from "@prisma/client";
+import React, { useState, useEffect, Fragment } from "react";
+import { asset, checklist, maintenance, subtask, task } from "@prisma/client";
 import Navigation from "../components/Navigation";
 import { Result } from "@/lib/result";
 import {
@@ -39,13 +40,37 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import "moment/locale/en-gb";
 import { useTheme } from "next-themes";
+import Loading from "../components/Loading";
 
 type OpenCollapsibles = Record<string, boolean>;
+
+type ExtendedAsset = asset & {
+	maintenanceList: ExtendedMaintenance[];
+};
+
+type ExtendedMaintenance = maintenance & {
+	checklists: ExtendedChecklist[];
+};
+
+type ExtendedChecklist = checklist & {
+	tasks: ExtendedTask[];
+};
+
+type ExtendedTask = task & {
+	subtasks: subtask[];
+};
 
 export default function AssetPage() {
 	const { theme } = useTheme();
 	const [mounted, setMounted] = useState(false);
-	const [assets, setAssets] = useState<asset[]>([]);
+	const [extendedAssetList, setExtendedAssetList] = useState<ExtendedAsset[]>(
+		[]
+	);
+	// const [assetList, setAssetList] = useState<asset[]>([]);
+	// const [checklistList, setChecklistList] = useState<checklist[]>([]);
+	// const [maintenanceList, setMaintenanceList] = useState<maintenance[]>([]);
+	// const [taskList, setTaskList] = useState<task[]>([]);
+	// const [subtaskList, setSubtaskList] = useState<subtask[]>([]);
 	const [currentAsset, setCurrentAsset] = useState<asset>();
 	const [currentChecklist, setCurrentChecklist] = useState<checklist>();
 	const [isLoading, setIsLoading] = useState(false);
@@ -61,120 +86,6 @@ export default function AssetPage() {
 		{}
 	);
 
-	// useEffect(() => {
-	// 	const fetchData = async () => {
-	// 		setIsLoading(true);
-	// 		try {
-	// 			const response: Response = await fetch("/api/asset", { method: "GET" });
-	// 			const result: Result<asset[]> = await response.json();
-
-	// 			if (response.status === 200) {
-	// 				setAssets(result.data!);
-	// 			} else {
-	// 				console.log(result.message);
-	// 			}
-	// 		} catch (error) {
-	// 			console.error("Error fetching data:", error);
-	// 		} finally {
-	// 			setIsLoading(false);
-	// 		}
-	// 	};
-
-	// 	fetchData();
-	// }, []);
-	const dummyData: checklist[] = [
-		{
-			uid: "1",
-			created_by: "1",
-			created_on: new Date(),
-			updated_by: "1",
-			updated_on: new Date(),
-			maintenance_uid: "1",
-			title: "Checklist A",
-			description: "description",
-			icon: "electric",
-			color: "red",
-		},
-		{
-			uid: "2",
-			created_by: "1",
-			created_on: new Date(),
-			updated_by: "1",
-			updated_on: new Date(),
-			maintenance_uid: "1",
-			title: "title 2",
-			description: "description",
-			icon: "electric",
-			color: "blue",
-		},
-		{
-			uid: "3",
-			created_by: "1",
-			created_on: new Date(),
-			updated_by: "1",
-			updated_on: new Date(),
-			maintenance_uid: "1",
-			title: "title 3",
-			description: "description",
-			icon: "electric",
-			color: "yellow",
-		},
-		{
-			uid: "4",
-			created_by: "1",
-			created_on: new Date(),
-			updated_by: "1",
-			updated_on: new Date(),
-			maintenance_uid: "1",
-			title: "title 4",
-			description: "description",
-			icon: "electric",
-			color: "green",
-		},
-	];
-
-	const taskList: task[] = [
-		{
-			uid: "1",
-			task_activity: "Do this",
-			description: null,
-			is_complete: false,
-			remarks: null,
-			issue: null,
-			deadline: null,
-			completed_by: null,
-			task_order: 1,
-			have_subtask: false,
-			checklist_uid: "1",
-		},
-		{
-			uid: "2",
-			task_activity: "Then that",
-			description: null,
-			is_complete: false,
-			remarks: null,
-			issue: null,
-			deadline: null,
-			completed_by: null,
-			task_order: 2,
-			have_subtask: false,
-			checklist_uid: "1",
-		},
-		{
-			uid: "3",
-			task_activity: "then those",
-			description: null,
-			is_complete: false,
-			remarks: null,
-			issue: null,
-			deadline: null,
-			completed_by: null,
-			task_order: 3,
-			have_subtask: false,
-			checklist_uid: "1",
-		},
-	];
-
 	const toggleCollapsible = (assetUid: string) => {
 		setOpenCollapsibles((prevState: OpenCollapsibles) => ({
 			...prevState,
@@ -182,11 +93,251 @@ export default function AssetPage() {
 		}));
 	};
 
+	async function fetchAssetList() {
+		try {
+			const response: Response = await fetch("/api/asset", {
+				method: "GET",
+			});
+			const result: Result<asset[]> = await response.json();
+
+			if (result.statusCode === 200 && result.data != undefined) {
+				// setAssetList(result.data);
+				await fetchMaintenanceList(result.data);
+				return result;
+			} else {
+				throw new Error(result.message);
+			}
+		} catch (error) {
+			console.error(error);
+			throw error;
+		}
+	}
+
+	async function fetchMaintenanceList(assetList: asset[]) {
+		try {
+			console.log(assetList);
+			const response: Response = await fetch("/api/maintenance", {
+				method: "GET",
+			});
+			const result: Result<maintenance[]> = await response.json();
+
+			if (result.statusCode === 200) {
+				if (result.data != undefined) {
+					// setMaintenanceList(result.data);
+					await fetchChecklistList(assetList, result.data);
+				}
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	}
+
+	async function fetchChecklistList(
+		assetList: asset[],
+		maintenanceList: maintenance[]
+	) {
+		try {
+			console.log(maintenanceList);
+			const response: Response = await fetch("/api/checklist", {
+				method: "GET",
+			});
+			const result: Result<checklist[]> = await response.json();
+
+			if (result.statusCode === 200) {
+				if (result.data != undefined) {
+					// setChecklistList(result.data);
+					await fetchTaskList(assetList, maintenanceList, result.data);
+				}
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	}
+
+	async function fetchTaskList(
+		assetList: asset[],
+		maintenanceList: maintenance[],
+		checklistList: checklist[]
+	) {
+		try {
+			console.log(checklistList);
+			const response: Response = await fetch("/api/task", {
+				method: "GET",
+			});
+			const result: Result<task[]> = await response.json();
+
+			if (result.statusCode === 200 && result.data != undefined) {
+				// setTaskList(result.data);
+				await fetchSubtaskList(
+					assetList,
+					maintenanceList,
+					checklistList,
+					result.data
+				);
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	}
+
+	async function fetchSubtaskList(
+		assetList: asset[],
+		maintenanceList: maintenance[],
+		checklistList: checklist[],
+		taskList: task[]
+	) {
+		try {
+			console.log(taskList);
+			const response: Response = await fetch("/api/subtask", {
+				method: "GET",
+			});
+			const result: Result<subtask[]> = await response.json();
+			console.log(result.statusCode);
+			console.log(result.data);
+
+			if (result.statusCode === 200 && result.data != undefined) {
+				// setSubtaskList(result.data);
+
+				console.log("hello", result.data);
+				const extendedAssetList: ExtendedAsset[] = [];
+
+				assetList.forEach((asset: asset) => {
+					let extendedMaintenanceList: ExtendedMaintenance[] = [];
+
+					maintenanceList.forEach((maintenance: maintenance) => {
+						if (maintenance.asset_uid !== asset.uid) return;
+
+						let extendedChecklistList: ExtendedChecklist[] = [];
+						checklistList.forEach((checklist: checklist) => {
+							if (checklist.maintenance_uid !== maintenance.uid) return;
+
+							let extendedTaskList: ExtendedTask[] = [];
+							taskList.forEach((task: task) => {
+								if (task.checklist_uid !== checklist.uid) return;
+
+								let filterSubtaskList: subtask[] = result.data!.filter(
+									(subtask: subtask) => {
+										return subtask.task_uid === task.uid;
+									}
+								);
+
+								if (filterSubtaskList.length) {
+									extendedTaskList.push({
+										...task,
+										subtasks: filterSubtaskList,
+									});
+								}
+							});
+
+							if (extendedTaskList.length) {
+								extendedChecklistList.push({
+									...checklist,
+									tasks: extendedTaskList,
+								});
+							}
+						});
+
+						if (extendedChecklistList.length) {
+							extendedMaintenanceList.push({
+								...maintenance,
+								checklists: extendedChecklistList,
+							});
+						}
+					});
+
+					if (extendedMaintenanceList.length) {
+						extendedAssetList.push({
+							...asset,
+							maintenanceList: extendedMaintenanceList,
+						});
+					}
+				});
+
+				setExtendedAssetList(extendedAssetList);
+				// constructExtendedAssetList(
+				// 	assetList,
+				// 	maintenanceList,
+				// 	checklistList,
+				// 	taskList,
+				// 	result.data
+				// );
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	}
+
+	function constructExtendedAssetList(
+		assetList: asset[],
+		maintenanceList: maintenance[],
+		checklistList: checklist[],
+		taskList: task[],
+		subtaskList: subtask[]
+	) {
+		console.log("hello", subtaskList);
+		const extendedAssetList: ExtendedAsset[] = [];
+
+		assetList.forEach((asset: asset) => {
+			let extendedMaintenanceList: ExtendedMaintenance[] = [];
+
+			maintenanceList.forEach((maintenance: maintenance) => {
+				if (maintenance.asset_uid !== asset.uid) return;
+
+				let extendedChecklistList: ExtendedChecklist[] = [];
+				checklistList.forEach((checklist: checklist) => {
+					if (checklist.maintenance_uid !== maintenance.uid) return;
+
+					let extendedTaskList: ExtendedTask[] = [];
+					taskList.forEach((task: task) => {
+						if (task.checklist_uid !== checklist.uid) return;
+
+						let filterSubtaskList: subtask[] = subtaskList.filter(
+							(subtask: subtask) => {
+								return subtask.task_uid === task.uid;
+							}
+						);
+
+						if (filterSubtaskList.length) {
+							extendedTaskList.push({
+								...task,
+								subtasks: filterSubtaskList,
+							});
+						}
+					});
+
+					if (extendedTaskList.length) {
+						extendedChecklistList.push({
+							...checklist,
+							tasks: extendedTaskList,
+						});
+					}
+				});
+
+				if (extendedChecklistList.length) {
+					extendedMaintenanceList.push({
+						...maintenance,
+						checklists: extendedChecklistList,
+					});
+				}
+			});
+
+			if (extendedMaintenanceList.length) {
+				extendedAssetList.push({
+					...asset,
+					maintenanceList: extendedMaintenanceList,
+				});
+			}
+		});
+
+		setExtendedAssetList(extendedAssetList);
+	}
+
 	useEffect(() => {
+		fetchAssetList();
 		setMounted(true);
 	}, []);
 
-	if (!mounted) return null;
+	if (!mounted) return <Loading label="Hang on tight" />;
 
 	return (
 		<div className="flex flex-col h-screen">
@@ -208,15 +359,24 @@ export default function AssetPage() {
 					<span>Asset List</span>
 					<Button
 						variant="ghost"
-						isIconOnly
 						size="sm"
 						endContent={<BiSolidBookAdd size={25} />}
-					></Button>
+					>
+						Add Asset
+					</Button>
 				</div>
+				{extendedAssetList.length > 0 ? (
+					<Fragment></Fragment>
+				) : (
+					<Fragment></Fragment>
+				)}
 				<div className="flex flex-row justify-between h-screen">
 					<div className="flex-1">
 						<Button onClick={() => setTestRightSideBar(!testRightSideBar)}>
 							Manifold
+						</Button>
+						<Button onClick={() => console.log(extendedAssetList)}>
+							Click Me
 						</Button>
 					</div>
 					{testRightSideBar && (
@@ -236,7 +396,7 @@ export default function AssetPage() {
 								</div>
 							</div>
 							<Divider className="mt-3" />
-
+							{/* 
 							{newMaintenance && currentChecklist && (
 								<div className="p-4 h-80 mt-4">
 									<span className="font-bold text-lg">
@@ -278,9 +438,9 @@ export default function AssetPage() {
 										Create
 									</Button>
 								</div>
-							)}
+							)} */}
 
-							{!newMaintenance && (
+							{/* {!newMaintenance && (
 								<div className="p-4">
 									<p>Description</p>
 									<p>This is the description of the asset</p>
@@ -328,7 +488,7 @@ export default function AssetPage() {
 										TODO: Card here
 									</div>
 								</div>
-							)}
+							)} */}
 						</div>
 					)}
 				</div>

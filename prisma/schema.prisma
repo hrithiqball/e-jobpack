@@ -192,7 +192,7 @@ model subtask {
   deadline      DateTime? @db.Timestamptz(6)
   completed_by  String?
   task_uid      String
-  task_order    BigInt
+  task_order    Int       @db.SmallInt
   task          task      @relation(fields: [task_uid], references: [uid], onDelete: Cascade)
 }
 
