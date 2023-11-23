@@ -1,11 +1,7 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-// "use client";
-
-import React, { useState, useEffect, Fragment } from "react";
+import React from "react";
 import { asset, checklist, maintenance, subtask, task } from "@prisma/client";
-import Navigation from "../../components/Navigation";
+import Navigation from "@/components/Navigation";
 import AssetComponent from "@/components/AssetComponent";
-import { GetServerSideProps } from "next";
 import { Result } from "@/lib/result";
 // import { Result } from "@/lib/result";
 // import {
@@ -56,20 +52,7 @@ export type ExtendedTask = task & {
 	subtasks: subtask[];
 };
 
-async function fetchExtendedAssetList(): Promise<Result<asset[]>> {
-	const response: Response = await fetch("/api/asset", {
-		method: "GET",
-	});
-	const result: Result<asset[]> = await response.json();
-
-	if (!response.ok) {
-		throw new Error(result.message);
-	}
-
-	return result;
-}
-
-async function fetchAssetList() {
+async function fetchAssetList(): Promise<Result<asset[]>> {
 	try {
 		const response: Response = await fetch("http://localhost:3000/api/asset", {
 			method: "GET",
@@ -86,10 +69,187 @@ async function fetchAssetList() {
 		throw error;
 	}
 }
-//https://nextjs.org/docs/app/building-your-application/data-fetching/patterns
+
+async function fetchMaintenanceList(): Promise<Result<maintenance[]>> {
+	try {
+		const response: Response = await fetch(
+			"http://localhost:3000/api/maintenance",
+			{
+				method: "GET",
+			}
+		);
+		const result: Result<maintenance[]> = await response.json();
+
+		if (!response.ok) {
+			throw new Error(result.message);
+		}
+
+		return result;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+async function fetchChecklistList(): Promise<Result<checklist[]>> {
+	try {
+		const response: Response = await fetch(
+			"http://localhost:3000/api/checklist",
+			{
+				method: "GET",
+			}
+		);
+		const result: Result<checklist[]> = await response.json();
+
+		if (!response.ok) {
+			throw new Error(result.message);
+		}
+
+		return result;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+async function fetchTaskList(): Promise<Result<task[]>> {
+	try {
+		const response: Response = await fetch("http://localhost:3000/api/task", {
+			method: "GET",
+		});
+		const result: Result<task[]> = await response.json();
+
+		if (!response.ok) {
+			throw new Error(result.message);
+		}
+
+		return result;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+async function fetchSubtaskList(): Promise<Result<subtask[]>> {
+	try {
+		const response: Response = await fetch(
+			"http://localhost:3000/api/subtask",
+			{
+				method: "GET",
+			}
+		);
+		const result: Result<subtask[]> = await response.json();
+
+		if (!response.ok) {
+			throw new Error(result.message);
+		}
+
+		return result;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+function constructNestedMaintenance(
+	assetList?: asset[],
+	maintenanceList?: maintenance[],
+	checklistList?: checklist[],
+	taskList?: task[],
+	subtaskList?: subtask[]
+): ExtendedAsset[] {
+	if (
+		assetList == undefined ||
+		maintenanceList == undefined ||
+		checklistList == undefined ||
+		taskList == undefined ||
+		subtaskList == undefined
+	) {
+		console.error("Data is undefined");
+		return [];
+	}
+
+	const extendedAssetList: ExtendedAsset[] = [];
+
+	assetList.forEach((asset: asset) => {
+		const extendedMaintenanceList: ExtendedMaintenance[] = [];
+
+		maintenanceList.forEach((maintenance: maintenance) => {
+			if (maintenance.asset_uid !== asset.uid) return;
+			const extendedChecklistList: ExtendedChecklist[] = [];
+
+			checklistList.forEach((checklist: checklist) => {
+				if (checklist.maintenance_uid !== maintenance.uid) return;
+				const extendedTaskList: ExtendedTask[] = [];
+
+				taskList.forEach((task: task) => {
+					if (task.checklist_uid !== checklist.uid) return;
+
+					const filterSubtaskList: subtask[] = subtaskList.filter(
+						(subtask: subtask) => {
+							return subtask.task_uid === task.uid;
+						}
+					);
+
+					if (filterSubtaskList.length) {
+						extendedTaskList.push({
+							...task,
+							subtasks: filterSubtaskList,
+						});
+					}
+				});
+
+				if (extendedTaskList.length) {
+					extendedChecklistList.push({
+						...checklist,
+						tasks: extendedTaskList,
+					});
+				}
+			});
+
+			if (extendedChecklistList.length) {
+				extendedMaintenanceList.push({
+					...maintenance,
+					checklists: extendedChecklistList,
+				});
+			}
+		});
+
+		if (extendedMaintenanceList.length) {
+			extendedAssetList.push({
+				...asset,
+				maintenanceList: extendedMaintenanceList,
+			});
+		}
+	});
+
+	return extendedAssetList;
+}
+
 export default async function AssetPage() {
 	const assetResult: Result<asset[]> = await fetchAssetList();
-	const extendedAssetList: asset[] = assetResult.data!;
+	const maintenanceResult: Result<maintenance[]> = await fetchMaintenanceList();
+	const checklistResult: Result<checklist[]> = await fetchChecklistList();
+	const taskResult: Result<task[]> = await fetchTaskList();
+	const subtaskResult: Result<subtask[]> = await fetchSubtaskList();
+
+	// https://nextjs.org/docs/app/building-your-application/data-fetching/patterns#parallel-data-fetching
+	const [assetList, maintenanceList, checklistList, taskList, subtaskList] =
+		await Promise.all([
+			assetResult,
+			maintenanceResult,
+			checklistResult,
+			taskResult,
+			subtaskResult,
+		]);
+
+	const extendedAssetList: ExtendedAsset[] = constructNestedMaintenance(
+		assetList.data,
+		maintenanceList.data,
+		checklistList.data,
+		taskList.data,
+		subtaskList.data
+	);
 
 	return (
 		<div className="flex flex-col h-screen">
@@ -113,191 +273,6 @@ export default async function AssetPage() {
 	// const [openDeleteAssetModal, setOpenDeleteAssetModal] = useState(false);
 	// const [testRightSideBar, setTestRightSideBar] = useState(false);
 	// const [newMaintenance, setNewMaintenance] = useState(false);
-
-	// const [openCollapsibles, setOpenCollapsibles] = useState<OpenCollapsibles>(
-	// 	{}
-	// );
-
-	// const toggleCollapsible = (assetUid: string) => {
-	// 	setOpenCollapsibles((prevState: OpenCollapsibles) => ({
-	// 		...prevState,
-	// 		[assetUid]: !prevState[assetUid],
-	// 	}));
-	// };
-
-	// async function fetchAssetList() {
-	// 	try {
-	// 		const response: Response = await fetch("/api/asset", {
-	// 			method: "GET",
-	// 		});
-	// 		const result: Result<asset[]> = await response.json();
-
-	// 		if (result.statusCode === 200 && result.data != undefined) {
-	// 			// setAssetList(result.data);
-	// 			await fetchMaintenanceList(result.data);
-	// 			return result;
-	// 		} else {
-	// 			throw new Error(result.message);
-	// 		}
-	// 	} catch (error) {
-	// 		console.error(error);
-	// 		throw error;
-	// 	}
-	// }
-
-	// async function fetchMaintenanceList(assetList: asset[]) {
-	// 	try {
-	// 		console.log(assetList);
-	// 		const response: Response = await fetch("/api/maintenance", {
-	// 			method: "GET",
-	// 		});
-	// 		const result: Result<maintenance[]> = await response.json();
-
-	// 		if (result.statusCode === 200) {
-	// 			if (result.data != undefined) {
-	// 				// setMaintenanceList(result.data);
-	// 				await fetchChecklistList(assetList, result.data);
-	// 			}
-	// 		}
-	// 	} catch (error) {
-	// 		console.error(error);
-	// 	}
-	// }
-
-	// async function fetchChecklistList(
-	// 	assetList: asset[],
-	// 	maintenanceList: maintenance[]
-	// ) {
-	// 	try {
-	// 		console.log(maintenanceList);
-	// 		const response: Response = await fetch("/api/checklist", {
-	// 			method: "GET",
-	// 		});
-	// 		const result: Result<checklist[]> = await response.json();
-
-	// 		if (result.statusCode === 200) {
-	// 			if (result.data != undefined) {
-	// 				// setChecklistList(result.data);
-	// 				await fetchTaskList(assetList, maintenanceList, result.data);
-	// 			}
-	// 		}
-	// 	} catch (error) {
-	// 		console.error(error);
-	// 	}
-	// }
-
-	// async function fetchTaskList(
-	// 	assetList: asset[],
-	// 	maintenanceList: maintenance[],
-	// 	checklistList: checklist[]
-	// ) {
-	// 	try {
-	// 		console.log(checklistList);
-	// 		const response: Response = await fetch("/api/task", {
-	// 			method: "GET",
-	// 		});
-	// 		const result: Result<task[]> = await response.json();
-
-	// 		if (result.statusCode === 200 && result.data != undefined) {
-	// 			// setTaskList(result.data);
-	// 			await fetchSubtaskList(
-	// 				assetList,
-	// 				maintenanceList,
-	// 				checklistList,
-	// 				result.data
-	// 			);
-	// 		}
-	// 	} catch (error) {
-	// 		console.error(error);
-	// 	}
-	// }
-
-	// async function fetchSubtaskList(
-	// 	assetList: asset[],
-	// 	maintenanceList: maintenance[],
-	// 	checklistList: checklist[],
-	// 	taskList: task[]
-	// ) {
-	// 	try {
-	// 		console.log(taskList);
-	// 		const response: Response = await fetch("/api/subtask", {
-	// 			method: "GET",
-	// 		});
-	// 		const result: Result<subtask[]> = await response.json();
-	// 		console.log(result.statusCode);
-	// 		console.log(result.data);
-
-	// 		if (result.statusCode === 200 && result.data != undefined) {
-	// 			// setSubtaskList(result.data);
-
-	// 			console.log("hello", result.data);
-	// 			const extendedAssetList: ExtendedAsset[] = [];
-
-	// 			assetList.forEach((asset: asset) => {
-	// 				let extendedMaintenanceList: ExtendedMaintenance[] = [];
-
-	// 				maintenanceList.forEach((maintenance: maintenance) => {
-	// 					if (maintenance.asset_uid !== asset.uid) return;
-
-	// 					let extendedChecklistList: ExtendedChecklist[] = [];
-	// 					checklistList.forEach((checklist: checklist) => {
-	// 						if (checklist.maintenance_uid !== maintenance.uid) return;
-
-	// 						let extendedTaskList: ExtendedTask[] = [];
-	// 						taskList.forEach((task: task) => {
-	// 							if (task.checklist_uid !== checklist.uid) return;
-
-	// 							let filterSubtaskList: subtask[] = result.data!.filter(
-	// 								(subtask: subtask) => {
-	// 									return subtask.task_uid === task.uid;
-	// 								}
-	// 							);
-
-	// 							if (filterSubtaskList.length) {
-	// 								extendedTaskList.push({
-	// 									...task,
-	// 									subtasks: filterSubtaskList,
-	// 								});
-	// 							}
-	// 						});
-
-	// 						if (extendedTaskList.length) {
-	// 							extendedChecklistList.push({
-	// 								...checklist,
-	// 								tasks: extendedTaskList,
-	// 							});
-	// 						}
-	// 					});
-
-	// 					if (extendedChecklistList.length) {
-	// 						extendedMaintenanceList.push({
-	// 							...maintenance,
-	// 							checklists: extendedChecklistList,
-	// 						});
-	// 					}
-	// 				});
-
-	// 				if (extendedMaintenanceList.length) {
-	// 					extendedAssetList.push({
-	// 						...asset,
-	// 						maintenanceList: extendedMaintenanceList,
-	// 					});
-	// 				}
-	// 			});
-
-	// 			setExtendedAssetList(extendedAssetList);
-	// 		}
-	// 	} catch (error) {
-	// 		console.error(error);
-	// 	}
-	// }
-
-	// useEffect(() => {
-	// 	fetchAssetList();
-	// 	setMounted(true);
-	// }, []);
-
-	// if (!mounted) return <Loading label="Hang on tight" />;
 
 	// return (
 	// 	<div className="flex flex-col h-screen">
