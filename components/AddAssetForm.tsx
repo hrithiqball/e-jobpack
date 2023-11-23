@@ -14,7 +14,7 @@ import {
 	Spinner,
 } from "@nextui-org/react";
 import { useForm, Controller } from "react-hook-form";
-import { AddAssetClient } from "../api/asset/route";
+import { AddAssetClient } from "../app/api/asset/route";
 import { asset, asset_type } from "@prisma/client";
 import { Result } from "@/lib/result";
 

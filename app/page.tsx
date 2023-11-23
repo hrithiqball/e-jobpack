@@ -1,4 +1,4 @@
-import AuthCard from "./components/AuthCard";
+import AuthCard from "../components/AuthCard";
 
 export default function Home() {
 	return (

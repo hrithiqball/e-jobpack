@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Navigation from "../components/Navigation";
-import NavigationDashboard from "../components/DashboardNavigation";
+import Navigation from "../../components/Navigation";
+import NavigationDashboard from "../../components/DashboardNavigation";
 import { Card } from "@nextui-org/react";
 import { useTheme } from "next-themes";
 

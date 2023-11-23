@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import {
 	Navbar,
@@ -23,7 +25,7 @@ import {
 	LiaUserTieSolid,
 	LiaUserLockSolid,
 } from "react-icons/lia";
-import clientIcon from "../../public/client-icon.svg";
+import clientIcon from "../public/client-icon.svg";
 import { BsSun } from "react-icons/bs";
 import { RiMoonClearFill } from "react-icons/ri";
 import { useTheme } from "next-themes";

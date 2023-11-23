@@ -2,7 +2,8 @@
 "use client";
 
 import React, { Key, useEffect, useRef, useState } from "react";
-import Navigation from "../components/Navigation";
+import { GetServerSideProps } from "next";
+import Navigation from "../../components/Navigation";
 import {
 	Button,
 	Card,
@@ -16,6 +17,7 @@ import {
 	ButtonGroup,
 } from "@nextui-org/react";
 import { asset, checklist, maintenance, task } from "@prisma/client";
+import TaskComponent from "@/components/TaskComponent";
 import { AiOutlineIssuesClose } from "react-icons/ai";
 import { FaRegFileExcel, FaRegFilePdf } from "react-icons/fa";
 import { AiOutlineCloudSync } from "react-icons/ai";
@@ -25,16 +27,16 @@ import { base64Image } from "@/public/client-icon";
 import moment from "moment";
 import { useTheme } from "next-themes";
 import { Result } from "@/lib/result";
-import Loading from "../components/Loading";
+import Loading from "../../components/Loading";
 
-type NestedMaintenance = maintenance & {
+export type NestedMaintenance = maintenance & {
 	checklists: NestedChecklist[];
 	asset: asset;
 	fileName: string | null;
 	loadingReadExcel: boolean;
 };
 
-type NestedChecklist = checklist & {
+export type NestedChecklist = checklist & {
 	tasks: task[];
 };
 
@@ -47,6 +49,12 @@ type SimplifiedTask = {
 };
 
 function Task() {
+	// return (
+	// 	<div className="flex flex-col h-screen">
+	// 		<Navigation />
+	// 		<TaskComponent nestedMaintenance={nestedMaintenance} />
+	// 	</div>
+	// )
 	const { theme } = useTheme();
 	const [selectedTaskMode, setSelectedTaskMode] = useState<string>("My Tasks");
 	const [mounted, setMounted] = useState(false);
@@ -560,5 +568,17 @@ function Task() {
 		</div>
 	);
 }
+
+// export const getServerSideProps: GetServerSideProps<{ data: NestedMaintenance[] }> = async (
+// 	context
+// ) => {
+// 	// fetching data here
+// 	// Return the data as props
+// 	return {
+// 		props: {
+// 			data,
+// 		},
+// 	};
+// };
 
 export default Task;

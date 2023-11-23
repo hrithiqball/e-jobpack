@@ -3,18 +3,18 @@ import { asset, checklist_use, subtask_use, task_use } from "@prisma/client";
 import React, { useEffect, useRef, useState } from "react";
 import { Result } from "@/lib/result";
 import { useForm } from "react-hook-form";
-import { AddChecklistUseClient } from "../api/checklist-use/route";
+import { AddChecklistUseClient } from "../app/api/checklist-use/route";
 import { IconChoice, iconChoice } from "@/public/icon-choice";
-import {
-	Collapsible,
-	CollapsibleContent,
-	CollapsibleTrigger,
-} from "./ui/Collapsible";
-import { AddTaskUseClient, AddTaskUseServer } from "../api/task-use/route";
+// import {
+// 	Collapsible,
+// 	CollapsibleContent,
+// 	CollapsibleTrigger,
+// } from "../app/components/ui/Collapsible";
+import { AddTaskUseClient, AddTaskUseServer } from "../app/api/task-use/route";
 import {
 	AddSubtaskUseClient,
 	AddSubtaskUseServer,
-} from "../api/subtask-use/route";
+} from "../app/api/subtask-use/route";
 import { NestedTask } from "@/model/nested-task";
 
 function AddNewChecklistUse(props: {
@@ -257,7 +257,7 @@ function AddNewChecklistUse(props: {
 							))}
 						</Select>
 					</div>
-					<Collapsible open={isTaskAdded}>
+					{/* <Collapsible open={isTaskAdded}>
 						<CollapsibleTrigger className="w-full">
 							<div className="flex justify-between">
 								<Button
@@ -329,7 +329,7 @@ function AddNewChecklistUse(props: {
 								</CollapsibleContent>
 							</Collapsible>
 						</CollapsibleContent>
-					</Collapsible>
+					</Collapsible> */}
 					{!isTaskAdded && (
 						<div className="flex justify-end">
 							<Button variant="light" onPress={() => props.onCloseModal()}>
