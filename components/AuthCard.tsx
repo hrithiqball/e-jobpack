@@ -10,6 +10,7 @@ import {
 import { cookies, headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
 export default async function AuthCard({
 	searchParams,
@@ -33,6 +34,15 @@ export default async function AuthCard({
 			return redirect("/sign-in?message=Could not authenticate user");
 		}
 
+		return redirect("/dashboard");
+	};
+
+	const signOut = async () => {
+		"use server";
+
+		const cookieStore = cookies();
+		const supabase = createClient(cookieStore);
+		await supabase.auth.signOut();
 		return redirect("/");
 	};
 
@@ -126,6 +136,12 @@ export default async function AuthCard({
 					<button className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2">
 						Sign In
 					</button>
+					<Link href="/sign-up">Sign Up</Link>
+					<form action={signOut}>
+						<button className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover">
+							Logout
+						</button>
+					</form>
 					{/* <button
 				formAction={signUp}
 				className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2"

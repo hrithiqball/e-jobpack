@@ -15,8 +15,6 @@ import {
 	DropdownMenu,
 	Dropdown,
 	DropdownItem,
-	User,
-	Switch,
 } from "@nextui-org/react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -30,7 +28,11 @@ import { BsSun } from "react-icons/bs";
 import { RiMoonClearFill } from "react-icons/ri";
 import { useTheme } from "next-themes";
 
-export default function Navigation() {
+export default function Navigation({
+	children,
+}: {
+	children: React.ReactNode;
+}) {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [mounted, setMounted] = useState(false);
 	const pathname = usePathname();
@@ -129,7 +131,7 @@ export default function Navigation() {
 						</DropdownItem>
 						<DropdownItem key="settings">My Settings</DropdownItem>
 						<DropdownItem key="logout" color="danger">
-							Log Out
+							{children}
 						</DropdownItem>
 					</DropdownMenu>
 				</Dropdown>

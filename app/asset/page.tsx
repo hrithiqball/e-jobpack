@@ -1,40 +1,8 @@
-import React from "react";
 import { asset, checklist, maintenance, subtask, task } from "@prisma/client";
 import Navigation from "@/components/Navigation";
 import AssetComponent from "@/components/AssetComponent";
 import { Result } from "@/lib/result";
-// import { Result } from "@/lib/result";
-// import {
-// 	Card,
-// 	Button,
-// 	useDisclosure,
-// 	Modal,
-// 	ModalContent,
-// 	ModalHeader,
-// 	ModalBody,
-// 	Divider,
-// 	CardFooter,
-// 	Image,
-// } from "@nextui-org/react";
-// import SkeletonList from "../../components/SkeletonList";
-// import AssetMaintenance from "../../components/AssetMaintenance";
-// import AddAssetForm from "../../components/AddAssetForm";
-// import AssetChecklistUse from "../../components/AssetChecklistUse";
-// import { BiSolidBookAdd } from "react-icons/bi";
-// import { BsFillPersonBadgeFill } from "react-icons/bs";
-// import { AiOutlineEdit } from "react-icons/ai";
-// import { AiOutlinePlusSquare } from "react-icons/ai";
-// import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-// import {
-// 	LiaUserCogSolid,
-// 	LiaUserTieSolid,
-// 	LiaUserLockSolid,
-// } from "react-icons/lia";
-// import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-// import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-// import "moment/locale/en-gb";
-// import { useTheme } from "next-themes";
-// import Loading from "../../components/Loading";
+import SignOutItem from "@/components/SignOutItem";
 
 export type ExtendedAsset = asset & {
 	maintenanceList: ExtendedMaintenance[];
@@ -253,7 +221,9 @@ export default async function AssetPage() {
 
 	return (
 		<div className="flex flex-col h-screen">
-			<Navigation />
+			<Navigation>
+				<SignOutItem />
+			</Navigation>
 			<AssetComponent extendedAsset={extendedAssetList} />
 		</div>
 	);

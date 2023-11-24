@@ -2,7 +2,6 @@
 "use client";
 
 import React, { Key, useEffect, useRef, useState } from "react";
-import { GetServerSideProps } from "next";
 import Navigation from "../../components/Navigation";
 import {
 	Button,
@@ -28,6 +27,7 @@ import moment from "moment";
 import { useTheme } from "next-themes";
 import { Result } from "@/lib/result";
 import Loading from "../../components/Loading";
+import SignOutItem from "@/components/SignOutItem";
 
 export type NestedMaintenance = maintenance & {
 	checklists: NestedChecklist[];
@@ -431,7 +431,9 @@ function Task() {
 
 	return (
 		<div className="flex flex-col h-screen">
-			<Navigation />
+			<Navigation>
+				<SignOutItem />
+			</Navigation>
 			<Card
 				className={`rounded-md p-4 m-4 flex-grow ${
 					theme === "dark" ? "bg-gray-800" : "bg-gray-200"
