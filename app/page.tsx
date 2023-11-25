@@ -3,6 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import AuthButton from "@/components/AuthButton";
 import { redirect } from "next/navigation";
 import ReadUserSession from "@/lib/actions/route";
+import { Fragment } from "react";
+import Link from "next/link";
 
 export default async function Index() {
 	const cookieStore = cookies();
@@ -17,15 +19,6 @@ export default async function Index() {
 		}
 	};
 
-	const signOut = async () => {
-		"use server";
-
-		const cookieStore = cookies();
-		const supabase = createClient(cookieStore);
-		await supabase.auth.signOut();
-		return redirect("/");
-	};
-
 	const isSupabaseConnected = initSupabaseClient();
 	const { data } = await ReadUserSession();
 
@@ -34,14 +27,13 @@ export default async function Index() {
 	}
 
 	return (
-		<div className="flex items-center justify-center h-screen">
-			{isSupabaseConnected && <AuthButton />}
-
-			<form action={signOut}>
-				<button className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover">
-					Logout
-				</button>
-			</form>
+		<div className="flex flex-col items-center justify-center h-screen">
+			{isSupabaseConnected && (
+				<Fragment>
+					<AuthButton />
+					<Link href="/sign-up">Sign Up</Link>
+				</Fragment>
+			)}
 		</div>
 	);
 }

@@ -11,6 +11,11 @@ export default function SignIn({
 			<p>Text input here for signing in</p>
 			<p>can also sign in using google and microsoft</p> */}
 			<AuthCard searchParams={searchParams} />
+			{searchParams?.message && (
+				<p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
+					{searchParams.message}
+				</p>
+			)}
 		</div>
 	);
 }
