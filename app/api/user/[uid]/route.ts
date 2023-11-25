@@ -34,11 +34,11 @@ type UpdateUser = z.infer<typeof UpdateUserSchema> & {
  */
 export async function GET(
 	request: Request,
-	{ params }: { params: { uid: string } }
+	{ params }: { params: { uid: any } }
 ): Promise<NextResponse> {
 	const uid = params.uid;
 	const user = await prisma.user.findUnique({
-		where: { uid },
+		where: { user_id: uid },
 	});
 
 	if (user) {

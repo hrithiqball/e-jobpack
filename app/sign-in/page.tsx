@@ -1,21 +1,18 @@
-import AuthCard from "@/components/AuthCard";
+import SignInCard from "@/components/SignInCard";
 
-export default function SignIn({
+export default function SignInPage({
 	searchParams,
 }: {
 	searchParams: { message: string };
 }) {
 	return (
 		<div>
-			{/* <h1>Sign In Page</h1>
-			<p>Text input here for signing in</p>
-			<p>can also sign in using google and microsoft</p> */}
-			<AuthCard searchParams={searchParams} />
 			{searchParams?.message && (
-				<p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
-					{searchParams.message}
-				</p>
+				<div className="absolute rounded-md mx-4 top-0 left-0 right-0 mt-4 p-4 bg-red-700 text-white text-center">
+					<span>{searchParams.message}</span>
+				</div>
 			)}
+			<SignInCard />
 		</div>
 	);
 }

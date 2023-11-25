@@ -48,7 +48,7 @@ type SimplifiedTask = {
 	isComplete: string | null;
 };
 
-function Task() {
+export default function TaskPage() {
 	// return (
 	// 	<div className="flex flex-col h-screen">
 	// 		<Navigation />
@@ -582,5 +582,3 @@ function Task() {
 // 		},
 // 	};
 // };
-
-export default Task;
