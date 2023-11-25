@@ -37,30 +37,6 @@ export default async function AuthCard({
 		return redirect("/dashboard");
 	};
 
-	// const signUp = async (formData: FormData) => {
-	// 	"use server";
-
-	// 	const origin = headers().get("origin");
-	// 	const email = formData.get("email") as string;
-	// 	const password = formData.get("password") as string;
-	// 	const cookieStore = cookies();
-	// 	const supabase = createClient(cookieStore);
-
-	// 	const { error } = await supabase.auth.signUp({
-	// 		email,
-	// 		password,
-	// 		options: {
-	// 			emailRedirectTo: `${origin}/auth/callback`,
-	// 		},
-	// 	});
-
-	// 	if (error) {
-	// 		return redirect("/sign-in?message=Could not authenticate user");
-	// 	}
-
-	// 	return redirect("/sign-in?message=Check email to continue sign in process");
-	// };
-
 	return (
 		// <div className="flex items-center justify-center h-screen">
 		// 	<Card title="Login / Sign Up" className="w-64 p-4 shadow-md">

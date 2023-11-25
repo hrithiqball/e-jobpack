@@ -27,11 +27,14 @@ import clientIcon from "../public/client-icon.svg";
 import { BsSun } from "react-icons/bs";
 import { RiMoonClearFill } from "react-icons/ri";
 import { useTheme } from "next-themes";
+import { MetadataUser } from "@/app/dashboard/page";
 
 export default function Navigation({
 	children,
+	user2,
 }: {
 	children: React.ReactNode;
+	user2: MetadataUser | null;
 }) {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [mounted, setMounted] = useState(false);
@@ -51,6 +54,8 @@ export default function Navigation({
 		email: "harith@gmail.com",
 		userId: "PET-0001",
 	};
+
+	const email = user2?.email;
 
 	useEffect(() => {
 		setMounted(true);
@@ -122,13 +127,11 @@ export default function Navigation({
 								</>
 							}
 						>
-							{user.name}
+							{user2?.name}
 						</Button>
 					</DropdownTrigger>
 					<DropdownMenu aria-label="Profile Actions" variant="flat">
-						<DropdownItem key="profile" className="h-14 gap-2">
-							<p className="font-semibold">zoey@example.com</p>
-						</DropdownItem>
+						<DropdownItem key="profile">{user2?.email}</DropdownItem>
 						<DropdownItem key="settings">My Settings</DropdownItem>
 						<DropdownItem key="logout" color="danger">
 							{children}

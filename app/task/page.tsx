@@ -431,7 +431,7 @@ function Task() {
 
 	return (
 		<div className="flex flex-col h-screen">
-			<Navigation>
+			<Navigation user2={null}>
 				<SignOutItem />
 			</Navigation>
 			<Card

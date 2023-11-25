@@ -277,14 +277,11 @@ model task_use {
 model user {
   uid                                                    String               @id
   name                                                   String
-  password                                               String
-  first_page                                             BigInt               @default(0)
+  first_page                                             Int                  @db.SmallInt
   enable_dashboard                                       Boolean              @default(false)
   is_dark_mode                                           Boolean              @default(false)
   created_on                                             DateTime             @db.Timestamptz(6)
   updated_on                                             DateTime             @db.Timestamptz(6)
-  email                                                  String               @unique
-  phone                                                  String?
   asset_asset_created_byTouser                           asset[]              @relation("asset_created_byTouser")
   asset_asset_person_in_chargeTouser                     asset[]              @relation("asset_person_in_chargeTouser")
   asset_asset_updated_byTouser                           asset[]              @relation("asset_updated_byTouser")

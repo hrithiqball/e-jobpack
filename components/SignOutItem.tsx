@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/supabase/server";
-import { DropdownItem } from "@nextui-org/react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -16,7 +15,7 @@ export default function SignOutItem() {
 
 	return (
 		<form action={signOut}>
-			<button className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover">
+			<button className="rounded-md no-underline bg-btn-background hover:bg-btn-background-hover">
 				Logout
 			</button>
 		</form>

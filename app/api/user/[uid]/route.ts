@@ -28,7 +28,7 @@ type UpdateUser = z.infer<typeof UpdateUserSchema> & {
  * This asynchronous function handles GET requests.
  *
  * @param {Request} request - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the user.
+ * @param {string} email - The unique identifier of the user.
  *
  * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the user.
  */

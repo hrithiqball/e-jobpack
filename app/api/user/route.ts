@@ -17,14 +17,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 	const sort_by = request.nextUrl.searchParams.get("sort_by");
 	const is_ascending = request.nextUrl.searchParams.get("is_ascending");
 
-	const phone = request.nextUrl.searchParams.get("phone");
-
 	const filters: Prisma.userWhereInput[] = [];
 	const orderBy: Prisma.userOrderByWithRelationInput[] = [];
-
-	if (phone) {
-		filters.push({ phone });
-	}
 
 	const page = page_str ? parseInt(page_str, 10) : 1;
 	const limit = limit_str ? parseInt(limit_str, 10) : 10;

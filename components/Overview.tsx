@@ -69,6 +69,96 @@ const Data = [
 		userGain: 4300,
 		userLost: 234,
 	},
+	{
+		id: 12,
+		year: 2018,
+		userGain: 78888,
+		userLost: 555,
+	},
+	{
+		id: 13,
+		year: 2019,
+		userGain: 90000,
+		userLost: 4555,
+	},
+	{
+		id: 14,
+		year: 2020,
+		userGain: 4300,
+		userLost: 234,
+	},
+	{
+		id: 15,
+		year: 2018,
+		userGain: 78888,
+		userLost: 555,
+	},
+	{
+		id: 16,
+		year: 2019,
+		userGain: 90000,
+		userLost: 4555,
+	},
+	{
+		id: 17,
+		year: 2020,
+		userGain: 4300,
+		userLost: 234,
+	},
+	{
+		id: 18,
+		year: 2018,
+		userGain: 78888,
+		userLost: 555,
+	},
+	{
+		id: 19,
+		year: 2019,
+		userGain: 90000,
+		userLost: 4555,
+	},
+	{
+		id: 20,
+		year: 2020,
+		userGain: 4300,
+		userLost: 234,
+	},
+	{
+		id: 21,
+		year: 2018,
+		userGain: 78888,
+		userLost: 555,
+	},
+	{
+		id: 22,
+		year: 2019,
+		userGain: 90000,
+		userLost: 4555,
+	},
+	{
+		id: 23,
+		year: 2020,
+		userGain: 4300,
+		userLost: 234,
+	},
+	{
+		id: 24,
+		year: 2018,
+		userGain: 78888,
+		userLost: 555,
+	},
+	{
+		id: 25,
+		year: 2019,
+		userGain: 90000,
+		userLost: 4555,
+	},
+	{
+		id: 26,
+		year: 2020,
+		userGain: 4300,
+		userLost: 234,
+	},
 ];
 
 ChartJS.register(CategoryScale);
@@ -89,8 +179,13 @@ const Overview = () => {
 	});
 
 	return (
-		<div>
-			<Bar data={chartData} />
+		<div className="flex flex-col rounded-md p-4 bg-black">
+			<div className="flex-1">
+				<Bar className="h-full" data={chartData} />
+			</div>
+			<div className="flex-1">
+				<p>Overview</p>
+			</div>
 		</div>
 	);
 };

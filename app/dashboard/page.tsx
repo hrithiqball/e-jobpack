@@ -1,27 +1,38 @@
 import Navigation from "../../components/Navigation";
-import NavigationDashboard from "../../components/DashboardNavigation";
-import { Card } from "@nextui-org/react";
-import { useTheme } from "next-themes";
 import SignOutItem from "@/components/SignOutItem";
+import { createClient } from "@/lib/supabase/server";
+import { cookies } from "next/headers";
+import { User } from "@supabase/supabase-js";
+import Dashboard from "@/components/Dashboard";
 
-export default function Dashboard() {
+export type MetadataUser = User & {
+	name: string | undefined;
+	role: string | undefined;
+	department: string | undefined;
+	userId: string | undefined;
+};
+
+export default async function DashboardPage() {
+	const supabase = createClient(cookies());
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+
+	const userInfo: MetadataUser | null = user && {
+		...user,
+		name: user.user_metadata.name ?? ("Harith Iqbal" as string),
+		role: user.user_metadata.role as string,
+		department: user.user_metadata.department as string,
+		email: user.email,
+		userId: user.id,
+	};
+
 	return (
-		<div>
-			<Navigation>
+		<div className="flex flex-col h-screen">
+			<Navigation user2={userInfo}>
 				<SignOutItem />
 			</Navigation>
-			{/* <form action={signOut}>
-				<button className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover">
-					Logout
-				</button>
-			</form> */}
-			{/* <Card
-				className={`rounded-md p-4 m-4 flex-grow ${
-					theme === "dark" ? "bg-gray-800" : "bg-gray-200"
-				}`}
-			>
-				<NavigationDashboard />
-			</Card> */}
+			<Dashboard />
 		</div>
 	);
 }
