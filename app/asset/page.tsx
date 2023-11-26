@@ -3,6 +3,7 @@ import Navigation from "@/components/Navigation";
 import AssetComponent from "@/components/AssetComponent";
 import { Result } from "@/lib/result";
 import SignOutItem from "@/components/SignOutItem";
+import { ReadUserInfo } from "@/lib/actions/route";
 
 export type ExtendedAsset = asset & {
 	maintenanceList: ExtendedMaintenance[];
@@ -219,9 +220,11 @@ export default async function AssetPage() {
 		subtaskList.data
 	);
 
+	const userInfo = await ReadUserInfo();
+
 	return (
 		<div className="flex flex-col h-screen">
-			<Navigation user2={null}>
+			<Navigation user={userInfo}>
 				<SignOutItem />
 			</Navigation>
 			<AssetComponent extendedAsset={extendedAssetList} />

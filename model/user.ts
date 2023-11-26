@@ -1,3 +1,4 @@
+import { Department, Role } from "@prisma/client";
 import { User } from "@supabase/supabase-js";
 
 export type SignUpUser = {
@@ -9,7 +10,7 @@ export type SignUpUser = {
 
 export type MetadataUser = User & {
 	name: string | undefined;
-	role: string | undefined;
-	department: string | undefined;
+	role: Role;
+	department: Department | undefined;
 	userId: string | undefined;
 };

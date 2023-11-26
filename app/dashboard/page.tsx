@@ -8,7 +8,7 @@ export default async function DashboardPage() {
 
 	return (
 		<div className="flex flex-col h-screen">
-			<Navigation user2={userInfo}>
+			<Navigation user={userInfo}>
 				<SignOutItem />
 			</Navigation>
 			<Dashboard />

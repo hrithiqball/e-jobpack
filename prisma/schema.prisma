@@ -317,6 +317,8 @@ model user {
   created_on                                             DateTime             @db.Timestamptz(6)
   updated_on                                             DateTime             @db.Timestamptz(6)
   user_id                                                String?              @unique @db.Uuid
+  department                                             Department?          @default(management)
+  role                                                   Role?                @default(maintainer)
   asset_asset_created_byTouser                           asset[]              @relation("asset_created_byTouser")
   asset_asset_person_in_chargeTouser                     asset[]              @relation("asset_person_in_chargeTouser")
   asset_asset_updated_byTouser                           asset[]              @relation("asset_updated_byTouser")
@@ -638,4 +640,19 @@ enum factor_type {
   webauthn
 
   @@schema("auth")
+}
+
+enum Department {
+  management
+  exploration
+
+  @@schema("public")
+}
+
+enum Role {
+  admin
+  supervisor
+  maintainer
+
+  @@schema("public")
 }

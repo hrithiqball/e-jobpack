@@ -36,26 +36,56 @@ export async function GET(
 	request: Request,
 	{ params }: { params: { uid: any } }
 ): Promise<NextResponse> {
-	const uid = params.uid;
-	const user = await prisma.user.findUnique({
-		where: { user_id: uid },
-	});
+	try {
+		const uid = params.uid;
+		const user = await prisma.user.findUnique({
+			where: { user_id: uid },
+		});
 
-	if (user) {
+		if (user) {
+			return new NextResponse(
+				JSON.stringify(
+					ResponseMessage(200, `Successfully fetched user ${uid}!`, user)
+				),
+				{
+					status: 200,
+					headers: { "Content-Type": "application/json" },
+				}
+			);
+		} else {
+			return new NextResponse(
+				JSON.stringify(
+					ResponseMessage(404, `User with ${params.uid} not found`)
+				),
+				{
+					status: 404,
+					headers: { "Content-Type": "application/json" },
+				}
+			);
+		}
+	} catch (error: any) {
+		console.error(error);
+		if (error.code === "P2025") {
+			return new NextResponse(
+				JSON.stringify(
+					ResponseMessage(
+						404,
+						`User uid ${params.uid} not found.`,
+						null,
+						error.message
+					)
+				),
+				{
+					status: 404,
+					headers: { "Content-Type": "application/json" },
+				}
+			);
+		}
+
 		return new NextResponse(
-			JSON.stringify(
-				ResponseMessage(200, `Successfully fetched user ${uid}!`, user)
-			),
+			JSON.stringify(ResponseMessage(500, error.message)),
 			{
-				status: 200,
-				headers: { "Content-Type": "application/json" },
-			}
-		);
-	} else {
-		return new NextResponse(
-			JSON.stringify(ResponseMessage(404, `User with ${params.uid} not found`)),
-			{
-				status: 404,
+				status: 500,
 				headers: { "Content-Type": "application/json" },
 			}
 		);

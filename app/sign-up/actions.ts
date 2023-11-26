@@ -22,6 +22,7 @@ export async function signUp(newUser: SignUpUser) {
 	});
 
 	if (error) {
+		console.error(error);
 		redirect("/sign-in?message=Could not authenticate user");
 	}
 
@@ -42,11 +43,13 @@ async function signUpUser(name: string) {
 		const result: Result<user> = await response.json();
 
 		if (result.statusCode !== 201) {
+			console.error(result.message);
 			throw new Error(result.message);
 		}
 
 		return result;
 	} catch (error) {
+		console.error(error);
 		throw error;
 	}
 }

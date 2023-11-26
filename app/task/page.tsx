@@ -28,6 +28,7 @@ import { useTheme } from "next-themes";
 import { Result } from "@/lib/result";
 import Loading from "../../components/Loading";
 import SignOutItem from "@/components/SignOutItem";
+import { ReadUserInfo } from "@/lib/actions/route";
 
 export type NestedMaintenance = maintenance & {
 	checklists: NestedChecklist[];
@@ -65,6 +66,7 @@ export default function TaskPage() {
 		NestedMaintenance[]
 	>([]);
 	const fileInputRef = useRef<HTMLInputElement | null>(null);
+	// const userInfo = await ReadUserInfo();
 
 	useEffect(() => {
 		fetchMaintenanceList();
@@ -431,7 +433,8 @@ export default function TaskPage() {
 
 	return (
 		<div className="flex flex-col h-screen">
-			<Navigation user2={null}>
+			{/* <Navigation user={userInfo}> */}
+			<Navigation user={null}>
 				<SignOutItem />
 			</Navigation>
 			<Card

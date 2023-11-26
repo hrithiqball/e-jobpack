@@ -34,20 +34,23 @@ export async function ReadUserInfo() {
 				const userInfo: MetadataUser = {
 					...data.user,
 					name: result.data.name,
-					role: "admin",
-					department: "IT",
+					role: result.data.role ?? "maintainer",
+					department: result.data.department ?? "management",
 					email: data.user.email,
 					userId: data.user.id,
 				};
 
 				return userInfo;
 			} else {
+				console.error("User not found");
 				return null;
 			}
 		} else {
+			console.error("User not found");
 			return null;
 		}
 	} catch (error) {
+		console.error(error);
 		throw error;
 	}
 }

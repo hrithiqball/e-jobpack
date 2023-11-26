@@ -27,14 +27,14 @@ import clientIcon from "../public/client-icon.svg";
 import { BsSun } from "react-icons/bs";
 import { RiMoonClearFill } from "react-icons/ri";
 import { useTheme } from "next-themes";
-import { MetadataUser } from "@/app/dashboard/page";
+import { MetadataUser } from "@/model/user";
 
 export default function Navigation({
 	children,
-	user2,
+	user,
 }: {
 	children: React.ReactNode;
-	user2: MetadataUser | null;
+	user: MetadataUser | null;
 }) {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [mounted, setMounted] = useState(false);
@@ -46,16 +46,6 @@ export default function Navigation({
 		{ href: "/asset", label: "Asset" },
 		{ href: "/task", label: "Task" },
 	];
-
-	const user = {
-		name: "Harith Iqbal",
-		role: "supervisor",
-		department: "Software",
-		email: "harith@gmail.com",
-		userId: "PET-0001",
-	};
-
-	const email = user2?.email;
 
 	useEffect(() => {
 		setMounted(true);
@@ -117,21 +107,17 @@ export default function Navigation({
 							size="sm"
 							endContent={
 								<>
-									{user.role === "admin" && <LiaUserLockSolid size={25} />}
-									{(user.role === "supervisor" || user.role === "manager") && (
-										<LiaUserTieSolid size={25} />
-									)}
-									{(user.role === "maintainer" || user.role === "worker") && (
-										<LiaUserCogSolid size={25} />
-									)}
+									{user?.role === "admin" && <LiaUserLockSolid size={25} />}
+									{user?.role === "supervisor" && <LiaUserTieSolid size={25} />}
+									{user?.role === "maintainer" && <LiaUserCogSolid size={25} />}
 								</>
 							}
 						>
-							{user2?.name}
+							{user?.name}
 						</Button>
 					</DropdownTrigger>
 					<DropdownMenu aria-label="Profile Actions" variant="flat">
-						<DropdownItem key="profile">{user2?.email}</DropdownItem>
+						<DropdownItem key="profile">{user?.email}</DropdownItem>
 						<DropdownItem key="settings">My Settings</DropdownItem>
 						<DropdownItem key="logout" color="danger">
 							{children}
