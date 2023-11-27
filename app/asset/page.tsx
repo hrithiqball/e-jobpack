@@ -1,9 +1,16 @@
 import { asset, checklist, maintenance, subtask, task } from "@prisma/client";
 import Navigation from "@/components/Navigation";
-import AssetComponent from "@/components/AssetComponent";
+import AssetComponent from "@/components/AssetList";
 import { Result } from "@/lib/result";
 import SignOutItem from "@/components/SignOutItem";
 import { ReadUserInfo } from "@/lib/actions/route";
+import {
+	fetchAssetList,
+	fetchChecklistList,
+	fetchMaintenanceList,
+	fetchSubtaskList,
+	fetchTaskList,
+} from "./actions";
 
 export type ExtendedAsset = asset & {
 	maintenanceList: ExtendedMaintenance[];
@@ -20,105 +27,6 @@ export type ExtendedChecklist = checklist & {
 export type ExtendedTask = task & {
 	subtasks: subtask[];
 };
-
-async function fetchAssetList(): Promise<Result<asset[]>> {
-	try {
-		const response: Response = await fetch("http://localhost:3000/api/asset", {
-			method: "GET",
-		});
-		const result: Result<asset[]> = await response.json();
-
-		if (!response.ok) {
-			throw new Error(result.message);
-		}
-
-		return result;
-	} catch (error) {
-		console.error(error);
-		throw error;
-	}
-}
-
-async function fetchMaintenanceList(): Promise<Result<maintenance[]>> {
-	try {
-		const response: Response = await fetch(
-			"http://localhost:3000/api/maintenance",
-			{
-				method: "GET",
-			}
-		);
-		const result: Result<maintenance[]> = await response.json();
-
-		if (!response.ok) {
-			throw new Error(result.message);
-		}
-
-		return result;
-	} catch (error) {
-		console.error(error);
-		throw error;
-	}
-}
-
-async function fetchChecklistList(): Promise<Result<checklist[]>> {
-	try {
-		const response: Response = await fetch(
-			"http://localhost:3000/api/checklist",
-			{
-				method: "GET",
-			}
-		);
-		const result: Result<checklist[]> = await response.json();
-
-		if (!response.ok) {
-			throw new Error(result.message);
-		}
-
-		return result;
-	} catch (error) {
-		console.error(error);
-		throw error;
-	}
-}
-
-async function fetchTaskList(): Promise<Result<task[]>> {
-	try {
-		const response: Response = await fetch("http://localhost:3000/api/task", {
-			method: "GET",
-		});
-		const result: Result<task[]> = await response.json();
-
-		if (!response.ok) {
-			throw new Error(result.message);
-		}
-
-		return result;
-	} catch (error) {
-		console.error(error);
-		throw error;
-	}
-}
-
-async function fetchSubtaskList(): Promise<Result<subtask[]>> {
-	try {
-		const response: Response = await fetch(
-			"http://localhost:3000/api/subtask",
-			{
-				method: "GET",
-			}
-		);
-		const result: Result<subtask[]> = await response.json();
-
-		if (!response.ok) {
-			throw new Error(result.message);
-		}
-
-		return result;
-	} catch (error) {
-		console.error(error);
-		throw error;
-	}
-}
 
 function constructNestedMaintenance(
 	assetList?: asset[],

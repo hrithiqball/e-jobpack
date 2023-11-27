@@ -8,8 +8,13 @@ import { BiSolidBookAdd } from "react-icons/bi";
 import Loading from "./Loading";
 import { BsFillPersonBadgeFill } from "react-icons/bs";
 import { AiOutlineEdit, AiOutlinePlusSquare } from "react-icons/ai";
+import Link from "next/link";
 
-function AssetComponent({ extendedAsset }: { extendedAsset: ExtendedAsset[] }) {
+export default function AssetList({
+	extendedAsset,
+}: {
+	extendedAsset: ExtendedAsset[];
+}) {
 	const { theme } = useTheme();
 	const [mounted, setMounted] = useState(false);
 	const [openSideBar, setOpenSideBar] = useState(false);
@@ -36,9 +41,34 @@ function AssetComponent({ extendedAsset }: { extendedAsset: ExtendedAsset[] }) {
 			<div className="flex flex-row justify-between h-screen">
 				<div className="flex-1">
 					{extendedAsset.map((asset, index) => (
-						<Button key={index} onClick={() => setOpenSideBar(!openSideBar)}>
-							{asset.name}
-						</Button>
+						<div className="" key={index}>
+							<Button key={index} onClick={() => setOpenSideBar(!openSideBar)}>
+								{asset.name}
+							</Button>
+							{/* TODO: style this to make it look like a button on replace above */}
+							<Link
+								href={{
+									pathname: `/asset/${asset.uid}`,
+									query: {
+										name: asset.name,
+										description: asset.description,
+										type: asset.type,
+										created_by: asset.created_by,
+										created_on: asset.created_on.toString(),
+										updated_by: asset.updated_by,
+										updated_on: asset.updated_on.toString(),
+										last_maintenance: asset.last_maintenance?.toString(),
+										last_maintainee: asset.last_maintainee,
+										location: asset.location,
+										next_maintenance: asset.next_maintenance?.toString(),
+										status_uid: asset.status_uid,
+										person_in_charge: asset.person_in_charge,
+									},
+								}}
+							>
+								Click Me
+							</Link>
+						</div>
 					))}
 				</div>
 				{openSideBar && (
@@ -108,5 +138,3 @@ function AssetComponent({ extendedAsset }: { extendedAsset: ExtendedAsset[] }) {
 		</Card>
 	);
 }
-
-export default AssetComponent;

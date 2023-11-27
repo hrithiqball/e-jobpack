@@ -573,15 +573,3 @@ export default function TaskPage() {
 		</div>
 	);
 }
-
-// export const getServerSideProps: GetServerSideProps<{ data: NestedMaintenance[] }> = async (
-// 	context
-// ) => {
-// 	// fetching data here
-// 	// Return the data as props
-// 	return {
-// 		props: {
-// 			data,
-// 		},
-// 	};
-// };

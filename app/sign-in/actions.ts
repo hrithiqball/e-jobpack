@@ -8,7 +8,8 @@ export async function signIn(formData: FormData) {
 	try {
 		const email = formData.get("email") as string;
 		const password = formData.get("password") as string;
-		const supabase = createClient(cookies());
+		const cookieStore = cookies();
+		const supabase = createClient(cookieStore);
 
 		const { error } = await supabase.auth.signInWithPassword({
 			email,

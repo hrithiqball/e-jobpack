@@ -3,7 +3,7 @@
 import { user } from "@prisma/client";
 import { Result } from "../result";
 import { createClient } from "../supabase/server";
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 import { MetadataUser } from "@/model/user";
 
 export async function ReadUserSession() {
@@ -16,7 +16,8 @@ export async function ReadUserSession() {
 export async function ReadUserInfo() {
 	try {
 		const origin = process.env.NEXT_PUBLIC_ORIGIN;
-		const supabase = createClient(cookies());
+		const cookieStore = cookies();
+		const supabase = createClient(cookieStore);
 		const { data } = await supabase.auth.getUser();
 
 		if (data.user) {

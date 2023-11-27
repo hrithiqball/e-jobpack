@@ -10,7 +10,8 @@ import { redirect } from "next/navigation";
 const origin = headers().get("origin");
 
 export async function signUp(newUser: SignUpUser) {
-	const supabase = createClient(cookies());
+	const cookieStore = cookies();
+	const supabase = createClient(cookieStore);
 
 	const { error } = await supabase.auth.signUp({
 		email: newUser.email,
