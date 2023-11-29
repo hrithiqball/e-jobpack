@@ -1,20 +1,77 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, ReactNode, Key } from "react";
 import { ExtendedAsset } from "@/app/asset/page";
-import { Button, Card, CardFooter, Divider } from "@nextui-org/react";
+import {
+	Button,
+	Card,
+	CardFooter,
+	Divider,
+	Table,
+	TableBody,
+	TableCell,
+	TableColumn,
+	TableHeader,
+	TableRow,
+	getKeyValue,
+} from "@nextui-org/react";
 import { useTheme } from "next-themes";
 import { BiSolidBookAdd } from "react-icons/bi";
 import Loading from "./Loading";
 import { BsFillPersonBadgeFill } from "react-icons/bs";
 import { AiOutlineEdit, AiOutlinePlusSquare } from "react-icons/ai";
 import Link from "next/link";
+import { asset } from "@prisma/client";
 
 export default function AssetList({
 	extendedAsset,
+	assetList,
 }: {
 	extendedAsset: ExtendedAsset[];
+	assetList: asset[];
 }) {
+	const renderCell = useCallback((asset: asset, columnKey: Key) => {
+		const cellValue = asset[columnKey as keyof asset];
+
+		switch (columnKey) {
+			case "name":
+				return (
+					<Link
+						className="hover:underline hover:text-blue-500"
+						href={{
+							pathname: `/asset/${asset.uid}`,
+							query: {
+								name: asset.name,
+								description: asset.description,
+								type: asset.type,
+								created_by: asset.created_by,
+								created_on: asset.created_on.toString(),
+								updated_by: asset.updated_by,
+								updated_on: asset.updated_on.toString(),
+								last_maintenance: asset.last_maintenance?.toString(),
+								last_maintainee: asset.last_maintainee,
+								location: asset.location,
+								next_maintenance: asset.next_maintenance?.toString(),
+								status_uid: asset.status_uid,
+								person_in_charge: asset.person_in_charge,
+							},
+						}}
+					>
+						{asset.name}
+					</Link>
+				);
+			case "type":
+				return (
+					<span>
+						{asset.type === null || asset.type === ""
+							? "Not Specified"
+							: asset.type}
+					</span>
+				);
+			default:
+				return cellValue;
+		}
+	}, []);
 	const { theme } = useTheme();
 	const [mounted, setMounted] = useState(false);
 	const [openSideBar, setOpenSideBar] = useState(false);
@@ -40,36 +97,33 @@ export default function AssetList({
 			</div>
 			<div className="flex flex-row justify-between h-screen">
 				<div className="flex-1">
-					{extendedAsset.map((asset, index) => (
-						<div className="" key={index}>
-							<Button key={index} onClick={() => setOpenSideBar(!openSideBar)}>
-								{asset.name}
-							</Button>
-							{/* TODO: style this to make it look like a button on replace above */}
-							<Link
-								href={{
-									pathname: `/asset/${asset.uid}`,
-									query: {
-										name: asset.name,
-										description: asset.description,
-										type: asset.type,
-										created_by: asset.created_by,
-										created_on: asset.created_on.toString(),
-										updated_by: asset.updated_by,
-										updated_on: asset.updated_on.toString(),
-										last_maintenance: asset.last_maintenance?.toString(),
-										last_maintainee: asset.last_maintainee,
-										location: asset.location,
-										next_maintenance: asset.next_maintenance?.toString(),
-										status_uid: asset.status_uid,
-										person_in_charge: asset.person_in_charge,
-									},
-								}}
-							>
-								Click Me
-							</Link>
-						</div>
-					))}
+					<Table
+						color="primary"
+						selectionMode="single"
+						className="mt-4"
+						aria-label="Asset List"
+					>
+						<TableHeader>
+							<TableColumn key={"name"}>Name</TableColumn>
+							<TableColumn key={"description"}>Description</TableColumn>
+							<TableColumn key={"type"}>Type</TableColumn>
+							<TableColumn key={"location"}>Location</TableColumn>
+							<TableColumn key={"person_in_charge"}>
+								Person In Charge
+							</TableColumn>
+						</TableHeader>
+						<TableBody items={assetList}>
+							{(item: asset) => (
+								<TableRow key={item.uid}>
+									{(columnKey) => (
+										<TableCell>
+											{renderCell(item, columnKey) as ReactNode}
+										</TableCell>
+									)}
+								</TableRow>
+							)}
+						</TableBody>
+					</Table>
 				</div>
 				{openSideBar && (
 					<div

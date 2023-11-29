@@ -128,6 +128,8 @@ export default async function AssetPage() {
 		subtaskList.data
 	);
 
+	const assetListData = assetList.data ?? [];
+
 	const userInfo = await ReadUserInfo();
 
 	return (
@@ -135,7 +137,10 @@ export default async function AssetPage() {
 			<Navigation user={userInfo}>
 				<SignOutItem />
 			</Navigation>
-			<AssetComponent extendedAsset={extendedAssetList} />
+			<AssetComponent
+				extendedAsset={extendedAssetList}
+				assetList={assetListData}
+			/>
 		</div>
 	);
 
