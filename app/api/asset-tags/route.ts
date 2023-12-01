@@ -1,5 +1,5 @@
 import { asset_tags } from "@prisma/client";
-import { prisma } from "@/lib/initPrisma";
+import { prisma } from "@/prisma/prisma";
 import { ResponseMessage } from "@/lib/result";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";

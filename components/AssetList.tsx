@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState, useCallback, ReactNode, Key } from "react";
-import { ExtendedAsset } from "@/app/asset/page";
 import {
 	Button,
 	Card,
@@ -13,7 +12,6 @@ import {
 	TableColumn,
 	TableHeader,
 	TableRow,
-	getKeyValue,
 } from "@nextui-org/react";
 import { useTheme } from "next-themes";
 import { BiSolidBookAdd } from "react-icons/bi";
@@ -23,13 +21,7 @@ import { AiOutlineEdit, AiOutlinePlusSquare } from "react-icons/ai";
 import Link from "next/link";
 import { asset } from "@prisma/client";
 
-export default function AssetList({
-	extendedAsset,
-	assetList,
-}: {
-	extendedAsset: ExtendedAsset[];
-	assetList: asset[];
-}) {
+export default function AssetList({ assetList }: { assetList: asset[] }) {
 	const renderCell = useCallback((asset: asset, columnKey: Key) => {
 		const cellValue = asset[columnKey as keyof asset];
 
@@ -37,7 +29,7 @@ export default function AssetList({
 			case "name":
 				return (
 					<Link
-						className="hover:underline hover:text-blue-500"
+						className="hover:underline hover:text-blue-400"
 						href={{
 							pathname: `/asset/${asset.uid}`,
 							query: {
@@ -104,13 +96,11 @@ export default function AssetList({
 						aria-label="Asset List"
 					>
 						<TableHeader>
-							<TableColumn key={"name"}>Name</TableColumn>
-							<TableColumn key={"description"}>Description</TableColumn>
-							<TableColumn key={"type"}>Type</TableColumn>
-							<TableColumn key={"location"}>Location</TableColumn>
-							<TableColumn key={"person_in_charge"}>
-								Person In Charge
-							</TableColumn>
+							<TableColumn key="name">Name</TableColumn>
+							<TableColumn key="description">Description</TableColumn>
+							<TableColumn key="type">Type</TableColumn>
+							<TableColumn key="location">Location</TableColumn>
+							<TableColumn key="person_in_charge">Person In Charge</TableColumn>
 						</TableHeader>
 						<TableBody items={assetList}>
 							{(item: asset) => (

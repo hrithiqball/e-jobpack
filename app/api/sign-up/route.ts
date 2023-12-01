@@ -1,5 +1,5 @@
 import { encryptPassword } from "@/lib/encryptPassword";
-import { prisma } from "@/lib/initPrisma";
+import { prisma } from "@/prisma/prisma";
 import { ResponseMessage } from "@/lib/result";
 import { createClient } from "@/lib/supabase/client";
 import { user } from "@prisma/client";

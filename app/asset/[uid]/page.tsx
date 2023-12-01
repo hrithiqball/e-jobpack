@@ -31,6 +31,7 @@ export default async function AssetItemPage({
 	const checklistUseResult = await fetchChecklistUseList(params.uid);
 	const maintenanceList = maintenanceListResult.data ?? [];
 	const checklistUse = checklistUseResult.data ?? [];
+
 	const asset: asset = {
 		uid: params.uid,
 		name: searchParams.name,

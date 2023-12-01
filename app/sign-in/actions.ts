@@ -10,19 +10,24 @@ export async function signIn(formData: FormData) {
 		const password = formData.get("password") as string;
 		const cookieStore = cookies();
 		const supabase = createClient(cookieStore);
+		console.log("1");
 
 		const { error } = await supabase.auth.signInWithPassword({
 			email,
 			password,
 		});
 
+		console.log("2");
+
 		if (error) {
 			console.error(error);
 			redirect("/sign-in?message=Could not authenticate user");
 		}
 
+		console.log("3");
+
 		return redirect("/dashboard");
 	} catch (error) {
-		console.error(error);
+		console.error(error, "here?");
 	}
 }

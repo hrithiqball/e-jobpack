@@ -1,8 +1,6 @@
 "use client";
 
 import {
-	Avatar,
-	AvatarGroup,
 	Button,
 	Card,
 	Chip,
@@ -12,14 +10,11 @@ import {
 	Tabs,
 } from "@nextui-org/react";
 import { useTheme } from "next-themes";
-import { Key, ReactNode, useEffect, useState } from "react";
+import { Key, useEffect, useState } from "react";
 import Loading from "./Loading";
 import { asset, checklist_use, maintenance } from "@prisma/client";
 import { IoIosArrowBack } from "react-icons/io";
-import { BsFillPersonBadgeFill } from "react-icons/bs";
 import { AiOutlineEdit, AiOutlinePlusSquare } from "react-icons/ai";
-import Image from "next/image";
-import moment from "moment";
 import AssetDetails from "./AssetDetails";
 import AssetMaintenance from "./AssetMaintenance";
 import AssetAttachment from "./AssetAttachment";
@@ -100,9 +95,6 @@ export default function Asset({
 				<h2 className="text-xl font-semibold">{asset.name}</h2>
 				<div className="flex flex-row">
 					<div className="flex flex-row">
-						<Button isIconOnly variant="faded">
-							<BsFillPersonBadgeFill />
-						</Button>
 						<Button isIconOnly className="ml-1" variant="faded">
 							<AiOutlineEdit />
 						</Button>
@@ -113,7 +105,7 @@ export default function Asset({
 				</div>
 			</div>
 			<Divider />
-			<Card className="rounded-md overflow-hidden my-4">
+			<Card className="rounded-md overflow-hidden mt-4">
 				{selectedTab === "details" && (
 					<AssetDetails asset={asset} checklistUse={checklistUse} />
 				)}

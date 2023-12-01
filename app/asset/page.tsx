@@ -1,135 +1,14 @@
-import { asset, checklist, maintenance, subtask, task } from "@prisma/client";
+import { asset } from "@prisma/client";
 import Navigation from "@/components/Navigation";
 import AssetComponent from "@/components/AssetList";
 import { Result } from "@/lib/result";
 import SignOutItem from "@/components/SignOutItem";
 import { ReadUserInfo } from "@/lib/actions/route";
-import {
-	fetchAssetList,
-	fetchChecklistList,
-	fetchMaintenanceList,
-	fetchSubtaskList,
-	fetchTaskList,
-} from "./actions";
-
-export type ExtendedAsset = asset & {
-	maintenanceList: ExtendedMaintenance[];
-};
-
-export type ExtendedMaintenance = maintenance & {
-	checklists: ExtendedChecklist[];
-};
-
-export type ExtendedChecklist = checklist & {
-	tasks: ExtendedTask[];
-};
-
-export type ExtendedTask = task & {
-	subtasks: subtask[];
-};
-
-function constructNestedMaintenance(
-	assetList?: asset[],
-	maintenanceList?: maintenance[],
-	checklistList?: checklist[],
-	taskList?: task[],
-	subtaskList?: subtask[]
-): ExtendedAsset[] {
-	if (
-		assetList == undefined ||
-		maintenanceList == undefined ||
-		checklistList == undefined ||
-		taskList == undefined ||
-		subtaskList == undefined
-	) {
-		console.error("Data is undefined");
-		return [];
-	}
-
-	const extendedAssetList: ExtendedAsset[] = [];
-
-	assetList.forEach((asset: asset) => {
-		const extendedMaintenanceList: ExtendedMaintenance[] = [];
-
-		maintenanceList.forEach((maintenance: maintenance) => {
-			if (maintenance.asset_uid !== asset.uid) return;
-			const extendedChecklistList: ExtendedChecklist[] = [];
-
-			checklistList.forEach((checklist: checklist) => {
-				if (checklist.maintenance_uid !== maintenance.uid) return;
-				const extendedTaskList: ExtendedTask[] = [];
-
-				taskList.forEach((task: task) => {
-					if (task.checklist_uid !== checklist.uid) return;
-
-					const filterSubtaskList: subtask[] = subtaskList.filter(
-						(subtask: subtask) => {
-							return subtask.task_uid === task.uid;
-						}
-					);
-
-					if (filterSubtaskList.length) {
-						extendedTaskList.push({
-							...task,
-							subtasks: filterSubtaskList,
-						});
-					}
-				});
-
-				if (extendedTaskList.length) {
-					extendedChecklistList.push({
-						...checklist,
-						tasks: extendedTaskList,
-					});
-				}
-			});
-
-			if (extendedChecklistList.length) {
-				extendedMaintenanceList.push({
-					...maintenance,
-					checklists: extendedChecklistList,
-				});
-			}
-		});
-
-		if (extendedMaintenanceList.length) {
-			extendedAssetList.push({
-				...asset,
-				maintenanceList: extendedMaintenanceList,
-			});
-		}
-	});
-
-	return extendedAssetList;
-}
+import { fetchAssetList } from "./actions";
 
 export default async function AssetPage() {
 	const assetResult: Result<asset[]> = await fetchAssetList();
-	const maintenanceResult: Result<maintenance[]> = await fetchMaintenanceList();
-	const checklistResult: Result<checklist[]> = await fetchChecklistList();
-	const taskResult: Result<task[]> = await fetchTaskList();
-	const subtaskResult: Result<subtask[]> = await fetchSubtaskList();
-
-	// https://nextjs.org/docs/app/building-your-application/data-fetching/patterns#parallel-data-fetching
-	const [assetList, maintenanceList, checklistList, taskList, subtaskList] =
-		await Promise.all([
-			assetResult,
-			maintenanceResult,
-			checklistResult,
-			taskResult,
-			subtaskResult,
-		]);
-
-	const extendedAssetList: ExtendedAsset[] = constructNestedMaintenance(
-		assetList.data,
-		maintenanceList.data,
-		checklistList.data,
-		taskList.data,
-		subtaskList.data
-	);
-
-	const assetListData = assetList.data ?? [];
-
+	const assetListData = assetResult.data ?? [];
 	const userInfo = await ReadUserInfo();
 
 	return (
@@ -137,10 +16,7 @@ export default async function AssetPage() {
 			<Navigation user={userInfo}>
 				<SignOutItem />
 			</Navigation>
-			<AssetComponent
-				extendedAsset={extendedAssetList}
-				assetList={assetListData}
-			/>
+			<AssetComponent assetList={assetListData} />
 		</div>
 	);
 

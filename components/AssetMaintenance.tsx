@@ -6,5 +6,9 @@ export default function AssetMaintenance({
 }: {
 	maintenanceList: maintenance[];
 }) {
-	return <div>AssetMaintenance count is {maintenanceList.length}</div>;
+	return (
+		<div className="flex flex-grow h-screen p-4">
+			AssetMaintenance count is {maintenanceList.length}
+		</div>
+	);
 }
