@@ -62,3 +62,6 @@ DATABASE_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=pub
 
 2. Set the provider of the datasource block in schema.prisma to match your database: postgresql, mysql, sqlite, sqlserver, mongodb or cockroachdb.
 3. Run prisma (`npm run prisma`) for pulling db and generate schema from prisma. _Install prisma globally to use outside terminal `npm i -g prisma`_
+
+npm i --save-dev prisma@latest
+npm i @prisma/client@latest

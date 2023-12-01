@@ -26,6 +26,69 @@ const config: Config = {
 		},
 	},
 	darkMode: "class",
-	plugins: [nextui(), require("@tailwindcss/typography")],
+	plugins: [
+		nextui({
+			addCommonColors: true,
+			themes: {
+				light: {
+					colors: {
+						background: {
+							DEFAULT: "#f0f0f0",
+						},
+						foreground: {
+							DEFAULT: "#000000",
+						},
+						focus: {
+							DEFAULT: "#a2e9c1",
+						},
+						primary: {
+							DEFAULT: "#00a89c",
+						},
+						secondary: {
+							DEFAULT: "#f0f0f0",
+						},
+						success: {
+							DEFAULT: "#a2e9c1",
+						},
+						warning: {
+							DEFAULT: "#f7d154",
+						},
+						danger: {
+							DEFAULT: "#f87979",
+						},
+					},
+				},
+				dark: {
+					colors: {
+						background: {
+							DEFAULT: "#0c0c0c",
+						},
+						foreground: {
+							DEFAULT: "#f0f0f0",
+						},
+						focus: {
+							DEFAULT: "#a2e9c1",
+						},
+						primary: {
+							DEFAULT: "#00a89c",
+						},
+						secondary: {
+							DEFAULT: "#f0f0f0",
+						},
+						success: {
+							DEFAULT: "#a2e9c1",
+						},
+						warning: {
+							DEFAULT: "#f7d154",
+						},
+						danger: {
+							DEFAULT: "#f87979",
+						},
+					},
+				},
+			},
+		}),
+		require("@tailwindcss/typography"),
+	],
 };
 export default config;

@@ -1,14 +1,17 @@
-"use client";
+import Navigation from "@/components/Navigation";
+import SignOutItem from "@/components/SignOutItem";
+import Dashboard from "@/components/Dashboard";
+import { ReadUserInfo } from "@/lib/actions/route";
 
-import React from "react";
-import Navigation from "../components/Navigation";
-import NavigationDashboard from "../components/DashboardNavigation";
+export default async function DashboardPage() {
+	const userInfo = await ReadUserInfo();
 
-export default function Dashboard() {
 	return (
-		<div>
-			<Navigation />
-			<NavigationDashboard />
+		<div className="flex flex-col h-screen">
+			<Navigation user={userInfo}>
+				<SignOutItem />
+			</Navigation>
+			<Dashboard />
 		</div>
 	);
 }

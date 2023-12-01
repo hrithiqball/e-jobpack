@@ -1,9 +1,9 @@
 import { encryptPassword } from "@/lib/encryptPassword";
-import { prisma } from "@/lib/initPrisma";
-import { supabase } from "@/lib/initSupabase";
+import { prisma } from "@/prisma/prisma";
 import { ResponseMessage } from "@/lib/result";
+import { createClient } from "@/lib/supabase/client";
 import { user } from "@prisma/client";
-import { AuthResponse } from "@supabase/supabase-js";
+import { UserResponse } from "@supabase/supabase-js";
 import moment from "moment";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -13,9 +13,6 @@ import { z } from "zod";
  */
 const SignUpUserSchema = z.object({
 	name: z.string(),
-	email: z.string().email(),
-	phone: z.string(),
-	password: z.string().min(8),
 });
 
 /**
@@ -32,48 +29,33 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 			const request: user = {
 				...result.data,
 				uid: `USER-${moment().format("YYMMDDHHmmssSSS")}`,
-				password: await encryptPassword(result.data.password),
-				first_page: BigInt("0"),
+				first_page: 0,
 				enable_dashboard: false,
-				is_dark_mode: false,
+				is_dark_mode: true,
 				created_on: new Date(),
 				updated_on: new Date(),
 			};
+
+			// const supabase = createClient()
+			// const supabaseUser: UserResponse = await supabase.auth.getUser()
+
+			// if (supabaseUser.data.user) {
+			// 	request.userId = supabaseUser.data.user.id
+			// }
 
 			const user: user = await prisma.user.create({
 				data: request,
 			});
 
-			const signUpData: { email: string; password: string; phone?: string } = {
-				email: request.email,
-				password: request.password,
-			};
-
-			if (request.phone) {
-				signUpData.phone = request.phone;
-			}
-
-			const authResponse: AuthResponse = await supabase.auth.signUp(signUpData);
-
-			if (authResponse.error) {
-				await prisma.user.delete({
-					where: {
-						uid: user.uid,
-					},
-				});
-
-				throw new Error(authResponse.error.message);
-			} else {
-				return new NextResponse(
-					JSON.stringify(
-						ResponseMessage(201, `User ${user.uid} has been created`, user)
-					),
-					{
-						status: 201,
-						headers: { "Content-Type": "application/json" },
-					}
-				);
-			}
+			return new NextResponse(
+				JSON.stringify(
+					ResponseMessage(201, `User ${user.uid} has been created`, user)
+				),
+				{
+					status: 201,
+					headers: { "Content-Type": "application/json" },
+				}
+			);
 		} else {
 			return new NextResponse(
 				JSON.stringify(

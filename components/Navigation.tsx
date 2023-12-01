@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import {
 	Navbar,
 	NavbarBrand,
@@ -13,7 +15,6 @@ import {
 	DropdownMenu,
 	Dropdown,
 	DropdownItem,
-	User,
 } from "@nextui-org/react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -22,23 +23,35 @@ import {
 	LiaUserTieSolid,
 	LiaUserLockSolid,
 } from "react-icons/lia";
-import clientIcon from "../../public/client-icon.svg";
+import clientIcon from "../public/client-icon.svg";
+import { BsSun } from "react-icons/bs";
+import { RiMoonClearFill } from "react-icons/ri";
+import { useTheme } from "next-themes";
+import { MetadataUser } from "@/model/user";
 
-export default function Navigation() {
-	const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+export default function Navigation({
+	children,
+	user,
+}: {
+	children: React.ReactNode;
+	user: MetadataUser | null;
+}) {
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
+	const [mounted, setMounted] = useState(false);
 	const pathname = usePathname();
+	const { theme, setTheme } = useTheme();
+
 	const navLinks = [
 		{ href: "/dashboard", label: "Dashboard" },
 		{ href: "/asset", label: "Asset" },
 		{ href: "/task", label: "Task" },
 	];
-	const user = {
-		name: "Harith Iqbal",
-		role: "supervisor",
-		department: "Software",
-		email: "harith@gmail.com",
-		userId: "PET-0001",
-	};
+
+	useEffect(() => {
+		setMounted(true);
+	}, []);
+
+	if (!mounted) return null;
 
 	return (
 		<Navbar
@@ -59,7 +72,7 @@ export default function Navigation() {
 						alt="Petronas Logo"
 						className="w-6 mr-3"
 					/>
-					<p className="font-bold text-inherit">Asset Management System</p>
+					<p className="font-bold text-inherit">AMS</p>
 				</NavbarBrand>
 			</NavbarContent>
 			<NavbarContent className="hidden sm:flex gap-4" justify="center">
@@ -79,6 +92,14 @@ export default function Navigation() {
 				})}
 			</NavbarContent>
 			<NavbarContent justify="end">
+				<Button
+					isIconOnly
+					onClick={() => {
+						setTheme(theme === "dark" ? "light" : "dark");
+					}}
+				>
+					{theme === "dark" ? <RiMoonClearFill /> : <BsSun />}
+				</Button>
 				<Dropdown placement="bottom-end">
 					<DropdownTrigger>
 						<Button
@@ -86,26 +107,20 @@ export default function Navigation() {
 							size="sm"
 							endContent={
 								<>
-									{user.role === "admin" && <LiaUserLockSolid size={25} />}
-									{(user.role === "supervisor" || user.role === "manager") && (
-										<LiaUserTieSolid size={25} />
-									)}
-									{(user.role === "maintainer" || user.role === "worker") && (
-										<LiaUserCogSolid size={25} />
-									)}
+									{user?.role === "admin" && <LiaUserLockSolid size={25} />}
+									{user?.role === "supervisor" && <LiaUserTieSolid size={25} />}
+									{user?.role === "maintainer" && <LiaUserCogSolid size={25} />}
 								</>
 							}
 						>
-							{user.name}
+							{user?.name}
 						</Button>
 					</DropdownTrigger>
 					<DropdownMenu aria-label="Profile Actions" variant="flat">
-						<DropdownItem key="profile" className="h-14 gap-2">
-							<p className="font-semibold">zoey@example.com</p>
-						</DropdownItem>
+						<DropdownItem key="profile">{user?.email}</DropdownItem>
 						<DropdownItem key="settings">My Settings</DropdownItem>
 						<DropdownItem key="logout" color="danger">
-							Log Out
+							{children}
 						</DropdownItem>
 					</DropdownMenu>
 				</Dropdown>
