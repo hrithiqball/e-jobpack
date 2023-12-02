@@ -1,7 +1,7 @@
 "use server";
 
 import { Result } from "@/lib/result";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/utils/supabase/server";
 import { SignUpUser } from "@/model/user";
 import { user } from "@prisma/client";
 import { cookies, headers } from "next/headers";

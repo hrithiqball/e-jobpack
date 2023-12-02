@@ -1,9 +1,9 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import React from "react";
 
-export default function SignOutItem() {
+export default async function SignOutItem() {
 	const signOut = async () => {
 		"use server";
 

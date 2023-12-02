@@ -10,7 +10,7 @@ import {
 	Divider,
 	Link,
 } from "@nextui-org/react";
-import { signIn } from "@/app/sign-in/actions";
+import { signIn } from "@/utils/actions/route";
 
 export default function SignInCard() {
 	let [isPending, startTransition] = useTransition();

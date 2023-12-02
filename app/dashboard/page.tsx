@@ -1,7 +1,7 @@
 import Navigation from "@/components/Navigation";
 import SignOutItem from "@/components/SignOutItem";
 import Dashboard from "@/components/Dashboard";
-import { ReadUserInfo } from "@/lib/actions/route";
+import { ReadUserInfo } from "@/utils/actions/route";
 
 export default async function DashboardPage() {
 	const userInfo = await ReadUserInfo();

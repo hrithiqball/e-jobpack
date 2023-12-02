@@ -23,11 +23,11 @@ import {
 	LiaUserTieSolid,
 	LiaUserLockSolid,
 } from "react-icons/lia";
-import clientIcon from "../public/client-icon.svg";
 import { BsSun } from "react-icons/bs";
 import { RiMoonClearFill } from "react-icons/ri";
 import { useTheme } from "next-themes";
 import { MetadataUser } from "@/model/user";
+import clientIcon from "@/public/client-icon.svg";
 
 export default function Navigation({
 	children,
@@ -36,10 +36,10 @@ export default function Navigation({
 	children: React.ReactNode;
 	user: MetadataUser | null;
 }) {
+	const { theme, setTheme } = useTheme();
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [mounted, setMounted] = useState(false);
 	const pathname = usePathname();
-	const { theme, setTheme } = useTheme();
 
 	const navLinks = [
 		{ href: "/dashboard", label: "Dashboard" },
@@ -77,14 +77,19 @@ export default function Navigation({
 			</NavbarContent>
 			<NavbarContent className="hidden sm:flex gap-4" justify="center">
 				{navLinks.map((link) => {
-					const isCurrentPage = pathname === link.href;
+					const isCurrentPage =
+						pathname === link.href || pathname.startsWith(link.href);
 					const ariaProps: { "aria-current"?: "page" } = isCurrentPage
 						? { "aria-current": "page" }
 						: {};
 
 					return (
 						<NavbarItem key={link.href} isActive={isCurrentPage}>
-							<Link color="foreground" href={link.href} {...ariaProps}>
+							<Link
+								color={isCurrentPage ? "primary" : "foreground"}
+								href={link.href}
+								{...ariaProps}
+							>
 								{link.label}
 							</Link>
 						</NavbarItem>

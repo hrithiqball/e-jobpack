@@ -1,7 +1,7 @@
 import { encryptPassword } from "@/lib/encryptPassword";
 import { prisma } from "@/prisma/prisma";
 import { ResponseMessage } from "@/lib/result";
-import { createClient } from "@/lib/supabase/client";
+import { createClient } from "@/utils/supabase/client";
 import { user } from "@prisma/client";
 import { UserResponse } from "@supabase/supabase-js";
 import moment from "moment";

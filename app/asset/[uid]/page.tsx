@@ -1,9 +1,12 @@
 import Asset from "@/components/Asset";
 import Navigation from "@/components/Navigation";
 import SignOutItem from "@/components/SignOutItem";
-import { ReadUserInfo } from "@/lib/actions/route";
+import {
+	ReadUserInfo,
+	fetchChecklistUseList,
+	fetchMaintenanceList,
+} from "@/utils/actions/route";
 import { asset } from "@prisma/client";
-import { fetchChecklistUseList, fetchMaintenanceList } from "../actions";
 
 export default async function AssetItemPage({
 	params,
