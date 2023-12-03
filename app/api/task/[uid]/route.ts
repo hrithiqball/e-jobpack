@@ -73,10 +73,12 @@ export async function PATCH(
 	{ params }: { params: { uid: string } }
 ): Promise<NextResponse> {
 	try {
+		console.log("hello");
 		const uid = params.uid;
 		let json = await nextRequest.json();
 
 		const result = UpdateTaskSchema.safeParse(json);
+		console.log(result);
 
 		if (result.success) {
 			const updateTaskValue: UpdateTask = result.data;
@@ -99,6 +101,7 @@ export async function PATCH(
 				}
 			);
 		} else {
+			console.error(result.error.message);
 			return new NextResponse(
 				JSON.stringify(
 					ResponseMessage(
@@ -115,6 +118,7 @@ export async function PATCH(
 			);
 		}
 	} catch (error: any) {
+		console.error(error);
 		if (error.code === "P2025") {
 			return new NextResponse(
 				JSON.stringify(

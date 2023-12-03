@@ -15,6 +15,7 @@ import { MetadataUser } from "@/model/user";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { Result } from "@/lib/result";
+import { revalidatePath } from "next/cache";
 
 const origin = process.env.NEXT_PUBLIC_ORIGIN;
 
@@ -281,12 +282,15 @@ export async function fetchTaskListByChecklistUid(checklistUid: string) {
 
 export async function updateTaskCompletion(
 	taskUid: string,
-	isCompleted: boolean
-): Promise<Result<task>> {
+	is_complete: boolean,
+	maintenance: maintenance
+) {
 	try {
+		console.log(`${origin}/api/task/${taskUid}`);
 		const response: Response = await fetch(`${origin}/api/task/${taskUid}`, {
+			headers: { "Content-Type": "application/json" },
 			method: "PATCH",
-			body: JSON.stringify({ isCompleted }),
+			body: JSON.stringify({ is_complete }),
 		});
 		const result: Result<task> = await response.json();
 
@@ -295,7 +299,10 @@ export async function updateTaskCompletion(
 			throw new Error(result.message);
 		}
 
-		return result;
+		console.log(result.data);
+		return revalidatePath(
+			`/task/${maintenance.uid}?${JSON.stringify(maintenance)}`
+		);
 	} catch (error) {
 		console.error(error);
 		throw error;

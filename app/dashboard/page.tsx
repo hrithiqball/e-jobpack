@@ -4,13 +4,13 @@ import Dashboard from "@/components/Dashboard";
 import { ReadUserInfo } from "@/utils/actions/route";
 
 export default async function DashboardPage() {
-	const userInfo = await ReadUserInfo();
+	// const userInfo = await ReadUserInfo();
 
 	return (
 		<div className="flex flex-col h-screen">
-			<Navigation user={userInfo}>
+			{/* <Navigation user={userInfo}>
 				<SignOutItem />
-			</Navigation>
+			</Navigation> */}
 			<Dashboard />
 		</div>
 	);

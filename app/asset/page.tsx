@@ -6,13 +6,13 @@ import Navigation from "@/components/Navigation";
 export default async function AssetPage() {
 	const assetResult = await fetchAssetList();
 	const assetListData = assetResult.data ?? [];
-	const userInfo = await ReadUserInfo();
+	// const userInfo = await ReadUserInfo();
 
 	return (
 		<div className="flex flex-col h-screen">
-			<Navigation user={userInfo}>
+			{/* <Navigation user={userInfo}>
 				<SignOutItem />
-			</Navigation>
+			</Navigation> */}
 			<AssetComponent assetList={assetListData} />
 		</div>
 	);

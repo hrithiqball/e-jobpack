@@ -17,7 +17,7 @@ export default async function TaskItemPage({
 	params: { uid: string };
 	searchParams: { maintenance: string };
 }) {
-	const userInfo = await ReadUserInfo();
+	// const userInfo = await ReadUserInfo();
 	const parsedMaintenance = JSON.parse(
 		searchParams.maintenance
 	) satisfies maintenance;
@@ -26,11 +26,14 @@ export default async function TaskItemPage({
 
 	return (
 		<div className="flex flex-col h-screen">
-			<Navigation user={userInfo}>
+			{/* <Navigation user={userInfo}>
 				<SignOutItem />
-			</Navigation>
+			</Navigation> */}
 			<TaskMaintenance maintenance={parsedMaintenance}>
-				<MaintenanceChecklistList checklistList={checklistData} />
+				<MaintenanceChecklistList
+					maintenance={parsedMaintenance}
+					checklistList={checklistData}
+				/>
 			</TaskMaintenance>
 		</div>
 	);
