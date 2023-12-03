@@ -81,7 +81,7 @@ export default async function TaskPage() {
 			<Navigation user={userInfo}>
 				<SignOutItem />
 			</Navigation>
-			<Task nestedMaintenanceList={nestedMaintenanceList} />
+			<Task maintenanceList={maintenanceListData} />
 		</div>
 	);
 }

@@ -1,4 +1,4 @@
-import { task } from "@prisma/client";
+import { Prisma, task } from "@prisma/client";
 import { prisma } from "@/prisma/prisma";
 import { ResponseMessage } from "@/lib/result";
 import { NextRequest, NextResponse } from "next/server";
@@ -37,7 +37,47 @@ type AddTask = z.infer<typeof AddTaskSchema> & {
  */
 export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
 	try {
-		const tasks: task[] = await prisma.task.findMany();
+		// filter params (all optional)
+		const page_str = nextRequest.nextUrl.searchParams.get("page");
+		const limit_str = nextRequest.nextUrl.searchParams.get("limit");
+		const sort_by = nextRequest.nextUrl.searchParams.get("sort_by");
+		const is_ascending = nextRequest.nextUrl.searchParams.get("is_ascending");
+
+		const checklist_uid = nextRequest.nextUrl.searchParams.get("checklist_uid");
+
+		const filters: Prisma.taskWhereInput[] = [];
+		const orderBy: Prisma.taskOrderByWithRelationInput[] = [];
+
+		if (checklist_uid) {
+			filters.push({
+				checklist_uid,
+			});
+		}
+
+		const page = page_str ? parseInt(page_str, 10) : 1;
+		const limit = limit_str ? parseInt(limit_str, 10) : 10;
+		const isAscending = !!is_ascending;
+		const sortBy = sort_by || "task_order";
+		const skip = (page - 1) * limit;
+
+		if (isAscending) {
+			orderBy.push({
+				[sortBy]: "asc",
+			});
+		} else {
+			orderBy.push({
+				[sortBy]: "desc",
+			});
+		}
+
+		const tasks: task[] = await prisma.task.findMany({
+			skip,
+			take: limit,
+			orderBy,
+			where: {
+				AND: filters,
+			},
+		});
 
 		if (tasks.length > 0) {
 			return new NextResponse(
