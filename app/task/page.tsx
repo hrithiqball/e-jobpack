@@ -74,13 +74,13 @@ export default async function TaskPage() {
 		subtaskListData
 	);
 
-	// const userInfo = await ReadUserInfo();
+	const userInfo = await ReadUserInfo();
 
 	return (
 		<div className="flex flex-col h-screen">
-			{/* <Navigation user={userInfo}>
+			<Navigation user={userInfo}>
 				<SignOutItem />
-			</Navigation> */}
+			</Navigation>
 			<Task maintenanceList={maintenanceListData} />
 		</div>
 	);

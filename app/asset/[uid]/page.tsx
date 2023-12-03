@@ -29,7 +29,7 @@ export default async function AssetItemPage({
 		person_in_charge: string;
 	};
 }) {
-	// const userInfo = await ReadUserInfo();
+	const userInfo = await ReadUserInfo();
 	const maintenanceListResult = await fetchMaintenanceList(params.uid);
 	const checklistUseResult = await fetchChecklistUseList(params.uid);
 	const maintenanceList = maintenanceListResult.data ?? [];
@@ -54,9 +54,9 @@ export default async function AssetItemPage({
 
 	return (
 		<div className="flex flex-col h-screen">
-			{/* <Navigation user={userInfo}>
+			<Navigation user={userInfo}>
 				<SignOutItem />
-			</Navigation> */}
+			</Navigation>
 			<Asset
 				asset={asset}
 				maintenanceList={maintenanceList}
