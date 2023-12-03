@@ -59,15 +59,9 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
 		const sortBy = sort_by || "title";
 		const skip = (page - 1) * limit;
 
-		if (isAscending) {
-			orderBy.push({
-				[sortBy]: "asc",
-			});
-		} else {
-			orderBy.push({
-				[sortBy]: "desc",
-			});
-		}
+		orderBy.push({
+			[sortBy]: isAscending ? "asc" : "desc",
+		});
 
 		const checklists: checklist[] = await prisma.checklist.findMany({
 			skip,

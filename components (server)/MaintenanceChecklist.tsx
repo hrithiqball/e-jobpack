@@ -2,6 +2,7 @@ import React, { Fragment } from "react";
 import { fetchTaskListByChecklistUid } from "@/utils/actions/route";
 import { checklist, maintenance } from "@prisma/client";
 import TaskMaintenanceChecklist from "@/components/TaskMaintenanceChecklist";
+import TaskList from "./TaskList";
 
 export default async function MaintenanceChecklist({
 	maintenance,
@@ -15,11 +16,9 @@ export default async function MaintenanceChecklist({
 
 	return (
 		<Fragment>
-			<TaskMaintenanceChecklist
-				maintenance={maintenance}
-				checklist={checklist}
-				taskList={taskListData}
-			></TaskMaintenanceChecklist>
+			<TaskMaintenanceChecklist maintenance={maintenance} checklist={checklist}>
+				<TaskList taskList={taskListData} />
+			</TaskMaintenanceChecklist>
 		</Fragment>
 	);
 }

@@ -5,7 +5,6 @@ import {
 	fetchAssetList,
 	fetchChecklistList,
 	fetchMaintenanceList,
-	fetchSubtaskList,
 	fetchTaskList,
 } from "@/utils/actions/route";
 import Task from "@/components/Task";
@@ -46,33 +45,8 @@ function constructNestedMaintenance(
 }
 
 export default async function TaskPage() {
-	const maintenanceListResult = fetchMaintenanceList();
-	const checklistListResult = fetchChecklistList();
-	const assetListResult = fetchAssetList();
-	const taskListResult = fetchTaskList();
-	const subtaskListResult = fetchSubtaskList();
-
-	const [maintenanceList, checklistList, assetList, taskList, subtaskList] =
-		await Promise.all([
-			maintenanceListResult,
-			checklistListResult,
-			assetListResult,
-			taskListResult,
-			subtaskListResult,
-		]);
-
-	const maintenanceListData = maintenanceList.data ?? [];
-	const checklistListData = checklistList.data ?? [];
-	const assetListData = assetList.data ?? [];
-	const taskListData = taskList.data ?? [];
-	const subtaskListData = subtaskList.data ?? [];
-	const nestedMaintenanceList: NestedMaintenance[] = constructNestedMaintenance(
-		maintenanceListData,
-		checklistListData,
-		assetListData,
-		taskListData,
-		subtaskListData
-	);
+	const maintenanceListResult = await fetchMaintenanceList();
+	const maintenanceListData = maintenanceListResult.data ?? [];
 
 	const userInfo = await ReadUserInfo();
 

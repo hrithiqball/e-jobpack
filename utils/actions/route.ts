@@ -105,6 +105,7 @@ export async function ReadUserInfo() {
 export async function fetchAssetList(): Promise<Result<asset[]>> {
 	try {
 		const response: Response = await fetch(`${origin}/api/asset`, {
+			headers: { "Content-Type": "application/json" },
 			method: "GET",
 		});
 		const result: Result<asset[]> = await response.json();
@@ -125,6 +126,7 @@ export async function fetchAssetList(): Promise<Result<asset[]>> {
 export async function fetchMaintenanceItemById(uid: string) {
 	try {
 		const response: Response = await fetch(`${origin}/api/maintenance/${uid}`, {
+			headers: { "Content-Type": "application/json" },
 			method: "GET",
 		});
 		const result: Result<maintenance> = await response.json();
@@ -147,6 +149,7 @@ export async function fetchMaintenanceList(
 		const response: Response = await fetch(
 			`${origin}/api/maintenance?asset_uid=${assetUid ?? ""}`,
 			{
+				headers: { "Content-Type": "application/json" },
 				method: "GET",
 			}
 		);
@@ -168,6 +171,7 @@ export async function fetchMaintenanceList(
 export async function fetchChecklistList(): Promise<Result<checklist[]>> {
 	try {
 		const response: Response = await fetch(`${origin}/api/checklist`, {
+			headers: { "Content-Type": "application/json" },
 			method: "GET",
 		});
 		const result: Result<checklist[]> = await response.json();
@@ -188,6 +192,7 @@ export async function fetchChecklistListByMaintenanceId(maintenanceId: string) {
 		const response: Response = await fetch(
 			`${origin}/api/checklist?maintenance_uid=${maintenanceId ?? ""}`,
 			{
+				headers: { "Content-Type": "application/json" },
 				method: "GET",
 			}
 		);
@@ -214,6 +219,7 @@ export async function fetchChecklistUseList(assetUid: string) {
 		const response: Response = await fetch(
 			`${origin}/api/checklist-use?asset_uid=${assetUid ?? ""}`,
 			{
+				headers: { "Content-Type": "application/json" },
 				method: "GET",
 			}
 		);
@@ -239,6 +245,7 @@ export async function fetchChecklistUseList(assetUid: string) {
 export async function fetchTaskList(): Promise<Result<task[]>> {
 	try {
 		const response: Response = await fetch(`${origin}/api/task`, {
+			headers: { "Content-Type": "application/json" },
 			method: "GET",
 		});
 		const result: Result<task[]> = await response.json();
@@ -264,6 +271,7 @@ export async function fetchTaskListByChecklistUid(checklistUid: string) {
 		const response: Response = await fetch(
 			`${origin}/api/task?checklist_uid=${checklistUid}`,
 			{
+				headers: { "Content-Type": "application/json" },
 				method: "GET",
 			}
 		);
@@ -313,13 +321,20 @@ export async function updateTaskCompletion(
 
 /**
  * fetch subtask list
+ * @param task_uid
  * @returns @type {Result<subtask[]>} of subtask list
  */
-export async function fetchSubtaskList(): Promise<Result<subtask[]>> {
+export async function fetchSubtaskListByTaskUid(
+	task_uid: string
+): Promise<Result<subtask[]>> {
 	try {
-		const response: Response = await fetch(`${origin}/api/subtask`, {
-			method: "GET",
-		});
+		const response: Response = await fetch(
+			`${origin}/api/subtask?task_uid=${task_uid}`,
+			{
+				headers: { "Content-Type": "application/json" },
+				method: "GET",
+			}
+		);
 		const result: Result<subtask[]> = await response.json();
 
 		if (!response.ok) {

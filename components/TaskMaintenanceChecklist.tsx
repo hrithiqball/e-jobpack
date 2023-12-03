@@ -9,11 +9,11 @@ import React, { useTransition } from "react";
 export default function TaskMaintenanceChecklist({
 	maintenance,
 	checklist,
-	taskList,
+	children,
 }: {
 	maintenance: maintenance;
 	checklist: checklist;
-	taskList: task[];
+	children: React.ReactNode;
 }) {
 	let [isPending, startTransition] = useTransition();
 
@@ -28,7 +28,8 @@ export default function TaskMaintenanceChecklist({
 			<p className="font-bold text-lg">{checklist.title}</p>
 			<Divider className="my-4" />
 			<div className="flex flex-col space-y-2">
-				{taskList.map((task) => (
+				{children}
+				{/* {taskList.map((task) => (
 					<div key={task.uid} className="flex gap-3 items-center">
 						<Checkbox
 							isSelected={task.is_complete}
@@ -42,7 +43,7 @@ export default function TaskMaintenanceChecklist({
 							</div>
 						</Checkbox>
 					</div>
-				))}
+				))} */}
 			</div>
 		</Card>
 	);
