@@ -1,5 +1,14 @@
 "use client";
 
+import { Key, useEffect, useState } from "react";
+import { useTheme } from "next-themes";
+import Loading from "./Loading";
+import { asset, checklist_use, maintenance } from "@prisma/client";
+import { IoIosArrowBack } from "react-icons/io";
+import { AiOutlineEdit, AiOutlinePlusSquare } from "react-icons/ai";
+import AssetDetails from "./AssetDetails";
+import AssetMaintenance from "./AssetMaintenance";
+import AssetAttachment from "./AssetAttachment";
 import {
 	Button,
 	Card,
@@ -9,15 +18,6 @@ import {
 	Tab,
 	Tabs,
 } from "@nextui-org/react";
-import { useTheme } from "next-themes";
-import { Key, useEffect, useState } from "react";
-import Loading from "./Loading";
-import { asset, checklist_use, maintenance } from "@prisma/client";
-import { IoIosArrowBack } from "react-icons/io";
-import { AiOutlineEdit, AiOutlinePlusSquare } from "react-icons/ai";
-import AssetDetails from "./AssetDetails";
-import AssetMaintenance from "./AssetMaintenance";
-import AssetAttachment from "./AssetAttachment";
 
 export default function Asset({
 	asset,

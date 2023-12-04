@@ -1,5 +1,5 @@
-import { checklist, maintenance } from "@prisma/client";
 import { Fragment } from "react";
+import { checklist, maintenance } from "@prisma/client";
 import MaintenanceChecklist from "./MaintenanceChecklist";
 
 export default async function MaintenanceChecklistList({

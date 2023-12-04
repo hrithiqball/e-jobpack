@@ -1,5 +1,5 @@
-import { Spinner } from "@nextui-org/react";
 import React from "react";
+import { Spinner } from "@nextui-org/react";
 
 function Loading({ label }: { label: string }) {
 	return (

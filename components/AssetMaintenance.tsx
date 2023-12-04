@@ -1,5 +1,5 @@
-import { maintenance } from "@prisma/client";
 import React from "react";
+import { maintenance } from "@prisma/client";
 
 export default function AssetMaintenance({
 	maintenanceList,

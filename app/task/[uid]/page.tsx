@@ -1,10 +1,9 @@
-import MaintenanceChecklistList from "@/components (server)/MaintenanceChecklistList";
+import MaintenanceChecklistList from "@/server/MaintenanceChecklistList";
 import Navigation from "@/components/Navigation";
 import SignOutItem from "@/components/SignOutItem";
 import TaskMaintenance from "@/components/TaskMaintenance";
-import { NestedMaintenance } from "@/model/nested-maintenance";
 import {
-	ReadUserInfo,
+	readUserInfo,
 	fetchChecklistListByMaintenanceId,
 } from "@/utils/actions/route";
 import { maintenance } from "@prisma/client";
@@ -17,7 +16,7 @@ export default async function TaskItemPage({
 	params: { uid: string };
 	searchParams: { maintenance: string };
 }) {
-	const userInfo = await ReadUserInfo();
+	const userInfo = await readUserInfo();
 	const parsedMaintenance = JSON.parse(
 		searchParams.maintenance
 	) satisfies maintenance;

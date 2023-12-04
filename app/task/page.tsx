@@ -1,54 +1,13 @@
-import { asset, checklist, maintenance, subtask, task } from "@prisma/client";
 import SignOutItem from "@/components/SignOutItem";
-import {
-	ReadUserInfo,
-	fetchAssetList,
-	fetchChecklistList,
-	fetchMaintenanceList,
-	fetchTaskList,
-} from "@/utils/actions/route";
+import { readUserInfo, fetchMaintenanceList } from "@/utils/actions/route";
 import Task from "@/components/Task";
-import { NestedMaintenance } from "@/model/nested-maintenance";
 import Navigation from "@/components/Navigation";
-
-function constructNestedMaintenance(
-	maintenanceList: maintenance[],
-	checklistList: checklist[],
-	assetList: asset[],
-	taskList: task[],
-	subtaskList: subtask[]
-): NestedMaintenance[] {
-	return maintenanceList.map((maintenance) => {
-		const filteredChecklist: checklist[] = checklistList.filter(
-			(checklist) => checklist.maintenance_uid === maintenance.uid
-		);
-
-		const nestedMaintenance: NestedMaintenance = {
-			fileName: null,
-			loadingReadExcel: false,
-			...maintenance,
-			asset: assetList.find((asset) => asset.uid === maintenance.asset_uid)!,
-			checklists: filteredChecklist.map((checklist) => {
-				const tasks = taskList.filter(
-					(task) => task.checklist_uid === checklist.uid
-				);
-
-				return {
-					...checklist,
-					tasks: tasks,
-				};
-			}),
-		};
-
-		return nestedMaintenance;
-	});
-}
 
 export default async function TaskPage() {
 	const maintenanceListResult = await fetchMaintenanceList();
 	const maintenanceListData = maintenanceListResult.data ?? [];
 
-	const userInfo = await ReadUserInfo();
+	const userInfo = await readUserInfo();
 
 	return (
 		<div className="flex flex-col h-screen">

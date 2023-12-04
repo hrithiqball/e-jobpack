@@ -337,9 +337,9 @@ export default function Task({
 										</Link>
 									</div>
 								</CardHeader>
-								<div className="px-4">
+								{/* <div className="px-4">
 									<Divider />
-								</div>
+								</div> */}
 								{/* <CardBody>
 									{nestedMaintenance.checklists.map(
 										(checklist: NestedChecklist) => (

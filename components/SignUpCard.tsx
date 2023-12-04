@@ -1,7 +1,8 @@
 "use client";
 
-import { signUp } from "@/app/sign-up/actions";
+import React, { useState, useTransition } from "react";
 import { SignUpUser } from "@/model/user";
+import { signUp } from "@/utils/actions/route";
 import {
 	Button,
 	Card,
@@ -11,7 +12,6 @@ import {
 	Input,
 	Link,
 } from "@nextui-org/react";
-import React, { useState, useTransition } from "react";
 
 export default function SignUpCard() {
 	let [isPending, startTransition] = useTransition();

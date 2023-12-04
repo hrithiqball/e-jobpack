@@ -1,6 +1,6 @@
+import React, { Fragment } from "react";
 import SubtaskItem from "@/components/SubtaskItem";
 import { subtask } from "@prisma/client";
-import React, { Fragment } from "react";
 
 export default function SubtaskList({
 	subtaskList,

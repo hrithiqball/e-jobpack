@@ -1,6 +1,18 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+import {
+	LiaUserCogSolid,
+	LiaUserTieSolid,
+	LiaUserLockSolid,
+} from "react-icons/lia";
+import { BsSun } from "react-icons/bs";
+import { RiMoonClearFill } from "react-icons/ri";
+import { useTheme } from "next-themes";
+import { MetadataUser } from "@/model/user";
+import clientIcon from "@/public/client-icon.svg";
 import {
 	Navbar,
 	NavbarBrand,
@@ -16,18 +28,6 @@ import {
 	Dropdown,
 	DropdownItem,
 } from "@nextui-org/react";
-import Image from "next/image";
-import { usePathname } from "next/navigation";
-import {
-	LiaUserCogSolid,
-	LiaUserTieSolid,
-	LiaUserLockSolid,
-} from "react-icons/lia";
-import { BsSun } from "react-icons/bs";
-import { RiMoonClearFill } from "react-icons/ri";
-import { useTheme } from "next-themes";
-import { MetadataUser } from "@/model/user";
-import clientIcon from "@/public/client-icon.svg";
 
 export default function Navigation({
 	children,

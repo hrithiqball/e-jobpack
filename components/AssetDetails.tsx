@@ -1,13 +1,7 @@
-import { asset, checklist_use } from "@prisma/client";
 import React from "react";
+import { asset, checklist_use } from "@prisma/client";
 import Image from "next/image";
 import moment from "moment";
-import {
-	BsFillPersonBadgeFill,
-	BsPassFill,
-	BsClockFill,
-	BsClockHistory,
-} from "react-icons/bs";
 import { FaWrench } from "react-icons/fa";
 import {
 	Avatar,
@@ -23,6 +17,12 @@ import {
 	TableRow,
 	User,
 } from "@nextui-org/react";
+import {
+	BsFillPersonBadgeFill,
+	BsPassFill,
+	BsClockFill,
+	BsClockHistory,
+} from "react-icons/bs";
 
 export default function AssetDetails({
 	asset,

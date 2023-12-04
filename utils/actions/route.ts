@@ -9,8 +9,8 @@ import {
 	task,
 	user,
 } from "@prisma/client";
-import { cookies } from "next/headers";
-import { MetadataUser } from "@/model/user";
+import { cookies, headers } from "next/headers";
+import { MetadataUser, SignUpUser } from "@/model/user";
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
@@ -51,14 +51,63 @@ export async function signOut() {
 	return redirect("/");
 }
 
-export async function ReadUserSession() {
+export async function signUp(newUser: SignUpUser) {
+	const cookieStore = cookies();
+	const supabase = createClient(cookieStore);
+	const originSignUp = headers().get("origin");
+
+	const { error } = await supabase.auth.signUp({
+		email: newUser.email,
+		password: newUser.password,
+		phone: newUser.phone ?? "",
+		options: {
+			emailRedirectTo: `${originSignUp}/auth/callback`,
+		},
+	});
+
+	if (error) {
+		console.error(error);
+		redirect("/sign-in?message=Could not authenticate user");
+	}
+
+	const signUpResult = await signUpUser(newUser.name, originSignUp);
+	if (signUpResult.statusCode !== 201) {
+		redirect("/sign-in?message=Could not register user");
+	}
+
+	return redirect("/sign-in?message=Check email to continue sign in process");
+}
+
+async function signUpUser(name: string, originSignup: string | null) {
+	if (!originSignup) alert("Origin is null");
+
+	try {
+		const response: Response = await fetch(`${originSignup}/api/sign-up`, {
+			method: "POST",
+			body: JSON.stringify({ name: name }),
+		});
+		const result: Result<user> = await response.json();
+
+		if (result.statusCode !== 201) {
+			console.error(result.message);
+			throw new Error(result.message);
+		}
+
+		return result;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+export async function readUserSession() {
 	const cookieStore = cookies();
 	const supabase = createClient(cookieStore);
 
 	return supabase.auth.getSession();
 }
 
-export async function ReadUserInfo() {
+export async function readUserInfo() {
 	try {
 		const cookieStore = cookies();
 		const supabase = createClient(cookieStore);

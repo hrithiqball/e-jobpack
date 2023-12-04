@@ -2,7 +2,7 @@ import Asset from "@/components/Asset";
 import Navigation from "@/components/Navigation";
 import SignOutItem from "@/components/SignOutItem";
 import {
-	ReadUserInfo,
+	readUserInfo,
 	fetchChecklistUseList,
 	fetchMaintenanceList,
 } from "@/utils/actions/route";
@@ -29,7 +29,7 @@ export default async function AssetItemPage({
 		person_in_charge: string;
 	};
 }) {
-	const userInfo = await ReadUserInfo();
+	const userInfo = await readUserInfo();
 	const maintenanceListResult = await fetchMaintenanceList(params.uid);
 	const checklistUseResult = await fetchChecklistUseList(params.uid);
 	const maintenanceList = maintenanceListResult.data ?? [];

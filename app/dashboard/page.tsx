@@ -1,10 +1,10 @@
 import Navigation from "@/components/Navigation";
 import SignOutItem from "@/components/SignOutItem";
 import Dashboard from "@/components/Dashboard";
-import { ReadUserInfo } from "@/utils/actions/route";
+import { readUserInfo } from "@/utils/actions/route";
 
 export default async function DashboardPage() {
-	const userInfo = await ReadUserInfo();
+	const userInfo = await readUserInfo();
 
 	return (
 		<div className="flex flex-col h-screen">

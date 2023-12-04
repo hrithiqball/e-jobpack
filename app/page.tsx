@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import AuthButton from "@/components/AuthButton";
 import { redirect } from "next/navigation";
-import { ReadUserSession } from "@/utils/actions/route";
+import { readUserSession } from "@/utils/actions/route";
 import { Fragment } from "react";
 import Link from "next/link";
 
@@ -20,7 +20,7 @@ export default async function Index() {
 	};
 
 	const isSupabaseConnected = initSupabaseClient();
-	const { data } = await ReadUserSession();
+	const { data } = await readUserSession();
 
 	if (data.session) {
 		return redirect("/dashboard");

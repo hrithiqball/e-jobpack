@@ -1,4 +1,4 @@
-import SubtaskList from "@/components (server)/SubtaskList";
+import SubtaskList from "@/server/SubtaskList";
 import { fetchSubtaskListByTaskUid } from "@/utils/actions/route";
 import { task } from "@prisma/client";
 import React from "react";
