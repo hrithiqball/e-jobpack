@@ -159,10 +159,6 @@ export async function fetchAssetList(): Promise<Result<asset[]>> {
 		});
 		const result: Result<asset[]> = await response.json();
 
-		if (!response.ok) {
-			throw new Error(result.message);
-		}
-
 		return result;
 	} catch (error) {
 		console.error(error);
@@ -179,10 +175,6 @@ export async function fetchMaintenanceItemById(uid: string) {
 			method: "GET",
 		});
 		const result: Result<maintenance> = await response.json();
-
-		if (!response.ok) {
-			throw new Error(result.message);
-		}
 
 		return result;
 	} catch (error) {
@@ -204,10 +196,6 @@ export async function fetchMaintenanceList(
 		);
 		const result: Result<maintenance[]> = await response.json();
 
-		if (!response.ok) {
-			throw new Error(result.message);
-		}
-
 		return result;
 	} catch (error) {
 		console.error(error);
@@ -225,10 +213,6 @@ export async function fetchChecklistList(): Promise<Result<checklist[]>> {
 		});
 		const result: Result<checklist[]> = await response.json();
 
-		if (!response.ok) {
-			throw new Error(result.message);
-		}
-
 		return result;
 	} catch (error) {
 		console.error(error);
@@ -238,6 +222,7 @@ export async function fetchChecklistList(): Promise<Result<checklist[]>> {
 
 export async function fetchChecklistListByMaintenanceId(maintenanceId: string) {
 	try {
+		console.log(maintenanceId);
 		const response: Response = await fetch(
 			`${origin}/api/checklist?maintenance_uid=${maintenanceId ?? ""}`,
 			{
@@ -246,10 +231,6 @@ export async function fetchChecklistListByMaintenanceId(maintenanceId: string) {
 			}
 		);
 		const result: Result<checklist[]> = await response.json();
-
-		if (!response.ok) {
-			throw new Error(result.message);
-		}
 
 		return result;
 	} catch (error) {
@@ -274,10 +255,6 @@ export async function fetchChecklistUseList(assetUid: string) {
 		);
 		const result: Result<checklist_use[]> = await response.json();
 
-		if (!response.ok) {
-			throw new Error(result.message);
-		}
-
 		return result;
 	} catch (error) {
 		console.error(error);
@@ -298,10 +275,6 @@ export async function fetchTaskList(): Promise<Result<task[]>> {
 			method: "GET",
 		});
 		const result: Result<task[]> = await response.json();
-
-		if (!response.ok) {
-			throw new Error(result.message);
-		}
 
 		return result;
 	} catch (error) {
@@ -325,11 +298,6 @@ export async function fetchTaskListByChecklistUid(checklistUid: string) {
 			}
 		);
 		const result: Result<task[]> = await response.json();
-
-		if (!response.ok) {
-			throw new Error(result.message);
-		}
-
 		return result;
 	} catch (error) {
 		console.error(error);
@@ -356,7 +324,6 @@ export async function updateTaskCompletion(
 			throw new Error(result.message);
 		}
 
-		console.log(result.data);
 		return revalidatePath(
 			`/task/${maintenance.uid}?${JSON.stringify(maintenance)}`
 		);
@@ -385,11 +352,6 @@ export async function fetchSubtaskListByTaskUid(
 			}
 		);
 		const result: Result<subtask[]> = await response.json();
-
-		if (!response.ok) {
-			throw new Error(result.message);
-		}
-
 		return result;
 	} catch (error) {
 		console.error(error);
