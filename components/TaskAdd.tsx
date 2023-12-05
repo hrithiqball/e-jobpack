@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Fragment, useState, useTransition } from "react";
+import React, { Fragment, useEffect, useState, useTransition } from "react";
 import {
 	Button,
 	Input,
@@ -12,10 +12,10 @@ import {
 	Select,
 	SelectItem,
 } from "@nextui-org/react";
-import { MdDelete } from "react-icons/md";
-import moment from "moment";
 import { TaskType, task } from "@prisma/client";
 import { createTask } from "@/utils/actions/route";
+import { MdDelete } from "react-icons/md";
+import moment from "moment";
 
 const selectionChoices: { key: TaskType; value: string }[] = [
 	{
@@ -42,12 +42,12 @@ const selectionChoices: { key: TaskType; value: string }[] = [
 
 export default function TaskAdd({ checklistUid }: { checklistUid: string }) {
 	let [isPending, startTransition] = useTransition();
-	const [open, setOpen] = useState(false);
-	const [taskActivity, setTaskActivity] = useState("");
-	const [taskDescription, setTaskDescription] = useState("");
+	const [open, setOpen] = useState<boolean>(false);
+	const [taskActivity, setTaskActivity] = useState<string>("");
+	const [taskDescription, setTaskDescription] = useState<string>("");
 	const [selection, setSelection] = useState<TaskType>(TaskType.check);
-	const [listCount, setListCount] = useState(1);
-	const [choices, setChoices] = useState(Array(listCount).fill(""));
+	const [listCount, setListCount] = useState<number>(1);
+	const [choices, setChoices] = useState(Array(listCount).fill("Choice 1"));
 
 	function handleSelectionChange(val: any) {
 		setSelection(val.currentKey as TaskType);
@@ -100,6 +100,19 @@ export default function TaskAdd({ checklistUid }: { checklistUid: string }) {
 			createTask(taskAdd);
 		});
 	}
+
+	function closeModal() {
+		setOpen((prevOpen) => !prevOpen);
+		setSelection("check");
+		setTaskActivity("");
+		setTaskDescription("");
+	}
+
+	useEffect(() => {
+		if (!isPending) {
+			closeModal();
+		}
+	}, [isPending]);
 
 	return (
 		<div>
@@ -168,14 +181,7 @@ export default function TaskAdd({ checklistUid }: { checklistUid: string }) {
 								)}
 							</ModalBody>
 							<ModalFooter>
-								<Button
-									color="danger"
-									variant="light"
-									onPress={() => {
-										setSelection("check");
-										setOpen(!open);
-									}}
-								>
+								<Button color="danger" variant="light" onPress={closeModal}>
 									Close
 								</Button>
 								<Button
@@ -186,9 +192,7 @@ export default function TaskAdd({ checklistUid }: { checklistUid: string }) {
 									}
 									color="primary"
 									onPress={() => {
-										setSelection("check");
 										addTaskClient();
-										setOpen(!open);
 									}}
 								>
 									Save

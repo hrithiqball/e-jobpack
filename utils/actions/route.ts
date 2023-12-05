@@ -1,6 +1,7 @@
 "use server";
 
 import {
+	Prisma,
 	asset,
 	checklist,
 	checklist_use,
@@ -266,7 +267,35 @@ export async function fetchChecklistUseList(assetUid: string) {
 // task
 
 export async function createTask(task: task) {
-	console.log(task);
+	try {
+		const filters: Prisma.taskWhereInput[] = [
+			{ checklist_uid: task.checklist_uid },
+		];
+		const orderBy: Prisma.taskOrderByWithRelationInput[] = [
+			{ task_order: "desc" },
+		];
+
+		const tasks: task[] = await prisma.task.findMany({
+			orderBy: orderBy,
+			where: {
+				AND: filters,
+			},
+		});
+
+		if (tasks.length === 0) {
+			task.task_order = 1;
+		} else {
+			task.task_order = tasks[0].task_order + 1;
+		}
+
+		const newTask: task = await prisma.task.create({
+			data: task,
+		});
+
+		return newTask;
+	} catch (error) {
+		console.error(error);
+	}
 }
 
 /**
@@ -303,26 +332,6 @@ export async function fetchTaskListByChecklistUid(checklistUid: string) {
 			}
 		);
 		const result: Result<task[]> = await response.json();
-		return result;
-	} catch (error) {
-		console.error(error);
-		throw error;
-	}
-}
-
-export async function updateTaskCompletion(
-	taskUid: string,
-	is_complete: boolean
-) {
-	try {
-		const response: Response = await fetch(`${origin}/api/task/${taskUid}`, {
-			headers: { "Content-Type": "application/json" },
-			method: "PATCH",
-			body: JSON.stringify({ is_complete }),
-		});
-		const result: Result<task> = await response.json();
-
-		console.log(result.data?.is_complete);
 		return result;
 	} catch (error) {
 		console.error(error);
