@@ -265,6 +265,10 @@ export async function fetchChecklistUseList(assetUid: string) {
 
 // task
 
+export async function createTask(task: task) {
+	console.log(task);
+}
+
 /**
  * fetch task list
  * @returns @type {Result<task[]>} of task list

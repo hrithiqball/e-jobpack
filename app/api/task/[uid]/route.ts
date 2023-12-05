@@ -18,6 +18,7 @@ const UpdateTaskSchema = z.object({
 	task_order: z.number().optional(),
 	have_subtask: z.boolean().optional(),
 	task_selected: z.string().array().optional(),
+	task_bool: z.boolean().optional(),
 });
 
 /**

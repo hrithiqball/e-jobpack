@@ -23,7 +23,7 @@ const AddTaskSchema = z.object({
 /**
  * @description Type for adding a new task
  */
-type AddTask = z.infer<typeof AddTaskSchema> & {
+export type AddTask = z.infer<typeof AddTaskSchema> & {
 	uid: string;
 	is_complete: boolean;
 	completed_by: string | null;
@@ -127,7 +127,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
 		if (result.success) {
 			const request: AddTask = {
 				...result.data,
-				uid: `CL-${moment().format("YYMMDDHHmmssSSS")}`,
+				uid: `TK-${moment().format("YYMMDDHHmmssSSS")}`,
 				is_complete: false,
 				completed_by: null,
 			};

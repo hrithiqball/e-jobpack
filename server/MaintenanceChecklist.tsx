@@ -16,8 +16,8 @@ export default async function MaintenanceChecklist({
 
 	return (
 		<Fragment>
-			<TaskMaintenanceChecklist maintenance={maintenance} checklist={checklist}>
-				<TaskList taskList={taskListData} />
+			<TaskMaintenanceChecklist checklist={checklist}>
+				<TaskList checklistUid={checklist.uid} taskList={taskListData} />
 			</TaskMaintenanceChecklist>
 		</Fragment>
 	);

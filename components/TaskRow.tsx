@@ -7,6 +7,7 @@ import {
 	Checkbox,
 	Select,
 	SelectItem,
+	Switch,
 	Textarea,
 } from "@nextui-org/react";
 import { updateTask, updateTaskCompletion } from "@/utils/actions/route";
@@ -14,25 +15,26 @@ import { UpdateTask } from "@/app/api/task/[uid]/route";
 
 export default function TaskRow({ task }: { task: task }) {
 	let [isPending, startTransition] = useTransition();
+	const [taskActivity, setTaskActivity] = useState(task.task_activity);
 	const [taskType, setTaskType] = useState(task.task_type);
-	const [selectedSelectOne, setSelectedSelectOne] = useState<string[]>(
+	const [taskSelected, setTaskSelected] = useState<string[]>(
 		task.task_selected
 	);
+	const [taskBool, setTaskBool] = useState(task.task_bool ?? false);
 	const [taskOrder, setTaskOrder] = useState(task.task_order);
 	const [taskIsComplete, setTaskIsComplete] = useState(task.is_complete);
 	const [taskIssue, setTaskIssue] = useState(task.issue ?? "");
 
-	function updateCompletion(isComplete: boolean) {
-		startTransition(() => {
-			updateTaskCompletion(task.uid, isComplete);
-		});
-	}
+	function handleSelectionChange(val: any) {
+		const changedValue = [val.currentKey as string];
 
-	function handleSingleSelectionChange(val: any) {
-		if ((val.currentKey as string) !== selectedSelectOne[0]) {
-			setSelectedSelectOne([val.currentKey as string]);
+		if (
+			changedValue.length !== taskSelected.length &&
+			changedValue.every((value, index) => value === taskSelected[index])
+		) {
+			setTaskSelected(changedValue);
 			const taskUpdate: UpdateTask = {
-				task_selected: [val.currentKey as string],
+				task_selected: changedValue,
 			};
 
 			startTransition(() => {
@@ -42,13 +44,21 @@ export default function TaskRow({ task }: { task: task }) {
 		console.log(val.currentKey as string);
 	}
 
-	if (taskType === "selectOne") {
+	function updateTaskClient(taskUpdate: UpdateTask) {
+		startTransition(() => {
+			updateTask(task.uid, taskUpdate);
+		});
+	}
+
+	if (taskType === "selectOne" || taskType === "selectMultiple") {
 		return (
 			<div className="flex">
+				<span>{taskActivity}</span>
 				<Select
 					className="max-w-[100]px"
-					selectedKeys={selectedSelectOne}
-					onSelectionChange={handleSingleSelectionChange}
+					selectedKeys={taskSelected}
+					selectionMode={taskType === "selectMultiple" ? "multiple" : "single"}
+					onSelectionChange={handleSelectionChange}
 					size="sm"
 					placeholder="Choose one"
 				>
@@ -62,6 +72,25 @@ export default function TaskRow({ task }: { task: task }) {
 		);
 	}
 
+	if (taskType === "choice") {
+		return (
+			<div className="flex">
+				<Switch
+					isSelected={taskBool}
+					onValueChange={() => {
+						setTaskBool(!taskBool);
+						const taskUpdate: UpdateTask = {
+							task_bool: !taskBool,
+						};
+						updateTaskClient(taskUpdate);
+					}}
+				>
+					{taskActivity}
+				</Switch>
+			</div>
+		);
+	}
+
 	return (
 		<div className="flex">
 			{/* <span>{taskOrder}</span> */}
@@ -69,10 +98,13 @@ export default function TaskRow({ task }: { task: task }) {
 				isSelected={taskIsComplete}
 				onValueChange={() => {
 					setTaskIsComplete(!taskIsComplete);
-					updateCompletion(!taskIsComplete);
+					const updateTask: UpdateTask = {
+						is_complete: !taskIsComplete,
+					};
+					updateTaskClient(updateTask);
 				}}
 			>
-				{task.task_activity}
+				{taskActivity}
 			</Checkbox>
 			<Textarea
 				label="Issue"
