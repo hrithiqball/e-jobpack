@@ -326,30 +326,15 @@ export async function updateTaskCompletion(
 	}
 }
 
-export async function updateSelectedValue(uid: string, updateTask: UpdateTask) {
+export async function updateTask(uid: string, updateTask: UpdateTask) {
 	try {
-		console.log(updateTask);
 		const updatedTaskValue: UpdateTask = updateTask;
 		const updatedTask: task = await prisma.task.update({
 			where: { uid },
 			data: updatedTaskValue,
 		});
 
-		console.log(updatedTask);
 		return updatedTask;
-
-		// console.log(task_selected);
-		// const response: Response = await fetch(`${origin}/api/task/${taskUid}`, {
-		// 	headers: { "Content-Type": "application/json" },
-		// 	method: "PATCH",
-		// 	body: JSON.stringify(task_selected),
-		// });
-
-		// const result: Result<task> = await response.json();
-		// console.log(result);
-
-		// console.log(result.data?.task_selected);
-		// return result;
 	} catch (error) {
 		console.error(error);
 		throw error;

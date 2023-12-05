@@ -77,7 +77,6 @@ export async function PATCH(
 		const uid = params.uid;
 		let json = await nextRequest.json();
 
-		console.log("Updating task");
 		const result = UpdateTaskSchema.safeParse(json);
 		console.log(result);
 

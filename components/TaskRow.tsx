@@ -9,10 +9,7 @@ import {
 	SelectItem,
 	Textarea,
 } from "@nextui-org/react";
-import {
-	updateSelectedValue,
-	updateTaskCompletion,
-} from "@/utils/actions/route";
+import { updateTask, updateTaskCompletion } from "@/utils/actions/route";
 import { UpdateTask } from "@/app/api/task/[uid]/route";
 
 export default function TaskRow({ task }: { task: task }) {
@@ -31,7 +28,7 @@ export default function TaskRow({ task }: { task: task }) {
 		});
 	}
 
-	function handleSelectionChange(val: any) {
+	function handleSingleSelectionChange(val: any) {
 		if ((val.currentKey as string) !== selectedSelectOne[0]) {
 			setSelectedSelectOne([val.currentKey as string]);
 			const taskUpdate: UpdateTask = {
@@ -39,7 +36,7 @@ export default function TaskRow({ task }: { task: task }) {
 			};
 
 			startTransition(() => {
-				updateSelectedValue(task.uid, taskUpdate);
+				updateTask(task.uid, taskUpdate);
 			});
 		}
 		console.log(val.currentKey as string);
@@ -51,7 +48,7 @@ export default function TaskRow({ task }: { task: task }) {
 				<Select
 					className="max-w-[100]px"
 					selectedKeys={selectedSelectOne}
-					onSelectionChange={handleSelectionChange}
+					onSelectionChange={handleSingleSelectionChange}
 					size="sm"
 					placeholder="Choose one"
 				>
