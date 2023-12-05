@@ -254,19 +254,25 @@ model subtask_use {
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model task {
-  uid           String    @id(map: "task2_pkey")
-  task_activity String
-  description   String?
-  is_complete   Boolean   @default(false)
-  remarks       String?
-  issue         String?
-  deadline      DateTime? @db.Timestamptz(6)
-  completed_by  String?
-  task_order    Int       @db.SmallInt
-  have_subtask  Boolean   @default(false)
-  checklist_uid String
-  subtask       subtask[]
-  checklist     checklist @relation(fields: [checklist_uid], references: [uid], onDelete: Cascade)
+  uid             String    @id(map: "task2_pkey")
+  task_activity   String
+  description     String?
+  is_complete     Boolean   @default(false)
+  remarks         String?
+  issue           String?
+  deadline        DateTime? @db.Timestamptz(6)
+  completed_by    String?
+  task_order      Int       @db.SmallInt
+  have_subtask    Boolean   @default(false)
+  checklist_uid   String
+  task_type       TaskType  @default(check)
+  list_choice     String[]  @default([])
+  task_bool       Boolean?
+  task_selected   String[]  @default([])
+  task_number_val Int?      @db.SmallInt
+  task_check      Boolean?  @default(false)
+  subtask         subtask[]
+  checklist       checklist @relation(fields: [checklist_uid], references: [uid], onDelete: Cascade)
 
   @@schema("public")
 }
@@ -653,6 +659,16 @@ enum Role {
   admin
   supervisor
   maintainer
+
+  @@schema("public")
+}
+
+enum TaskType {
+  choice
+  selectOne
+  check
+  number
+  selectMultiple
 
   @@schema("public")
 }

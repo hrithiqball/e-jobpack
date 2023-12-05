@@ -15,7 +15,7 @@ import { MetadataUser, SignUpUser } from "@/model/user";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { Result } from "@/lib/result";
-import { revalidatePath } from "next/cache";
+import { UpdateTask } from "@/app/api/task/[uid]/route";
 
 const origin = process.env.NEXT_PUBLIC_ORIGIN;
 
@@ -307,11 +307,9 @@ export async function fetchTaskListByChecklistUid(checklistUid: string) {
 
 export async function updateTaskCompletion(
 	taskUid: string,
-	is_complete: boolean,
-	maintenance: maintenance
+	is_complete: boolean
 ) {
 	try {
-		console.log(`${origin}/api/task/${taskUid}`);
 		const response: Response = await fetch(`${origin}/api/task/${taskUid}`, {
 			headers: { "Content-Type": "application/json" },
 			method: "PATCH",
@@ -319,14 +317,31 @@ export async function updateTaskCompletion(
 		});
 		const result: Result<task> = await response.json();
 
-		if (result.statusCode !== 200) {
-			console.error(result.message);
-			throw new Error(result.message);
-		}
+		console.log(result.data?.is_complete);
+		return result;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
 
-		return revalidatePath(
-			`/task/${maintenance.uid}?${JSON.stringify(maintenance)}`
-		);
+export async function updateSelectedValue(
+	taskUid: string,
+	task_selected: UpdateTask
+) {
+	try {
+		console.log(task_selected);
+		const response: Response = await fetch(`${origin}/api/task/${taskUid}`, {
+			headers: { "Content-Type": "application/json" },
+			method: "PATCH",
+			body: JSON.stringify(task_selected),
+		});
+
+		const result: Result<task> = await response.json();
+		console.log(result);
+
+		console.log(result.data?.task_selected);
+		return result;
 	} catch (error) {
 		console.error(error);
 		throw error;
@@ -352,6 +367,29 @@ export async function fetchSubtaskListByTaskUid(
 			}
 		);
 		const result: Result<subtask[]> = await response.json();
+		return result;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+export async function updateSubtaskCompletion(
+	subtaskUid: string,
+	is_complete: boolean
+) {
+	try {
+		const response: Response = await fetch(
+			`${origin}/api/subtask/${subtaskUid}`,
+			{
+				headers: { "Content-Type": "application/json" },
+				method: "PATCH",
+				body: JSON.stringify({ is_complete }),
+			}
+		);
+		const result: Result<subtask> = await response.json();
+
+		console.log(result.data?.is_complete);
 		return result;
 	} catch (error) {
 		console.error(error);

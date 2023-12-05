@@ -17,12 +17,13 @@ const UpdateTaskSchema = z.object({
 	completed_by: z.string().optional(),
 	task_order: z.number().optional(),
 	have_subtask: z.boolean().optional(),
+	task_selected: z.string().array().optional(),
 });
 
 /**
  * @description Type for updating an task
  */
-type UpdateTask = z.infer<typeof UpdateTaskSchema>;
+export type UpdateTask = z.infer<typeof UpdateTaskSchema>;
 
 /**
  * This asynchronous function handles GET requests.
@@ -73,10 +74,10 @@ export async function PATCH(
 	{ params }: { params: { uid: string } }
 ): Promise<NextResponse> {
 	try {
-		console.log("hello");
 		const uid = params.uid;
 		let json = await nextRequest.json();
 
+		console.log("Updating task");
 		const result = UpdateTaskSchema.safeParse(json);
 		console.log(result);
 
