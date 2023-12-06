@@ -3,12 +3,12 @@
 @tailwind utilities;
 
 @layer base {
-    :root {
-        --black: #333333;
-        --white: #ffffff;
-        --silver: #c9cccd;
-        --emerald-green-dark: #006359;
-        --emerald-green-light: #00a199;
-        --deep-gray: #3d3835;
-    }
+  :root {
+    --black: #333333;
+    --white: #ffffff;
+    --silver: #c9cccd;
+    --emerald-green-dark: #006359;
+    --emerald-green-light: #00a199;
+    --deep-gray: #3d3835;
+  }
 }

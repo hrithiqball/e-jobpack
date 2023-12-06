@@ -1,29 +1,31 @@
 {
-	"cSpell.words": [
-		"chartjs",
-		"daygrid",
-		"exceljs",
-		"fullcalendar",
-		"icam",
-		"kyziq",
-		"maintainee",
-		"nextjs",
-		"nextui",
-		"supabase",
-		"tailwindcss",
-		"trpc",
-		"YYMMDDHH"
-	],
-	"material-icon-theme.activeIconPack": "react",
-	"material-icon-theme.files.associations": {
-		"supabase/client.ts": "supabase",
-		"supabase/middleware.ts": "supabase",
-		"supabase/server.ts": "supabase",
-		"prisma/prisma.ts": "prisma"
-	},
-	"material-icon-theme.folders.associations": {
-		"actions": "connection",
-		"asset": "",
-		"callback": "error"
-	}
+  "cSpell.words": [
+    "chartjs",
+    "daygrid",
+    "exceljs",
+    "fullcalendar",
+    "icam",
+    "kyziq",
+    "maintainee",
+    "nextjs",
+    "nextui",
+    "Parens",
+    "supabase",
+    "tailwindcss",
+    "trpc",
+    "YYMMDDHH"
+  ],
+  "material-icon-theme.activeIconPack": "react",
+  "material-icon-theme.files.associations": {
+    "supabase/client.ts": "supabase",
+    "supabase/middleware.ts": "supabase",
+    "supabase/server.ts": "supabase",
+    "prisma/prisma.ts": "prisma"
+  },
+  "material-icon-theme.folders.associations": {
+    "actions": "connection",
+    "asset": "",
+    "callback": "error",
+    "(route)": "routes"
+  }
 }
