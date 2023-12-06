@@ -1,0 +1,16 @@
+{
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=827846
+  // publisher.extension
+  "recommendations": [
+    "dsznajder.es7-react-js-snippets",
+    "prisma.prisma",
+    "bradlc.vscode-tailwindcss",
+    "wallabyjs.console-ninja",
+    "vivaxy.vscode-conventional-commits",
+    "wix.vscode-import-cost",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "streetsidesoftware.code-spell-checker",
+    "pkief.material-icon-theme"
+  ]
+}

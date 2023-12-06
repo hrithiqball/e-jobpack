@@ -15,7 +15,7 @@ import {
   Chip,
   Divider,
 } from '@nextui-org/react';
-import { base64Image } from '@/public/client-icon';
+import { base64Image } from '@/public/client-icon-base64';
 import {
   NestedChecklist,
   NestedMaintenance,
