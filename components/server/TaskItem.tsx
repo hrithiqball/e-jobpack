@@ -2,7 +2,7 @@ import React from 'react';
 import SubtaskList from '@/components/server/SubtaskList';
 import { fetchSubtaskListByTaskUid } from '@/utils/actions/route';
 import { subtask, task } from '@prisma/client';
-import TaskRow from './TaskRow';
+import TaskRow from '../client/TaskRow';
 
 export default async function TaskItem({ task }: { task: task }) {
   let subtaskResult;
