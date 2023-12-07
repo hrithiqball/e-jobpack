@@ -10,12 +10,13 @@
     "nextjs",
     "nextui",
     "Parens",
+    "reduxjs",
     "supabase",
     "tailwindcss",
     "trpc",
     "YYMMDDHH"
   ],
-  "material-icon-theme.activeIconPack": "react",
+  "material-icon-theme.activeIconPack": "react_redux",
   "material-icon-theme.files.associations": {
     "supabase/client.ts": "supabase",
     "supabase/middleware.ts": "supabase",
@@ -23,7 +24,7 @@
     "prisma/prisma.ts": "prisma"
   },
   "material-icon-theme.folders.associations": {
-    "actions": "connection",
+    "utils/actions": "connection",
     "asset": "",
     "callback": "error",
     "(route)": "routes"
