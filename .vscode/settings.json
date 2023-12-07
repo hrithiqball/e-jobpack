@@ -13,6 +13,7 @@
     "reduxjs",
     "supabase",
     "tailwindcss",
+    "toastify",
     "trpc",
     "YYMMDDHH"
   ],

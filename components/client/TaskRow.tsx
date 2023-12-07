@@ -13,13 +13,14 @@ import {
 } from '@nextui-org/react';
 import { updateTask } from '@/utils/actions/route';
 import { UpdateTask } from '@/app/api/task/[uid]/route';
-import { LuPen, LuTrash2 } from 'react-icons/lu';
+import { LuTrash2 } from 'react-icons/lu';
 import { isEditState, useSelector } from '@/lib/redux';
 
 export default function TaskRow({ task }: { task: task }) {
   const isEdit = useSelector(isEditState);
   let [isPending, startTransition] = useTransition();
   const [taskActivity, setTaskActivity] = useState(task.task_activity);
+  const [taskDescription, setTaskDescription] = useState(task.description);
   const [taskType, setTaskType] = useState(task.task_type);
   const [taskSelected, setTaskSelected] = useState<string[]>(
     task.task_selected,
@@ -70,7 +71,10 @@ export default function TaskRow({ task }: { task: task }) {
   return (
     <div className="flex items-center">
       <div className="flex-1 px-4">
-        <span>{taskActivity}</span>
+        <div className="flex flex-col">
+          <span className="text-medium font-medium">{taskActivity}</span>
+          <span className="text-sm font-thin">{taskDescription}</span>
+        </div>
       </div>
       <div className="flex-1 px-4">
         {taskType === 'check' && (
@@ -84,7 +88,7 @@ export default function TaskRow({ task }: { task: task }) {
               updateTaskClient(updateTask);
             }}
           >
-            {taskActivity} {isEdit ? 'true' : 'false'}
+            {taskActivity}
           </Checkbox>
         )}
         {taskType === 'choice' && (
@@ -144,11 +148,8 @@ export default function TaskRow({ task }: { task: task }) {
           onValueChange={setTaskRemark}
         />
       </div>
-      <div className="flex-2 space-x-2">
-        <Button isIconOnly color="warning">
-          <LuPen />
-        </Button>
-        <Button isIconOnly color="danger">
+      <div className="flex-2 hover:cursor-not-allowed">
+        <Button isDisabled={!isEdit} isIconOnly color="danger">
           <LuTrash2 />
         </Button>
       </div>

@@ -48,7 +48,7 @@ const config: Config = {
               DEFAULT: '#f0f0f0',
             },
             success: {
-              DEFAULT: '#a2e9c1',
+              DEFAULT: '#23ff71',
             },
             warning: {
               DEFAULT: '#f7d154',
@@ -76,7 +76,7 @@ const config: Config = {
               DEFAULT: '#f0f0f0',
             },
             success: {
-              DEFAULT: '#a2e9c1',
+              DEFAULT: '#23ff71',
             },
             warning: {
               DEFAULT: '#f7d154',

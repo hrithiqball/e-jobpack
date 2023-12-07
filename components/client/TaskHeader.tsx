@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Button, Divider } from '@nextui-org/react';
-import { LuActivity } from 'react-icons/lu';
+import { LuCheckCircle, LuCheckCircle2, LuPen } from 'react-icons/lu';
 import { isEditState, useDispatch, useSelector, setIsEdit } from '@/lib/redux';
 
 export default function TaskHeader() {
@@ -29,11 +29,12 @@ export default function TaskHeader() {
           <span className=" font-bold text-medium">Remarks</span>
         </div>
         <div className="flex-2 space-x-2">
-          <Button onClick={handleEdit} isIconOnly>
-            <LuActivity />
-          </Button>
-          <Button isIconOnly>
-            <LuActivity />
+          <Button
+            color={isEdit ? 'success' : 'warning'}
+            onClick={handleEdit}
+            isIconOnly
+          >
+            {isEdit ? <LuCheckCircle /> : <LuPen />}
           </Button>
         </div>
       </div>
