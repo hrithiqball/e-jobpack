@@ -207,6 +207,19 @@ export async function fetchMaintenanceList(
 
 // checklist
 
+export async function createChecklist(data: checklist) {
+  try {
+    const newChecklist: checklist = await prisma.checklist.create({
+      data,
+    });
+
+    return newChecklist;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 export async function fetchChecklistList(): Promise<Result<checklist[]>> {
   try {
     const response: Response = await fetch(`${origin}/api/checklist`, {
