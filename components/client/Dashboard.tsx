@@ -3,9 +3,9 @@
 import React, { Key, useEffect, useState } from 'react';
 import { Card, Tab, Tabs } from '@nextui-org/react';
 import { useTheme } from 'next-themes';
-import Overview from './Overview';
-import Calendar from './Calendar';
-import Report from './Report';
+import Overview from '@/components/client/Overview';
+import Calendar from '@/components/client/Calendar';
+import Report from '@/components/client/Report';
 
 export default function Dashboard() {
   const [activeComponent, setActiveComponent] = useState('overview');

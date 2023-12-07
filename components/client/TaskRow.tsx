@@ -14,8 +14,10 @@ import {
 import { updateTask } from '@/utils/actions/route';
 import { UpdateTask } from '@/app/api/task/[uid]/route';
 import { LuPen, LuTrash2 } from 'react-icons/lu';
+import { isEditState, useSelector } from '@/lib/redux';
 
 export default function TaskRow({ task }: { task: task }) {
+  const isEdit = useSelector(isEditState);
   let [isPending, startTransition] = useTransition();
   const [taskActivity, setTaskActivity] = useState(task.task_activity);
   const [taskType, setTaskType] = useState(task.task_type);
@@ -82,7 +84,7 @@ export default function TaskRow({ task }: { task: task }) {
               updateTaskClient(updateTask);
             }}
           >
-            {taskActivity}
+            {taskActivity} {isEdit ? 'true' : 'false'}
           </Checkbox>
         )}
         {taskType === 'choice' && (

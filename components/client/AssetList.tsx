@@ -15,7 +15,7 @@ import {
 } from '@nextui-org/react';
 import { useTheme } from 'next-themes';
 import { BiSolidBookAdd } from 'react-icons/bi';
-import Loading from './Loading';
+import Loading from '@/components/client/Loading';
 import { BsFillPersonBadgeFill } from 'react-icons/bs';
 import { AiOutlineEdit, AiOutlinePlusSquare } from 'react-icons/ai';
 import Link from 'next/link';

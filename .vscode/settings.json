@@ -25,6 +25,7 @@
   },
   "material-icon-theme.folders.associations": {
     "utils/actions": "connection",
+    "lib/redux": "redux-actions",
     "asset": "",
     "callback": "error",
     "(route)": "routes"

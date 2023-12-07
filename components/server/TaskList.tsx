@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import { task } from '@prisma/client';
 import TaskItem from '@/components/server/TaskItem';
 import TaskAdd from '@/components/client/TaskAdd';
-import TaskHeader from '../client/TaskHeader';
+import TaskHeader from '@/components/client/TaskHeader';
 
 export default function TaskList({
   checklistUid,

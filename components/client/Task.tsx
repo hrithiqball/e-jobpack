@@ -3,7 +3,7 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { maintenance, task } from '@prisma/client';
-import Loading from './Loading';
+import Loading from '@/components/client/Loading';
 import {
   Button,
   ButtonGroup,

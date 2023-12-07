@@ -2,13 +2,13 @@
 
 import React, { Key, useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
-import Loading from './Loading';
+import Loading from '@/components/client/Loading';
 import { asset, checklist_use, maintenance } from '@prisma/client';
 import { IoIosArrowBack } from 'react-icons/io';
 import { AiOutlineEdit, AiOutlinePlusSquare } from 'react-icons/ai';
-import AssetDetails from './AssetDetails';
-import AssetMaintenance from './AssetMaintenance';
-import AssetAttachment from './AssetAttachment';
+import AssetDetails from '@/components/client/AssetDetails';
+import AssetMaintenance from '@/components/client/AssetMaintenance';
+import AssetAttachment from '@/components/client/AssetAttachment';
 import {
   Button,
   Card,

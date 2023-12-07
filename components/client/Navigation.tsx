@@ -12,7 +12,7 @@ import { BsSun } from 'react-icons/bs';
 import { RiMoonClearFill } from 'react-icons/ri';
 import { useTheme } from 'next-themes';
 import { MetadataUser } from '@/utils/model/user';
-import clientIcon from '@/public/image/client-icon.svg'
+import clientIcon from '@/public/image/client-icon.svg';
 import {
   Navbar,
   NavbarBrand,

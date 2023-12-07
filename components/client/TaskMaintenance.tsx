@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
-import Loading from './Loading';
+import Loading from '@/components/client/Loading';
 import { Button, Card, Divider } from '@nextui-org/react';
 import Link from 'next/link';
 import { IoIosArrowBack } from 'react-icons/io';

@@ -1,10 +1,18 @@
 'use client';
 
-import { Button, Divider } from '@nextui-org/react';
 import React from 'react';
+import { Button, Divider } from '@nextui-org/react';
 import { LuActivity } from 'react-icons/lu';
+import { isEditState, useDispatch, useSelector, setIsEdit } from '@/lib/redux';
 
 export default function TaskHeader() {
+  const dispatch = useDispatch();
+  const isEdit = useSelector(isEditState);
+
+  function handleEdit() {
+    dispatch(setIsEdit(!isEdit));
+  }
+
   return (
     <div>
       <div className="flex mb-4 items-center">
@@ -21,7 +29,7 @@ export default function TaskHeader() {
           <span className=" font-bold text-medium">Remarks</span>
         </div>
         <div className="flex-2 space-x-2">
-          <Button isIconOnly>
+          <Button onClick={handleEdit} isIconOnly>
             <LuActivity />
           </Button>
           <Button isIconOnly>

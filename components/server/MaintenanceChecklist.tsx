@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import { fetchTaskListByChecklistUid } from '@/utils/actions/route';
 import { checklist, maintenance } from '@prisma/client';
 import TaskMaintenanceChecklist from '@/components/client/TaskMaintenanceChecklist';
-import TaskList from './TaskList';
+import TaskList from '@/components/server/TaskList';
 
 export default async function MaintenanceChecklist({
   maintenance,
