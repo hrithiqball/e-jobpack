@@ -1,7 +1,8 @@
 import React, { Fragment } from 'react';
 import { task } from '@prisma/client';
-import TaskItem from '@/components/client/TaskItem';
+import TaskItem from '@/components/server/TaskItem';
 import TaskAdd from '@/components/client/TaskAdd';
+import TaskHeader from '../client/TaskHeader';
 
 export default function TaskList({
   checklistUid,
@@ -12,6 +13,7 @@ export default function TaskList({
 }) {
   return (
     <Fragment>
+      <TaskHeader />
       {taskList.map(task => (
         <TaskItem key={task.uid} task={task} />
       ))}
