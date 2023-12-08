@@ -26,16 +26,18 @@ import Link from 'next/link';
 import { IoIosArrowBack } from 'react-icons/io';
 import { AiOutlineEdit } from 'react-icons/ai';
 import { FaRegFileExcel, FaRegFilePdf } from 'react-icons/fa';
-import { checklist, maintenance } from '@prisma/client';
+import { checklist, checklist_library, maintenance } from '@prisma/client';
 import { LuFilePlus2, LuChevronDown } from 'react-icons/lu';
 import moment from 'moment';
 import { createChecklist } from '@/utils/actions/route';
 
 export default function TaskMaintenance({
   maintenance,
+  checklistLibraryList,
   children,
 }: {
   maintenance: maintenance;
+  checklistLibraryList: checklist_library[];
   children: React.ReactNode;
 }) {
   let [isPending, startTransition] = useTransition();
@@ -145,14 +147,28 @@ export default function TaskMaintenance({
                   Add New Checklist
                 </ModalHeader>
                 <ModalBody>
+                  {/* <Select label="Checklist Library" variant="faded">
+                    {!checklistLibraryList.length && (
+                      <SelectItem key="err">No library found</SelectItem>
+                    )}
+                    {checklistLibraryList.map(library => (
+                      <SelectItem key={library.uid} value={library.uid}>
+                        <span>{library.title}</span>
+                      </SelectItem>
+                    ))}
+                  </Select> */}
                   <Select label="Checklist Library" variant="faded">
-                    <SelectItem key="1" value="1">
-                      <span>Checklist 1</span>
-                    </SelectItem>
-                    <SelectItem key="2" value="2">
-                      <span>Checklist 2</span>
-                    </SelectItem>
+                    {!checklistLibraryList || !checklistLibraryList.length ? (
+                      <SelectItem key="err">No library found</SelectItem>
+                    ) : (
+                      checklistLibraryList.map(library => (
+                        <SelectItem key={library.uid} value={library.uid}>
+                          <span>{library.title}</span>
+                        </SelectItem>
+                      ))
+                    )}
                   </Select>
+
                   <Divider />
                   <Input
                     value={newChecklistTitle}

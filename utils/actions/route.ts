@@ -4,6 +4,7 @@ import {
   Prisma,
   asset,
   checklist,
+  checklist_library,
   checklist_use,
   maintenance,
   subtask,
@@ -253,6 +254,8 @@ export async function fetchChecklistListByMaintenanceId(maintenanceId: string) {
   }
 }
 
+// checklist use
+
 /**
  * fetch checklist use by asset
  * @param assetUid
@@ -270,6 +273,17 @@ export async function fetchChecklistUseList(assetUid: string) {
     const result: Result<checklist_use[]> = await response.json();
 
     return result;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+// checklist library
+
+export async function fetchChecklistLibraryList() {
+  try {
+    return await prisma.checklist_library.findMany();
   } catch (error) {
     console.error(error);
     throw error;
