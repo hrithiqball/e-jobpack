@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { fetchTaskListByChecklistUid } from '@/utils/actions/route';
+import { fetchTaskList } from '@/app/api/server-actions';
 import { checklist, maintenance } from '@prisma/client';
 import TaskMaintenanceChecklist from '@/components/client/TaskMaintenanceChecklist';
 import TaskList from '@/components/server/TaskList';
@@ -11,13 +11,12 @@ export default async function MaintenanceChecklist({
   maintenance: maintenance;
   checklist: checklist;
 }) {
-  const taskListResult = await fetchTaskListByChecklistUid(checklist.uid);
-  const taskListData = taskListResult.data ?? [];
+  const taskList = await fetchTaskList(checklist.uid);
 
   return (
     <Fragment>
       <TaskMaintenanceChecklist checklist={checklist}>
-        <TaskList checklistUid={checklist.uid} taskList={taskListData} />
+        <TaskList checklistUid={checklist.uid} taskList={taskList} />
       </TaskMaintenanceChecklist>
     </Fragment>
   );

@@ -1,12 +1,11 @@
 import SignOutItem from '@/components/client/SignOutItem';
-import { readUserInfo, fetchMaintenanceList } from '@/utils/actions/route';
+import { readUserInfo, fetchMaintenanceList } from '@/app/api/server-actions';
 import Task from '@/components/client/Task';
 import Navigation from '@/components/client/Navigation';
 
 export default async function TaskPage() {
-  const maintenanceListResult = await fetchMaintenanceList();
-  const maintenanceListData = maintenanceListResult.data ?? [];
-
+  const maintenanceList = await fetchMaintenanceList();
+  console.log(maintenanceList);
   const userInfo = await readUserInfo();
 
   return (
@@ -14,7 +13,7 @@ export default async function TaskPage() {
       <Navigation user={userInfo}>
         <SignOutItem />
       </Navigation>
-      <Task maintenanceList={maintenanceListData} />
+      <Task maintenanceList={maintenanceList} />
     </div>
   );
 }

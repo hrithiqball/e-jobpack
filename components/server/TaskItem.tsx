@@ -1,16 +1,14 @@
 import React from 'react';
 import SubtaskList from '@/components/server/SubtaskList';
-import { fetchSubtaskListByTaskUid } from '@/utils/actions/route';
+import { fetchSubtaskListByTaskUid } from '@/app/api/server-actions';
 import { subtask, task } from '@prisma/client';
 import TaskRow from '@/components/client/TaskRow';
 
 export default async function TaskItem({ task }: { task: task }) {
-  let subtaskResult;
-  let subtaskData: subtask[] = [];
+  let subtaskList: subtask[] = [];
 
   if (task.have_subtask) {
-    subtaskResult = await fetchSubtaskListByTaskUid(task.uid);
-    subtaskData = subtaskResult.data ?? [];
+    subtaskList = await fetchSubtaskListByTaskUid(task.uid);
   }
 
   return (
@@ -18,7 +16,7 @@ export default async function TaskItem({ task }: { task: task }) {
       <TaskRow task={task} />
       {task.have_subtask && (
         <div className="mt-2">
-          <SubtaskList subtaskList={subtaskData} />
+          <SubtaskList subtaskList={subtaskList} />
         </div>
       )}
     </div>

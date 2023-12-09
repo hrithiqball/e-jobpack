@@ -2,7 +2,7 @@ import { cookies } from 'next/headers';
 import { createClient } from '@/utils/supabase/server';
 import AuthButton from '@/components/client/AuthButton';
 import { redirect } from 'next/navigation';
-import { readUserSession } from '@/utils/actions/route';
+import { readUserSession } from '@/app/api/server-actions';
 import { Fragment } from 'react';
 import Link from 'next/link';
 

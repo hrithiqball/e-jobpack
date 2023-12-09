@@ -4,9 +4,9 @@ import SignOutItem from '@/components/client/SignOutItem';
 import TaskMaintenance from '@/components/client/TaskMaintenance';
 import {
   readUserInfo,
-  fetchChecklistListByMaintenanceId,
+  fetchChecklistList,
   fetchChecklistLibraryList,
-} from '@/utils/actions/route';
+} from '@/app/api/server-actions';
 import { maintenance } from '@prisma/client';
 import React from 'react';
 
@@ -21,8 +21,7 @@ export default async function TaskItemPage({
   const parsedMaintenance = JSON.parse(
     searchParams.maintenance,
   ) satisfies maintenance;
-  const checklistResult = await fetchChecklistListByMaintenanceId(params.uid);
-  const checklistData = checklistResult.data ?? [];
+  const checklistList = await fetchChecklistList(params.uid);
   const checklistLibrary = await fetchChecklistLibraryList();
 
   return (
@@ -36,7 +35,7 @@ export default async function TaskItemPage({
       >
         <MaintenanceChecklistList
           maintenance={parsedMaintenance}
-          checklistList={checklistData}
+          checklistList={checklistList}
         />
       </TaskMaintenance>
     </div>

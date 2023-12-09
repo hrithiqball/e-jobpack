@@ -2,7 +2,7 @@
 
 import React, { useState, useTransition } from 'react';
 import { SignUpUser } from '@/utils/model/user';
-import { signUp } from '@/utils/actions/route';
+import { signUp } from '@/app/api/server-actions';
 import {
   Button,
   Card,

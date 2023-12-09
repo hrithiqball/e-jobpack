@@ -1,5 +1,5 @@
 import React from 'react';
-import { signOut } from '@/utils/actions/route';
+import { signOut } from '@/app/api/server-actions';
 
 export default async function SignOutItem() {
   return (

@@ -1,4 +1,4 @@
-import { readUserInfo, fetchAssetList } from '@/utils/actions/route';
+import { readUserInfo, fetchAssetList } from '@/app/api/server-actions';
 import AssetComponent from '@/components/client/AssetList';
 import SignOutItem from '@/components/client/SignOutItem';
 import Navigation from '@/components/client/Navigation';

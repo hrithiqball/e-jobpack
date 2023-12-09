@@ -5,7 +5,7 @@ import {
   readUserInfo,
   fetchChecklistUseList,
   fetchMaintenanceList,
-} from '@/utils/actions/route';
+} from '@/app/api/server-actions';
 import { asset } from '@prisma/client';
 
 export default async function AssetItemPage({
@@ -30,10 +30,8 @@ export default async function AssetItemPage({
   };
 }) {
   const userInfo = await readUserInfo();
-  const maintenanceListResult = await fetchMaintenanceList(params.uid);
-  const checklistUseResult = await fetchChecklistUseList(params.uid);
-  const maintenanceList = maintenanceListResult.data ?? [];
-  const checklistUse = checklistUseResult.data ?? [];
+  const maintenanceList = await fetchMaintenanceList(params.uid);
+  const checklistUse = await fetchChecklistUseList(params.uid);
 
   const asset: asset = {
     uid: params.uid,

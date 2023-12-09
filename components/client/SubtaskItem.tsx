@@ -2,9 +2,10 @@
 
 import React, { useState, useTransition } from 'react';
 import { subtask } from '@prisma/client';
-import { updateSubtaskCompletion } from '@/utils/actions/route';
+import { updateSubtaskCompletion } from '@/app/api/server-actions';
 import { Checkbox } from '@nextui-org/react';
 import { VscIndent } from 'react-icons/vsc';
+import { UpdateSubtask } from '@/app/api/subtask/[uid]/route';
 
 export default function SubtaskItem({ subtask }: { subtask: subtask }) {
   let [isPending, startTransition] = useTransition();
@@ -14,8 +15,12 @@ export default function SubtaskItem({ subtask }: { subtask: subtask }) {
   const [subtaskActivity, setSubtaskActivity] = useState(subtask.task_activity);
 
   function updateCompletion(isComplete: boolean) {
+    const data: UpdateSubtask = {
+      is_complete: isComplete,
+    };
+
     startTransition(() => {
-      updateSubtaskCompletion(subtask.uid, isComplete);
+      updateSubtaskCompletion(subtask.uid, data);
     });
   }
 

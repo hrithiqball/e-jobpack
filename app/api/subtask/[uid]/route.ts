@@ -21,7 +21,7 @@ const UpdateSubtaskSchema = z.object({
 /**
  * @description Type for updating an subtask
  */
-type UpdateSubtask = z.infer<typeof UpdateSubtaskSchema>;
+export type UpdateSubtask = z.infer<typeof UpdateSubtaskSchema>;
 
 /**
  * This asynchronous function handles GET requests.

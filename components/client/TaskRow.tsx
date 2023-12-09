@@ -11,7 +11,7 @@ import {
   Switch,
   Textarea,
 } from '@nextui-org/react';
-import { updateTask } from '@/utils/actions/route';
+import { updateTask } from '@/app/api/server-actions';
 import { UpdateTask } from '@/app/api/task/[uid]/route';
 import { LuTrash2 } from 'react-icons/lu';
 import { isEditState, useSelector } from '@/lib/redux';
