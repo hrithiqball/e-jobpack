@@ -1,16 +1,34 @@
 {
-	"cSpell.words": [
-		"daygrid",
-		"exceljs",
-		"fullcalendar",
-		"icam",
-		"kyziq",
-		"maintainee",
-		"nextjs",
-		"nextui",
-		"supabase",
-		"tailwindcss",
-		"trpc",
-		"YYMMDDHH"
-	]
+  "cSpell.words": [
+    "chartjs",
+    "daygrid",
+    "exceljs",
+    "fullcalendar",
+    "icam",
+    "kyziq",
+    "maintainee",
+    "nextjs",
+    "nextui",
+    "Parens",
+    "reduxjs",
+    "supabase",
+    "tailwindcss",
+    "toastify",
+    "trpc",
+    "YYMMDDHH"
+  ],
+  "material-icon-theme.activeIconPack": "react_redux",
+  "material-icon-theme.files.associations": {
+    "supabase/client.ts": "supabase",
+    "supabase/middleware.ts": "supabase",
+    "supabase/server.ts": "supabase",
+    "prisma/prisma.ts": "prisma"
+  },
+  "material-icon-theme.folders.associations": {
+    "utils/actions": "connection",
+    "lib/redux": "redux-actions",
+    "asset": "",
+    "callback": "error",
+    "(route)": "routes"
+  }
 }

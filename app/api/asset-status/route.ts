@@ -1,16 +1,16 @@
-import { prisma } from "@/prisma/prisma";
-import { ResponseMessage } from "@/lib/result";
-import { asset_status } from "@prisma/client";
-import moment from "moment";
-import { NextRequest, NextResponse } from "next/server";
-import z from "zod";
+import { prisma } from '@/prisma/prisma';
+import { ResponseMessage } from '@/utils/function/result';
+import { asset_status } from '@prisma/client';
+import moment from 'moment';
+import { NextRequest, NextResponse } from 'next/server';
+import z from 'zod';
 
 /**
  * @description Validate the request body for adding a new asset-status
  */
 const AddAssetStatusSchema = z.object({
-	title: z.string(),
-	color: z.string(),
+  title: z.string(),
+  color: z.string(),
 });
 
 /**
@@ -25,40 +25,40 @@ type AddAssetStatus = z.infer<typeof AddAssetStatusSchema> & { uid: string };
  * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset-status.
  */
 export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
-	try {
-		const assetStatuses: asset_status[] = await prisma.asset_status.findMany();
+  try {
+    const assetStatuses: asset_status[] = await prisma.asset_status.findMany();
 
-		if (assetStatuses.length > 0) {
-			return new NextResponse(
-				JSON.stringify(
-					ResponseMessage(
-						200,
-						`Successfully fetched ${assetStatuses.length} status-assets`
-					)
-				),
-				{
-					status: 200,
-					headers: { "Content-Type": "application/json" },
-				}
-			);
-		} else {
-			return new NextResponse(
-				JSON.stringify(ResponseMessage(204, `No assets found`)),
-				{
-					status: 204,
-					headers: { "Content-Type": "application/json" },
-				}
-			);
-		}
-	} catch (error: any) {
-		return new NextResponse(
-			JSON.stringify(ResponseMessage(500, error.message ?? error)),
-			{
-				status: 500,
-				headers: { "Content-Type": "application/json" },
-			}
-		);
-	}
+    if (assetStatuses.length > 0) {
+      return new NextResponse(
+        JSON.stringify(
+          ResponseMessage(
+            200,
+            `Successfully fetched ${assetStatuses.length} status-assets`,
+          ),
+        ),
+        {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        },
+      );
+    } else {
+      return new NextResponse(
+        JSON.stringify(ResponseMessage(204, `No assets found`)),
+        {
+          status: 204,
+          headers: { 'Content-Type': 'application/json' },
+        },
+      );
+    }
+  } catch (error: any) {
+    return new NextResponse(
+      JSON.stringify(ResponseMessage(500, error.message ?? error)),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    );
+  }
 }
 
 /**
@@ -68,66 +68,66 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
  * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset-status.
  */
 export async function POST(nextRequest: NextRequest) {
-	try {
-		const json = await nextRequest.json();
+  try {
+    const json = await nextRequest.json();
 
-		const result = AddAssetStatusSchema.safeParse(json);
-		if (result.success) {
-			const req: AddAssetStatus = {
-				...result.data,
-				uid: `ASTATUS-${moment().format("YYMMDDHHmmssSSS")}`,
-			};
+    const result = AddAssetStatusSchema.safeParse(json);
+    if (result.success) {
+      const req: AddAssetStatus = {
+        ...result.data,
+        uid: `ASTATUS-${moment().format('YYMMDDHHmmssSSS')}`,
+      };
 
-			const assetStatus: asset_status = await prisma.asset_status.create({
-				data: req,
-			});
+      const assetStatus: asset_status = await prisma.asset_status.create({
+        data: req,
+      });
 
-			return new NextResponse(
-				JSON.stringify(
-					ResponseMessage(
-						200,
-						`Successfully created asset status ${assetStatus.uid}`,
-						assetStatus
-					)
-				),
-				{
-					status: 200,
-					headers: { "Content-Type": "application/json" },
-				}
-			);
-		} else {
-			return new NextResponse(
-				JSON.stringify(
-					ResponseMessage(
-						400,
-						result.error.issues.map((issue) => issue.message).join(", "),
-						null,
-						result.error.issues.map((issue) => issue.code.toString()).join("")
-					)
-				),
-				{
-					status: 400,
-					headers: { "Content-Type": "application/json" },
-				}
-			);
-		}
-	} catch (error: any) {
-		if (error.code === "P2002") {
-			return new NextResponse(
-				JSON.stringify(ResponseMessage(409, `Asset status already existed`)),
-				{
-					status: 409,
-					headers: { "Content-Type": "application/json" },
-				}
-			);
-		}
+      return new NextResponse(
+        JSON.stringify(
+          ResponseMessage(
+            200,
+            `Successfully created asset status ${assetStatus.uid}`,
+            assetStatus,
+          ),
+        ),
+        {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        },
+      );
+    } else {
+      return new NextResponse(
+        JSON.stringify(
+          ResponseMessage(
+            400,
+            result.error.issues.map(issue => issue.message).join(', '),
+            null,
+            result.error.issues.map(issue => issue.code.toString()).join(''),
+          ),
+        ),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        },
+      );
+    }
+  } catch (error: any) {
+    if (error.code === 'P2002') {
+      return new NextResponse(
+        JSON.stringify(ResponseMessage(409, `Asset status already existed`)),
+        {
+          status: 409,
+          headers: { 'Content-Type': 'application/json' },
+        },
+      );
+    }
 
-		return new NextResponse(
-			JSON.stringify(ResponseMessage(500, error.message)),
-			{
-				status: 500,
-				headers: { "Content-Type": "application/json" },
-			}
-		);
-	}
+    return new NextResponse(
+      JSON.stringify(ResponseMessage(500, error.message)),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    );
+  }
 }
