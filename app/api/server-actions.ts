@@ -4,8 +4,6 @@ import {
   Prisma,
   asset,
   checklist,
-  checklist_library,
-  checklist_use,
   maintenance,
   subtask,
   task,
@@ -21,8 +19,6 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
 import { Result } from '@/utils/function/result';
 import { prisma } from '@/prisma/prisma';
-
-const origin = process.env.NEXT_PUBLIC_ORIGIN;
 
 export async function signIn(formData: FormData) {
   try {
@@ -119,16 +115,6 @@ export async function readUserInfo(): Promise<MetadataUser | null> {
     const { data } = await supabase.auth.getUser();
 
     if (data.user) {
-      // const response: Response = await fetch(
-      //   `${origin}/api/user/${data.user.id}`,
-      //   { method: 'GET' },
-      // );
-      // const result: Result<user> = await response.json();
-
-      // if (result.statusCode !== 200) {
-      //   throw new Error(result.message);
-      // }
-
       const user = await prisma.user.findUnique({
         where: { user_id: data.user.id },
       });
@@ -160,14 +146,6 @@ export async function readUserInfo(): Promise<MetadataUser | null> {
 
 export async function fetchAssetList(): Promise<asset[]> {
   try {
-    // const response: Response = await fetch(`${origin}/api/asset`, {
-    //   headers: { 'Content-Type': 'application/json' },
-    //   method: 'GET',
-    // });
-    // const result: Result<asset[]> = await response.json();
-
-    // return result;
-
     return await prisma.asset.findMany({
       orderBy: {
         updated_on: 'desc',
@@ -183,14 +161,6 @@ export async function fetchAssetList(): Promise<asset[]> {
 
 export async function fetchMaintenanceItemById(uid: string) {
   try {
-    // const response: Response = await fetch(`${origin}/api/maintenance/${uid}`, {
-    //   headers: { 'Content-Type': 'application/json' },
-    //   method: 'GET',
-    // });
-    // const result: Result<maintenance> = await response.json();
-
-    // return result;
-
     return await prisma.maintenance.findUnique({
       where: { uid },
     });
@@ -204,17 +174,6 @@ export async function fetchMaintenanceList(
   assetUid?: string,
 ): Promise<maintenance[]> {
   try {
-    // const response: Response = await fetch(
-    //   `${origin}/api/maintenance?asset_uid=${assetUid ?? ''}`,
-    //   {
-    //     headers: { 'Content-Type': 'application/json' },
-    //     method: 'GET',
-    //   },
-    // );
-    // const result: Result<maintenance[]> = await response.json();
-
-    // return result;
-
     const filters: Prisma.maintenanceWhereInput[] = [];
     const orderBy: Prisma.maintenanceOrderByWithRelationInput[] = [];
 
@@ -257,16 +216,6 @@ export async function createChecklist(data: checklist) {
 
 export async function fetchChecklistList(maintenance_uid?: string) {
   try {
-    // const response: Response = await fetch(
-    //   `${origin}/api/checklist?maintenance_uid=${maintenanceId ?? ''}`,
-    //   {
-    //     headers: { 'Content-Type': 'application/json' },
-    //     method: 'GET',
-    //   },
-    // );
-    // const result: Result<checklist[]> = await response.json();
-
-    // return result;
     const filters: Prisma.checklistWhereInput[] = [];
     const orderBy: Prisma.checklistOrderByWithRelationInput[] = [];
 
@@ -301,16 +250,6 @@ export async function fetchChecklistList(maintenance_uid?: string) {
  */
 export async function fetchChecklistUseList(uid: string) {
   try {
-    // const response: Response = await fetch(
-    //   `${origin}/api/checklist-use?asset_uid=${assetUid ?? ''}`,
-    //   {
-    //     headers: { 'Content-Type': 'application/json' },
-    //     method: 'GET',
-    //   },
-    // );
-    // const result: Result<checklist_use[]> = await response.json();
-
-    // return result;
     return await prisma.checklist_use.findMany({
       where: { uid },
     });
@@ -370,14 +309,6 @@ export async function createTask(task: task): Promise<task | null> {
  */
 export async function fetchTaskList(checklist_uid?: string): Promise<task[]> {
   try {
-    // const response: Response = await fetch(`${origin}/api/task`, {
-    //   headers: { 'Content-Type': 'application/json' },
-    //   method: 'GET',
-    // });
-    // const result: Result<task[]> = await response.json();
-
-    // return result;
-
     const filters: Prisma.taskWhereInput[] = [];
     const orderBy: Prisma.taskOrderByWithRelationInput[] = [];
 
@@ -426,16 +357,6 @@ export async function fetchSubtaskListByTaskUid(
   task_uid?: string,
 ): Promise<subtask[]> {
   try {
-    //   const response: Response = await fetch(
-    //     `${origin}/api/subtask?task_uid=${task_uid}`,
-    //     {
-    //       headers: { 'Content-Type': 'application/json' },
-    //       method: 'GET',
-    //     },
-    //   );
-    //   const result: Result<subtask[]> = await response.json();
-    //   return result;
-
     const filters: Prisma.subtaskWhereInput[] = [];
     const orderBy: Prisma.subtaskOrderByWithRelationInput[] = [];
 
@@ -461,25 +382,9 @@ export async function fetchSubtaskListByTaskUid(
   }
 }
 
-export async function updateSubtaskCompletion(
-  uid: string,
-  data: UpdateSubtask,
-) {
+export async function updateSubtask(uid: string, data: UpdateSubtask) {
   try {
-    // const response: Response = await fetch(
-    //   `${origin}/api/subtask/${subtaskUid}`,
-    //   {
-    //     headers: { 'Content-Type': 'application/json' },
-    //     method: 'PATCH',
-    //     body: JSON.stringify({ is_complete }),
-    //   },
-    // );
-    // const result: Result<subtask> = await response.json();
-
-    // console.log(result.data?.is_complete);
-    // return result;
-
-    return await prisma.task.update({
+    return await prisma.subtask.update({
       where: { uid },
       data,
     });

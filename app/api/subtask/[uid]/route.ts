@@ -16,6 +16,9 @@ const UpdateSubtaskSchema = z.object({
   deadline: z.date().optional(),
   completed_by: z.string().optional(),
   task_order: z.number().optional(),
+  task_bool: z.boolean().optional(),
+  task_selected: z.string().array().optional(),
+  task_number_val: z.number().optional(),
 });
 
 /**

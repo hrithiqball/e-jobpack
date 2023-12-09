@@ -78,35 +78,37 @@ export default function TaskRow({ task }: { task: task }) {
       </div>
       <div className="flex-1 px-4">
         {taskType === 'check' && (
-          <Checkbox
-            isSelected={taskIsComplete}
-            onValueChange={() => {
-              setTaskIsComplete(!taskIsComplete);
-              const updateTask: UpdateTask = {
-                is_complete: !taskIsComplete,
-              };
-              updateTaskClient(updateTask);
-            }}
-          >
-            {taskActivity}
-          </Checkbox>
+          <div className="flex justify-center">
+            <Checkbox
+              isSelected={taskIsComplete}
+              onValueChange={() => {
+                setTaskIsComplete(!taskIsComplete);
+                const updateTask: UpdateTask = {
+                  is_complete: !taskIsComplete,
+                };
+                updateTaskClient(updateTask);
+              }}
+            />
+          </div>
         )}
         {taskType === 'choice' && (
-          <Switch
-            className="flex-1"
-            isSelected={taskBool}
-            onValueChange={() => {
-              setTaskBool(!taskBool);
-              const taskUpdate: UpdateTask = {
-                task_bool: !taskBool,
-              };
-              updateTaskClient(taskUpdate);
-            }}
-          />
+          <div className="flex justify-center">
+            <Switch
+              className="flex-1"
+              isSelected={taskBool}
+              onValueChange={() => {
+                setTaskBool(!taskBool);
+                const taskUpdate: UpdateTask = {
+                  task_bool: !taskBool,
+                };
+                updateTaskClient(taskUpdate);
+              }}
+            />
+          </div>
         )}
         {(taskType === 'selectOne' || taskType === 'selectMultiple') && (
           <Select
-            variant="bordered"
+            variant="faded"
             selectedKeys={taskSelected}
             selectionMode={
               taskType === 'selectMultiple' ? 'multiple' : 'single'
@@ -124,7 +126,7 @@ export default function TaskRow({ task }: { task: task }) {
         )}
         {taskType === 'number' && (
           <Input
-            variant="bordered"
+            variant="faded"
             value={taskNumberValue}
             onValueChange={setTaskNumberValue}
             isInvalid={isInvalid}
@@ -142,7 +144,7 @@ export default function TaskRow({ task }: { task: task }) {
       </div>
       <div className="flex-1 px-4">
         <Textarea
-          variant="bordered"
+          variant="faded"
           maxRows={1}
           value={taskRemark}
           onValueChange={setTaskRemark}

@@ -1,7 +1,7 @@
 import MaintenanceChecklistList from '@/components/server/MaintenanceChecklistList';
 import Navigation from '@/components/client/Navigation';
 import SignOutItem from '@/components/client/SignOutItem';
-import TaskMaintenance from '@/components/client/TaskMaintenance';
+import TaskMaintenance from '@/components/client/task/TaskMaintenance';
 import {
   readUserInfo,
   fetchChecklistList,
