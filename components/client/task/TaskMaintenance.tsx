@@ -276,7 +276,20 @@ export default function TaskMaintenance({
         // Row 7
         worksheet.addRow([]);
 
+        worksheet.addRows([
+          [3, 'Alex', '44'],
+          { id: 4, name: 'Margaret', age: 32 },
+        ]);
+
+        worksheet.addRow([2, 'Mary Sue', 22]);
+
         // Row 8
+
+        if (!checklistResult.data) {
+          return;
+        }
+
+        const hye = await returningStuff();
 
         if (checklistResult.data) {
           checklistResult.data.forEach(async checklist => {
@@ -285,8 +298,8 @@ export default function TaskMaintenance({
             ).then(res => res.json());
 
             if (taskListResult.data) {
-              const dummyTask: SimplifiedTask[] = taskListResult.data.map(
-                task => {
+              const taskListSimplified: SimplifiedTask[] =
+                taskListResult.data.map(task => {
                   return {
                     uid: task.uid,
                     no: task.task_order,
@@ -294,17 +307,26 @@ export default function TaskMaintenance({
                     remarks: task.description,
                     isComplete: task.is_complete ? 'Yes' : 'No',
                   };
-                },
-              );
+                });
 
-              console.log(dummyTask);
-              worksheet.addRow([checklist.title]);
+              console.log(taskListSimplified);
+              worksheet.addRow([2, 'Mary Suez', 22]);
+              worksheet.addRow([{ id: checklist.title }]);
               worksheet.addRow(['No.', 'Id', 'Task', 'Remarks', 'Is Complete']);
+              console.log('here');
+            } else {
+              console.error('apparently empty here');
             }
 
             // worksheet.addRow(dummyTask);
           });
+        } else {
+          worksheet.addRow([2, 'Mary Suez', 872634872534]);
         }
+
+        console.log('here 23526');
+
+        worksheet.addRow([2, 'Mary Suez', 223]);
 
         // // Row 8
         // worksheet.addRow(['No.', 'Id', 'Task', 'Remarks', 'Is Complete']);
@@ -363,6 +385,10 @@ export default function TaskMaintenance({
     };
 
     await saveExcel();
+  }
+
+  async function returningStuff() {
+    return 'hye';
   }
 
   if (!mounted) return <Loading label="Hang on tight" />;

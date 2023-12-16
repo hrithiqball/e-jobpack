@@ -26,11 +26,11 @@ model asset {
   status_uid                        String?
   updated_on                        DateTime        @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
   person_in_charge                  String?
-  user_asset_created_byTouser       user            @relation("asset_created_byTouser", fields: [created_by], references: [uid], onDelete: Cascade)
-  user_asset_person_in_chargeTouser user?           @relation("asset_person_in_chargeTouser", fields: [person_in_charge], references: [uid], onDelete: Cascade)
+  user_asset_created_byTouser       user            @relation("asset_created_byTouser", fields: [created_by], references: [id], onDelete: Cascade)
+  user_asset_person_in_chargeTouser user?           @relation("asset_person_in_chargeTouser", fields: [person_in_charge], references: [id], onDelete: Cascade)
   asset_status                      asset_status?   @relation(fields: [status_uid], references: [uid], onDelete: Cascade)
   asset_type                        asset_type?     @relation(fields: [type], references: [uid], onDelete: Cascade)
-  user_asset_updated_byTouser       user            @relation("asset_updated_byTouser", fields: [updated_by], references: [uid], onDelete: Cascade)
+  user_asset_updated_byTouser       user            @relation("asset_updated_byTouser", fields: [updated_by], references: [id], onDelete: Cascade)
   asset_tags                        asset_tags[]
   checklist_use                     checklist_use[]
   maintenance                       maintenance[]
@@ -74,8 +74,8 @@ model asset_tags_library {
   created_by                               String
   updated_by                               String
   asset_tags                               asset_tags[]
-  user_asset_tags_library_created_byTouser user         @relation("asset_tags_library_created_byTouser", fields: [created_by], references: [uid], onDelete: Cascade)
-  user_asset_tags_library_updated_byTouser user         @relation("asset_tags_library_updated_byTouser", fields: [updated_by], references: [uid], onDelete: Cascade)
+  user_asset_tags_library_created_byTouser user         @relation("asset_tags_library_created_byTouser", fields: [created_by], references: [id], onDelete: Cascade)
+  user_asset_tags_library_updated_byTouser user         @relation("asset_tags_library_updated_byTouser", fields: [updated_by], references: [id], onDelete: Cascade)
 
   @@schema("public")
 }
@@ -92,8 +92,8 @@ model asset_type {
   description                      String?
   icon                             String?
   asset                            asset[]
-  user_asset_type_created_byTouser user     @relation("asset_type_created_byTouser", fields: [created_by], references: [uid], onDelete: Cascade)
-  user_asset_type_updated_byTouser user     @relation("asset_type_updated_byTouser", fields: [updated_by], references: [uid], onDelete: Cascade)
+  user_asset_type_created_byTouser user     @relation("asset_type_created_byTouser", fields: [created_by], references: [id], onDelete: Cascade)
+  user_asset_type_updated_byTouser user     @relation("asset_type_updated_byTouser", fields: [updated_by], references: [id], onDelete: Cascade)
 
   @@schema("public")
 }
@@ -111,9 +111,9 @@ model checklist {
   color                           String?
   icon                            String?
   maintenance_uid                 String
-  user_checklist_created_byTouser user        @relation("checklist_created_byTouser", fields: [created_by], references: [uid], onDelete: Cascade)
+  user_checklist_created_byTouser user        @relation("checklist_created_byTouser", fields: [created_by], references: [id], onDelete: Cascade)
   maintenance                     maintenance @relation(fields: [maintenance_uid], references: [uid], onDelete: Cascade)
-  user_checklist_updated_byTouser user        @relation("checklist_updated_byTouser", fields: [updated_by], references: [uid], onDelete: Cascade)
+  user_checklist_updated_byTouser user        @relation("checklist_updated_byTouser", fields: [updated_by], references: [id], onDelete: Cascade)
   task                            task[]
 
   @@schema("public")
@@ -131,8 +131,8 @@ model checklist_library {
   description                             String?
   color                                   String?
   icon                                    String?
-  user_checklist_library_created_byTouser user            @relation("checklist_library_created_byTouser", fields: [created_by], references: [uid], onDelete: Cascade)
-  user_checklist_library_updated_byTouser user            @relation("checklist_library_updated_byTouser", fields: [updated_by], references: [uid], onDelete: Cascade)
+  user_checklist_library_created_byTouser user            @relation("checklist_library_created_byTouser", fields: [created_by], references: [id], onDelete: Cascade)
+  user_checklist_library_updated_byTouser user            @relation("checklist_library_updated_byTouser", fields: [updated_by], references: [id], onDelete: Cascade)
   checklist_use                           checklist_use[]
 
   @@schema("public")
@@ -153,8 +153,8 @@ model checklist_use {
   asset_uid                           String
   asset                               asset              @relation(fields: [asset_uid], references: [uid], onDelete: Cascade)
   checklist_library                   checklist_library? @relation(fields: [checklist_library_uid], references: [uid], onDelete: Cascade)
-  user_checklist_use_created_byTouser user?              @relation("checklist_use_created_byTouser", fields: [created_by], references: [uid], onDelete: NoAction, onUpdate: NoAction)
-  user_checklist_use_updated_byTouser user?              @relation("checklist_use_updated_byTouser", fields: [updated_by], references: [uid], onDelete: NoAction, onUpdate: NoAction)
+  user_checklist_use_created_byTouser user?              @relation("checklist_use_created_byTouser", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_checklist_use_updated_byTouser user?              @relation("checklist_use_updated_byTouser", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   task_use                            task_use[]
 
   @@schema("public")
@@ -181,7 +181,7 @@ model history {
   asset_type_uid        String?
   asset_tags_uid        String?
   user_uid              String?
-  user                  user     @relation(fields: [action_by], references: [uid])
+  user                  user     @relation(fields: [action_by], references: [id])
 
   @@schema("public")
 }
@@ -236,8 +236,8 @@ model subtask_library {
   created_by                            String
   updated_on                            DateTime      @db.Timestamptz(6)
   updated_by                            String
-  user_subtask_library_created_byTouser user          @relation("subtask_library_created_byTouser", fields: [created_by], references: [uid], onDelete: Cascade)
-  user_subtask_library_updated_byTouser user          @relation("subtask_library_updated_byTouser", fields: [updated_by], references: [uid], onDelete: Cascade)
+  user_subtask_library_created_byTouser user          @relation("subtask_library_created_byTouser", fields: [created_by], references: [id], onDelete: Cascade)
+  user_subtask_library_updated_byTouser user          @relation("subtask_library_updated_byTouser", fields: [updated_by], references: [id], onDelete: Cascade)
   subtask_use                           subtask_use[]
 
   @@schema("public")
@@ -295,8 +295,8 @@ model task_library {
   description                        String?
   have_subtask                       Boolean
   task_order                         BigInt
-  user_task_library_created_byTouser user       @relation("task_library_created_byTouser", fields: [created_by], references: [uid], onDelete: Cascade)
-  user_task_library_updated_byTouser user       @relation("task_library_updated_byTouser", fields: [updated_by], references: [uid], onDelete: Cascade)
+  user_task_library_created_byTouser user       @relation("task_library_created_byTouser", fields: [created_by], references: [id], onDelete: Cascade)
+  user_task_library_updated_byTouser user       @relation("task_library_updated_byTouser", fields: [updated_by], references: [id], onDelete: Cascade)
   task_use                           task_use[]
 
   @@schema("public")
@@ -321,7 +321,7 @@ model task_use {
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model user {
-  uid                                                    String               @id
+  id                                                     String               @id
   name                                                   String
   first_page                                             Int                  @db.SmallInt
   enable_dashboard                                       Boolean              @default(false)
@@ -331,6 +331,8 @@ model user {
   user_id                                                String?              @unique @db.Uuid
   department                                             Department?          @default(management)
   role                                                   Role?                @default(maintainer)
+  email                                                  String               @unique
+  password                                               String
   asset_asset_created_byTouser                           asset[]              @relation("asset_created_byTouser")
   asset_asset_person_in_chargeTouser                     asset[]              @relation("asset_person_in_chargeTouser")
   asset_asset_updated_byTouser                           asset[]              @relation("asset_updated_byTouser")
