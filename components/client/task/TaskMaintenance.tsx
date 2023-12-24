@@ -141,26 +141,6 @@ export default function TaskMaintenance({
 
         let simplifiedTask: SimplifiedTask[] = [];
 
-        // worksheet.eachRow((row, rowNumber) => {
-        //   if (rowNumber !== 1) {
-        //     simplifiedTask.push({
-        //       uid: `T-${moment().format('YYMMDDHHmmssSSS')}`,
-        //       created_by: '',
-        //       created_on: new Date(),
-        //       updated_by: '',
-        //       updated_on: new Date(),
-        //       checklist_uid: '',
-        //       title: row.getCell(1).value,
-        //       description: row.getCell(2).value,
-        //       is_completed: false,
-        //       is_skipped: false,
-        //       is_na: false,
-        //       is_commented: false,
-        //       comment: '',
-        //     });
-        //   }
-        // });
-
         for (let index = 9; index <= worksheet.rowCount; index++) {
           const row = worksheet.getRow(index);
 
@@ -211,16 +191,6 @@ export default function TaskMaintenance({
       checklistResult.data === undefined
     )
       throw new Error(checklistResult.statusMessage);
-
-    let simplifiedTask: SimplifiedTask[] = [
-      {
-        uid: 'T-1923861239',
-        no: 1,
-        taskActivity: 'Monkey',
-        remarks: 'remarks',
-        isComplete: '/',
-      },
-    ];
 
     // const customSort = (a: SimplifiedTask, b: SimplifiedTask) => a.no - b.no;
     // simplifiedTask = simplifiedTask.sort(customSort);
@@ -276,57 +246,33 @@ export default function TaskMaintenance({
         // Row 7
         worksheet.addRow([]);
 
-        worksheet.addRows([
-          [3, 'Alex', '44'],
-          { id: 4, name: 'Margaret', age: 32 },
-        ]);
-
-        worksheet.addRow([2, 'Mary Sue', 22]);
-
-        // Row 8
-
         if (!checklistResult.data) {
           return;
         }
 
-        const hye = await returningStuff();
+        for (const checklist of checklistResult.data) {
+          const taskListResult: Result<task[]> = await fetch(
+            `/api/task?checklist_uid=${checklist.uid}`,
+          ).then(res => res.json());
 
-        if (checklistResult.data) {
-          checklistResult.data.forEach(async checklist => {
-            const taskListResult: Result<task[]> = await fetch(
-              `/api/task?checklist_uid=${checklist.uid}`,
-            ).then(res => res.json());
+          if (!taskListResult.data) return;
 
-            if (taskListResult.data) {
-              const taskListSimplified: SimplifiedTask[] =
-                taskListResult.data.map(task => {
-                  return {
-                    uid: task.uid,
-                    no: task.task_order,
-                    taskActivity: task.task_activity,
-                    remarks: task.description,
-                    isComplete: task.is_complete ? 'Yes' : 'No',
-                  };
-                });
+          const taskListSimplified: SimplifiedTask[] = taskListResult.data.map(
+            task => {
+              return {
+                uid: task.uid,
+                no: task.task_order,
+                taskActivity: task.task_activity,
+                remarks: task.description,
+                isComplete: task.is_complete ? 'Yes' : 'No',
+              };
+            },
+          );
 
-              console.log(taskListSimplified);
-              worksheet.addRow([2, 'Mary Suez', 22]);
-              worksheet.addRow([{ id: checklist.title }]);
-              worksheet.addRow(['No.', 'Id', 'Task', 'Remarks', 'Is Complete']);
-              console.log('here');
-            } else {
-              console.error('apparently empty here');
-            }
-
-            // worksheet.addRow(dummyTask);
+          taskListSimplified.forEach(task => {
+            worksheet.addRow(task);
           });
-        } else {
-          worksheet.addRow([2, 'Mary Suez', 872634872534]);
         }
-
-        console.log('here 23526');
-
-        worksheet.addRow([2, 'Mary Suez', 223]);
 
         // // Row 8
         // worksheet.addRow(['No.', 'Id', 'Task', 'Remarks', 'Is Complete']);
@@ -339,8 +285,20 @@ export default function TaskMaintenance({
 
         const borderWidth: Partial<Border> = { style: 'thin' };
 
-        for (let index = 8; index <= simplifiedTask.length + 8; index++) {
-          worksheet.getRow(index).eachCell((cell: Cell) => {
+        // for (let index = 8; index <= simplifiedTask.length + 8; index++) {
+        //   worksheet.getRow(index).eachCell((cell: Cell) => {
+        //     cell.border = {
+        //       top: { style: 'thin' },
+        //       left: { style: 'thin' },
+        //       bottom: { style: 'thin' },
+        //       right: { style: 'thin' },
+        //     };
+        //   });
+        // }
+
+        // Border for header
+        for (let i = 3; i <= 6; i++) {
+          worksheet.getRow(i).eachCell((cell: Cell) => {
             cell.border = {
               top: { style: 'thin' },
               left: { style: 'thin' },
@@ -350,17 +308,7 @@ export default function TaskMaintenance({
           });
         }
 
-        for (let index = 3; index <= 6; index++) {
-          worksheet.getRow(index).eachCell((cell: Cell) => {
-            cell.border = {
-              top: { style: 'thin' },
-              left: { style: 'thin' },
-              bottom: { style: 'thin' },
-              right: { style: 'thin' },
-            };
-          });
-        }
-
+        // Border for title
         for (let i = 1; i <= 5; i++) {
           const cell = worksheet.getRow(1).getCell(i);
           cell.border = {
