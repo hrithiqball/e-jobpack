@@ -197,6 +197,7 @@ export default function TaskMaintenance({
 
     const saveExcel = async () => {
       try {
+        let rowTracker = 7;
         const worksheet = workbook.addWorksheet(worksheetName);
         worksheet.columns = columns;
         worksheet.mergeCells('A1:D1');
@@ -257,21 +258,123 @@ export default function TaskMaintenance({
 
           if (!taskListResult.data) return;
 
-          const taskListSimplified: SimplifiedTask[] = taskListResult.data.map(
-            task => {
-              return {
-                uid: task.uid,
-                no: task.task_order,
-                taskActivity: task.task_activity,
-                remarks: task.description,
-                isComplete: task.is_complete ? 'Yes' : 'No',
-              };
-            },
-          );
+          // const taskListSimplified: SimplifiedTask[] = taskListResult.data.map(
+          //   task => {
+          //     return {
+          //       uid: task.uid,
+          //       no: task.task_order,
+          //       taskActivity: task.task_activity,
+          //       remarks: task.description,
+          //       isComplete: task.is_complete ? 'Yes' : 'No',
+          //     };
+          //   },
+          // );
 
-          taskListSimplified.forEach(task => {
-            worksheet.addRow(task);
+          worksheet.addRow([checklist.title]);
+          rowTracker++;
+          worksheet.getRow(rowTracker).font = {
+            name: 'Calibri',
+            size: 11,
+            bold: true,
+          };
+          worksheet.mergeCells(`A${rowTracker}:E${rowTracker}`);
+          worksheet.getRow(rowTracker).alignment = {
+            horizontal: 'center',
+            vertical: 'middle',
+          };
+
+          worksheet.addRow(['No.', 'Id', 'Task', 'Remarks', 'Value']);
+          rowTracker++;
+          worksheet.getRow(rowTracker).font = {
+            name: 'Calibri',
+            size: 11,
+            bold: true,
+          };
+          worksheet.getRow(rowTracker).eachCell((cell: Cell) => {
+            cell.border = {
+              top: { style: 'thin' },
+              left: { style: 'thin' },
+              bottom: { style: 'thin' },
+              right: { style: 'thin' },
+            };
           });
+
+          taskListResult.data.forEach(task => {
+            console.log(rowTracker);
+            worksheet.addRow([
+              task.task_order,
+              task.uid,
+              task.task_activity ?? '',
+              task.description ?? '',
+            ]);
+            rowTracker++;
+            switch (task.task_type) {
+              case 'selectMultiple':
+              case 'selectOne':
+                worksheet.getCell(`E${rowTracker}`).value = 'Select One';
+                worksheet.getCell(`E${rowTracker}`).dataValidation = {
+                  type: 'list',
+                  allowBlank: true,
+                  formulae: [`"${task.list_choice}"`],
+                  showInputMessage: true,
+                  promptTitle: 'Select',
+                  prompt: 'Please select value(s)',
+                };
+                break;
+              case 'number':
+                worksheet.getCell(`E${rowTracker}`).value = 0;
+                worksheet.getCell(`E${rowTracker}`).dataValidation = {
+                  type: 'decimal',
+                  allowBlank: true,
+                  formulae: [],
+                  showInputMessage: true,
+                  promptTitle: 'Number',
+                  prompt: 'The value must be in number',
+                };
+                break;
+              case 'check':
+                worksheet.getCell(`E${rowTracker}`).value = 'Incomplete';
+                worksheet.getCell(`E${rowTracker}`).dataValidation = {
+                  type: 'list',
+                  allowBlank: false,
+                  formulae: [`"Completed, Incomplete"`],
+                  showInputMessage: true,
+                  promptTitle: 'Check',
+                  prompt: 'Check if completed',
+                };
+                break;
+              case 'choice':
+                worksheet.getCell(`E${rowTracker}`).value = 'False';
+                worksheet.getCell(`E${rowTracker}`).dataValidation = {
+                  type: 'list',
+                  allowBlank: false,
+                  formulae: [`"True, False"`],
+                  showInputMessage: true,
+                  promptTitle: 'Choice',
+                  prompt: 'Select true or false',
+                };
+                break;
+              default:
+                worksheet.getCell(`E${rowTracker}`).value = 'hye';
+                break;
+            }
+            // worksheet.addRow([task.]);
+            worksheet.getRow(rowTracker).font = {
+              name: 'Calibri',
+              size: 11,
+            };
+            worksheet.getRow(rowTracker).eachCell((cell: Cell) => {
+              cell.border = {
+                top: { style: 'thin' },
+                left: { style: 'thin' },
+                bottom: { style: 'thin' },
+                right: { style: 'thin' },
+              };
+            });
+          });
+
+          worksheet.addRow([]);
+          rowTracker++;
         }
 
         // // Row 8
@@ -284,6 +387,12 @@ export default function TaskMaintenance({
         // });
 
         const borderWidth: Partial<Border> = { style: 'thin' };
+
+        worksheet.getCell('B16').dataValidation = {
+          type: 'list',
+          allowBlank: true,
+          formulae: ['"One,Two,Three,Four"'],
+        };
 
         // for (let index = 8; index <= simplifiedTask.length + 8; index++) {
         //   worksheet.getRow(index).eachCell((cell: Cell) => {
