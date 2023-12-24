@@ -39,7 +39,6 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
     const page_str = nextRequest.nextUrl.searchParams.get('page');
     const limit_str = nextRequest.nextUrl.searchParams.get('limit');
     const sort_by = nextRequest.nextUrl.searchParams.get('sort_by');
-    const is_ascending = nextRequest.nextUrl.searchParams.get('is_ascending');
 
     const task_uid = nextRequest.nextUrl.searchParams.get('task_uid');
 
@@ -54,12 +53,11 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
 
     const page = page_str ? parseInt(page_str, 10) : 1;
     const limit = limit_str ? parseInt(limit_str, 10) : 10;
-    const isAscending = !!is_ascending;
     const sortBy = sort_by || 'task_order';
     const skip = (page - 1) * limit;
 
     orderBy.push({
-      [sortBy]: isAscending ? 'asc' : 'desc',
+      [sortBy]: 'asc',
     });
 
     const subtasks: subtask[] = await prisma.subtask.findMany({
