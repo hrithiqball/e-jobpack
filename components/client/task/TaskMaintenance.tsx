@@ -550,16 +550,6 @@ export default function TaskMaintenance({
                   Add New Checklist
                 </ModalHeader>
                 <ModalBody>
-                  {/* <Select label="Checklist Library" variant="faded">
-                    {!checklistLibraryList.length && (
-                      <SelectItem key="err">No library found</SelectItem>
-                    )}
-                    {checklistLibraryList.map(library => (
-                      <SelectItem key={library.uid} value={library.uid}>
-                        <span>{library.title}</span>
-                      </SelectItem>
-                    ))}
-                  </Select> */}
                   <Select label="Checklist Library" variant="faded">
                     {!checklistLibraryList || !checklistLibraryList.length ? (
                       <SelectItem key="err">No library found</SelectItem>
@@ -571,7 +561,6 @@ export default function TaskMaintenance({
                       ))
                     )}
                   </Select>
-
                   <Divider />
                   <Input
                     value={newChecklistTitle}
@@ -657,8 +646,8 @@ export default function TaskMaintenance({
           </div>
         </div>
         <Divider />
-        <Card className="rounded-md overflow-hidden mt-4">
-          <div className="flex flex-col h-screen p-4">
+        <Card className="rounded-md mt-4">
+          <div className="flex flex-col h-full p-4 overflow-y-auto">
             <div className="flex-shrink-0 w-full">{children}</div>
           </div>
         </Card>
