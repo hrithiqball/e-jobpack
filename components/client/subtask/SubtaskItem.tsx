@@ -15,7 +15,7 @@ import { UpdateSubtask } from '@/app/api/subtask/[uid]/route';
 import { LuCornerDownRight, LuTrash2 } from 'react-icons/lu';
 import { isEditState, useSelector } from '@/lib/redux';
 
-enum InputType {
+export enum InputType {
   remarks,
   issue,
   numberVal,
