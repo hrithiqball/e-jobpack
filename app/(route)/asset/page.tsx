@@ -4,8 +4,7 @@ import SignOutItem from '@/components/client/SignOutItem';
 import Navigation from '@/components/client/Navigation';
 
 export default async function AssetPage() {
-  const assetResult = await fetchAssetList();
-  const assetListData = assetResult.data ?? [];
+  const assetList = await fetchAssetList();
   const userInfo = await readUserInfo();
 
   return (
@@ -13,7 +12,7 @@ export default async function AssetPage() {
       <Navigation user={userInfo}>
         <SignOutItem />
       </Navigation>
-      <AssetComponent assetList={assetListData} />
+      <AssetComponent assetList={assetList} />
     </div>
   );
 }

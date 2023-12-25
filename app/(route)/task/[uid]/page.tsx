@@ -33,10 +33,7 @@ export default async function TaskItemPage({
         maintenance={parsedMaintenance}
         checklistLibraryList={checklistLibrary}
       >
-        <MaintenanceChecklistList
-          maintenance={parsedMaintenance}
-          checklistList={checklistList}
-        />
+        <MaintenanceChecklistList checklistList={checklistList} />
       </TaskMaintenance>
     </div>
   );

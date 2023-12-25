@@ -1,7 +1,7 @@
 import React from 'react';
 import { Skeleton } from '@nextui-org/react';
 
-function SkeletonList() {
+export default function SkeletonList() {
   return (
     <div className="max-w-[300px] w-full flex items-center gap-3 mb-4">
       <div>
@@ -14,5 +14,3 @@ function SkeletonList() {
     </div>
   );
 }
-
-export default SkeletonList;

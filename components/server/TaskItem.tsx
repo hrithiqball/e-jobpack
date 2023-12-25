@@ -15,7 +15,7 @@ export default async function TaskItem({ task }: { task: task }) {
     <div>
       <TaskRow task={task} />
       {task.have_subtask && (
-        <div className="mt-2">
+        <div className="mt-4 mb-1">
           <SubtaskList subtaskList={subtaskList} />
         </div>
       )}
