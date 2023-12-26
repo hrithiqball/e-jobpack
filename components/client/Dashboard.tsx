@@ -49,7 +49,7 @@ export default function Dashboard() {
         <Tab key="report" title="Report" />
         <Tab key="calendar" title="Calendar" />
       </Tabs>
-      <div className="flex-grow h-100 mt-4">{renderComponent()}</div>
+      <div className="flex-grow h-full mt-4">{renderComponent()}</div>
     </Card>
   );
 }

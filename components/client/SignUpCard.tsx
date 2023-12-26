@@ -1,8 +1,7 @@
 'use client';
 
 import React, { useState, useTransition } from 'react';
-import { SignUpUser } from '@/utils/model/user';
-import { signUp } from '@/app/api/server-actions';
+// import { SignUpUser } from '@/utils/model/user';
 import {
   Button,
   Card,
@@ -12,31 +11,41 @@ import {
   Input,
   Link,
 } from '@nextui-org/react';
+import { useRouter } from 'next/navigation';
+import { createNewUser } from '@/app/api/server-actions';
 
 export default function SignUpCard() {
   let [isPending, startTransition] = useTransition();
+  const router = useRouter();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [phone, setPhone] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  function signUpClient() {
+  const signUpClient = async () => {
     if (password !== confirmPassword) {
       alert('Passwords do not match');
     }
 
-    const userInfo: SignUpUser = {
-      name,
-      email,
-      password,
-      phone,
-    };
+    try {
+      startTransition(() => {
+        isPending = true;
+        createNewUser(name, email, password)
+          .then(res => {
+            if (isPending) console.log(res);
+            isPending = false;
 
-    startTransition(() => {
-      signUp(userInfo);
-    });
-  }
+            router.replace('/sign-in');
+          })
+          .catch(err => {
+            console.error(err);
+          });
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   function handleName(event: React.ChangeEvent<HTMLInputElement>) {
     setName(event.target.value);
@@ -59,7 +68,7 @@ export default function SignUpCard() {
   }
 
   return (
-    <div className="flex items-center justify-center h-screen">
+    <div className="flex items-center justify-center h-full">
       <Card title="Sign Up" className="w-90 p-4 shadow-md">
         <CardHeader className="flex gap-3">
           <Image

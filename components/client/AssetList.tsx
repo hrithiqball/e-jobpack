@@ -87,7 +87,7 @@ export default function AssetList({ assetList }: { assetList: asset[] }) {
           Add Asset
         </Button>
       </div>
-      <div className="flex flex-row justify-between h-screen">
+      <div className="flex flex-row justify-between h-full">
         <div className="flex-1">
           <Table
             color="primary"

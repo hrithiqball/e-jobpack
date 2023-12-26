@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useTransition } from 'react';
+import React, { useState } from 'react';
 import {
   Card,
   Button,
@@ -10,21 +10,32 @@ import {
   Divider,
   Link,
 } from '@nextui-org/react';
-import { signIn } from '@/app/api/server-actions';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 export default function SignInCard() {
-  let [isPending, startTransition] = useTransition();
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  function signInClient() {
-    let formData: FormData = new FormData();
-    formData.append('email', email);
-    formData.append('password', password);
+  async function signInClient() {
+    try {
+      const res = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      });
 
-    startTransition(() => {
-      signIn(formData);
-    });
+      if (res?.error) {
+        console.error(res.error);
+        router.replace('/sign-in?message=Invalid credentials');
+        return;
+      }
+
+      router.replace('/dashboard');
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   function handleEmail(event: React.ChangeEvent<HTMLInputElement>) {
@@ -36,7 +47,7 @@ export default function SignInCard() {
   }
 
   return (
-    <div className="flex items-center justify-center h-screen">
+    <div className="flex items-center justify-center h-full">
       <Card title="Login" className="w-90 p-4 shadow-md">
         <CardHeader className="flex gap-3">
           <Image

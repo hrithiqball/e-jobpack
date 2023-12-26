@@ -1,8 +1,8 @@
 'use client';
 
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
-import { maintenance, task } from '@prisma/client';
+import { maintenance } from '@prisma/client';
 import Loading from '@/components/client/Loading';
 import { Button, Card, CardHeader, Chip, Divider } from '@nextui-org/react';
 import { AiOutlineIssuesClose } from 'react-icons/ai';
@@ -23,7 +23,7 @@ export default function Task({
   if (!mounted) return <Loading label="Hang on tight" />;
   return (
     <Card
-      className={`flex rounded-md p-4 m-4 flex-grow ${
+      className={`flex rounded-md p-4 m-4 h-full flex-grow ${
         theme === 'dark' ? 'bg-gray-800' : 'bg-gray-200'
       }`}
     >

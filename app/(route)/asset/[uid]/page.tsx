@@ -1,8 +1,5 @@
 import Asset from '@/components/client/Asset';
-import Navigation from '@/components/client/Navigation';
-import SignOutItem from '@/components/client/SignOutItem';
 import {
-  readUserInfo,
   fetchChecklistUseList,
   fetchMaintenanceList,
 } from '@/app/api/server-actions';
@@ -29,7 +26,6 @@ export default async function AssetItemPage({
     person_in_charge: string;
   };
 }) {
-  const userInfo = await readUserInfo();
   const maintenanceList = await fetchMaintenanceList(params.uid);
   const checklistUse = await fetchChecklistUseList(params.uid);
 
@@ -51,10 +47,7 @@ export default async function AssetItemPage({
   };
 
   return (
-    <div className="flex flex-col h-screen">
-      <Navigation user={userInfo}>
-        <SignOutItem />
-      </Navigation>
+    <div className="flex flex-col h-full">
       <Asset
         asset={asset}
         maintenanceList={maintenanceList}

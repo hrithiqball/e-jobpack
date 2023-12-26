@@ -1,39 +1,18 @@
-import { cookies } from 'next/headers';
-import { createClient } from '@/utils/supabase/server';
 import AuthButton from '@/components/client/AuthButton';
-import { redirect } from 'next/navigation';
-import { readUserSession } from '@/app/api/server-actions';
-import { Fragment } from 'react';
+import { getServerSession } from 'next-auth';
 import Link from 'next/link';
+import { authOptions } from './api/auth/[...nextauth]/route';
+import { redirect } from 'next/navigation';
 
 export default async function Index() {
-  const cookieStore = cookies();
+  const session = await getServerSession(authOptions);
 
-  const initSupabaseClient = () => {
-    try {
-      createClient(cookieStore);
-      return true;
-    } catch (error) {
-      console.error(error);
-      return false;
-    }
-  };
-
-  const isSupabaseConnected = initSupabaseClient();
-  const { data } = await readUserSession();
-
-  if (data.session) {
-    return redirect('/dashboard');
-  }
+  if (session) redirect('dashboard');
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      {isSupabaseConnected && (
-        <Fragment>
-          <AuthButton />
-          <Link href="/sign-up">Sign Up</Link>
-        </Fragment>
-      )}
+    <div className="flex flex-col items-center justify-center h-full">
+      <AuthButton />
+      <Link href="/sign-up">Sign Up</Link>
     </div>
   );
 }
