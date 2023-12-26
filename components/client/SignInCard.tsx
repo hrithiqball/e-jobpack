@@ -80,7 +80,6 @@ export default function SignInCard() {
         <Button variant="solid" className="w-full mt-4" onClick={signInClient}>
           Login
         </Button>
-        <Button onClick={() => toast.info('Hello')}>Toast</Button>
         <Link
           href="/sign-up"
           className="text-blue-500 hover:underline mt-4 align-middle self-center text-center"
