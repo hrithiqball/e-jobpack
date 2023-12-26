@@ -2,7 +2,7 @@ import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { prisma } from '@/prisma/prisma';
 import { user } from '@prisma/client';
-// import bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -24,8 +24,8 @@ export const authOptions: NextAuthOptions = {
               'User not found. Please enter a valid email address.',
             );
 
-          if (password !== userInfo.password)
-            throw new Error('Wrong password. Please try again.');
+          const isMatch = await bcrypt.compare(password, userInfo.password);
+          if (!isMatch) throw new Error('Wrong password. Please try again.');
 
           return userInfo;
         } catch (error: any) {

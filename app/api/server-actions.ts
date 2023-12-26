@@ -10,8 +10,38 @@ import {
 } from '@prisma/client';
 import { UpdateTask } from '@/app/api/task/[uid]/route';
 import { UpdateSubtask } from '@/app/api/subtask/[uid]/route';
-
 import { prisma } from '@/prisma/prisma';
+import moment from 'moment';
+import bcrypt from 'bcrypt';
+
+// user
+
+export async function createNewUser(
+  name: string,
+  email: string,
+  password: string,
+) {
+  try {
+    const hash = await bcrypt.hash(password, 10);
+
+    return await prisma.user.create({
+      data: {
+        id: `USER-${moment().format('YYMMDDHHmmssSSS')}`,
+        first_page: 0,
+        enable_dashboard: true,
+        is_dark_mode: true,
+        created_on: new Date(),
+        updated_on: new Date(),
+        name,
+        email,
+        password: hash,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
 
 // asset
 
