@@ -3,15 +3,10 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import {
-  LiaUserCogSolid,
-  LiaUserTieSolid,
-  LiaUserLockSolid,
-} from 'react-icons/lia';
+import { LuUser } from 'react-icons/lu';
 import { BsSun } from 'react-icons/bs';
 import { RiMoonClearFill } from 'react-icons/ri';
 import { useTheme } from 'next-themes';
-import { MetadataUser } from '@/utils/model/user';
 import clientIcon from '@/public/image/client-icon.svg';
 import {
   Navbar,
@@ -28,18 +23,15 @@ import {
   Dropdown,
   DropdownItem,
 } from '@nextui-org/react';
+import { signOut } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 
-export default function Navigation({
-  children,
-  user,
-}: {
-  children: React.ReactNode;
-  user: MetadataUser | null;
-}) {
+export default function Navigation() {
   const { theme, setTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
+  const { data: session } = useSession();
 
   const navLinks = [
     { href: '/dashboard', label: 'Dashboard' },
@@ -110,22 +102,17 @@ export default function Navigation({
             <Button
               variant="ghost"
               size="sm"
-              endContent={
-                <>
-                  {user?.role === 'admin' && <LiaUserLockSolid size={25} />}
-                  {user?.role === 'supervisor' && <LiaUserTieSolid size={25} />}
-                  {user?.role === 'maintainer' && <LiaUserCogSolid size={25} />}
-                </>
-              }
+              startContent={<LuUser size={20} />}
             >
-              {user?.name}
+              {session?.user?.name}
             </Button>
           </DropdownTrigger>
           <DropdownMenu aria-label="Profile Actions" variant="flat">
-            <DropdownItem key="profile">{user?.email}</DropdownItem>
+            <DropdownItem key="real-name">{session?.user?.name}</DropdownItem>
+            <DropdownItem key="profile">{session?.user?.email}</DropdownItem>
             <DropdownItem key="settings">My Settings</DropdownItem>
-            <DropdownItem key="logout" color="danger">
-              {children}
+            <DropdownItem color="danger" key="real" onClick={() => signOut()}>
+              Sign Out
             </DropdownItem>
           </DropdownMenu>
         </Dropdown>

@@ -1,9 +1,7 @@
 import MaintenanceChecklistList from '@/components/server/MaintenanceChecklistList';
 import Navigation from '@/components/client/Navigation';
-import SignOutItem from '@/components/client/SignOutItem';
 import TaskMaintenance from '@/components/client/task/TaskMaintenance';
 import {
-  readUserInfo,
   fetchChecklistList,
   fetchChecklistLibraryList,
 } from '@/app/api/server-actions';
@@ -17,7 +15,6 @@ export default async function TaskItemPage({
   params: { uid: string };
   searchParams: { maintenance: string };
 }) {
-  const userInfo = await readUserInfo();
   const parsedMaintenance = JSON.parse(
     searchParams.maintenance,
   ) satisfies maintenance;
@@ -26,9 +23,7 @@ export default async function TaskItemPage({
 
   return (
     <div className="flex flex-col h-screen">
-      <Navigation user={userInfo}>
-        <SignOutItem />
-      </Navigation>
+      <Navigation />
       <TaskMaintenance
         maintenance={parsedMaintenance}
         checklistLibraryList={checklistLibrary}

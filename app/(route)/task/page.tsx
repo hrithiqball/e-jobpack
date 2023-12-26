@@ -1,17 +1,13 @@
-import SignOutItem from '@/components/client/SignOutItem';
-import { readUserInfo, fetchMaintenanceList } from '@/app/api/server-actions';
+import { fetchMaintenanceList } from '@/app/api/server-actions';
 import Task from '@/components/client/task/Task';
 import Navigation from '@/components/client/Navigation';
 
 export default async function TaskPage() {
   const maintenanceList = await fetchMaintenanceList();
-  const userInfo = await readUserInfo();
 
   return (
     <div className="flex flex-col h-screen">
-      <Navigation user={userInfo}>
-        <SignOutItem />
-      </Navigation>
+      <Navigation />
       <Task maintenanceList={maintenanceList} />
     </div>
   );
