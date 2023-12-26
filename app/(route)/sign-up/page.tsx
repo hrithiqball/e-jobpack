@@ -2,7 +2,7 @@ import SignUpCard from '@/components/client/SignUpCard';
 
 export default function SignUpPage() {
   return (
-    <div className="flex items-center justify-center h-screen">
+    <div className="flex items-center justify-center h-full">
       <SignUpCard />
     </div>
   );

@@ -32,7 +32,7 @@ export default function AssetDetails({
   checklistUse: checklist_use[];
 }) {
   return (
-    <div className="flex flex-col sm:flex-row h-screen p-4">
+    <div className="flex flex-col sm:flex-row h-full p-4">
       <div className="flex-shrink-0 w-full mb-4 sm:mb-0 sm:w-3/4 mr-4">
         <Card className="p-4 flex-1 h-full">
           <div className="h-30 min-w-min">

@@ -47,7 +47,7 @@ export default function SignInCard() {
   }
 
   return (
-    <div className="flex items-center justify-center h-screen">
+    <div className="flex items-center justify-center h-full">
       <Card title="Login" className="w-90 p-4 shadow-md">
         <CardHeader className="flex gap-3">
           <Image

@@ -1,5 +1,4 @@
 import MaintenanceChecklistList from '@/components/server/MaintenanceChecklistList';
-import Navigation from '@/components/client/Navigation';
 import TaskMaintenance from '@/components/client/task/TaskMaintenance';
 import {
   fetchChecklistList,
@@ -22,8 +21,7 @@ export default async function TaskItemPage({
   const checklistLibrary = await fetchChecklistLibraryList();
 
   return (
-    <div className="flex flex-col h-screen">
-      <Navigation />
+    <div className="flex flex-col h-full">
       <TaskMaintenance
         maintenance={parsedMaintenance}
         checklistLibraryList={checklistLibrary}

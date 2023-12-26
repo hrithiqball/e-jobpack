@@ -1,5 +1,4 @@
 import Asset from '@/components/client/Asset';
-import Navigation from '@/components/client/Navigation';
 import {
   fetchChecklistUseList,
   fetchMaintenanceList,
@@ -48,8 +47,7 @@ export default async function AssetItemPage({
   };
 
   return (
-    <div className="flex flex-col h-screen">
-      <Navigation />
+    <div className="flex flex-col h-full">
       <Asset
         asset={asset}
         maintenanceList={maintenanceList}

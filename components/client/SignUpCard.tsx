@@ -2,7 +2,6 @@
 
 import React, { useState, useTransition } from 'react';
 import { SignUpUser } from '@/utils/model/user';
-import { signUp } from '@/app/api/server-actions';
 import {
   Button,
   Card,
@@ -59,7 +58,7 @@ export default function SignUpCard() {
   }
 
   return (
-    <div className="flex items-center justify-center h-screen">
+    <div className="flex items-center justify-center h-full">
       <Card title="Sign Up" className="w-90 p-4 shadow-md">
         <CardHeader className="flex gap-3">
           <Image

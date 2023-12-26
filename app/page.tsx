@@ -10,7 +10,7 @@ export default async function Index() {
   if (session) redirect('dashboard');
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
+    <div className="flex flex-col items-center justify-center h-full">
       <AuthButton />
       <Link href="/sign-up">Sign Up</Link>
     </div>
