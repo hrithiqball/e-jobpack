@@ -247,6 +247,17 @@ export async function updateTask(uid: string, data: UpdateTask) {
   }
 }
 
+export async function deleteTask(uid: string) {
+  try {
+    return prisma.task.delete({
+      where: { uid },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 // subtask
 
 /**

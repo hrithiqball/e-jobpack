@@ -3,9 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { LuUser } from 'react-icons/lu';
-import { BsSun } from 'react-icons/bs';
-import { RiMoonClearFill } from 'react-icons/ri';
+import { LuUser, LuSun, LuMoonStar } from 'react-icons/lu';
 import { useTheme } from 'next-themes';
 import clientIcon from '@/public/image/client-icon.svg';
 import {
@@ -95,7 +93,7 @@ export default function Navigation() {
             setTheme(theme === 'dark' ? 'light' : 'dark');
           }}
         >
-          {theme === 'dark' ? <RiMoonClearFill /> : <BsSun />}
+          {theme === 'dark' ? <LuMoonStar /> : <LuSun />}
         </Button>
         <Dropdown placement="bottom-end">
           <DropdownTrigger>

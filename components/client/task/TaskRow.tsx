@@ -13,7 +13,7 @@ import {
 } from '@nextui-org/react';
 import { updateTask } from '@/app/api/server-actions';
 import { UpdateTask } from '@/app/api/task/[uid]/route';
-import { LuTrash2 } from 'react-icons/lu';
+import { LuMoreVertical, LuTrash2 } from 'react-icons/lu';
 import { isEditState, useSelector } from '@/lib/redux';
 
 export default function TaskRow({ task }: { task: task }) {
@@ -60,6 +60,10 @@ export default function TaskRow({ task }: { task: task }) {
       });
     }
     console.log(val.currentKey as string);
+  }
+
+  function handleDelete() {
+    console.log('task id:', task.uid);
   }
 
   function updateTaskClient(taskUpdate: UpdateTask) {
@@ -151,9 +155,15 @@ export default function TaskRow({ task }: { task: task }) {
         />
       </div>
       <div className="flex-2 hover:cursor-not-allowed">
-        <Button isDisabled={!isEdit} isIconOnly color="danger">
+        <LuMoreVertical />
+        {/* <Button
+          isDisabled={!isEdit}
+          onClick={handleDelete}
+          isIconOnly
+          color="danger"
+        >
           <LuTrash2 />
-        </Button>
+        </Button> */}
       </div>
     </div>
   );

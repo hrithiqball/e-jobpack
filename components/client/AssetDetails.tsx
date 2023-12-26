@@ -2,7 +2,7 @@ import React from 'react';
 import { asset, checklist_use } from '@prisma/client';
 import Image from 'next/image';
 import moment from 'moment';
-import { FaWrench } from 'react-icons/fa';
+import { LuWrench } from 'react-icons/lu';
 import {
   Avatar,
   AvatarGroup,
@@ -156,7 +156,7 @@ export default function AssetDetails({
         </Card>
         <Card className="p-4 flex-1 overflow-y-auto">
           <div className="flex flex-row items-center">
-            <FaWrench />
+            <LuWrench />
             <span className="font-bold ml-4">Maintenance</span>
           </div>
           <Table

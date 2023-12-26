@@ -28,10 +28,7 @@ import {
   SelectItem,
 } from '@nextui-org/react';
 import Link from 'next/link';
-// import { ToastContainer, toast } from 'react-toastify';
-import { IoIosArrowBack } from 'react-icons/io';
-import { AiOutlineEdit } from 'react-icons/ai';
-import { FaRegFileExcel, FaRegFilePdf } from 'react-icons/fa';
+import { FaRegFileExcel, FaRegFilePdf } from 'react-icons/fa6';
 import {
   checklist,
   checklist_library,
@@ -39,7 +36,12 @@ import {
   subtask,
   task,
 } from '@prisma/client';
-import { LuFilePlus2, LuChevronDown } from 'react-icons/lu';
+import {
+  LuFilePlus2,
+  LuChevronDown,
+  LuChevronLeft,
+  LuPencilLine,
+} from 'react-icons/lu';
 import moment from 'moment';
 import { createChecklist } from '@/app/api/server-actions';
 import { Border, Cell, Column, Workbook } from 'exceljs';
@@ -527,7 +529,7 @@ export default function TaskMaintenance({
             className="max-w-min"
             as={Link}
             href="/task"
-            startContent={<IoIosArrowBack />}
+            startContent={<LuChevronLeft />}
             variant="faded"
             size="md"
           >
@@ -635,7 +637,7 @@ export default function TaskMaintenance({
               </ModalContent>
             </Modal>
             <Button isIconOnly variant="faded">
-              <AiOutlineEdit />
+              <LuPencilLine />
             </Button>
             <Button isIconOnly variant="faded">
               <FaRegFilePdf />
