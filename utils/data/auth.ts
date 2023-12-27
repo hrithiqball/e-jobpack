@@ -1,9 +1,9 @@
-import NextAuth, { NextAuthOptions } from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
 import { prisma } from '@/prisma/prisma';
-import { user } from '@prisma/client';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import { NextAuthOptions } from 'next-auth';
+import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcrypt';
+import { user } from '@prisma/client';
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -44,7 +44,3 @@ export const authOptions: NextAuthOptions = {
     signIn: '/sign-in',
   },
 };
-
-const handler = NextAuth(authOptions);
-
-export { handler as GET, handler as POST };
