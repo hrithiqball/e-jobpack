@@ -6,13 +6,9 @@ import {
 } from 'react-redux';
 
 import { reducer } from '@/lib/redux/reducer';
-import { middleware } from '@/lib/redux/middleware';
 
 export const reduxStore = configureStore({
   reducer,
-  // middleware: getDefaultMiddleware => {
-  //   return getDefaultMiddleware().concat(middleware);
-  // },
 });
 export const useDispatch = () => useReduxDispatch<ReduxDispatch>();
 export const useSelector: TypedUseSelectorHook<ReduxState> = useReduxSelector;

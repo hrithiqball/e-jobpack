@@ -29,8 +29,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         first_page: 0,
         enable_dashboard: false,
         is_dark_mode: true,
-        created_on: new Date(),
-        updated_on: new Date(),
+        created_at: new Date(),
+        updated_at: new Date(),
+        email: '',
+        password: '',
+        role: 'supervisor',
+        department: 'exploration',
+        user_id: '',
+        image: '',
+        email_verified: null,
       };
 
       const user: user = await prisma.user.create({

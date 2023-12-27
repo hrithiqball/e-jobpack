@@ -1,7 +1,7 @@
 import AuthButton from '@/components/client/AuthButton';
+import { authOptions } from '@/utils/data/auth';
 import { getServerSession } from 'next-auth';
 import Link from 'next/link';
-import { authOptions } from './api/auth/[...nextauth]/route';
 import { redirect } from 'next/navigation';
 
 export default async function Index() {
