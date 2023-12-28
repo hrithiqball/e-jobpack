@@ -1,7 +1,7 @@
 import SignInCard from '@/components/client/SignInCard';
 import { redirect } from 'next/navigation';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/utils/data/auth';
 
 export default async function SignInPage({
   searchParams,

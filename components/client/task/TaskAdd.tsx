@@ -14,9 +14,9 @@ import {
 } from '@nextui-org/react';
 import { TaskType, task } from '@prisma/client';
 import { createTask } from '@/app/api/server-actions';
-import { MdDelete } from 'react-icons/md';
 import moment from 'moment';
 import { selectionChoices } from '@/utils/data/task-type-options';
+import { LuTrash2 } from 'react-icons/lu';
 
 export default function TaskAdd({ checklistUid }: { checklistUid: string }) {
   let [isPending, startTransition] = useTransition();
@@ -148,7 +148,7 @@ export default function TaskAdd({ checklistUid }: { checklistUid: string }) {
                           isIconOnly
                           onClick={() => handleDeleteChoice(index)}
                         >
-                          <MdDelete />
+                          <LuTrash2 />
                         </Button>
                       </div>
                     ))}

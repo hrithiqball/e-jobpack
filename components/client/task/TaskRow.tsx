@@ -1,23 +1,30 @@
 'use client';
 
-import React, { useMemo, useState, useTransition } from 'react';
+import React, { Key, useMemo, useState, useTransition } from 'react';
 import { task } from '@prisma/client';
 import {
   Button,
   Checkbox,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
   Input,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
   Select,
   SelectItem,
   Switch,
   Textarea,
 } from '@nextui-org/react';
-import { updateTask } from '@/app/api/server-actions';
+import { deleteTask, updateTask } from '@/app/api/server-actions';
 import { UpdateTask } from '@/app/api/task/[uid]/route';
-import { LuTrash2 } from 'react-icons/lu';
-import { isEditState, useSelector } from '@/lib/redux';
+import { LuMoreVertical } from 'react-icons/lu';
+import { toast } from 'sonner';
 
 export default function TaskRow({ task }: { task: task }) {
-  const isEdit = useSelector(isEditState);
   let [isPending, startTransition] = useTransition();
   const [taskActivity, setTaskActivity] = useState(task.task_activity);
   const [taskDescription, setTaskDescription] = useState(task.description);
@@ -56,16 +63,30 @@ export default function TaskRow({ task }: { task: task }) {
       };
 
       startTransition(() => {
-        updateTask(task.uid, taskUpdate);
+        updateTask(task.uid, taskUpdate).then(() => {
+          toast.success('Task updated successfully');
+        });
       });
     }
-    console.log(val.currentKey as string);
   }
 
   function updateTaskClient(taskUpdate: UpdateTask) {
     startTransition(() => {
-      updateTask(task.uid, taskUpdate);
+      updateTask(task.uid, taskUpdate).then(() => {
+        toast.success('Task updated successfully');
+      });
     });
+  }
+
+  function handleActions(key: Key) {
+    if (key === 'edit') toast.info('editing');
+    else {
+      startTransition(() => {
+        deleteTask(task.uid)
+          .then(() => toast.success('Task deleted'))
+          .catch(() => toast.error('Task not deleted'));
+      });
+    }
   }
 
   return (
@@ -80,6 +101,7 @@ export default function TaskRow({ task }: { task: task }) {
         {taskType === 'check' && (
           <div className="flex justify-center">
             <Checkbox
+              aria-label="Task Checkbox"
               isSelected={taskIsComplete}
               onValueChange={() => {
                 setTaskIsComplete(!taskIsComplete);
@@ -94,6 +116,7 @@ export default function TaskRow({ task }: { task: task }) {
         {taskType === 'choice' && (
           <div className="flex justify-center">
             <Switch
+              aria-label="Task Switch"
               className="flex-1"
               isSelected={taskBool}
               onValueChange={() => {
@@ -108,6 +131,7 @@ export default function TaskRow({ task }: { task: task }) {
         )}
         {(taskType === 'selectOne' || taskType === 'selectMultiple') && (
           <Select
+            aria-label="Task Select"
             variant="faded"
             selectedKeys={taskSelected}
             selectionMode={
@@ -126,6 +150,7 @@ export default function TaskRow({ task }: { task: task }) {
         )}
         {taskType === 'number' && (
           <Input
+            aria-label="Task Number"
             variant="faded"
             value={taskNumberValue}
             onValueChange={setTaskNumberValue}
@@ -136,6 +161,7 @@ export default function TaskRow({ task }: { task: task }) {
       </div>
       <div className="flex-1 px-4">
         <Textarea
+          aria-label="Task Issue"
           variant="faded"
           maxRows={1}
           value={taskIssue}
@@ -144,16 +170,30 @@ export default function TaskRow({ task }: { task: task }) {
       </div>
       <div className="flex-1 px-4">
         <Textarea
+          aria-label="Task Remark"
           variant="faded"
           maxRows={1}
           value={taskRemark}
           onValueChange={setTaskRemark}
         />
       </div>
-      <div className="flex-2 hover:cursor-not-allowed">
-        <Button isDisabled={!isEdit} isIconOnly color="danger">
-          <LuTrash2 />
-        </Button>
+      <div className="flex-2">
+        <Dropdown>
+          <DropdownTrigger>
+            <Button variant="flat" isIconOnly>
+              <LuMoreVertical />
+            </Button>
+          </DropdownTrigger>
+          <DropdownMenu
+            aria-label="Action event example"
+            onAction={handleActions}
+          >
+            <DropdownItem key="edit">Edit Task</DropdownItem>
+            <DropdownItem key="delete" className="text-danger" color="danger">
+              Delete Task
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
       </div>
     </div>
   );

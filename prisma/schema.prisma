@@ -1,6 +1,7 @@
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["multiSchema"]
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
@@ -326,13 +327,16 @@ model user {
   first_page                                             Int                  @db.SmallInt
   enable_dashboard                                       Boolean              @default(false)
   is_dark_mode                                           Boolean              @default(false)
-  created_on                                             DateTime             @db.Timestamptz(6)
-  updated_on                                             DateTime             @db.Timestamptz(6)
+  created_at                                             DateTime             @db.Timestamptz(6)
+  updated_at                                             DateTime             @db.Timestamptz(6)
   user_id                                                String?              @unique @db.Uuid
   department                                             Department?          @default(management)
   role                                                   Role?                @default(maintainer)
   email                                                  String               @unique
   password                                               String
+  email_verified                                         DateTime?            @db.Timestamptz(6)
+  image                                                  String?
+  account                                                account[]
   asset_asset_created_byTouser                           asset[]              @relation("asset_created_byTouser")
   asset_asset_person_in_chargeTouser                     asset[]              @relation("asset_person_in_chargeTouser")
   asset_asset_updated_byTouser                           asset[]              @relation("asset_updated_byTouser")
@@ -347,6 +351,7 @@ model user {
   checklist_use_checklist_use_created_byTouser           checklist_use[]      @relation("checklist_use_created_byTouser")
   checklist_use_checklist_use_updated_byTouser           checklist_use[]      @relation("checklist_use_updated_byTouser")
   history                                                history[]
+  session                                                session[]
   subtask_library_subtask_library_created_byTouser       subtask_library[]    @relation("subtask_library_created_byTouser")
   subtask_library_subtask_library_updated_byTouser       subtask_library[]    @relation("subtask_library_updated_byTouser")
   task_library_task_library_created_byTouser             task_library[]       @relation("task_library_created_byTouser")
@@ -627,6 +632,48 @@ model users {
 
   @@index([instance_id])
   @@schema("auth")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model account {
+  id                   String    @id
+  user_id              String
+  provider_type        String
+  provider_id          String
+  provider_account_id  String
+  refresh_token        String?
+  access_token         String?
+  access_token_expires DateTime? @db.Timestamptz(6)
+  created_at           DateTime  @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  updated_at           DateTime? @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  user                 user      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model session {
+  id            String   @id
+  user_id       String
+  expires       DateTime @db.Timestamptz(6)
+  session_token String   @unique
+  access_token  String   @unique
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime @default(now()) @db.Timestamptz(6)
+  user          user     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model verification_request {
+  id         String   @id
+  identifier String
+  token      String   @unique
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @db.Timestamptz(6)
+
+  @@schema("public")
 }
 
 enum aal_level {

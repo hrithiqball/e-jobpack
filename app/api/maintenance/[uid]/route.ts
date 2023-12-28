@@ -3,6 +3,7 @@ import { ResponseMessage } from '@/utils/function/result';
 import { maintenance } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { fetchMaintenanceItemById } from '../../server-actions';
 
 /**
  * @description Validator for updating a maintenance
@@ -31,17 +32,14 @@ export async function GET(
   nextRequest: NextRequest,
   { params }: { params: { uid: string } },
 ): Promise<NextResponse> {
-  const uid = params.uid;
-  const maintenance: maintenance | null = await prisma.maintenance.findUnique({
-    where: { uid },
-  });
+  const maintenance = fetchMaintenanceItemById(params.uid);
 
   if (maintenance) {
     return new NextResponse(
       JSON.stringify(
         ResponseMessage(
           200,
-          `Successfully fetched maintenance ${uid}!`,
+          `Successfully fetched maintenance ${params.uid}!`,
           maintenance,
         ),
       ),
@@ -52,7 +50,9 @@ export async function GET(
     );
   } else {
     return new NextResponse(
-      JSON.stringify(ResponseMessage(404, `Maintenance ${uid} not found`)),
+      JSON.stringify(
+        ResponseMessage(404, `Maintenance ${params.uid} not found`),
+      ),
       {
         status: 404,
         headers: { 'Content-Type': 'application/json' },

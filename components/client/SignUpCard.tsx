@@ -13,6 +13,7 @@ import {
 } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import { createNewUser } from '@/app/api/server-actions';
+import { toast } from 'sonner';
 
 export default function SignUpCard() {
   let [isPending, startTransition] = useTransition();
@@ -37,6 +38,7 @@ export default function SignUpCard() {
             isPending = false;
 
             router.replace('/sign-in');
+            toast.success('User created successfully');
           })
           .catch(err => {
             console.error(err);
@@ -96,6 +98,7 @@ export default function SignUpCard() {
           className="mt-4 mb-4"
         />
         <Input
+          type="email"
           value={email}
           onChange={handleEmail}
           name="email"
@@ -103,6 +106,7 @@ export default function SignUpCard() {
           className="mt-4 mb-4"
         />
         <Input
+          type="password"
           value={password}
           onChange={handlePassword}
           name="password"
@@ -110,6 +114,7 @@ export default function SignUpCard() {
           className="mt-4 mb-4"
         />
         <Input
+          type="password"
           value={confirmPassword}
           onChange={handleConfirmPassword}
           name="confirmPassword"

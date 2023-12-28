@@ -4,8 +4,7 @@ import React, { Key, useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import Loading from '@/components/client/Loading';
 import { asset, checklist_use, maintenance } from '@prisma/client';
-import { IoIosArrowBack } from 'react-icons/io';
-import { AiOutlineEdit, AiOutlinePlusSquare } from 'react-icons/ai';
+import { LuChevronLeft, LuPencilLine, LuPackagePlus } from 'react-icons/lu';
 import AssetDetails from '@/components/client/AssetDetails';
 import AssetMaintenance from '@/components/client/AssetMaintenance';
 import AssetAttachment from '@/components/client/AssetAttachment';
@@ -49,7 +48,7 @@ export default function Asset({
           className="max-w-min"
           as={Link}
           href="/asset"
-          startContent={<IoIosArrowBack />}
+          startContent={<LuChevronLeft />}
           variant="faded"
           size="md"
         >
@@ -96,10 +95,10 @@ export default function Asset({
         <div className="flex flex-row">
           <div className="flex flex-row">
             <Button isIconOnly className="ml-1" variant="faded">
-              <AiOutlineEdit />
+              <LuPencilLine />
             </Button>
             <Button isIconOnly className="ml-1" variant="faded">
-              <AiOutlinePlusSquare />
+              <LuPackagePlus />
             </Button>
           </div>
         </div>

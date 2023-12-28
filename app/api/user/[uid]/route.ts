@@ -1,5 +1,5 @@
 import { prisma } from '@/prisma/prisma';
-import { ResponseMessage, Result } from '@/utils/function/result';
+import { ResponseMessage } from '@/utils/function/result';
 import { user } from '@prisma/client';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -104,7 +104,7 @@ export async function PATCH(
   { params }: { params: { uid: string } },
 ): Promise<NextResponse> {
   try {
-    const uid = params.uid;
+    const id = params.uid;
     let json = await request.json();
 
     const result = UpdateUserSchema.safeParse(json);
@@ -115,13 +115,13 @@ export async function PATCH(
         updated_on: new Date(),
       };
       const updatedUser: user = await prisma.user.update({
-        where: { uid },
+        where: { id },
         data: updateUserValue,
       });
 
       return new NextResponse(
         JSON.stringify(
-          ResponseMessage(200, `Successfully updated user ${uid}`, updatedUser),
+          ResponseMessage(200, `Successfully updated user ${id}`, updatedUser),
         ),
         {
           status: 200,
@@ -184,9 +184,9 @@ export async function DELETE(
   { params }: { params: { uid: string } },
 ): Promise<NextResponse> {
   try {
-    const uid = params.uid;
+    const id = params.uid;
     await prisma.user.delete({
-      where: { uid },
+      where: { id },
     });
     //TODO delete user in supabase auth
 

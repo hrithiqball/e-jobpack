@@ -30,8 +30,8 @@ export async function createNewUser(
         first_page: 0,
         enable_dashboard: true,
         is_dark_mode: true,
-        created_on: new Date(),
-        updated_on: new Date(),
+        created_at: new Date(),
+        updated_at: new Date(),
         name,
         email,
         password: hash,
@@ -67,7 +67,7 @@ export async function fetchMaintenanceItemById(uid: string) {
     });
   } catch (error) {
     console.error(error);
-    return null;
+    throw error;
   }
 }
 
@@ -240,6 +240,17 @@ export async function updateTask(uid: string, data: UpdateTask) {
     return await prisma.task.update({
       where: { uid },
       data,
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function deleteTask(uid: string) {
+  try {
+    return prisma.task.delete({
+      where: { uid },
     });
   } catch (error) {
     console.error(error);

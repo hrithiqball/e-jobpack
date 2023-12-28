@@ -2,36 +2,7 @@ import { Prisma, asset } from '@prisma/client';
 import { prisma } from '@/prisma/prisma';
 import { ResponseMessage } from '@/utils/function/result';
 import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 import moment from 'moment';
-
-/**
- * @description Validate the request body for adding a new asset
- */
-export const AddAssetSchema = z.object({
-  name: z.string(),
-  description: z.string().nullable(),
-  type: z.string().nullable(),
-  created_by: z.string(),
-  last_maintenance: z.date().nullable(),
-  next_maintenance: z.date().nullable(),
-  last_maintainee: z.array(z.string()),
-  location: z.string().nullable(),
-  status_uid: z.string().nullable(),
-  person_in_charge: z.string().nullable(),
-});
-
-export type AddAssetClient = z.infer<typeof AddAssetSchema>;
-
-/**
- * @description Type for adding a new asset
- */
-type AddAsset = z.infer<typeof AddAssetSchema> & {
-  uid: string;
-  updated_on: Date;
-  created_on: Date;
-  updated_by: string;
-};
 
 /**
  * This asynchronous function handles GET requests.
@@ -137,16 +108,15 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
  */
 export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
   try {
-    const json = await nextRequest.json();
+    const assetRequest = await nextRequest.json();
 
-    const result = AddAssetSchema.safeParse(json);
-    if (result.success) {
-      const req: AddAsset = {
-        ...result.data,
+    if (assetRequest) {
+      const req = {
+        ...assetRequest,
         uid: `ASSET-${moment().format('YYMMDDHHmmssSSS')}`,
         updated_on: new Date(),
         created_on: new Date(),
-        updated_by: result.data.created_by,
+        updated_by: assetRequest.data.created_by,
       };
 
       const asset: asset = await prisma.asset.create({
@@ -171,9 +141,9 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
         JSON.stringify(
           ResponseMessage(
             400,
-            result.error.issues.map(issue => issue.message).join(', '),
+            'Invalid request body',
             null,
-            result.error.issues.map(issue => issue.code.toString()).join(''),
+            'Request body must not be empty',
           ),
         ),
         {

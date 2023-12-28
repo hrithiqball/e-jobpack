@@ -4,7 +4,8 @@ import { Inter } from 'next/font/google';
 import { Providers } from '@/app/providers';
 import Navigation from '@/components/client/Navigation';
 import { getServerSession } from 'next-auth';
-import { authOptions } from './api/auth/[...nextauth]/route';
+import { Toaster } from 'sonner';
+import { authOptions } from '@/utils/data/auth';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
@@ -25,7 +26,10 @@ export default async function RootLayout({
         <Providers>
           <div className="flex flex-col h-screen">
             {session && <Navigation />}
-            <div className="flex-1">{children}</div>
+            <div className="flex-1">
+              {children}
+              <Toaster richColors />
+            </div>
           </div>
         </Providers>
       </body>

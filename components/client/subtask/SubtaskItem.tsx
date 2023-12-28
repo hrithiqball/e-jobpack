@@ -12,7 +12,7 @@ import {
   Switch,
 } from '@nextui-org/react';
 import { UpdateSubtask } from '@/app/api/subtask/[uid]/route';
-import { LuCornerDownRight, LuTrash2 } from 'react-icons/lu';
+import { LuCornerDownRight, LuMoreVertical, LuTrash2 } from 'react-icons/lu';
 import { isEditState, useSelector } from '@/lib/redux';
 
 export enum InputType {
@@ -180,9 +180,10 @@ export default function SubtaskItem({ subtask }: { subtask: subtask }) {
         />
       </div>
       <div className="flex-2 hover:cursor-not-allowed">
-        <Button isDisabled={!isEdit} isIconOnly color="danger">
+        <LuMoreVertical />
+        {/* <Button isDisabled={!isEdit} isIconOnly color="danger">
           <LuTrash2 />
-        </Button>
+        </Button> */}
       </div>
     </div>
   );

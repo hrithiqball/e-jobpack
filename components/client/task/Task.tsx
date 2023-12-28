@@ -5,8 +5,8 @@ import { useTheme } from 'next-themes';
 import { maintenance } from '@prisma/client';
 import Loading from '@/components/client/Loading';
 import { Button, Card, CardHeader, Chip, Divider } from '@nextui-org/react';
-import { AiOutlineIssuesClose } from 'react-icons/ai';
 import Link from 'next/link';
+import { LuWrench } from 'react-icons/lu';
 
 export default function Task({
   maintenanceList,
@@ -41,7 +41,7 @@ export default function Task({
               <Card key={maintenance.uid} className="w-full my-4">
                 <CardHeader className="flex gap-3">
                   <Button color="danger" isIconOnly>
-                    <AiOutlineIssuesClose />
+                    <LuWrench />
                   </Button>
                   <div className="flex flex-col">
                     <Link

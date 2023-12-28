@@ -38,7 +38,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
   } else {
     orderBy.push({
-      updated_on: 'desc',
+      updated_at: 'desc',
     });
   }
 
