@@ -67,7 +67,7 @@ export async function fetchMaintenanceItemById(uid: string) {
     });
   } catch (error) {
     console.error(error);
-    return null;
+    throw error;
   }
 }
 
