@@ -1,7 +1,10 @@
-name: Run prettier on Merge to main
+name: Prettier Formatter
 
 on:
   push:
+    branches:
+      - main
+  pull_request:
     branches:
       - main
 
