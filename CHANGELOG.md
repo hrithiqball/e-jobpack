@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/hrithiqball/asset-management-app/compare/v1.0.0...v1.1.0) (2023-12-28)
+
+
+### Features
+
+* create template for issues ([d0116ee](https://github.com/hrithiqball/asset-management-app/commit/d0116eed39939bcad99f7087f69e908ef9b3d47c))
+
 # 1.0.0 (2023-12-27)
 
 
