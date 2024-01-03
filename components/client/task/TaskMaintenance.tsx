@@ -50,6 +50,7 @@ import { base64Image } from '@/public/client-icon-base64';
 import { saveAs } from 'file-saver';
 import { Result } from '@/utils/function/result';
 import { convertToRoman } from '@/utils/function/convertToRoman';
+import { toast } from 'sonner';
 
 export default function TaskMaintenance({
   maintenance,
@@ -92,6 +93,8 @@ export default function TaskMaintenance({
   }, []);
 
   function handleClose() {
+    createChecklistClient();
+
     setOpenAddChecklist(false);
     setNewChecklistTitle('');
     setNewChecklistDescription('');
@@ -99,22 +102,27 @@ export default function TaskMaintenance({
     setOpenAddChecklist(!openAddChecklist);
   }
 
-  function createChecklistClient() {
-    const newChecklist: checklist = {
+  async function createChecklistClient() {
+    //TODO: figure out how to get user id based on current session
+
+    const newChecklist = {
       uid: `CL-${moment().format('YYMMDDHHmmssSSS')}`,
-      created_by: '',
+      created_by: 'USER-231226231304454',
       created_on: new Date(),
-      updated_by: '',
+      updated_by: 'USER-231226231304454',
       updated_on: new Date(),
       maintenance_uid: maintenance.uid,
       color: null,
       icon: null,
       title: newChecklistTitle,
       description: newChecklistDescription,
-    };
+    } satisfies checklist;
 
     startTransition(() => {
       createChecklist(newChecklist);
+      if (!isPending) {
+        toast.success('Checklist created');
+      }
     });
   }
 
@@ -508,11 +516,7 @@ export default function TaskMaintenance({
     };
 
     await saveExcel();
-    console.log('downloaded');
-  }
-
-  async function returningStuff() {
-    return 'hye';
+    toast.success('Excel file downloaded🎉');
   }
 
   if (!mounted) return <Loading label="Hang on tight" />;

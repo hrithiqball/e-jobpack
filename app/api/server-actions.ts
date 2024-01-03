@@ -16,6 +16,17 @@ import bcrypt from 'bcrypt';
 
 // user
 
+export async function fetchUserByEmail(email: string) {
+  try {
+    return await prisma.user.findUnique({
+      where: { email },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 export async function createNewUser(
   name: string,
   email: string,
