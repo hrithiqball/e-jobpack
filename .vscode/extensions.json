@@ -10,7 +10,6 @@
     "wix.vscode-import-cost",
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
-    "streetsidesoftware.code-spell-checker",
     "pkief.material-icon-theme"
   ]
 }

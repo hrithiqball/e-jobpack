@@ -1,28 +1,8 @@
 {
-  "cSpell.words": [
-    "chartjs",
-    "clsx",
-    "daygrid",
-    "exceljs",
-    "fullcalendar",
-    "icam",
-    "kyziq",
-    "maintainee",
-    "nextauth",
-    "nextjs",
-    "nextui",
-    "Parens",
-    "reduxjs",
-    "sonner",
-    "supabase",
-    "tailwindcss",
-    "toastify",
-    "trpc",
-    "YYMMDDHH"
-  ],
   "material-icon-theme.activeIconPack": "react_redux",
   "material-icon-theme.files.associations": {
-    "prisma/prisma.ts": "prisma"
+    "prisma/prisma.ts": "prisma",
+    "cspell.json": "todo"
   },
   "material-icon-theme.folders.associations": {
     "utils/actions": "connection",

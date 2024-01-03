@@ -1,0 +1,42 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "ignorePaths": [
+    "node_modules/**",
+    "dist/**",
+    "*.sql",
+    "*.svg",
+    "*.prisma",
+    "Dockerfile",
+    "*.md"
+  ],
+  "ignoreWords": [
+    "chartjs",
+    "clsx",
+    "daygrid",
+    "exceljs",
+    "fullcalendar",
+    "icam",
+    "kyziq",
+    "maintainee",
+    "nextauth",
+    "nextjs",
+    "nextui",
+    "Parens",
+    "reduxjs",
+    "sonner",
+    "supabase",
+    "tailwindcss",
+    "toastify",
+    "trpc",
+    "YYMMDDHH",
+    "mmss",
+    "STUSE",
+    "ATYPE",
+    "ATAGS",
+    "ASTATUS",
+    "TSUSE",
+    "CLUSE",
+    "CLLIB"
+  ]
+}
