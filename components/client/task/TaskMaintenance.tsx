@@ -1,12 +1,6 @@
 'use client';
 
-import React, {
-  Fragment,
-  useEffect,
-  useRef,
-  useState,
-  useTransition,
-} from 'react';
+import React, { Fragment, useEffect, useState, useTransition } from 'react';
 import { useTheme } from 'next-themes';
 import Loading from '@/components/client/Loading';
 import {
@@ -45,7 +39,7 @@ import {
 import moment from 'moment';
 import { createChecklist } from '@/app/api/server-actions';
 import { Border, Cell, Column, Workbook } from 'exceljs';
-import { SimplifiedTask } from '@/utils/model/nested-maintenance';
+// import { SimplifiedTask } from '@/utils/model/nested-maintenance';
 import { base64Image } from '@/public/client-icon-base64';
 import { saveAs } from 'file-saver';
 import { Result } from '@/utils/function/result';
@@ -74,8 +68,8 @@ export default function TaskMaintenance({
   const [selectedSaveOption, setSelectedSaveOption] = useState(
     new Set(['saveOnly']),
   );
-  const [selectedFile, setSelectedFile] = useState(null);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  // const [selectedFile, setSelectedFile] = useState(null);
+  // const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const descriptionsMap = {
     saveOnly: 'Save only for this maintenance.',
@@ -134,60 +128,60 @@ export default function TaskMaintenance({
     });
   }
 
-  function handleButtonClick() {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  }
+  // function handleButtonClick() {
+  //   if (fileInputRef.current) {
+  //     fileInputRef.current.click();
+  //   }
+  // }
 
-  function handleFileChange(event: any) {
-    const file = event.target.files[0];
+  // function handleFileChange(event: any) {
+  //   const file = event.target.files[0];
 
-    if (file) {
-      setSelectedFile(file);
-    }
-  }
+  //   if (file) {
+  //     setSelectedFile(file);
+  //   }
+  // }
 
-  async function importExcel() {
-    if (selectedFile) {
-      const workbook = new Workbook();
-      const reader = new FileReader();
+  // async function importExcel() {
+  //   if (selectedFile) {
+  //     const workbook = new Workbook();
+  //     const reader = new FileReader();
 
-      reader.onload = async (event: any) => {
-        const buffer = event.target.result;
-        await workbook.xlsx.load(buffer);
-        //const worksheet = workbook.getWorksheet(1);
-        const worksheet = workbook.worksheets[0];
+  //     reader.onload = async (event: any) => {
+  //       const buffer = event.target.result;
+  //       await workbook.xlsx.load(buffer);
+  //       //const worksheet = workbook.getWorksheet(1);
+  //       const worksheet = workbook.worksheets[0];
 
-        let simplifiedTask: SimplifiedTask[] = [];
+  //       let simplifiedTask: SimplifiedTask[] = [];
 
-        for (let index = 9; index <= worksheet.rowCount; index++) {
-          const row = worksheet.getRow(index);
+  //       for (let index = 9; index <= worksheet.rowCount; index++) {
+  //         const row = worksheet.getRow(index);
 
-          const task: SimplifiedTask = {
-            no: row.getCell(1).value as number,
-            uid: row.getCell(2).value as string,
-            taskActivity: 'Monkey',
-            remarks: 'remarks',
-            isComplete: '/',
-          };
+  //         const task: SimplifiedTask = {
+  //           no: row.getCell(1).value as number,
+  //           uid: row.getCell(2).value as string,
+  //           taskActivity: 'Monkey',
+  //           remarks: 'remarks',
+  //           isComplete: '/',
+  //         };
 
-          simplifiedTask.push(task);
-        }
+  //         simplifiedTask.push(task);
+  //       }
 
-        console.log(simplifiedTask);
+  //       console.log(simplifiedTask);
 
-        setTimeout(() => {
-          //loading false
-        }, 3000);
+  //       setTimeout(() => {
+  //         //loading false
+  //       }, 3000);
 
-        reader.readAsArrayBuffer(selectedFile);
-        setSelectedFile(null);
-      };
-    } else {
-      console.log('other value');
-    }
-  }
+  //       reader.readAsArrayBuffer(selectedFile);
+  //       setSelectedFile(null);
+  //     };
+  //   } else {
+  //     console.log('other value');
+  //   }
+  // }
 
   async function exportToExcel() {
     const workbook = new Workbook();

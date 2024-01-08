@@ -5,6 +5,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcrypt';
 import { User } from '@prisma/client';
 
+// https://www.youtube.com/watch?v=bkUmN9TH_hQ
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
@@ -29,15 +30,6 @@ export const authOptions: NextAuthOptions = {
 
           const isMatch = await bcrypt.compare(password, data.password);
           if (!isMatch) throw new Error('Wrong password. Please try again.');
-
-          console.log({
-            id: data.id,
-            emailVerified: data.email_verified,
-            email: data.email,
-            name: data.name,
-            image: data.image,
-            role: data.role,
-          });
 
           return {
             id: data.id,

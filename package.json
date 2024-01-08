@@ -9,6 +9,8 @@
     "start": "next start",
     "lint": "next lint",
     "prisma": "prisma db pull && prisma generate",
+    "prisma-push": "prisma db push",
+    "prisma-init-migrate" : "prisma migrate dev --name init",
     "prettier": "prettier --write .",
     "release": "semantic-release",
     "spellcheck": "cspell **"

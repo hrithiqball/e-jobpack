@@ -7,7 +7,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  schemas  = ["auth", "public"]
+  schemas  = ["public"]
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -18,14 +18,14 @@ model asset {
   description                       String?
   type                              String?
   created_by                        String
-  created_on                        DateTime        @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  created_on                        DateTime
   updated_by                        String
-  last_maintenance                  DateTime?       @db.Timestamptz(6)
+  last_maintenance                  DateTime?
   last_maintainee                   String[]
   location                          String?
-  next_maintenance                  DateTime?       @db.Timestamptz(6)
+  next_maintenance                  DateTime?
   status_uid                        String?
-  updated_on                        DateTime        @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  updated_on                        DateTime
   person_in_charge                  String?
   user_asset_created_byTouser       User            @relation("asset_created_byTouser", fields: [created_by], references: [id], onDelete: Cascade)
   user_asset_person_in_chargeTouser User?           @relation("asset_person_in_chargeTouser", fields: [person_in_charge], references: [id], onDelete: Cascade)
@@ -70,8 +70,8 @@ model asset_tags_library {
   uid                                      String       @id
   title                                    String
   color                                    String?
-  created_on                               DateTime     @db.Timestamptz(6)
-  updated_on                               DateTime     @db.Timestamptz(6)
+  created_on                               DateTime
+  updated_on                               DateTime
   created_by                               String
   updated_by                               String
   asset_tags                               asset_tags[]
@@ -85,9 +85,9 @@ model asset_tags_library {
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model asset_type {
   uid                              String   @id
-  created_on                       DateTime @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  created_on                       DateTime
   created_by                       String
-  updated_on                       DateTime @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  updated_on                       DateTime
   updated_by                       String
   title                            String
   description                      String?
@@ -103,9 +103,9 @@ model asset_type {
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model checklist {
   uid                             String      @id
-  created_on                      DateTime    @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  created_on                      DateTime
   created_by                      String
-  updated_on                      DateTime    @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  updated_on                      DateTime
   updated_by                      String
   title                           String
   description                     String?
@@ -124,9 +124,9 @@ model checklist {
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model checklist_library {
   uid                                     String          @id
-  created_on                              DateTime        @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  created_on                              DateTime
   created_by                              String
-  updated_on                              DateTime        @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  updated_on                              DateTime
   updated_by                              String
   title                                   String
   description                             String?
@@ -142,9 +142,9 @@ model checklist_library {
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model checklist_use {
   uid                                 String             @id
-  created_on                          DateTime?          @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  created_on                          DateTime?
   created_by                          String?
-  updated_on                          DateTime?          @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  updated_on                          DateTime?
   updated_by                          String?
   title                               String
   description                         String?
@@ -164,10 +164,10 @@ model checklist_use {
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model history {
   uid                   String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  created_on            DateTime @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  created_on            DateTime
   activity              String
   action_by             String
-  action_on             DateTime @db.Timestamptz(6)
+  action_on             DateTime
   task_uid              String?
   subtask_uid           String?
   maintenance_uid       String?
@@ -192,11 +192,11 @@ model history {
 model maintenance {
   uid             String      @id
   asset_uid       String
-  date            DateTime    @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  date            DateTime
   maintainee      String?
   attachment_path String?
   approved_by     String?
-  approved_on     DateTime?   @db.Timestamptz(6)
+  approved_on     DateTime?
   checklist       checklist[]
   asset           asset       @relation(fields: [asset_uid], references: [uid], onDelete: Cascade)
 
@@ -212,7 +212,7 @@ model subtask {
   is_complete     Boolean   @default(false)
   remarks         String?
   issue           String?
-  deadline        DateTime? @db.Timestamptz(6)
+  deadline        DateTime?
   completed_by    String?
   task_uid        String
   task_order      Int       @db.SmallInt
@@ -233,9 +233,9 @@ model subtask_library {
   task_activity                         String
   description                           String?
   task_order                            BigInt
-  created_on                            DateTime      @db.Timestamptz(6)
+  created_on                            DateTime
   created_by                            String
-  updated_on                            DateTime      @db.Timestamptz(6)
+  updated_on                            DateTime
   updated_by                            String
   user_subtask_library_created_byTouser User          @relation("subtask_library_created_byTouser", fields: [created_by], references: [id], onDelete: Cascade)
   user_subtask_library_updated_byTouser User          @relation("subtask_library_updated_byTouser", fields: [updated_by], references: [id], onDelete: Cascade)
@@ -262,12 +262,12 @@ model subtask_use {
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model task {
   uid             String    @id(map: "task2_pkey")
-  task_activity   String
+  task_activity   String?
   description     String?
   is_complete     Boolean   @default(false)
   remarks         String?
   issue           String?
-  deadline        DateTime? @db.Timestamptz(6)
+  deadline        DateTime?
   completed_by    String?
   task_order      Int       @db.SmallInt
   have_subtask    Boolean   @default(false)
@@ -288,10 +288,10 @@ model task {
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model task_library {
   uid                                String     @id
-  created_on                         DateTime   @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  created_on                         DateTime
   created_by                         String
   updated_by                         String
-  updated_on                         DateTime   @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  updated_on                         DateTime
   task_activity                      String
   description                        String?
   have_subtask                       Boolean
@@ -319,279 +319,6 @@ model task_use {
   @@schema("public")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model audit_log_entries {
-  instance_id String?   @db.Uuid
-  id          String    @id @db.Uuid
-  payload     Json?     @db.Json
-  created_at  DateTime? @db.Timestamptz(6)
-  ip_address  String    @default("") @db.VarChar(64)
-
-  @@index([instance_id], map: "audit_logs_instance_id_idx")
-  @@schema("auth")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model flow_state {
-  id                     String                @id @db.Uuid
-  user_id                String?               @db.Uuid
-  auth_code              String
-  code_challenge_method  code_challenge_method
-  code_challenge         String
-  provider_type          String
-  provider_access_token  String?
-  provider_refresh_token String?
-  created_at             DateTime?             @db.Timestamptz(6)
-  updated_at             DateTime?             @db.Timestamptz(6)
-  authentication_method  String
-  saml_relay_states      saml_relay_states[]
-
-  @@index([created_at(sort: Desc)])
-  @@index([auth_code], map: "idx_auth_code")
-  @@index([user_id, authentication_method], map: "idx_user_id_auth_method")
-  @@schema("auth")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model identities {
-  provider_id     String
-  user_id         String    @db.Uuid
-  identity_data   Json
-  provider        String
-  last_sign_in_at DateTime? @db.Timestamptz(6)
-  created_at      DateTime? @db.Timestamptz(6)
-  updated_at      DateTime? @db.Timestamptz(6)
-  email           String?   @default(dbgenerated("lower((identity_data ->> 'email'::text))"))
-  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  users           users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@unique([provider_id, provider], map: "identities_provider_id_provider_unique")
-  @@index([email])
-  @@index([user_id])
-  @@schema("auth")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model instances {
-  id              String    @id @db.Uuid
-  uuid            String?   @db.Uuid
-  raw_base_config String?
-  created_at      DateTime? @db.Timestamptz(6)
-  updated_at      DateTime? @db.Timestamptz(6)
-
-  @@schema("auth")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model mfa_amr_claims {
-  session_id            String   @db.Uuid
-  created_at            DateTime @db.Timestamptz(6)
-  updated_at            DateTime @db.Timestamptz(6)
-  authentication_method String
-  id                    String   @id(map: "amr_id_pk") @db.Uuid
-  sessions              sessions @relation(fields: [session_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@unique([session_id, authentication_method], map: "mfa_amr_claims_session_id_authentication_method_pkey")
-  @@schema("auth")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model mfa_challenges {
-  id          String      @id @db.Uuid
-  factor_id   String      @db.Uuid
-  created_at  DateTime    @db.Timestamptz(6)
-  verified_at DateTime?   @db.Timestamptz(6)
-  ip_address  String      @db.Inet
-  mfa_factors mfa_factors @relation(fields: [factor_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "mfa_challenges_auth_factor_id_fkey")
-
-  @@index([created_at(sort: Desc)], map: "mfa_challenge_created_at_idx")
-  @@schema("auth")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model mfa_factors {
-  id             String           @id @db.Uuid
-  user_id        String           @db.Uuid
-  friendly_name  String?
-  factor_type    factor_type
-  status         factor_status
-  created_at     DateTime         @db.Timestamptz(6)
-  updated_at     DateTime         @db.Timestamptz(6)
-  secret         String?
-  mfa_challenges mfa_challenges[]
-  users          users            @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@index([user_id, created_at], map: "factor_id_created_at_idx")
-  @@index([user_id])
-  @@schema("auth")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model refresh_tokens {
-  instance_id String?   @db.Uuid
-  id          BigInt    @id @default(autoincrement())
-  token       String?   @unique(map: "refresh_tokens_token_unique") @db.VarChar(255)
-  user_id     String?   @db.VarChar(255)
-  revoked     Boolean?
-  created_at  DateTime? @db.Timestamptz(6)
-  updated_at  DateTime? @db.Timestamptz(6)
-  parent      String?   @db.VarChar(255)
-  session_id  String?   @db.Uuid
-  sessions    sessions? @relation(fields: [session_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@index([instance_id])
-  @@index([instance_id, user_id])
-  @@index([parent])
-  @@index([session_id, revoked])
-  @@index([updated_at(sort: Desc)])
-  @@schema("auth")
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model saml_providers {
-  id                String        @id @db.Uuid
-  sso_provider_id   String        @db.Uuid
-  entity_id         String        @unique
-  metadata_xml      String
-  metadata_url      String?
-  attribute_mapping Json?
-  created_at        DateTime?     @db.Timestamptz(6)
-  updated_at        DateTime?     @db.Timestamptz(6)
-  sso_providers     sso_providers @relation(fields: [sso_provider_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@index([sso_provider_id])
-  @@schema("auth")
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model saml_relay_states {
-  id              String        @id @db.Uuid
-  sso_provider_id String        @db.Uuid
-  request_id      String
-  for_email       String?
-  redirect_to     String?
-  from_ip_address String?       @db.Inet
-  created_at      DateTime?     @db.Timestamptz(6)
-  updated_at      DateTime?     @db.Timestamptz(6)
-  flow_state_id   String?       @db.Uuid
-  flow_state      flow_state?   @relation(fields: [flow_state_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  sso_providers   sso_providers @relation(fields: [sso_provider_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@index([created_at(sort: Desc)])
-  @@index([for_email])
-  @@index([sso_provider_id])
-  @@schema("auth")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model schema_migrations {
-  version String @id @db.VarChar(255)
-
-  @@schema("auth")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model sessions {
-  id             String           @id @db.Uuid
-  user_id        String           @db.Uuid
-  created_at     DateTime?        @db.Timestamptz(6)
-  updated_at     DateTime?        @db.Timestamptz(6)
-  factor_id      String?          @db.Uuid
-  aal            aal_level?
-  not_after      DateTime?        @db.Timestamptz(6)
-  refreshed_at   DateTime?        @db.Timestamp(6)
-  user_agent     String?
-  ip             String?          @db.Inet
-  tag            String?
-  mfa_amr_claims mfa_amr_claims[]
-  refresh_tokens refresh_tokens[]
-  users          users            @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@index([not_after(sort: Desc)])
-  @@index([user_id])
-  @@index([user_id, created_at], map: "user_id_created_at_idx")
-  @@schema("auth")
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
-model sso_domains {
-  id              String        @id @db.Uuid
-  sso_provider_id String        @db.Uuid
-  domain          String
-  created_at      DateTime?     @db.Timestamptz(6)
-  updated_at      DateTime?     @db.Timestamptz(6)
-  sso_providers   sso_providers @relation(fields: [sso_provider_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@index([sso_provider_id])
-  @@schema("auth")
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
-model sso_providers {
-  id                String              @id @db.Uuid
-  resource_id       String?
-  created_at        DateTime?           @db.Timestamptz(6)
-  updated_at        DateTime?           @db.Timestamptz(6)
-  saml_providers    saml_providers[]
-  saml_relay_states saml_relay_states[]
-  sso_domains       sso_domains[]
-
-  @@schema("auth")
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
-model users {
-  instance_id                 String?       @db.Uuid
-  id                          String        @id @db.Uuid
-  aud                         String?       @db.VarChar(255)
-  role                        String?       @db.VarChar(255)
-  email                       String?       @db.VarChar(255)
-  encrypted_password          String?       @db.VarChar(255)
-  email_confirmed_at          DateTime?     @db.Timestamptz(6)
-  invited_at                  DateTime?     @db.Timestamptz(6)
-  confirmation_token          String?       @db.VarChar(255)
-  confirmation_sent_at        DateTime?     @db.Timestamptz(6)
-  recovery_token              String?       @db.VarChar(255)
-  recovery_sent_at            DateTime?     @db.Timestamptz(6)
-  email_change_token_new      String?       @db.VarChar(255)
-  email_change                String?       @db.VarChar(255)
-  email_change_sent_at        DateTime?     @db.Timestamptz(6)
-  last_sign_in_at             DateTime?     @db.Timestamptz(6)
-  raw_app_meta_data           Json?
-  raw_user_meta_data          Json?
-  is_super_admin              Boolean?
-  created_at                  DateTime?     @db.Timestamptz(6)
-  updated_at                  DateTime?     @db.Timestamptz(6)
-  phone                       String?       @unique
-  phone_confirmed_at          DateTime?     @db.Timestamptz(6)
-  phone_change                String?       @default("")
-  phone_change_token          String?       @default("") @db.VarChar(255)
-  phone_change_sent_at        DateTime?     @db.Timestamptz(6)
-  confirmed_at                DateTime?     @default(dbgenerated("LEAST(email_confirmed_at, phone_confirmed_at)")) @db.Timestamptz(6)
-  email_change_token_current  String?       @default("") @db.VarChar(255)
-  email_change_confirm_status Int?          @default(0) @db.SmallInt
-  banned_until                DateTime?     @db.Timestamptz(6)
-  reauthentication_token      String?       @default("") @db.VarChar(255)
-  reauthentication_sent_at    DateTime?     @db.Timestamptz(6)
-  is_sso_user                 Boolean       @default(false)
-  deleted_at                  DateTime?     @db.Timestamptz(6)
-  identities                  identities[]
-  mfa_factors                 mfa_factors[]
-  sessions                    sessions[]
-  User                        User?
-
-  @@index([instance_id])
-  @@schema("auth")
-}
-
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model account {
   id                   String    @id
@@ -601,9 +328,9 @@ model account {
   provider_account_id  String
   refresh_token        String?
   access_token         String?
-  access_token_expires DateTime? @db.Timestamptz(6)
-  created_at           DateTime  @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
-  updated_at           DateTime? @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  access_token_expires DateTime?
+  created_at           DateTime
+  updated_at           DateTime?
   user                 User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@schema("public")
@@ -613,11 +340,11 @@ model account {
 model session {
   id            String   @id
   user_id       String
-  expires       DateTime @db.Timestamptz(6)
+  expires       DateTime
   session_token String   @unique
   access_token  String   @unique
-  created_at    DateTime @default(now()) @db.Timestamptz(6)
-  updated_at    DateTime @default(now()) @db.Timestamptz(6)
+  created_at    DateTime
+  updated_at    DateTime
   user          User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@schema("public")
@@ -628,8 +355,8 @@ model verification_request {
   id         String   @id
   identifier String
   token      String   @unique
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  updated_at DateTime @default(now()) @db.Timestamptz(6)
+  created_at DateTime
+  updated_at DateTime
 
   @@schema("public")
 }
@@ -642,16 +369,14 @@ model User {
   first_page                                             Int                  @db.SmallInt
   enable_dashboard                                       Boolean              @default(false)
   is_dark_mode                                           Boolean              @default(false)
-  created_at                                             DateTime             @db.Timestamptz(6)
-  updated_at                                             DateTime             @db.Timestamptz(6)
-  user_id                                                String?              @unique(map: "user_user_id_key") @db.Uuid
+  created_at                                             DateTime
+  updated_at                                             DateTime
   department                                             Department?          @default(management)
   role                                                   Role?                @default(maintainer)
   email                                                  String               @unique(map: "user_email_key")
   password                                               String
-  email_verified                                         DateTime?            @db.Timestamptz(6)
+  email_verified                                         DateTime?
   image                                                  String?
-  users                                                  users?               @relation(fields: [user_id], references: [id], onDelete: Cascade)
   account                                                account[]
   asset_asset_created_byTouser                           asset[]              @relation("asset_created_byTouser")
   asset_asset_person_in_chargeTouser                     asset[]              @relation("asset_person_in_chargeTouser")
@@ -674,35 +399,6 @@ model User {
   task_library_task_library_updated_byTouser             task_library[]       @relation("task_library_updated_byTouser")
 
   @@schema("public")
-}
-
-enum aal_level {
-  aal1
-  aal2
-  aal3
-
-  @@schema("auth")
-}
-
-enum code_challenge_method {
-  s256
-  plain
-
-  @@schema("auth")
-}
-
-enum factor_status {
-  unverified
-  verified
-
-  @@schema("auth")
-}
-
-enum factor_type {
-  totp
-  webauthn
-
-  @@schema("auth")
 }
 
 enum Department {
