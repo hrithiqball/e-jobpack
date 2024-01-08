@@ -53,6 +53,7 @@ export default function AssetList({
   const [mounted, setMounted] = useState(false);
   const [openAddAsset, setOpenAddAsset] = useState(false);
   const [newAssetName, setNewAssetName] = useState('');
+  const [newAssetTag, setNewAssetTag] = useState('');
   const [newAssetDescription, setNewAssetDescription] = useState('');
   const [newAssetType, setNewAssetType] = useState('');
   const [newAssetStatus, setNewAssetStatus] = useState('');
@@ -129,6 +130,7 @@ export default function AssetList({
       last_maintenance: null,
       next_maintenance: null,
       last_maintainee: [],
+      tag: newAssetTag,
       status_uid: newAssetStatus || null,
     } satisfies asset;
 
@@ -197,6 +199,12 @@ export default function AssetList({
                 variant="faded"
                 value={newAssetDescription}
                 onValueChange={setNewAssetDescription}
+              />
+              <Input
+                label="Tag"
+                variant="faded"
+                value={newAssetTag}
+                onValueChange={setNewAssetTag}
               />
               {/* <Dropdown>
                 <DropdownTrigger>
@@ -289,6 +297,7 @@ export default function AssetList({
           >
             <TableHeader>
               <TableColumn key="name">Name</TableColumn>
+              <TableColumn key="tag">Tag</TableColumn>
               <TableColumn key="description">Description</TableColumn>
               <TableColumn key="type">Type</TableColumn>
               <TableColumn key="location">Location</TableColumn>

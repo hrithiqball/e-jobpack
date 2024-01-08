@@ -5,9 +5,9 @@ import { useTheme } from 'next-themes';
 import Loading from '@/components/client/Loading';
 import { asset, checklist_use, maintenance } from '@prisma/client';
 import { LuChevronLeft, LuPencilLine, LuPackagePlus } from 'react-icons/lu';
-import AssetDetails from '@/components/client/AssetDetails';
-import AssetMaintenance from '@/components/client/AssetMaintenance';
-import AssetAttachment from '@/components/client/AssetAttachment';
+import AssetDetails from '@/components/client/asset/AssetDetails';
+import AssetMaintenance from '@/components/client/asset/AssetMaintenance';
+import AssetAttachment from '@/components/client/asset/AssetAttachment';
 import {
   Button,
   Card,

@@ -3,7 +3,7 @@ import {
   fetchAssetTypeList,
   fetchAssetStatusList,
 } from '@/app/api/server-actions';
-import AssetComponent from '@/components/client/AssetList';
+import AssetComponent from '@/components/client/asset/AssetList';
 
 export default async function AssetPage() {
   const assetList = await fetchAssetList();

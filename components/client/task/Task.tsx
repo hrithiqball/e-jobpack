@@ -53,17 +53,17 @@ export default function Task({
                       }}
                       className="text-md font-bold"
                     >
-                      {maintenance.uid} Maintenance
+                      {maintenance.uid}
                     </Link>
                     <p className=" text-sm">
                       Maintenance ID: {maintenance.uid}
                     </p>
-                    <Link
+                    {/* <Link
                       className=" text-sm hover:text-blue-500 hover:underline transition-all"
                       href={`/asset/${maintenance.asset_uid}`}
                     >
                       Asset Details
-                    </Link>
+                    </Link> */}
                   </div>
                 </CardHeader>
                 {/* <CardBody>

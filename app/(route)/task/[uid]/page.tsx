@@ -3,6 +3,7 @@ import TaskMaintenance from '@/components/client/task/TaskMaintenance';
 import {
   fetchChecklistList,
   fetchChecklistLibraryList,
+  fetchFilteredAssetList,
 } from '@/app/api/server-actions';
 import { maintenance } from '@prisma/client';
 import React from 'react';
@@ -17,6 +18,8 @@ export default async function TaskItemPage({
   const parsedMaintenance = JSON.parse(
     searchParams.maintenance,
   ) satisfies maintenance;
+
+  const assetList = await fetchFilteredAssetList(parsedMaintenance.asset_ids);
   const checklistList = await fetchChecklistList(params.uid);
   const checklistLibrary = await fetchChecklistLibraryList();
 
@@ -25,6 +28,7 @@ export default async function TaskItemPage({
       <TaskMaintenance
         maintenance={parsedMaintenance}
         checklistLibraryList={checklistLibrary}
+        assetList={assetList}
       >
         <MaintenanceChecklistList checklistList={checklistList} />
       </TaskMaintenance>

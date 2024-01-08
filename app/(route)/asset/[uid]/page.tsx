@@ -1,4 +1,4 @@
-import Asset from '@/components/client/Asset';
+import Asset from '@/components/client/asset/Asset';
 import {
   fetchChecklistUseList,
   fetchMaintenanceList,
@@ -44,6 +44,7 @@ export default async function AssetItemPage({
     next_maintenance: new Date(searchParams.next_maintenance),
     status_uid: searchParams.status_uid,
     person_in_charge: searchParams.person_in_charge,
+    tag: '',
   };
 
   return (

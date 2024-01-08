@@ -73,12 +73,27 @@ export async function fetchAssetList(): Promise<asset[]> {
   try {
     return await prisma.asset.findMany({
       orderBy: {
-        updated_on: 'desc',
+        name: 'asc',
       },
     });
   } catch (error) {
     console.error(error);
     return [];
+  }
+}
+
+export async function fetchFilteredAssetList(assetIds: string[]) {
+  try {
+    return await prisma.asset.findMany({
+      where: {
+        uid: {
+          in: assetIds,
+        },
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
 }
 
@@ -113,6 +128,17 @@ export async function fetchAssetStatusList(): Promise<asset_status[]> {
 }
 
 // maintenance
+
+export async function createMaintenance(data: maintenance) {
+  try {
+    return await prisma.maintenance.create({
+      data,
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
 
 export async function fetchMaintenanceItemById(uid: string) {
   try {

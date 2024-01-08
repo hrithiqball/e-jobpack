@@ -27,6 +27,7 @@ model asset {
   status_uid                        String?
   updated_on                        DateTime
   person_in_charge                  String?
+  tag                               String?
   user_asset_created_byTouser       User            @relation("asset_created_byTouser", fields: [created_by], references: [id], onDelete: Cascade)
   user_asset_person_in_chargeTouser User?           @relation("asset_person_in_chargeTouser", fields: [person_in_charge], references: [id], onDelete: Cascade)
   asset_status                      asset_status?   @relation(fields: [status_uid], references: [uid], onDelete: Cascade)
@@ -191,14 +192,16 @@ model history {
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model maintenance {
   uid             String      @id
-  asset_uid       String
+  asset_uid       String?
   date            DateTime
   maintainee      String?
   attachment_path String?
   approved_by     String?
   approved_on     DateTime?
+  asset_ids       String[]
+  deadline        DateTime?
   checklist       checklist[]
-  asset           asset       @relation(fields: [asset_uid], references: [uid], onDelete: Cascade)
+  asset           asset?      @relation(fields: [asset_uid], references: [uid], onDelete: Cascade)
 
   @@schema("public")
 }

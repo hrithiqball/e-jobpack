@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Fragment, useEffect, useState, useTransition } from 'react';
+import React, { useEffect, useState, useTransition } from 'react';
 import { useTheme } from 'next-themes';
 import Loading from '@/components/client/Loading';
 import {
@@ -24,6 +24,7 @@ import {
 import Link from 'next/link';
 import { FaRegFileExcel, FaRegFilePdf } from 'react-icons/fa6';
 import {
+  asset,
   checklist,
   checklist_library,
   maintenance,
@@ -51,10 +52,12 @@ import { useRouter } from 'next/navigation';
 export default function TaskMaintenance({
   maintenance,
   checklistLibraryList,
+  assetList,
   children,
 }: {
   maintenance: maintenance;
   checklistLibraryList: checklist_library[];
+  assetList: asset[];
   children: React.ReactNode;
 }) {
   const user = useSession();
@@ -524,142 +527,140 @@ export default function TaskMaintenance({
   if (!mounted) return <Loading label="Hang on tight" />;
 
   return (
-    <Fragment>
-      <Card
-        className={`rounded-md p-4 m-4 flex-grow ${
-          theme === 'dark' ? 'bg-gray-800' : 'bg-gray-200'
-        }`}
-      >
-        <div className="flex flex-row">
+    <Card
+      className={`rounded-md p-4 m-4 flex-grow ${
+        theme === 'dark' ? 'bg-gray-800' : 'bg-gray-200'
+      }`}
+    >
+      <div className="flex flex-row">
+        <Button
+          className="max-w-min"
+          as={Link}
+          href="/task"
+          startContent={<LuChevronLeft />}
+          variant="faded"
+          size="md"
+        >
+          Back
+        </Button>
+      </div>
+      <div className="flex flex-row justify-between items-center my-4 ">
+        <h2 className="text-xl font-semibold">{maintenance.uid}</h2>
+        <div className="flex flex-row space-x-1">
           <Button
-            className="max-w-min"
-            as={Link}
-            href="/task"
-            startContent={<LuChevronLeft />}
+            isIconOnly
             variant="faded"
-            size="md"
+            onPress={() => setOpenAddChecklist(!openAddChecklist)}
           >
-            Back
+            <LuFilePlus2 />
+          </Button>
+          <Modal isOpen={openAddChecklist} hideCloseButton backdrop="blur">
+            <ModalContent>
+              <ModalHeader className="flex flex-col gap-1">
+                Add New Checklist
+              </ModalHeader>
+              <ModalBody>
+                <Select label="Checklist Library" variant="faded">
+                  {!checklistLibraryList || !checklistLibraryList.length ? (
+                    <SelectItem key="err">No library found</SelectItem>
+                  ) : (
+                    checklistLibraryList.map(library => (
+                      <SelectItem key={library.uid} value={library.uid}>
+                        <span>{library.title}</span>
+                      </SelectItem>
+                    ))
+                  )}
+                </Select>
+                <Divider />
+                <Input
+                  value={newChecklistTitle}
+                  onValueChange={setNewChecklistTitle}
+                  isRequired
+                  label="Title"
+                  variant="faded"
+                />
+                <Input
+                  value={newChecklistDescription}
+                  onValueChange={setNewChecklistDescription}
+                  label="Description"
+                  variant="faded"
+                />
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  color="danger"
+                  onClick={() => setOpenAddChecklist(!openAddChecklist)}
+                >
+                  Cancel
+                </Button>
+                <ButtonGroup>
+                  <Button
+                    isDisabled={newChecklistTitle === ''}
+                    onClick={handleClose}
+                  >
+                    {
+                      labelsMap[
+                        selectedSaveOptionCurrent as keyof typeof labelsMap
+                      ]
+                    }
+                  </Button>
+                  <Dropdown placement="bottom-end">
+                    <DropdownTrigger>
+                      <Button isIconOnly>
+                        <LuChevronDown />
+                      </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu
+                      disallowEmptySelection
+                      aria-label="Merge options"
+                      selectedKeys={selectedSaveOption}
+                      selectionMode="single"
+                      onSelectionChange={(setString: any) =>
+                        setSelectedSaveOption(setString)
+                      }
+                      className="max-w-[300px]"
+                    >
+                      <DropdownItem
+                        key="saveOnly"
+                        description={descriptionsMap['saveOnly']}
+                      >
+                        {labelsMap['saveOnly']}
+                      </DropdownItem>
+                      <DropdownItem
+                        key="saveAsLibrary"
+                        description={descriptionsMap['saveAsLibrary']}
+                      >
+                        {labelsMap['saveAsLibrary']}
+                      </DropdownItem>
+                      <DropdownItem
+                        key="onlyLibrary"
+                        description={descriptionsMap['onlyLibrary']}
+                      >
+                        {labelsMap['onlyLibrary']}
+                      </DropdownItem>
+                    </DropdownMenu>
+                  </Dropdown>
+                </ButtonGroup>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+          <Button isIconOnly variant="faded">
+            <LuPencilLine />
+          </Button>
+          <Button isIconOnly variant="faded">
+            <FaRegFilePdf />
+          </Button>
+          <Button isIconOnly variant="faded" onClick={exportToExcel}>
+            <FaRegFileExcel />
           </Button>
         </div>
-        <div className="flex flex-row justify-between items-center my-4 ">
-          <h2 className="text-xl font-semibold">{maintenance.uid}</h2>
-          <div className="flex flex-row space-x-1">
-            <Button
-              isIconOnly
-              variant="faded"
-              onPress={() => setOpenAddChecklist(!openAddChecklist)}
-            >
-              <LuFilePlus2 />
-            </Button>
-            <Modal isOpen={openAddChecklist} hideCloseButton backdrop="blur">
-              <ModalContent>
-                <ModalHeader className="flex flex-col gap-1">
-                  Add New Checklist
-                </ModalHeader>
-                <ModalBody>
-                  <Select label="Checklist Library" variant="faded">
-                    {!checklistLibraryList || !checklistLibraryList.length ? (
-                      <SelectItem key="err">No library found</SelectItem>
-                    ) : (
-                      checklistLibraryList.map(library => (
-                        <SelectItem key={library.uid} value={library.uid}>
-                          <span>{library.title}</span>
-                        </SelectItem>
-                      ))
-                    )}
-                  </Select>
-                  <Divider />
-                  <Input
-                    value={newChecklistTitle}
-                    onValueChange={setNewChecklistTitle}
-                    isRequired
-                    label="Title"
-                    variant="faded"
-                  />
-                  <Input
-                    value={newChecklistDescription}
-                    onValueChange={setNewChecklistDescription}
-                    label="Description"
-                    variant="faded"
-                  />
-                </ModalBody>
-                <ModalFooter>
-                  <Button
-                    color="danger"
-                    onClick={() => setOpenAddChecklist(!openAddChecklist)}
-                  >
-                    Cancel
-                  </Button>
-                  <ButtonGroup>
-                    <Button
-                      isDisabled={newChecklistTitle === ''}
-                      onClick={handleClose}
-                    >
-                      {
-                        labelsMap[
-                          selectedSaveOptionCurrent as keyof typeof labelsMap
-                        ]
-                      }
-                    </Button>
-                    <Dropdown placement="bottom-end">
-                      <DropdownTrigger>
-                        <Button isIconOnly>
-                          <LuChevronDown />
-                        </Button>
-                      </DropdownTrigger>
-                      <DropdownMenu
-                        disallowEmptySelection
-                        aria-label="Merge options"
-                        selectedKeys={selectedSaveOption}
-                        selectionMode="single"
-                        onSelectionChange={(setString: any) =>
-                          setSelectedSaveOption(setString)
-                        }
-                        className="max-w-[300px]"
-                      >
-                        <DropdownItem
-                          key="saveOnly"
-                          description={descriptionsMap['saveOnly']}
-                        >
-                          {labelsMap['saveOnly']}
-                        </DropdownItem>
-                        <DropdownItem
-                          key="saveAsLibrary"
-                          description={descriptionsMap['saveAsLibrary']}
-                        >
-                          {labelsMap['saveAsLibrary']}
-                        </DropdownItem>
-                        <DropdownItem
-                          key="onlyLibrary"
-                          description={descriptionsMap['onlyLibrary']}
-                        >
-                          {labelsMap['onlyLibrary']}
-                        </DropdownItem>
-                      </DropdownMenu>
-                    </Dropdown>
-                  </ButtonGroup>
-                </ModalFooter>
-              </ModalContent>
-            </Modal>
-            <Button isIconOnly variant="faded">
-              <LuPencilLine />
-            </Button>
-            <Button isIconOnly variant="faded">
-              <FaRegFilePdf />
-            </Button>
-            <Button isIconOnly variant="faded" onClick={exportToExcel}>
-              <FaRegFileExcel />
-            </Button>
-          </div>
+      </div>
+      <Divider />
+      <Card className="rounded-md mt-4">
+        <div className="flex flex-col h-full p-4 overflow-y-auto">
+          <div className="flex-shrink-0 w-full">{children}</div>
         </div>
-        <Divider />
-        <Card className="rounded-md mt-4">
-          <div className="flex flex-col h-full p-4 overflow-y-auto">
-            <div className="flex-shrink-0 w-full">{children}</div>
-          </div>
-        </Card>
       </Card>
-    </Fragment>
+    </Card>
   );
 }
