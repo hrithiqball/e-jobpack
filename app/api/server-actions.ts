@@ -3,6 +3,8 @@
 import {
   Prisma,
   asset,
+  asset_status,
+  asset_type,
   checklist,
   maintenance,
   subtask,
@@ -56,6 +58,17 @@ export async function createNewUser(
 
 // asset
 
+export async function createAsset(data: asset): Promise<asset> {
+  try {
+    return await prisma.asset.create({
+      data,
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 export async function fetchAssetList(): Promise<asset[]> {
   try {
     return await prisma.asset.findMany({
@@ -66,6 +79,36 @@ export async function fetchAssetList(): Promise<asset[]> {
   } catch (error) {
     console.error(error);
     return [];
+  }
+}
+
+// asset type
+
+export async function fetchAssetTypeList(): Promise<asset_type[]> {
+  try {
+    return await prisma.asset_type.findMany({
+      orderBy: {
+        updated_on: 'desc',
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+// asset status
+
+export async function fetchAssetStatusList(): Promise<asset_status[]> {
+  try {
+    return await prisma.asset_status.findMany({
+      orderBy: {
+        title: 'desc',
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
 }
 

@@ -144,118 +144,113 @@ export default function TaskAdd({ checklistUid }: { checklistUid: string }) {
       <Button onPress={() => setOpen(!open)}>Add Task</Button>
       <Modal isOpen={open} hideCloseButton backdrop="blur">
         <ModalContent>
-          <Fragment>
-            <ModalHeader className="flex flex-col gap-1">
-              Add New Task
-            </ModalHeader>
-            <ModalBody>
-              <Input
-                isRequired
-                autoFocus
-                label="Activity"
-                variant="faded"
-                value={taskActivity}
-                onValueChange={setTaskActivity}
-              />
-              <Input
-                label="Description"
-                variant="faded"
-                value={taskDescription}
-                onValueChange={setTaskDescription}
-              />
-              <Checkbox isSelected={haveSubtask} onValueChange={setHaveSubtask}>
-                Multiple Task
-              </Checkbox>
-              {haveSubtask && (
-                <Fragment>
-                  {subtaskList.map((subtask, index) => (
-                    <div key={index} className="space-y-4">
-                      <div className="flex items-center space-x-4">
-                        <Input
-                          label={`Subtask title ${index + 1}`}
-                          value={subtask.title}
-                          onChange={e => handleSubtaskTitleChange(e, index)}
-                          variant="faded"
-                        />
-                        <Button
-                          isIconOnly
-                          onClick={() => handleDeleteSubtask(index)}
-                          color="warning"
-                        >
-                          <LuTrash2 />
-                        </Button>
-                      </div>
+          <ModalHeader className="flex flex-col gap-1">
+            Add New Task
+          </ModalHeader>
+          <ModalBody>
+            <Input
+              isRequired
+              autoFocus
+              label="Activity"
+              variant="faded"
+              value={taskActivity}
+              onValueChange={setTaskActivity}
+            />
+            <Input
+              label="Description"
+              variant="faded"
+              value={taskDescription}
+              onValueChange={setTaskDescription}
+            />
+            <Checkbox isSelected={haveSubtask} onValueChange={setHaveSubtask}>
+              Multiple Task
+            </Checkbox>
+            {haveSubtask && (
+              <Fragment>
+                {subtaskList.map((subtask, index) => (
+                  <div key={index} className="space-y-4">
+                    <div className="flex items-center space-x-4">
                       <Input
-                        label={`Subtask description ${index + 1}`}
-                        value={subtask.description}
-                        onChange={e => handleSubtaskDescriptionChange(e, index)}
-                      />
-                    </div>
-                  ))}
-                  <Button onClick={handleAddSubtask}>Add Subtask</Button>
-                  <Button onClick={handleSaveSubtask}>Save</Button>
-                </Fragment>
-              )}
-              {!haveSubtask && (
-                <Select
-                  isRequired
-                  label="Type (default check)"
-                  variant="faded"
-                  value={selection}
-                  onSelectionChange={handleSelectionChange}
-                >
-                  {selectionChoices.map(choice => (
-                    <SelectItem key={choice.key} value={choice.key}>
-                      {choice.value}
-                    </SelectItem>
-                  ))}
-                </Select>
-              )}
-              {(selection === 'selectOne' ||
-                selection === 'selectMultiple') && (
-                <Fragment>
-                  {choices.map((choice, index) => (
-                    <div className="flex items-center" key={index}>
-                      <Input
-                        label={`List Choice ${index + 1}`}
+                        label={`Subtask title ${index + 1}`}
+                        value={subtask.title}
+                        onChange={e => handleSubtaskTitleChange(e, index)}
                         variant="faded"
-                        value={choice}
-                        onChange={e =>
-                          handleChoiceChange(index, e.target.value)
-                        }
                       />
                       <Button
-                        className="ml-2"
                         isIconOnly
-                        onClick={() => handleDeleteChoice(index)}
+                        onClick={() => handleDeleteSubtask(index)}
+                        color="warning"
                       >
                         <LuTrash2 />
                       </Button>
                     </div>
-                  ))}
-                  <Button onClick={() => handleAddChoice()}>Add Choice</Button>
-                </Fragment>
-              )}
-            </ModalBody>
-            <ModalFooter>
-              <Button color="danger" variant="light" onPress={closeModal}>
-                Close
-              </Button>
-              <Button
-                isDisabled={
-                  taskActivity === '' ||
-                  (selection === 'selectOne' && listCount < 2) ||
-                  (selection === 'selectMultiple' && listCount < 2)
-                }
-                color="primary"
-                onPress={() => {
-                  addTaskClient();
-                }}
+                    <Input
+                      label={`Subtask description ${index + 1}`}
+                      value={subtask.description}
+                      onChange={e => handleSubtaskDescriptionChange(e, index)}
+                    />
+                  </div>
+                ))}
+                <Button onClick={handleAddSubtask}>Add Subtask</Button>
+                <Button onClick={handleSaveSubtask}>Save</Button>
+              </Fragment>
+            )}
+            {!haveSubtask && (
+              <Select
+                isRequired
+                label="Type (default check)"
+                variant="faded"
+                value={selection}
+                onSelectionChange={handleSelectionChange}
               >
-                Save
-              </Button>
-            </ModalFooter>
-          </Fragment>
+                {selectionChoices.map(choice => (
+                  <SelectItem key={choice.key} value={choice.key}>
+                    {choice.value}
+                  </SelectItem>
+                ))}
+              </Select>
+            )}
+            {(selection === 'selectOne' || selection === 'selectMultiple') && (
+              <Fragment>
+                {choices.map((choice, index) => (
+                  <div className="flex items-center" key={index}>
+                    <Input
+                      label={`List Choice ${index + 1}`}
+                      variant="faded"
+                      value={choice}
+                      onChange={e => handleChoiceChange(index, e.target.value)}
+                    />
+                    <Button
+                      className="ml-2"
+                      isIconOnly
+                      onClick={() => handleDeleteChoice(index)}
+                    >
+                      <LuTrash2 />
+                    </Button>
+                  </div>
+                ))}
+                <Button onClick={() => handleAddChoice()}>Add Choice</Button>
+              </Fragment>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button color="danger" variant="light" onPress={closeModal}>
+              Close
+            </Button>
+            <Button
+              isDisabled={
+                taskActivity === '' ||
+                (selection === 'selectOne' && listCount < 2) ||
+                (selection === 'selectMultiple' && listCount < 2)
+              }
+              color="primary"
+              onPress={() => {
+                addTaskClient();
+              }}
+            >
+              Save
+            </Button>
+          </ModalFooter>
         </ModalContent>
       </Modal>
     </div>

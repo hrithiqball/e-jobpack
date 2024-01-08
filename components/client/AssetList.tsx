@@ -1,9 +1,24 @@
 'use client';
 
-import React, { useEffect, useState, useCallback, ReactNode, Key } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  ReactNode,
+  Key,
+  useTransition,
+} from 'react';
 import {
   Button,
   Card,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  Select,
+  SelectItem,
   Table,
   TableBody,
   TableCell,
@@ -15,9 +30,42 @@ import { useTheme } from 'next-themes';
 import { LuPackagePlus } from 'react-icons/lu';
 import Loading from '@/components/client/Loading';
 import Link from 'next/link';
-import { asset } from '@prisma/client';
+import { asset, asset_status, asset_type } from '@prisma/client';
+import moment from 'moment';
+import { useSession } from 'next-auth/react';
+import { toast } from 'sonner';
+import { createAsset } from '@/app/api/server-actions';
+import { useRouter } from 'next/navigation';
 
-export default function AssetList({ assetList }: { assetList: asset[] }) {
+export default function AssetList({
+  assetList,
+  assetTypeList,
+  assetStatusList,
+}: {
+  assetList: asset[];
+  assetTypeList: asset_type[];
+  assetStatusList: asset_status[];
+}) {
+  let [isPending, startTransition] = useTransition();
+  const { data: session } = useSession();
+  const router = useRouter();
+  const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  const [openAddAsset, setOpenAddAsset] = useState(false);
+  const [newAssetName, setNewAssetName] = useState('');
+  const [newAssetDescription, setNewAssetDescription] = useState('');
+  const [newAssetType, setNewAssetType] = useState('');
+  const [newAssetStatus, setNewAssetStatus] = useState('');
+  const [newAssetLocation, setNewAssetLocation] = useState('');
+
+  function handleAssetType(e: any) {
+    setNewAssetType(e.currentKey);
+  }
+
+  function handleAssetStatus(e: any) {
+    setNewAssetStatus(e.currentKey);
+  }
+
   const renderCell = useCallback((asset: asset, columnKey: Key) => {
     const cellValue = asset[columnKey as keyof asset];
 
@@ -60,8 +108,53 @@ export default function AssetList({ assetList }: { assetList: asset[] }) {
         return cellValue;
     }
   }, []);
-  const { theme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+
+  function handleAddAsset() {
+    if (session?.user.id === undefined || session?.user.id === null) {
+      toast.error('User not found');
+      return;
+    }
+
+    const newAsset = {
+      uid: `AS-${moment().format('YYMMDDHHmmssSSS')}`,
+      name: newAssetName,
+      description: newAssetDescription,
+      type: newAssetType || null,
+      location: newAssetLocation,
+      created_by: session.user.id,
+      created_on: new Date(),
+      updated_by: session.user.id,
+      updated_on: new Date(),
+      person_in_charge: null,
+      last_maintenance: null,
+      next_maintenance: null,
+      last_maintainee: [],
+      status_uid: newAssetStatus || null,
+    } satisfies asset;
+
+    startTransition(() => {
+      createAsset(newAsset)
+        .then(res => {
+          if (isPending) console.info(res);
+          toast.success(`Asset ${newAsset.name} created successfully`);
+          closeAddAssetModal();
+          router.refresh();
+        })
+        .catch(err => {
+          console.log(err);
+          toast.error(`Asset ${newAsset.name} not created`);
+        });
+    });
+  }
+
+  function closeAddAssetModal() {
+    setOpenAddAsset(false);
+    setNewAssetName('');
+    setNewAssetDescription('');
+    setNewAssetType('');
+    setNewAssetStatus('');
+    setNewAssetLocation('');
+  }
 
   useEffect(() => {
     setMounted(true);
@@ -77,9 +170,114 @@ export default function AssetList({ assetList }: { assetList: asset[] }) {
     >
       <div className="flex justify-between">
         <span>Asset List</span>
-        <Button variant="ghost" size="sm" endContent={<LuPackagePlus />}>
+        <Button
+          onClick={() => setOpenAddAsset(!openAddAsset)}
+          variant="ghost"
+          size="sm"
+          endContent={<LuPackagePlus />}
+        >
           Add Asset
         </Button>
+        <Modal isOpen={openAddAsset} hideCloseButton backdrop="blur">
+          <ModalContent>
+            <ModalHeader className="flex flex-col gap-1">
+              Add New Asset
+            </ModalHeader>
+            <ModalBody>
+              <Input
+                isRequired
+                autoFocus
+                label="Name"
+                variant="faded"
+                value={newAssetName}
+                onValueChange={setNewAssetName}
+              />
+              <Input
+                label="Description"
+                variant="faded"
+                value={newAssetDescription}
+                onValueChange={setNewAssetDescription}
+              />
+              {/* <Dropdown>
+                <DropdownTrigger>
+                  <Button>Open Menu</Button>
+                </DropdownTrigger>
+                <DropdownMenu
+                  onAction={(e: Key) => console.log(e)}
+                  aria-label="Type of asset"
+                  items={assetTypeList}
+                >
+                  {(item) => (
+                    <DropdownItem key={item.uid}>
+                      {item.title}
+                    </DropdownItem>
+                  )}
+                </DropdownMenu>
+              </Dropdown> */}
+              <Select
+                label="Type of asset"
+                variant="faded"
+                value={newAssetType}
+                onSelectionChange={e => handleAssetType(e)}
+              >
+                {assetTypeList.map(assetType => (
+                  <SelectItem key={assetType.uid} value={assetType.uid}>
+                    {assetType.title}
+                  </SelectItem>
+                ))}
+              </Select>
+              <Input
+                label="Location"
+                variant="faded"
+                value={newAssetLocation}
+                onValueChange={setNewAssetLocation}
+              />
+              <Select
+                label="Asset Status"
+                variant="faded"
+                value={newAssetStatus}
+                onSelectionChange={e => handleAssetStatus(e)}
+              >
+                {assetStatusList.map(assetStatus => (
+                  <SelectItem key={assetStatus.uid} value={assetStatus.uid}>
+                    {assetStatus.title}
+                  </SelectItem>
+                ))}
+              </Select>
+              {/* TODO: iterate real user id */}
+              <Select label="Person in charge" variant="faded">
+                <SelectItem key="1" value="Harith">
+                  Harith
+                </SelectItem>
+                <SelectItem key="2" value="Iqbal">
+                  Iqbal
+                </SelectItem>
+                <SelectItem key="3" value="John">
+                  John
+                </SelectItem>
+              </Select>
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                color="danger"
+                variant="faded"
+                onPress={closeAddAssetModal}
+              >
+                Close
+              </Button>
+              <Button
+                isDisabled={newAssetName === ''}
+                variant="faded"
+                color="primary"
+                onPress={() => {
+                  handleAddAsset();
+                }}
+              >
+                Save
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </div>
       <div className="flex flex-row justify-between h-full">
         <div className="flex-1">
