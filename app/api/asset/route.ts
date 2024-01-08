@@ -44,7 +44,7 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
 
     const page = page_str ? parseInt(page_str, 10) : 1;
     const limit = limit_str ? parseInt(limit_str, 10) : 10;
-    const isAscending = !!is_ascending;
+    const isAscending = Boolean(is_ascending);
     const sortBy = sort_by || 'updated_on';
     const skip = (page - 1) * limit;
 

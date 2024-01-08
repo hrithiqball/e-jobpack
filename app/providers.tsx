@@ -5,8 +5,9 @@ import { ThemeProvider as NextThemeProvider } from 'next-themes';
 import { Provider as ReduxProvider } from 'react-redux';
 import { SessionProvider } from 'next-auth/react';
 import { reduxStore } from '@/lib/redux';
+import { PropsWithChildren } from 'react';
 
-export function Providers({ children }: { children: React.ReactNode }) {
+export function Providers({ children }: PropsWithChildren) {
   return (
     <SessionProvider>
       <ReduxProvider store={reduxStore}>

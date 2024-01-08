@@ -1,6 +1,6 @@
 import { prisma } from '@/prisma/prisma';
 import { ResponseMessage } from '@/utils/function/result';
-import { user } from '@prisma/client';
+import { User } from '@prisma/client';
 import moment from 'moment';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const result = SignUpUserSchema.safeParse(json);
 
     if (result.success) {
-      const request: user = {
+      const request: User = {
         ...result.data,
         id: `USER-${moment().format('YYMMDDHHmmssSSS')}`,
         first_page: 0,
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         email_verified: null,
       };
 
-      const user: user = await prisma.user.create({
+      const user: User = await prisma.user.create({
         data: request,
       });
 

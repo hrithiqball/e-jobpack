@@ -51,6 +51,8 @@ import { saveAs } from 'file-saver';
 import { Result } from '@/utils/function/result';
 import { convertToRoman } from '@/utils/function/convertToRoman';
 import { toast } from 'sonner';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 export default function TaskMaintenance({
   maintenance,
@@ -61,6 +63,8 @@ export default function TaskMaintenance({
   checklistLibraryList: checklist_library[];
   children: React.ReactNode;
 }) {
+  const user = useSession();
+  const router = useRouter();
   let [isPending, startTransition] = useTransition();
   const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -103,13 +107,16 @@ export default function TaskMaintenance({
   }
 
   async function createChecklistClient() {
-    //TODO: figure out how to get user id based on current session
+    if (user.data?.user.id === undefined || user.data?.user.id === null) {
+      console.error('not found');
+      return;
+    }
 
     const newChecklist = {
       uid: `CL-${moment().format('YYMMDDHHmmssSSS')}`,
-      created_by: 'USER-231226231304454',
+      created_by: user.data.user.id,
       created_on: new Date(),
-      updated_by: 'USER-231226231304454',
+      updated_by: user.data.user.id,
       updated_on: new Date(),
       maintenance_uid: maintenance.uid,
       color: null,
@@ -122,6 +129,7 @@ export default function TaskMaintenance({
       createChecklist(newChecklist);
       if (!isPending) {
         toast.success('Checklist created');
+        router.refresh();
       }
     });
   }

@@ -1,6 +1,6 @@
 import { prisma } from '@/prisma/prisma';
 import { ResponseMessage } from '@/utils/function/result';
-import { user } from '@prisma/client';
+import { User } from '@prisma/client';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -114,7 +114,7 @@ export async function PATCH(
         ...result.data,
         updated_on: new Date(),
       };
-      const updatedUser: user = await prisma.user.update({
+      const updatedUser: User = await prisma.user.update({
         where: { id },
         data: updateUserValue,
       });
