@@ -188,7 +188,6 @@ export async function DELETE(
     await prisma.user.delete({
       where: { id },
     });
-    //TODO delete user in supabase auth
 
     return new NextResponse(
       JSON.stringify(ResponseMessage(204, `No uid provided`)),

@@ -5,7 +5,7 @@ import { Subtask } from '@prisma/client';
 import { updateSubtask } from '@/app/api/server-actions';
 import { Checkbox, Input, Select, SelectItem, Switch } from '@nextui-org/react';
 import { UpdateSubtask } from '@/app/api/subtask/[uid]/route';
-import { LuCornerDownRight, LuMoreVertical } from 'react-icons/lu';
+import { CornerDownRight, MoreVertical } from 'lucide-react';
 
 export enum InputType {
   remarks,
@@ -87,7 +87,7 @@ export default function SubtaskItem({ subtask }: { subtask: Subtask }) {
       <div className="flex-1 px-4">
         <div className="flex flex-col">
           <div className="flex flex-row items-center">
-            <LuCornerDownRight />
+            <CornerDownRight />
             <span className="text-medium font-medium ml-2">
               {subtaskActivity}
             </span>
@@ -171,7 +171,7 @@ export default function SubtaskItem({ subtask }: { subtask: Subtask }) {
         />
       </div>
       <div className="flex-2 hover:cursor-not-allowed">
-        <LuMoreVertical />
+        <MoreVertical />
         {/* <Button isDisabled={!isEdit} isIconOnly color="danger">
           <LuTrash2 />
         </Button> */}

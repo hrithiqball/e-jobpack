@@ -2,7 +2,6 @@ import React, { useState, useTransition } from 'react';
 import { Asset, ChecklistUse, Maintenance } from '@prisma/client';
 import Image from 'next/image';
 import moment from 'moment';
-import { LuWrench } from 'react-icons/lu';
 import {
   Avatar,
   AvatarGroup,
@@ -25,15 +24,10 @@ import {
   TableRow,
   User,
 } from '@nextui-org/react';
-import {
-  BsFillPersonBadgeFill,
-  BsPassFill,
-  BsClockFill,
-  BsClockHistory,
-} from 'react-icons/bs';
 import { createMaintenance } from '@/app/api/server-actions';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { FilePenLine, UsersRound, Wrench, Clock, History } from 'lucide-react';
 
 export default function AssetDetails({
   asset,
@@ -144,7 +138,7 @@ export default function AssetDetails({
       <div className="sm:flex flex-col w-full sm:w-1/4">
         <Card className="mb-4 p-4 flex-2 overflow-y-auto">
           <div className="flex flex-row items-center">
-            <BsFillPersonBadgeFill />
+            <UsersRound />
             <span className="font-bold ml-4">Team</span>
           </div>
           <Table aria-label="Team" color="primary" hideHeader removeWrapper>
@@ -185,7 +179,7 @@ export default function AssetDetails({
         </Card>
         <Card className="mb-4 p-4 flex-2 overflow-y-auto">
           <div className="flex flex-row items-center">
-            <BsPassFill />
+            <FilePenLine />
             <span className="font-bold ml-4">Checklist</span>
           </div>
           <div className="">
@@ -198,7 +192,7 @@ export default function AssetDetails({
         </Card>
         <Card className="p-4 flex-1 overflow-y-auto">
           <div className="flex flex-row items-center">
-            <LuWrench />
+            <Wrench />
             <span className="font-bold ml-4">Maintenance</span>
           </div>
           <Table
@@ -218,7 +212,7 @@ export default function AssetDetails({
                   Next Maintenance
                 </TableCell>
                 <TableCell className="justify-center">
-                  <Chip variant="flat" startContent={<BsClockFill size={18} />}>
+                  <Chip variant="flat" startContent={<Clock />}>
                     {asset.nextMaintenance !== null
                       ? moment(asset.nextMaintenance).format('DD/MM/yyyy')
                       : 'No Scheduled Maintenance'}
@@ -228,10 +222,7 @@ export default function AssetDetails({
               <TableRow>
                 <TableCell className="semi-bold">Last Maintenance</TableCell>
                 <TableCell>
-                  <Chip
-                    variant="flat"
-                    startContent={<BsClockHistory size={18} />}
-                  >
+                  <Chip variant="flat" startContent={<History />}>
                     {asset.lastMaintenance !== null
                       ? moment(asset.lastMaintenance).format('DD/MM/yyyy')
                       : 'No Maintenance Completed'}

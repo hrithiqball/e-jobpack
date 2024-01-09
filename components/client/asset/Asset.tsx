@@ -4,7 +4,6 @@ import React, { Key, useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import Loading from '@/components/client/Loading';
 import { Asset, ChecklistUse, Maintenance } from '@prisma/client';
-import { LuChevronLeft, LuPencilLine, LuPackagePlus } from 'react-icons/lu';
 import AssetDetails from '@/components/client/asset/AssetDetails';
 import AssetMaintenance from '@/components/client/asset/AssetMaintenance';
 import AssetAttachment from '@/components/client/asset/AssetAttachment';
@@ -17,6 +16,7 @@ import {
   Tab,
   Tabs,
 } from '@nextui-org/react';
+import { ChevronLeft, PackagePlus, PencilLine } from 'lucide-react';
 
 export default function AssetComponent({
   asset,
@@ -48,7 +48,7 @@ export default function AssetComponent({
           className="max-w-min"
           as={Link}
           href="/asset"
-          startContent={<LuChevronLeft />}
+          startContent={<ChevronLeft />}
           variant="faded"
           size="md"
         >
@@ -95,10 +95,10 @@ export default function AssetComponent({
         <div className="flex flex-row">
           <div className="flex flex-row">
             <Button isIconOnly className="ml-1" variant="faded">
-              <LuPencilLine />
+              <PencilLine />
             </Button>
             <Button isIconOnly className="ml-1" variant="faded">
-              <LuPackagePlus />
+              <PackagePlus />
             </Button>
           </div>
         </div>

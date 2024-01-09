@@ -21,7 +21,6 @@ import {
   SelectItem,
 } from '@nextui-org/react';
 import Link from 'next/link';
-import { FaRegFileExcel, FaRegFilePdf } from 'react-icons/fa6';
 import {
   Asset,
   Checklist,
@@ -30,12 +29,6 @@ import {
   Subtask,
   Task,
 } from '@prisma/client';
-import {
-  LuFilePlus2,
-  LuChevronDown,
-  LuChevronLeft,
-  LuPencilLine,
-} from 'react-icons/lu';
 import moment from 'moment';
 import { createChecklist } from '@/app/api/server-actions';
 import { Border, Cell, Column, Workbook } from 'exceljs';
@@ -47,6 +40,14 @@ import { convertToRoman } from '@/utils/function/convertToRoman';
 import { toast } from 'sonner';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import {
+  ChevronDown,
+  ChevronLeft,
+  FilePieChart,
+  FilePlus2,
+  PencilLine,
+  Table2,
+} from 'lucide-react';
 
 export default function TaskMaintenance({
   maintenance,
@@ -537,7 +538,7 @@ export default function TaskMaintenance({
           className="max-w-min"
           as={Link}
           href="/task"
-          startContent={<LuChevronLeft />}
+          startContent={<ChevronLeft />}
           variant="faded"
           size="md"
         >
@@ -552,7 +553,7 @@ export default function TaskMaintenance({
             variant="faded"
             onPress={() => setOpenAddChecklist(!openAddChecklist)}
           >
-            <LuFilePlus2 />
+            <FilePlus2 />
           </Button>
           <Modal isOpen={openAddChecklist} hideCloseButton backdrop="blur">
             <ModalContent>
@@ -605,7 +606,7 @@ export default function TaskMaintenance({
                   <Dropdown placement="bottom-end">
                     <DropdownTrigger>
                       <Button isIconOnly>
-                        <LuChevronDown />
+                        <ChevronDown />
                       </Button>
                     </DropdownTrigger>
                     <DropdownMenu
@@ -643,13 +644,13 @@ export default function TaskMaintenance({
             </ModalContent>
           </Modal>
           <Button isIconOnly variant="faded">
-            <LuPencilLine />
+            <PencilLine />
           </Button>
           <Button isIconOnly variant="faded">
-            <FaRegFilePdf />
+            <FilePieChart />
           </Button>
           <Button isIconOnly variant="faded" onClick={exportToExcel}>
-            <FaRegFileExcel />
+            <Table2 />
           </Button>
         </div>
       </div>

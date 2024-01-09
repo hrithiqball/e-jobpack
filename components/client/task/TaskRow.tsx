@@ -17,8 +17,8 @@ import {
 } from '@nextui-org/react';
 import { deleteTask, updateTask } from '@/app/api/server-actions';
 import { UpdateTask } from '@/app/api/task/[uid]/route';
-import { LuMoreVertical } from 'react-icons/lu';
 import { toast } from 'sonner';
+import { MoreVertical } from 'lucide-react';
 
 export default function TaskRow({ task }: { task: Task }) {
   let [isPending, startTransition] = useTransition();
@@ -177,7 +177,7 @@ export default function TaskRow({ task }: { task: Task }) {
         <Dropdown>
           <DropdownTrigger>
             <Button variant="flat" isIconOnly>
-              <LuMoreVertical />
+              <MoreVertical />
             </Button>
           </DropdownTrigger>
           <DropdownMenu

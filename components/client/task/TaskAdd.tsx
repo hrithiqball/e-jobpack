@@ -17,9 +17,9 @@ import { TaskType, Task } from '@prisma/client';
 import { createTask } from '@/app/api/server-actions';
 import moment from 'moment';
 import { selectionChoices } from '@/utils/data/task-type-options';
-import { LuTrash2 } from 'react-icons/lu';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { Trash2 } from 'lucide-react';
 
 export default function TaskAdd({ checklistUid }: { checklistUid: string }) {
   let [isPending, startTransition] = useTransition();
@@ -188,7 +188,7 @@ export default function TaskAdd({ checklistUid }: { checklistUid: string }) {
                         onClick={() => handleDeleteSubtask(index)}
                         color="warning"
                       >
-                        <LuTrash2 />
+                        <Trash2 />
                       </Button>
                     </div>
                     <Input
@@ -232,7 +232,7 @@ export default function TaskAdd({ checklistUid }: { checklistUid: string }) {
                       isIconOnly
                       onClick={() => handleDeleteChoice(index)}
                     >
-                      <LuTrash2 />
+                      <Trash2 />
                     </Button>
                   </div>
                 ))}

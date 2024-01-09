@@ -72,29 +72,6 @@ export const authOptions: NextAuthOptions = {
       };
     },
   },
-  // callbacks: {
-  //   async session(session): Promise<Session> {
-  //     console.log(session);
-  //     const user: User | null = await prisma.user.findUnique({
-  //       where: { email: session.user.email },
-  //     });
-  //     if (user) {
-  //       session.user = {
-  //         id: user.id,
-  //         emailVerified: user.email_verified,
-  //         email: user.email,
-  //         role: user.role,
-  //       };
-  //     }
-
-  //     const expires = (Date.now() + 30 * 24 * 60 * 60 * 1000).toString();
-
-  //     return {
-  //       user: session.user,
-  //       expires,
-  //     };
-  //   },
-  // },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: '/sign-in',

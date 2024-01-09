@@ -27,7 +27,6 @@ import {
   TableRow,
 } from '@nextui-org/react';
 import { useTheme } from 'next-themes';
-import { LuPackagePlus } from 'react-icons/lu';
 import Loading from '@/components/client/Loading';
 import Link from 'next/link';
 import { Asset, AssetStatus, AssetType } from '@prisma/client';
@@ -36,6 +35,7 @@ import { useSession } from 'next-auth/react';
 import { toast } from 'sonner';
 import { createAsset } from '@/app/api/server-actions';
 import { useRouter } from 'next/navigation';
+import { PackagePlus } from 'lucide-react';
 
 export default function AssetList({
   assetList,
@@ -176,7 +176,7 @@ export default function AssetList({
           onClick={() => setOpenAddAsset(!openAddAsset)}
           variant="ghost"
           size="sm"
-          endContent={<LuPackagePlus />}
+          endContent={<PackagePlus />}
         >
           Add Asset
         </Button>

@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { LuUser, LuSun, LuMoonStar } from 'react-icons/lu';
 import { useTheme } from 'next-themes';
 import clientIcon from '@/public/image/client-icon.svg';
 import {
@@ -23,6 +22,7 @@ import {
 } from '@nextui-org/react';
 import { signOut } from 'next-auth/react';
 import { useSession } from 'next-auth/react';
+import { CircleUserRound, Moon, Sun } from 'lucide-react';
 
 export default function Navigation() {
   const { theme, setTheme } = useTheme();
@@ -62,7 +62,7 @@ export default function Navigation() {
             alt="Petronas Logo"
             className="w-6 mr-3"
           />
-          <p className="font-bold text-inherit">AMS</p>
+          <p className="font-bold text-inherit">eJobpack</p>
         </NavbarBrand>
       </NavbarContent>
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
@@ -93,14 +93,14 @@ export default function Navigation() {
             setTheme(theme === 'dark' ? 'light' : 'dark');
           }}
         >
-          {theme === 'dark' ? <LuMoonStar /> : <LuSun />}
+          {theme === 'dark' ? <Moon /> : <Sun />}
         </Button>
         <Dropdown placement="bottom-end">
           <DropdownTrigger>
             <Button
               variant="ghost"
               size="sm"
-              startContent={<LuUser size={20} />}
+              startContent={<CircleUserRound />}
             >
               {session?.user?.name}
             </Button>
