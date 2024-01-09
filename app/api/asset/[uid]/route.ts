@@ -1,6 +1,6 @@
 import { prisma } from '@/prisma/prisma';
 import { ResponseMessage } from '@/utils/function/result';
-import { asset } from '@prisma/client';
+import { Asset } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 // import { z } from 'zod';
 
@@ -31,7 +31,7 @@ export async function GET(
   { params }: { params: { uid: string } },
 ): Promise<NextResponse> {
   const uid = params.uid;
-  const asset: asset | null = await prisma.asset.findUnique({
+  const asset: Asset | null = await prisma.asset.findUnique({
     where: { uid },
   });
 

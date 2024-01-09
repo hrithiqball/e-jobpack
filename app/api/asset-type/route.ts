@@ -1,4 +1,4 @@
-import { asset_type } from '@prisma/client';
+import { AssetType } from '@prisma/client';
 import { prisma } from '@/prisma/prisma';
 import { ResponseMessage } from '@/utils/function/result';
 import { NextRequest, NextResponse } from 'next/server';
@@ -33,7 +33,7 @@ type AddAssetType = z.infer<typeof AddAssetTypeSchema> & {
  */
 export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
   try {
-    const assetTypes: asset_type[] = await prisma.asset_type.findMany();
+    const assetTypes: AssetType[] = await prisma.assetType.findMany();
 
     if (assetTypes.length > 0) {
       return new NextResponse(
@@ -89,7 +89,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
         updated_by: result.data.created_by,
       };
 
-      const assetType: asset_type = await prisma.asset_type.create({
+      const assetType: AssetType = await prisma.assetType.create({
         data: request,
       });
 

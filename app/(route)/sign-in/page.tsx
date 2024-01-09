@@ -1,4 +1,4 @@
-import SignInCard from '@/components/client/SignInCard';
+import SignInCard from '@/components/client/auth/SignInCard';
 import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/utils/data/auth';

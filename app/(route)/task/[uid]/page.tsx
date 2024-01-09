@@ -1,5 +1,5 @@
 import React from 'react';
-import { maintenance } from '@prisma/client';
+import { Maintenance } from '@prisma/client';
 import {
   fetchChecklistList,
   fetchChecklistLibraryList,
@@ -17,7 +17,7 @@ export default async function TaskItemPage({
 }) {
   const parsedMaintenance = JSON.parse(
     searchParams.maintenance,
-  ) satisfies maintenance;
+  ) satisfies Maintenance;
 
   const assetList = await fetchAssetList();
   const checklistList = await fetchChecklistList(params.uid);

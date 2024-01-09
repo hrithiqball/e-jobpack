@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useTransition } from 'react';
+import React, { useEffect, useState, useTransition, ReactNode } from 'react';
 import { useTheme } from 'next-themes';
 import Loading from '@/components/client/Loading';
 import {
@@ -12,7 +12,6 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-  Input,
   Modal,
   ModalBody,
   ModalContent,
@@ -24,12 +23,12 @@ import {
 import Link from 'next/link';
 import { FaRegFileExcel, FaRegFilePdf } from 'react-icons/fa6';
 import {
-  asset,
-  checklist,
-  checklist_library,
-  maintenance,
-  subtask,
-  task,
+  Asset,
+  Checklist,
+  ChecklistLibrary,
+  Maintenance,
+  Subtask,
+  Task,
 } from '@prisma/client';
 import {
   LuFilePlus2,
@@ -55,10 +54,10 @@ export default function TaskMaintenance({
   assetList,
   children,
 }: {
-  maintenance: maintenance;
-  checklistLibraryList: checklist_library[];
-  assetList: asset[];
-  children: React.ReactNode;
+  maintenance: Maintenance;
+  checklistLibraryList: ChecklistLibrary[];
+  assetList: Asset[];
+  children: ReactNode;
 }) {
   const user = useSession();
   const router = useRouter();
@@ -66,12 +65,11 @@ export default function TaskMaintenance({
   const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [openAddChecklist, setOpenAddChecklist] = useState(false);
-  const [newChecklistTitle, setNewChecklistTitle] = useState('');
   const [newChecklistDescription, setNewChecklistDescription] = useState('');
   const [selectedSaveOption, setSelectedSaveOption] = useState(
     new Set(['saveOnly']),
   );
-  const [selectedAsset, setSelectedAsset] = useState([]);
+  const [selectedAsset, setSelectedAsset] = useState<any>([]);
   // const [selectedFile, setSelectedFile] = useState(null);
   // const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -94,12 +92,11 @@ export default function TaskMaintenance({
     setMounted(true);
   }, []);
 
-  function handleClose() {
+  function handleAddAsset() {
     createChecklistClient();
 
     setOpenAddChecklist(false);
     setSelectedAsset([]);
-    setNewChecklistTitle('');
     setNewChecklistDescription('');
     setSelectedSaveOption(new Set(['saveOnly']));
     setOpenAddChecklist(!openAddChecklist);
@@ -113,6 +110,7 @@ export default function TaskMaintenance({
 
     const newChecklist = {
       uid: `CL-${moment().format('YYMMDDHHmmssSSS')}`,
+      asset_id: selectedAsset.currentKey,
       created_by: user.data.user.id,
       created_on: new Date(),
       updated_by: user.data.user.id,
@@ -120,9 +118,9 @@ export default function TaskMaintenance({
       maintenance_uid: maintenance.uid,
       color: null,
       icon: null,
-      title: newChecklistTitle,
+      title: '',
       description: newChecklistDescription,
-    } satisfies checklist;
+    } satisfies Checklist;
 
     startTransition(() => {
       createChecklist(newChecklist).then(() => {
@@ -212,7 +210,7 @@ export default function TaskMaintenance({
     ];
     const borderWidth: Partial<Border> = { style: 'thin' };
 
-    const checklistResult: Result<checklist[]> = await fetch(
+    const checklistResult: Result<Checklist[]> = await fetch(
       `/api/checklist?maintenance_uid=${maintenance.uid}`,
     ).then(res => res.json());
 
@@ -281,7 +279,7 @@ export default function TaskMaintenance({
         }
 
         for (const checklist of checklistResult.data) {
-          const taskListResult: Result<task[]> = await fetch(
+          const taskListResult: Result<Task[]> = await fetch(
             `/api/task?checklist_uid=${checklist.uid}`,
           ).then(res => res.json());
 
@@ -396,7 +394,7 @@ export default function TaskMaintenance({
             });
 
             if (task.have_subtask) {
-              const subtaskListResult: Result<subtask[]> = await fetch(
+              const subtaskListResult: Result<Subtask[]> = await fetch(
                 `/api/subtask?task_uid=${task.uid}`,
               ).then(res => res.json());
 
@@ -563,6 +561,7 @@ export default function TaskMaintenance({
               </ModalHeader>
               <ModalBody>
                 <Select
+                  isRequired
                   items={assetList}
                   selectedKeys={selectedAsset}
                   onSelectionChange={(s: any) => setSelectedAsset(s)}
@@ -573,7 +572,7 @@ export default function TaskMaintenance({
                     <SelectItem key={asset.uid}>{asset.name}</SelectItem>
                   )}
                 </Select>
-                <Select label="Checklist Library" variant="faded">
+                <Select label="Asset Checklist Library" variant="faded">
                   {!checklistLibraryList || !checklistLibraryList.length ? (
                     <SelectItem key="err">No library found</SelectItem>
                   ) : (
@@ -584,20 +583,6 @@ export default function TaskMaintenance({
                     ))
                   )}
                 </Select>
-                <Divider />
-                <Input
-                  value={newChecklistTitle}
-                  onValueChange={setNewChecklistTitle}
-                  isRequired
-                  label="Title"
-                  variant="faded"
-                />
-                <Input
-                  value={newChecklistDescription}
-                  onValueChange={setNewChecklistDescription}
-                  label="Description"
-                  variant="faded"
-                />
               </ModalBody>
               <ModalFooter>
                 <Button
@@ -608,8 +593,8 @@ export default function TaskMaintenance({
                 </Button>
                 <ButtonGroup>
                   <Button
-                    isDisabled={newChecklistTitle === ''}
-                    onClick={handleClose}
+                    isDisabled={selectedAsset.length === 0}
+                    onClick={handleAddAsset}
                   >
                     {
                       labelsMap[

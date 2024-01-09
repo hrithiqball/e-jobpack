@@ -3,7 +3,7 @@
 import React, { Key, useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import Loading from '@/components/client/Loading';
-import { asset, checklist_use, maintenance } from '@prisma/client';
+import { Asset, ChecklistUse, Maintenance } from '@prisma/client';
 import { LuChevronLeft, LuPencilLine, LuPackagePlus } from 'react-icons/lu';
 import AssetDetails from '@/components/client/asset/AssetDetails';
 import AssetMaintenance from '@/components/client/asset/AssetMaintenance';
@@ -18,14 +18,14 @@ import {
   Tabs,
 } from '@nextui-org/react';
 
-export default function Asset({
+export default function AssetComponent({
   asset,
   maintenanceList,
   checklistUse,
 }: {
-  asset: asset;
-  maintenanceList: maintenance[];
-  checklistUse: checklist_use[];
+  asset: Asset;
+  maintenanceList: Maintenance[];
+  checklistUse: ChecklistUse[];
 }) {
   const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);

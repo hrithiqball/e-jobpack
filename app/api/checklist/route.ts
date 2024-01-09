@@ -1,4 +1,4 @@
-import { Prisma, checklist } from '@prisma/client';
+import { Prisma, Checklist } from '@prisma/client';
 import { prisma } from '@/prisma/prisma';
 import { ResponseMessage } from '@/utils/function/result';
 import { NextRequest, NextResponse } from 'next/server';
@@ -44,8 +44,8 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
     const maintenance_uid =
       nextRequest.nextUrl.searchParams.get('maintenance_uid');
 
-    const filters: Prisma.checklistWhereInput[] = [];
-    const orderBy: Prisma.checklistOrderByWithRelationInput[] = [];
+    const filters: Prisma.ChecklistWhereInput[] = [];
+    const orderBy: Prisma.ChecklistOrderByWithRelationInput[] = [];
 
     if (maintenance_uid) {
       filters.push({
@@ -63,7 +63,7 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
       [sortBy]: isAscending ? 'asc' : 'desc',
     });
 
-    const checklists: checklist[] = await prisma.checklist.findMany({
+    const checklists: Checklist[] = await prisma.checklist.findMany({
       skip,
       take: limit,
       orderBy,
@@ -126,7 +126,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
         updated_by: result.data.created_by,
       };
 
-      const checklist: checklist = await prisma.checklist.create({
+      const checklist: Checklist = await prisma.checklist.create({
         data: request,
       });
 

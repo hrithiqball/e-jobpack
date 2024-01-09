@@ -1,9 +1,9 @@
-import Asset from '@/components/client/asset/Asset';
+import AssetComponent from '@/components/client/asset/Asset';
 import {
   fetchChecklistUseList,
   fetchMaintenanceList,
 } from '@/app/api/server-actions';
-import { asset } from '@prisma/client';
+import { Asset } from '@prisma/client';
 
 export default async function AssetItemPage({
   params,
@@ -29,27 +29,27 @@ export default async function AssetItemPage({
   const maintenanceList = await fetchMaintenanceList(params.uid);
   const checklistUse = await fetchChecklistUseList(params.uid);
 
-  const asset: asset = {
+  const asset: Asset = {
     uid: params.uid,
     name: searchParams.name,
     description: searchParams.description,
     type: searchParams.type,
-    created_by: searchParams.created_by,
-    created_on: new Date(searchParams.created_on),
-    updated_by: searchParams.updated_by,
-    updated_on: new Date(searchParams.updated_on),
-    last_maintenance: new Date(searchParams.last_maintenance),
-    last_maintainee: searchParams.last_maintainee,
+    createdBy: searchParams.created_by,
+    createdOn: new Date(searchParams.created_on),
+    updatedBy: searchParams.updated_by,
+    updatedOn: new Date(searchParams.updated_on),
+    lastMaintenance: new Date(searchParams.last_maintenance),
+    lastMaintainee: searchParams.last_maintainee,
     location: searchParams.location,
-    next_maintenance: new Date(searchParams.next_maintenance),
-    status_uid: searchParams.status_uid,
-    person_in_charge: searchParams.person_in_charge,
+    nextMaintenance: new Date(searchParams.next_maintenance),
+    statusId: searchParams.status_uid,
+    personInCharge: searchParams.person_in_charge,
     tag: '',
   };
 
   return (
     <div className="flex flex-col h-full">
-      <Asset
+      <AssetComponent
         asset={asset}
         maintenanceList={maintenanceList}
         checklistUse={checklistUse}

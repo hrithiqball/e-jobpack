@@ -1,4 +1,4 @@
-import AuthButton from '@/components/client/AuthButton';
+import AuthButton from '@/components/client/auth/AuthButton';
 import { authOptions } from '@/utils/data/auth';
 import { getServerSession } from 'next-auth';
 import Link from 'next/link';

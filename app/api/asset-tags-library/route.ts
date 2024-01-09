@@ -1,4 +1,4 @@
-import { asset_tags_library } from '@prisma/client';
+import { AssetTagLibrary } from '@prisma/client';
 import { prisma } from '@/prisma/prisma';
 import { ResponseMessage } from '@/utils/function/result';
 import { NextRequest, NextResponse } from 'next/server';
@@ -33,8 +33,8 @@ type AddAssetTagsLibrary = z.infer<typeof AddAssetTagsLibrarySchema> & {
  */
 export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
   try {
-    const assetTagsLibrary: asset_tags_library[] =
-      await prisma.asset_tags_library.findMany();
+    const assetTagsLibrary: AssetTagLibrary[] =
+      await prisma.assetTagLibrary.findMany();
 
     if (assetTagsLibrary.length > 0) {
       return new NextResponse(
@@ -90,8 +90,8 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
         updated_on: new Date(),
       };
 
-      const assetTagsLibrary: asset_tags_library =
-        await prisma.asset_tags_library.create({
+      const assetTagsLibrary: AssetTagLibrary =
+        await prisma.assetTagLibrary.create({
           data: request,
         });
 

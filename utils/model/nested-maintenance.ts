@@ -1,14 +1,14 @@
-import { asset, checklist, maintenance, task } from '@prisma/client';
+import { Asset, Checklist, Maintenance, Task } from '@prisma/client';
 
-export type NestedMaintenance = maintenance & {
+export type NestedMaintenance = Maintenance & {
   checklists: NestedChecklist[];
-  asset: asset;
+  asset: Asset;
   fileName: string | null;
   loadingReadExcel: boolean;
 };
 
-export type NestedChecklist = checklist & {
-  tasks: task[];
+export type NestedChecklist = Checklist & {
+  tasks: Task[];
 };
 
 export type SimplifiedTask = {

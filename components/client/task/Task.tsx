@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
-import { maintenance } from '@prisma/client';
+import { Maintenance } from '@prisma/client';
 import Loading from '@/components/client/Loading';
 import { Button, Card, CardHeader, Chip, Divider } from '@nextui-org/react';
 import Link from 'next/link';
@@ -11,7 +11,7 @@ import { LuWrench } from 'react-icons/lu';
 export default function Task({
   maintenanceList,
 }: {
-  maintenanceList: maintenance[];
+  maintenanceList: Maintenance[];
 }) {
   const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);

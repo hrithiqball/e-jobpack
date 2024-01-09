@@ -1,4 +1,4 @@
-import { checklist_use } from '@prisma/client';
+import { ChecklistUse } from '@prisma/client';
 import { prisma } from '@/prisma/prisma';
 import { ResponseMessage } from '@/utils/function/result';
 import { NextRequest, NextResponse } from 'next/server';
@@ -36,7 +36,7 @@ type AddChecklistUse = z.infer<typeof AddChecklistUseSchema> & {
  */
 export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
   try {
-    const checklistUse: checklist_use[] = await prisma.checklist_use.findMany();
+    const checklistUse: ChecklistUse[] = await prisma.checklistUse.findMany();
 
     if (checklistUse.length > 0) {
       return new NextResponse(
@@ -92,7 +92,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
         updated_by: result.data.created_by,
       };
 
-      const checklistUse: checklist_use = await prisma.checklist_use.create({
+      const checklistUse: ChecklistUse = await prisma.checklistUse.create({
         data: request,
       });
 

@@ -2,13 +2,13 @@
 
 import {
   Prisma,
-  asset,
-  asset_status,
-  asset_type,
-  checklist,
-  maintenance,
-  subtask,
-  task,
+  Asset,
+  AssetStatus,
+  AssetType,
+  Checklist,
+  Maintenance,
+  Subtask,
+  Task,
 } from '@prisma/client';
 import { UpdateTask } from '@/app/api/task/[uid]/route';
 import { UpdateSubtask } from '@/app/api/subtask/[uid]/route';
@@ -58,7 +58,7 @@ export async function createNewUser(
 
 // asset
 
-export async function createAsset(data: asset): Promise<asset> {
+export async function createAsset(data: Asset): Promise<Asset> {
   try {
     return await prisma.asset.create({
       data,
@@ -69,7 +69,7 @@ export async function createAsset(data: asset): Promise<asset> {
   }
 }
 
-export async function fetchAssetList(): Promise<asset[]> {
+export async function fetchAssetList(): Promise<Asset[]> {
   try {
     return await prisma.asset.findMany({
       orderBy: {
@@ -79,6 +79,19 @@ export async function fetchAssetList(): Promise<asset[]> {
   } catch (error) {
     console.error(error);
     return [];
+  }
+}
+
+export async function fetchAsset(assetId: string): Promise<Asset> {
+  try {
+    return await prisma.asset.findUniqueOrThrow({
+      where: {
+        uid: assetId,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
 }
 
@@ -99,9 +112,9 @@ export async function fetchFilteredAssetList(assetIds: string[]) {
 
 // asset type
 
-export async function fetchAssetTypeList(): Promise<asset_type[]> {
+export async function fetchAssetTypeList(): Promise<AssetType[]> {
   try {
-    return await prisma.asset_type.findMany({
+    return await prisma.assetType.findMany({
       orderBy: {
         updated_on: 'desc',
       },
@@ -114,9 +127,9 @@ export async function fetchAssetTypeList(): Promise<asset_type[]> {
 
 // asset status
 
-export async function fetchAssetStatusList(): Promise<asset_status[]> {
+export async function fetchAssetStatusList(): Promise<AssetStatus[]> {
   try {
-    return await prisma.asset_status.findMany({
+    return await prisma.assetStatus.findMany({
       orderBy: {
         title: 'desc',
       },
@@ -129,7 +142,7 @@ export async function fetchAssetStatusList(): Promise<asset_status[]> {
 
 // maintenance
 
-export async function createMaintenance(data: maintenance) {
+export async function createMaintenance(data: Maintenance) {
   try {
     return await prisma.maintenance.create({
       data,
@@ -153,10 +166,10 @@ export async function fetchMaintenanceItemById(uid: string) {
 
 export async function fetchMaintenanceList(
   assetUid?: string,
-): Promise<maintenance[]> {
+): Promise<Maintenance[]> {
   try {
-    const filters: Prisma.maintenanceWhereInput[] = [];
-    const orderBy: Prisma.maintenanceOrderByWithRelationInput[] = [];
+    const filters: Prisma.MaintenanceWhereInput[] = [];
+    const orderBy: Prisma.MaintenanceOrderByWithRelationInput[] = [];
 
     if (assetUid) {
       filters.push({
@@ -182,9 +195,9 @@ export async function fetchMaintenanceList(
 
 // checklist
 
-export async function createChecklist(data: checklist) {
+export async function createChecklist(data: Checklist) {
   try {
-    const newChecklist: checklist = await prisma.checklist.create({
+    const newChecklist: Checklist = await prisma.checklist.create({
       data,
     });
 
@@ -197,8 +210,8 @@ export async function createChecklist(data: checklist) {
 
 export async function fetchChecklistList(maintenance_uid?: string) {
   try {
-    const filters: Prisma.checklistWhereInput[] = [];
-    const orderBy: Prisma.checklistOrderByWithRelationInput[] = [];
+    const filters: Prisma.ChecklistWhereInput[] = [];
+    const orderBy: Prisma.ChecklistOrderByWithRelationInput[] = [];
 
     if (maintenance_uid) {
       filters.push({
@@ -231,7 +244,7 @@ export async function fetchChecklistList(maintenance_uid?: string) {
  */
 export async function fetchChecklistUseList(uid: string) {
   try {
-    return await prisma.checklist_use.findMany({
+    return await prisma.checklistUse.findMany({
       where: { uid },
     });
   } catch (error) {
@@ -244,7 +257,7 @@ export async function fetchChecklistUseList(uid: string) {
 
 export async function fetchChecklistLibraryList() {
   try {
-    return await prisma.checklist_library.findMany();
+    return await prisma.checklistLibrary.findMany();
   } catch (error) {
     console.error(error);
     throw error;
@@ -253,16 +266,16 @@ export async function fetchChecklistLibraryList() {
 
 // task
 
-export async function createTask(task: task): Promise<task | null> {
+export async function createTask(task: Task): Promise<Task | null> {
   try {
-    const filters: Prisma.taskWhereInput[] = [
+    const filters: Prisma.TaskWhereInput[] = [
       { checklist_uid: task.checklist_uid },
     ];
-    const orderBy: Prisma.taskOrderByWithRelationInput[] = [
+    const orderBy: Prisma.TaskOrderByWithRelationInput[] = [
       { task_order: 'desc' },
     ];
 
-    const tasks: task[] = await prisma.task.findMany({
+    const tasks: Task[] = await prisma.task.findMany({
       orderBy: orderBy,
       where: {
         AND: filters,
@@ -288,10 +301,10 @@ export async function createTask(task: task): Promise<task | null> {
  * fetch task list
  * @returns @type {Result<task[]>} of task list
  */
-export async function fetchTaskList(checklist_uid?: string): Promise<task[]> {
+export async function fetchTaskList(checklist_uid?: string): Promise<Task[]> {
   try {
-    const filters: Prisma.taskWhereInput[] = [];
-    const orderBy: Prisma.taskOrderByWithRelationInput[] = [];
+    const filters: Prisma.TaskWhereInput[] = [];
+    const orderBy: Prisma.TaskOrderByWithRelationInput[] = [];
 
     orderBy.push({
       task_order: 'asc',
@@ -347,10 +360,10 @@ export async function deleteTask(uid: string) {
  */
 export async function fetchSubtaskListByTaskUid(
   task_uid?: string,
-): Promise<subtask[]> {
+): Promise<Subtask[]> {
   try {
-    const filters: Prisma.subtaskWhereInput[] = [];
-    const orderBy: Prisma.subtaskOrderByWithRelationInput[] = [];
+    const filters: Prisma.SubtaskWhereInput[] = [];
+    const orderBy: Prisma.SubtaskOrderByWithRelationInput[] = [];
 
     if (task_uid) {
       filters.push({

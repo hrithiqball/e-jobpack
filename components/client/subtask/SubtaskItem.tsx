@@ -1,19 +1,11 @@
 'use client';
 
 import React, { KeyboardEvent, useMemo, useState, useTransition } from 'react';
-import { subtask } from '@prisma/client';
+import { Subtask } from '@prisma/client';
 import { updateSubtask } from '@/app/api/server-actions';
-import {
-  Button,
-  Checkbox,
-  Input,
-  Select,
-  SelectItem,
-  Switch,
-} from '@nextui-org/react';
+import { Checkbox, Input, Select, SelectItem, Switch } from '@nextui-org/react';
 import { UpdateSubtask } from '@/app/api/subtask/[uid]/route';
-import { LuCornerDownRight, LuMoreVertical, LuTrash2 } from 'react-icons/lu';
-import { isEditState, useSelector } from '@/lib/redux';
+import { LuCornerDownRight, LuMoreVertical } from 'react-icons/lu';
 
 export enum InputType {
   remarks,
@@ -21,8 +13,7 @@ export enum InputType {
   numberVal,
 }
 
-export default function SubtaskItem({ subtask }: { subtask: subtask }) {
-  const isEdit = useSelector(isEditState);
+export default function SubtaskItem({ subtask }: { subtask: Subtask }) {
   let [isPending, startTransition] = useTransition();
   const [subtaskIsComplete, setSubtaskIsComplete] = useState(
     subtask.is_complete,

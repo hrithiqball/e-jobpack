@@ -1,4 +1,4 @@
-import { Prisma, asset } from '@prisma/client';
+import { Prisma, Asset } from '@prisma/client';
 import { prisma } from '@/prisma/prisma';
 import { ResponseMessage } from '@/utils/function/result';
 import { NextRequest, NextResponse } from 'next/server';
@@ -25,8 +25,8 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
       'upcoming_maintenance',
     );
 
-    const filters: Prisma.assetWhereInput[] = [];
-    const orderBy: Prisma.assetOrderByWithRelationInput[] = [];
+    const filters: Prisma.AssetWhereInput[] = [];
+    const orderBy: Prisma.AssetOrderByWithRelationInput[] = [];
 
     if (type) {
       filters.push({ type });
@@ -36,7 +36,7 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
     }
     if (upcoming_maintenance) {
       filters.push({
-        next_maintenance: {
+        nextMaintenance: {
           gte: new Date(upcoming_maintenance),
         },
       });
@@ -58,11 +58,11 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
       });
     }
 
-    const assets: asset[] = await prisma.asset.findMany({
+    const assets: Asset[] = await prisma.asset.findMany({
       skip,
       take: limit,
       orderBy: {
-        updated_on: 'desc',
+        updatedOn: 'desc',
       },
     });
 
@@ -119,7 +119,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
         updated_by: assetRequest.data.created_by,
       };
 
-      const asset: asset = await prisma.asset.create({
+      const asset: Asset = await prisma.asset.create({
         data: req,
       });
 

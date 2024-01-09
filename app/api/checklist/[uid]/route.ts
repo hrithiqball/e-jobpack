@@ -1,6 +1,6 @@
 import { prisma } from '@/prisma/prisma';
 import { ResponseMessage } from '@/utils/function/result';
-import { checklist } from '@prisma/client';
+import { Checklist } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -34,7 +34,7 @@ export async function GET(
   { params }: { params: { uid: string } },
 ): Promise<NextResponse> {
   const uid = params.uid;
-  const checklist: checklist | null = await prisma.checklist.findUnique({
+  const checklist: Checklist | null = await prisma.checklist.findUnique({
     where: { uid },
   });
 
@@ -85,7 +85,7 @@ export async function PATCH(
         ...result.data,
         updated_on: new Date(),
       };
-      const updatedChecklist: checklist = await prisma.checklist.update({
+      const updatedChecklist: Checklist = await prisma.checklist.update({
         where: { uid },
         data: updateChecklistValue,
       });

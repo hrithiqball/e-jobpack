@@ -1,7 +1,7 @@
 'use client';
 
 import React, { Key, useMemo, useState, useTransition } from 'react';
-import { task } from '@prisma/client';
+import { Task } from '@prisma/client';
 import {
   Button,
   Checkbox,
@@ -10,10 +10,6 @@ import {
   DropdownMenu,
   DropdownTrigger,
   Input,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
   Select,
   SelectItem,
   Switch,
@@ -24,7 +20,7 @@ import { UpdateTask } from '@/app/api/task/[uid]/route';
 import { LuMoreVertical } from 'react-icons/lu';
 import { toast } from 'sonner';
 
-export default function TaskRow({ task }: { task: task }) {
+export default function TaskRow({ task }: { task: Task }) {
   let [isPending, startTransition] = useTransition();
   const [taskActivity, setTaskActivity] = useState(task.task_activity);
   const [taskDescription, setTaskDescription] = useState(task.description);

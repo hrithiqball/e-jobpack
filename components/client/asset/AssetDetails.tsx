@@ -1,5 +1,5 @@
 import React, { useState, useTransition } from 'react';
-import { asset, checklist_use, maintenance } from '@prisma/client';
+import { Asset, ChecklistUse, Maintenance } from '@prisma/client';
 import Image from 'next/image';
 import moment from 'moment';
 import { LuWrench } from 'react-icons/lu';
@@ -39,8 +39,8 @@ export default function AssetDetails({
   asset,
   checklistUse,
 }: {
-  asset: asset;
-  checklistUse: checklist_use[];
+  asset: Asset;
+  checklistUse: ChecklistUse[];
 }) {
   let [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -59,7 +59,7 @@ export default function AssetDetails({
         approved_on: null,
         asset_ids: [asset.uid],
         deadline: null,
-      } satisfies maintenance;
+      } satisfies Maintenance;
 
       createMaintenance(newMaintenance)
         .then(res => {
@@ -121,8 +121,8 @@ export default function AssetDetails({
                       <span className="font-semibold">Created By</span>
                     </TableCell>
                     <TableCell>
-                      {asset.created_by} on{' '}
-                      {moment(asset.created_on).format('DD/MM/yyyy hh:mmA')}
+                      {asset.createdBy} on{' '}
+                      {moment(asset.createdOn).format('DD/MM/yyyy hh:mmA')}
                     </TableCell>
                   </TableRow>
                   <TableRow>
@@ -219,8 +219,8 @@ export default function AssetDetails({
                 </TableCell>
                 <TableCell className="justify-center">
                   <Chip variant="flat" startContent={<BsClockFill size={18} />}>
-                    {asset.next_maintenance !== null
-                      ? moment(asset.next_maintenance).format('DD/MM/yyyy')
+                    {asset.nextMaintenance !== null
+                      ? moment(asset.nextMaintenance).format('DD/MM/yyyy')
                       : 'No Scheduled Maintenance'}
                   </Chip>
                 </TableCell>
@@ -232,8 +232,8 @@ export default function AssetDetails({
                     variant="flat"
                     startContent={<BsClockHistory size={18} />}
                   >
-                    {asset.last_maintenance !== null
-                      ? moment(asset.last_maintenance).format('DD/MM/yyyy')
+                    {asset.lastMaintenance !== null
+                      ? moment(asset.lastMaintenance).format('DD/MM/yyyy')
                       : 'No Maintenance Completed'}
                   </Chip>
                 </TableCell>

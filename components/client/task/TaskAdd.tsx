@@ -13,7 +13,7 @@ import {
   Select,
   SelectItem,
 } from '@nextui-org/react';
-import { TaskType, task } from '@prisma/client';
+import { TaskType, Task } from '@prisma/client';
 import { createTask } from '@/app/api/server-actions';
 import moment from 'moment';
 import { selectionChoices } from '@/utils/data/task-type-options';
@@ -66,7 +66,7 @@ export default function TaskAdd({ checklistUid }: { checklistUid: string }) {
   }
 
   function addTaskClient() {
-    const taskAdd: task = {
+    const taskAdd: Task = {
       uid: `TK-${moment().format('YYMMDDHHmmssSSS')}`,
       checklist_uid: checklistUid,
       task_activity: taskActivity,

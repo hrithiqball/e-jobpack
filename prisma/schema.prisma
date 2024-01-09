@@ -12,79 +12,84 @@ datasource db {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model asset {
-  uid                               String          @id
+model Asset {
+  uid                               String         @id
   name                              String
   description                       String?
   type                              String?
-  created_by                        String
-  created_on                        DateTime
-  updated_by                        String
-  last_maintenance                  DateTime?
-  last_maintainee                   String[]
+  createdBy                         String         @map("created_by")
+  createdOn                         DateTime       @map("created_on")
+  updatedBy                         String         @map("updated_by")
+  lastMaintenance                   DateTime?      @map("last_maintenance")
+  lastMaintainee                    String[]       @map("last_maintainee")
   location                          String?
-  next_maintenance                  DateTime?
-  status_uid                        String?
-  updated_on                        DateTime
-  person_in_charge                  String?
+  nextMaintenance                   DateTime?      @map("next_maintenance")
+  statusId                          String?        @map("status_uid")
+  updatedOn                         DateTime       @map("updated_on")
+  personInCharge                    String?        @map("person_in_charge")
   tag                               String?
-  user_asset_created_byTouser       User            @relation("asset_created_byTouser", fields: [created_by], references: [id], onDelete: Cascade)
-  user_asset_person_in_chargeTouser User?           @relation("asset_person_in_chargeTouser", fields: [person_in_charge], references: [id], onDelete: Cascade)
-  asset_status                      asset_status?   @relation(fields: [status_uid], references: [uid], onDelete: Cascade)
-  asset_type                        asset_type?     @relation(fields: [type], references: [uid], onDelete: Cascade)
-  user_asset_updated_byTouser       User            @relation("asset_updated_byTouser", fields: [updated_by], references: [id], onDelete: Cascade)
-  asset_tags                        asset_tags[]
-  checklist_use                     checklist_use[]
-  maintenance                       maintenance[]
+  user_asset_created_byTouser       User           @relation("asset_created_byTouser", fields: [createdBy], references: [id], onDelete: Cascade)
+  user_asset_person_in_chargeTouser User?          @relation("asset_person_in_chargeTouser", fields: [personInCharge], references: [id], onDelete: Cascade)
+  asset_status                      AssetStatus?   @relation(fields: [statusId], references: [uid], onDelete: Cascade)
+  asset_type                        AssetType?     @relation(fields: [type], references: [uid], onDelete: Cascade)
+  user_asset_updated_byTouser       User           @relation("asset_updated_byTouser", fields: [updatedBy], references: [id], onDelete: Cascade)
+  asset_tags                        AssetTag[]
+  checklist                         Checklist[]
+  checklist_use                     ChecklistUse[]
+  maintenance                       Maintenance[]
 
+  @@map("asset")
   @@schema("public")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model asset_status {
+model AssetStatus {
   uid   String  @id
   title String
   color String?
-  asset asset[]
+  asset Asset[]
 
+  @@map("asset_status")
   @@schema("public")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model asset_tags {
-  uid                    String             @id
+model AssetTag {
+  uid                    String          @id
   title                  String
   color                  String?
   asset_uid              String
   asset_tags_library_uid String
-  asset_tags_library     asset_tags_library @relation(fields: [asset_tags_library_uid], references: [uid], onDelete: Cascade)
-  asset                  asset              @relation(fields: [asset_uid], references: [uid], onDelete: Cascade)
+  asset_tags_library     AssetTagLibrary @relation(fields: [asset_tags_library_uid], references: [uid], onDelete: Cascade)
+  asset                  Asset           @relation(fields: [asset_uid], references: [uid], onDelete: Cascade)
 
+  @@map("asset_tags")
   @@schema("public")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model asset_tags_library {
-  uid                                      String       @id
+model AssetTagLibrary {
+  uid                                      String     @id
   title                                    String
   color                                    String?
   created_on                               DateTime
   updated_on                               DateTime
   created_by                               String
   updated_by                               String
-  asset_tags                               asset_tags[]
-  user_asset_tags_library_created_byTouser User         @relation("asset_tags_library_created_byTouser", fields: [created_by], references: [id], onDelete: Cascade)
-  user_asset_tags_library_updated_byTouser User         @relation("asset_tags_library_updated_byTouser", fields: [updated_by], references: [id], onDelete: Cascade)
+  asset_tags                               AssetTag[]
+  user_asset_tags_library_created_byTouser User       @relation("asset_tags_library_created_byTouser", fields: [created_by], references: [id], onDelete: Cascade)
+  user_asset_tags_library_updated_byTouser User       @relation("asset_tags_library_updated_byTouser", fields: [updated_by], references: [id], onDelete: Cascade)
 
+  @@map("asset_tags_library")
   @@schema("public")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model asset_type {
+model AssetType {
   uid                              String   @id
   created_on                       DateTime
   created_by                       String
@@ -93,16 +98,17 @@ model asset_type {
   title                            String
   description                      String?
   icon                             String?
-  asset                            asset[]
+  asset                            Asset[]
   user_asset_type_created_byTouser User     @relation("asset_type_created_byTouser", fields: [created_by], references: [id], onDelete: Cascade)
   user_asset_type_updated_byTouser User     @relation("asset_type_updated_byTouser", fields: [updated_by], references: [id], onDelete: Cascade)
 
+  @@map("asset_type")
   @@schema("public")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model checklist {
+model Checklist {
   uid                             String      @id
   created_on                      DateTime
   created_by                      String
@@ -113,18 +119,21 @@ model checklist {
   color                           String?
   icon                            String?
   maintenance_uid                 String
+  asset_id                        String
+  asset                           Asset       @relation(fields: [asset_id], references: [uid], onDelete: Cascade, map: "checklist_asset_fk")
   user_checklist_created_byTouser User        @relation("checklist_created_byTouser", fields: [created_by], references: [id], onDelete: Cascade)
-  maintenance                     maintenance @relation(fields: [maintenance_uid], references: [uid], onDelete: Cascade)
+  maintenance                     Maintenance @relation(fields: [maintenance_uid], references: [uid], onDelete: Cascade)
   user_checklist_updated_byTouser User        @relation("checklist_updated_byTouser", fields: [updated_by], references: [id], onDelete: Cascade)
-  task                            task[]
+  task                            Task[]
 
+  @@map("checklist")
   @@schema("public")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model checklist_library {
-  uid                                     String          @id
+model ChecklistLibrary {
+  uid                                     String         @id
   created_on                              DateTime
   created_by                              String
   updated_on                              DateTime
@@ -133,16 +142,17 @@ model checklist_library {
   description                             String?
   color                                   String?
   icon                                    String?
-  user_checklist_library_created_byTouser User            @relation("checklist_library_created_byTouser", fields: [created_by], references: [id], onDelete: Cascade)
-  user_checklist_library_updated_byTouser User            @relation("checklist_library_updated_byTouser", fields: [updated_by], references: [id], onDelete: Cascade)
-  checklist_use                           checklist_use[]
+  user_checklist_library_created_byTouser User           @relation("checklist_library_created_byTouser", fields: [created_by], references: [id], onDelete: Cascade)
+  user_checklist_library_updated_byTouser User           @relation("checklist_library_updated_byTouser", fields: [updated_by], references: [id], onDelete: Cascade)
+  checklist_use                           ChecklistUse[]
 
+  @@map("checklist_library")
   @@schema("public")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model checklist_use {
-  uid                                 String             @id
+model ChecklistUse {
+  uid                                 String            @id
   created_on                          DateTime?
   created_by                          String?
   updated_on                          DateTime?
@@ -153,17 +163,18 @@ model checklist_use {
   icon                                String?
   checklist_library_uid               String?
   asset_uid                           String
-  asset                               asset              @relation(fields: [asset_uid], references: [uid], onDelete: Cascade)
-  checklist_library                   checklist_library? @relation(fields: [checklist_library_uid], references: [uid], onDelete: Cascade)
-  user_checklist_use_created_byTouser User?              @relation("checklist_use_created_byTouser", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  user_checklist_use_updated_byTouser User?              @relation("checklist_use_updated_byTouser", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  task_use                            task_use[]
+  asset                               Asset             @relation(fields: [asset_uid], references: [uid], onDelete: Cascade)
+  checklist_library                   ChecklistLibrary? @relation(fields: [checklist_library_uid], references: [uid], onDelete: Cascade)
+  user_checklist_use_created_byTouser User?             @relation("checklist_use_created_byTouser", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_checklist_use_updated_byTouser User?             @relation("checklist_use_updated_byTouser", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  task_use                            TaskUse[]
 
+  @@map("checklist_use")
   @@schema("public")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model history {
+model History {
   uid                   String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   created_on            DateTime
   activity              String
@@ -185,12 +196,13 @@ model history {
   user_uid              String?
   user                  User     @relation(fields: [action_by], references: [id])
 
+  @@map("history")
   @@schema("public")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model maintenance {
+model Maintenance {
   uid             String      @id
   asset_uid       String?
   date            DateTime
@@ -200,15 +212,16 @@ model maintenance {
   approved_on     DateTime?
   asset_ids       String[]
   deadline        DateTime?
-  checklist       checklist[]
-  asset           asset?      @relation(fields: [asset_uid], references: [uid], onDelete: Cascade)
+  checklist       Checklist[]
+  asset           Asset?      @relation(fields: [asset_uid], references: [uid], onDelete: Cascade)
 
+  @@map("maintenance")
   @@schema("public")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model subtask {
+model Subtask {
   uid             String    @id
   task_activity   String
   description     String?
@@ -225,14 +238,15 @@ model subtask {
   task_check      Boolean?
   task_selected   String[]
   task_bool       Boolean?  @default(false)
-  task            task      @relation(fields: [task_uid], references: [uid], onDelete: Cascade)
+  task            Task      @relation(fields: [task_uid], references: [uid], onDelete: Cascade)
 
+  @@map("subtask")
   @@schema("public")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model subtask_library {
-  uid                                   String        @id
+model SubtaskLibrary {
+  uid                                   String       @id
   task_activity                         String
   description                           String?
   task_order                            BigInt
@@ -240,30 +254,32 @@ model subtask_library {
   created_by                            String
   updated_on                            DateTime
   updated_by                            String
-  user_subtask_library_created_byTouser User          @relation("subtask_library_created_byTouser", fields: [created_by], references: [id], onDelete: Cascade)
-  user_subtask_library_updated_byTouser User          @relation("subtask_library_updated_byTouser", fields: [updated_by], references: [id], onDelete: Cascade)
-  subtask_use                           subtask_use[]
+  user_subtask_library_created_byTouser User         @relation("subtask_library_created_byTouser", fields: [created_by], references: [id], onDelete: Cascade)
+  user_subtask_library_updated_byTouser User         @relation("subtask_library_updated_byTouser", fields: [updated_by], references: [id], onDelete: Cascade)
+  subtask_use                           SubtaskUse[]
 
+  @@map("subtask_library")
   @@schema("public")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model subtask_use {
-  uid                 String           @id
+model SubtaskUse {
+  uid                 String          @id
   task_activity       String
   description         String?
   task_use_uid        String
-  task_order          Int              @db.SmallInt
+  task_order          Int             @db.SmallInt
   subtask_library_uid String?
-  subtask_library     subtask_library? @relation(fields: [subtask_library_uid], references: [uid], onDelete: Cascade)
-  task_use            task_use         @relation(fields: [task_use_uid], references: [uid], onDelete: Cascade)
+  subtask_library     SubtaskLibrary? @relation(fields: [subtask_library_uid], references: [uid], onDelete: Cascade)
+  task_use            TaskUse         @relation(fields: [task_use_uid], references: [uid], onDelete: Cascade)
 
+  @@map("subtask_use")
   @@schema("public")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model task {
+model Task {
   uid             String    @id(map: "task2_pkey")
   task_activity   String?
   description     String?
@@ -281,16 +297,17 @@ model task {
   task_selected   String[]  @default([])
   task_number_val Int?      @db.SmallInt
   task_check      Boolean?  @default(false)
-  subtask         subtask[]
-  checklist       checklist @relation(fields: [checklist_uid], references: [uid], onDelete: Cascade)
+  subtask         Subtask[]
+  checklist       Checklist @relation(fields: [checklist_uid], references: [uid], onDelete: Cascade)
 
+  @@map("task")
   @@schema("public")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model task_library {
-  uid                                String     @id
+model TaskLibrary {
+  uid                                String    @id
   created_on                         DateTime
   created_by                         String
   updated_by                         String
@@ -299,31 +316,33 @@ model task_library {
   description                        String?
   have_subtask                       Boolean
   task_order                         BigInt
-  user_task_library_created_byTouser User       @relation("task_library_created_byTouser", fields: [created_by], references: [id], onDelete: Cascade)
-  user_task_library_updated_byTouser User       @relation("task_library_updated_byTouser", fields: [updated_by], references: [id], onDelete: Cascade)
-  task_use                           task_use[]
+  user_task_library_created_byTouser User      @relation("task_library_created_byTouser", fields: [created_by], references: [id], onDelete: Cascade)
+  user_task_library_updated_byTouser User      @relation("task_library_updated_byTouser", fields: [updated_by], references: [id], onDelete: Cascade)
+  task_use                           TaskUse[]
 
+  @@map("task_library")
   @@schema("public")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model task_use {
-  uid               String        @id
+model TaskUse {
+  uid               String       @id
   task_activity     String
   description       String?
-  task_order        Int           @db.SmallInt
-  have_subtask      Boolean       @default(false)
+  task_order        Int          @db.SmallInt
+  have_subtask      Boolean      @default(false)
   checklist_use_uid String
   task_library_uid  String?
-  subtask_use       subtask_use[]
-  checklist_use     checklist_use @relation(fields: [checklist_use_uid], references: [uid], onDelete: Cascade)
-  task_library      task_library? @relation(fields: [task_library_uid], references: [uid], onDelete: Cascade)
+  subtask_use       SubtaskUse[]
+  checklist_use     ChecklistUse @relation(fields: [checklist_use_uid], references: [uid], onDelete: Cascade)
+  task_library      TaskLibrary? @relation(fields: [task_library_uid], references: [uid], onDelete: Cascade)
 
+  @@map("task_use")
   @@schema("public")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model account {
+model Account {
   id                   String    @id
   user_id              String
   provider_type        String
@@ -336,11 +355,12 @@ model account {
   updated_at           DateTime?
   user                 User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
+  @@map("account")
   @@schema("public")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model session {
+model Session {
   id            String   @id
   user_id       String
   expires       DateTime
@@ -350,57 +370,58 @@ model session {
   updated_at    DateTime
   user          User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
+  @@map("session")
   @@schema("public")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model verification_request {
+model VerificationRequest {
   id         String   @id
   identifier String
   token      String   @unique
   created_at DateTime
   updated_at DateTime
 
+  @@map("verification_request")
   @@schema("public")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model User {
-  id                                                     String               @id(map: "user_pkey")
+  id                                                     String             @id
   name                                                   String
-  first_page                                             Int                  @db.SmallInt
-  enable_dashboard                                       Boolean              @default(false)
-  is_dark_mode                                           Boolean              @default(false)
+  first_page                                             Int                @db.SmallInt
+  enable_dashboard                                       Boolean            @default(false)
+  is_dark_mode                                           Boolean            @default(false)
   created_at                                             DateTime
   updated_at                                             DateTime
-  department                                             Department?          @default(management)
-  role                                                   Role?                @default(maintainer)
-  email                                                  String               @unique(map: "user_email_key")
+  department                                             Department?        @default(management)
+  role                                                   Role?              @default(maintainer)
+  email                                                  String             @unique
   password                                               String
   email_verified                                         DateTime?
   image                                                  String?
-  account                                                account[]
-  asset_asset_created_byTouser                           asset[]              @relation("asset_created_byTouser")
-  asset_asset_person_in_chargeTouser                     asset[]              @relation("asset_person_in_chargeTouser")
-  asset_asset_updated_byTouser                           asset[]              @relation("asset_updated_byTouser")
-  asset_tags_library_asset_tags_library_created_byTouser asset_tags_library[] @relation("asset_tags_library_created_byTouser")
-  asset_tags_library_asset_tags_library_updated_byTouser asset_tags_library[] @relation("asset_tags_library_updated_byTouser")
-  asset_type_asset_type_created_byTouser                 asset_type[]         @relation("asset_type_created_byTouser")
-  asset_type_asset_type_updated_byTouser                 asset_type[]         @relation("asset_type_updated_byTouser")
-  checklist_checklist_created_byTouser                   checklist[]          @relation("checklist_created_byTouser")
-  checklist_checklist_updated_byTouser                   checklist[]          @relation("checklist_updated_byTouser")
-  checklist_library_checklist_library_created_byTouser   checklist_library[]  @relation("checklist_library_created_byTouser")
-  checklist_library_checklist_library_updated_byTouser   checklist_library[]  @relation("checklist_library_updated_byTouser")
-  checklist_use_checklist_use_created_byTouser           checklist_use[]      @relation("checklist_use_created_byTouser")
-  checklist_use_checklist_use_updated_byTouser           checklist_use[]      @relation("checklist_use_updated_byTouser")
-  history                                                history[]
-  session                                                session[]
-  subtask_library_subtask_library_created_byTouser       subtask_library[]    @relation("subtask_library_created_byTouser")
-  subtask_library_subtask_library_updated_byTouser       subtask_library[]    @relation("subtask_library_updated_byTouser")
-  task_library_task_library_created_byTouser             task_library[]       @relation("task_library_created_byTouser")
-  task_library_task_library_updated_byTouser             task_library[]       @relation("task_library_updated_byTouser")
+  account                                                Account[]
+  asset_asset_created_byTouser                           Asset[]            @relation("asset_created_byTouser")
+  asset_asset_person_in_chargeTouser                     Asset[]            @relation("asset_person_in_chargeTouser")
+  asset_asset_updated_byTouser                           Asset[]            @relation("asset_updated_byTouser")
+  asset_tags_library_asset_tags_library_created_byTouser AssetTagLibrary[]  @relation("asset_tags_library_created_byTouser")
+  asset_tags_library_asset_tags_library_updated_byTouser AssetTagLibrary[]  @relation("asset_tags_library_updated_byTouser")
+  asset_type_asset_type_created_byTouser                 AssetType[]        @relation("asset_type_created_byTouser")
+  asset_type_asset_type_updated_byTouser                 AssetType[]        @relation("asset_type_updated_byTouser")
+  checklist_checklist_created_byTouser                   Checklist[]        @relation("checklist_created_byTouser")
+  checklist_checklist_updated_byTouser                   Checklist[]        @relation("checklist_updated_byTouser")
+  checklist_library_checklist_library_created_byTouser   ChecklistLibrary[] @relation("checklist_library_created_byTouser")
+  checklist_library_checklist_library_updated_byTouser   ChecklistLibrary[] @relation("checklist_library_updated_byTouser")
+  checklist_use_checklist_use_created_byTouser           ChecklistUse[]     @relation("checklist_use_created_byTouser")
+  checklist_use_checklist_use_updated_byTouser           ChecklistUse[]     @relation("checklist_use_updated_byTouser")
+  history                                                History[]
+  session                                                Session[]
+  subtask_library_subtask_library_created_byTouser       SubtaskLibrary[]   @relation("subtask_library_created_byTouser")
+  subtask_library_subtask_library_updated_byTouser       SubtaskLibrary[]   @relation("subtask_library_updated_byTouser")
+  task_library_task_library_created_byTouser             TaskLibrary[]      @relation("task_library_created_byTouser")
+  task_library_task_library_updated_byTouser             TaskLibrary[]      @relation("task_library_updated_byTouser")
 
+  @@map("user")
   @@schema("public")
 }
 

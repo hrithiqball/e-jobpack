@@ -1,10 +1,10 @@
 import React from 'react';
-import { maintenance } from '@prisma/client';
+import { Maintenance } from '@prisma/client';
 
 export default function AssetMaintenance({
   maintenanceList,
 }: {
-  maintenanceList: maintenance[];
+  maintenanceList: Maintenance[];
 }) {
   return (
     <div className="flex flex-grow h-full p-4">

@@ -30,7 +30,7 @@ import { useTheme } from 'next-themes';
 import { LuPackagePlus } from 'react-icons/lu';
 import Loading from '@/components/client/Loading';
 import Link from 'next/link';
-import { asset, asset_status, asset_type } from '@prisma/client';
+import { Asset, AssetStatus, AssetType } from '@prisma/client';
 import moment from 'moment';
 import { useSession } from 'next-auth/react';
 import { toast } from 'sonner';
@@ -42,9 +42,9 @@ export default function AssetList({
   assetTypeList,
   assetStatusList,
 }: {
-  assetList: asset[];
-  assetTypeList: asset_type[];
-  assetStatusList: asset_status[];
+  assetList: Asset[];
+  assetTypeList: AssetType[];
+  assetStatusList: AssetStatus[];
 }) {
   let [isPending, startTransition] = useTransition();
   const { data: session } = useSession();
@@ -67,8 +67,8 @@ export default function AssetList({
     setNewAssetStatus(e.currentKey);
   }
 
-  const renderCell = useCallback((asset: asset, columnKey: Key) => {
-    const cellValue = asset[columnKey as keyof asset];
+  const renderCell = useCallback((asset: Asset, columnKey: Key) => {
+    const cellValue = asset[columnKey as keyof Asset];
 
     switch (columnKey) {
       case 'name':
@@ -81,16 +81,16 @@ export default function AssetList({
                 name: asset.name,
                 description: asset.description,
                 type: asset.type,
-                created_by: asset.created_by,
-                created_on: asset.created_on.toString(),
-                updated_by: asset.updated_by,
-                updated_on: asset.updated_on.toString(),
-                last_maintenance: asset.last_maintenance?.toString(),
-                last_maintainee: asset.last_maintainee,
+                created_by: asset.createdBy,
+                created_on: asset.createdOn.toString(),
+                updated_by: asset.updatedBy,
+                updated_on: asset.updatedOn.toString(),
+                last_maintenance: asset.lastMaintenance?.toString(),
+                last_maintainee: asset.lastMaintainee,
                 location: asset.location,
-                next_maintenance: asset.next_maintenance?.toString(),
-                status_uid: asset.status_uid,
-                person_in_charge: asset.person_in_charge,
+                next_maintenance: asset.nextMaintenance?.toString(),
+                status_uid: asset.statusId,
+                person_in_charge: asset.personInCharge,
               },
             }}
           >
@@ -122,17 +122,17 @@ export default function AssetList({
       description: newAssetDescription,
       type: newAssetType || null,
       location: newAssetLocation,
-      created_by: session.user.id,
-      created_on: new Date(),
-      updated_by: session.user.id,
-      updated_on: new Date(),
-      person_in_charge: null,
-      last_maintenance: null,
-      next_maintenance: null,
-      last_maintainee: [],
+      createdBy: session.user.id,
+      createdOn: new Date(),
+      updatedBy: session.user.id,
+      updatedOn: new Date(),
+      personInCharge: null,
+      lastMaintenance: null,
+      nextMaintenance: null,
+      lastMaintainee: [],
       tag: newAssetTag,
-      status_uid: newAssetStatus || null,
-    } satisfies asset;
+      statusId: newAssetStatus || null,
+    } satisfies Asset;
 
     startTransition(() => {
       createAsset(newAsset)
@@ -304,7 +304,7 @@ export default function AssetList({
               <TableColumn key="person_in_charge">Person In Charge</TableColumn>
             </TableHeader>
             <TableBody items={assetList}>
-              {(item: asset) => (
+              {(item: Asset) => (
                 <TableRow key={item.uid}>
                   {columnKey => (
                     <TableCell>
