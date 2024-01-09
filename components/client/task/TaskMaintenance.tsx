@@ -71,6 +71,7 @@ export default function TaskMaintenance({
   const [selectedSaveOption, setSelectedSaveOption] = useState(
     new Set(['saveOnly']),
   );
+  const [selectedAsset, setSelectedAsset] = useState([]);
   // const [selectedFile, setSelectedFile] = useState(null);
   // const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -97,6 +98,7 @@ export default function TaskMaintenance({
     createChecklistClient();
 
     setOpenAddChecklist(false);
+    setSelectedAsset([]);
     setNewChecklistTitle('');
     setNewChecklistDescription('');
     setSelectedSaveOption(new Set(['saveOnly']));
@@ -123,11 +125,11 @@ export default function TaskMaintenance({
     } satisfies checklist;
 
     startTransition(() => {
-      createChecklist(newChecklist);
-      if (!isPending) {
-        toast.success('Checklist created');
+      createChecklist(newChecklist).then(() => {
+        console.log(isPending);
+        toast.success('Asset added to maintenance');
         router.refresh();
-      }
+      });
     });
   }
 
@@ -557,9 +559,20 @@ export default function TaskMaintenance({
           <Modal isOpen={openAddChecklist} hideCloseButton backdrop="blur">
             <ModalContent>
               <ModalHeader className="flex flex-col gap-1">
-                Add New Checklist
+                Add New Asset
               </ModalHeader>
               <ModalBody>
+                <Select
+                  items={assetList}
+                  selectedKeys={selectedAsset}
+                  onSelectionChange={(s: any) => setSelectedAsset(s)}
+                  label="Asset"
+                  variant="faded"
+                >
+                  {asset => (
+                    <SelectItem key={asset.uid}>{asset.name}</SelectItem>
+                  )}
+                </Select>
                 <Select label="Checklist Library" variant="faded">
                   {!checklistLibraryList || !checklistLibraryList.length ? (
                     <SelectItem key="err">No library found</SelectItem>

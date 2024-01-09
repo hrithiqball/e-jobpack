@@ -1,12 +1,12 @@
-import MaintenanceChecklistList from '@/components/server/MaintenanceChecklistList';
-import TaskMaintenance from '@/components/client/task/TaskMaintenance';
+import React from 'react';
+import { maintenance } from '@prisma/client';
 import {
   fetchChecklistList,
   fetchChecklistLibraryList,
-  fetchFilteredAssetList,
+  fetchAssetList,
 } from '@/app/api/server-actions';
-import { maintenance } from '@prisma/client';
-import React from 'react';
+import MaintenanceChecklistList from '@/components/server/MaintenanceChecklistList';
+import TaskMaintenance from '@/components/client/task/TaskMaintenance';
 
 export default async function TaskItemPage({
   params,
@@ -19,7 +19,7 @@ export default async function TaskItemPage({
     searchParams.maintenance,
   ) satisfies maintenance;
 
-  const assetList = await fetchFilteredAssetList(parsedMaintenance.asset_ids);
+  const assetList = await fetchAssetList();
   const checklistList = await fetchChecklistList(params.uid);
   const checklistLibrary = await fetchChecklistLibraryList();
 

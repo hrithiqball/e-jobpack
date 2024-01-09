@@ -18,9 +18,12 @@ import { createTask } from '@/app/api/server-actions';
 import moment from 'moment';
 import { selectionChoices } from '@/utils/data/task-type-options';
 import { LuTrash2 } from 'react-icons/lu';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 export default function TaskAdd({ checklistUid }: { checklistUid: string }) {
   let [isPending, startTransition] = useTransition();
+  const router = useRouter();
   const [open, setOpen] = useState<boolean>(false);
   const [taskActivity, setTaskActivity] = useState<string>('');
   const [taskDescription, setTaskDescription] = useState<string>('');
@@ -84,7 +87,11 @@ export default function TaskAdd({ checklistUid }: { checklistUid: string }) {
     };
 
     startTransition(() => {
-      createTask(taskAdd);
+      createTask(taskAdd).then(res => {
+        console.log(res);
+        toast.success('Task added successfully');
+        router.refresh();
+      });
     });
   }
 
