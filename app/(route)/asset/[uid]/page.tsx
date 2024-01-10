@@ -1,9 +1,8 @@
-import AssetComponent from '@/components/client/asset/Asset';
-import {
-  fetchChecklistUseList,
-  fetchMaintenanceList,
-} from '@/app/api/server-actions';
 import { Asset } from '@prisma/client';
+
+import AssetComponent from '@/components/client/asset/Asset';
+import { fetchMaintenanceList } from '@/lib/actions/maintenance';
+import { fetchChecklistUseList } from '@/lib/actions/checklist-use';
 
 export default async function AssetItemPage({
   params,

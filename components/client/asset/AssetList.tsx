@@ -33,9 +33,9 @@ import { Asset, AssetStatus, AssetType } from '@prisma/client';
 import moment from 'moment';
 import { useSession } from 'next-auth/react';
 import { toast } from 'sonner';
-import { createAsset } from '@/app/api/server-actions';
 import { useRouter } from 'next/navigation';
 import { PackagePlus } from 'lucide-react';
+import { createAsset } from '@/lib/actions/asset';
 
 export default function AssetList({
   assetList,

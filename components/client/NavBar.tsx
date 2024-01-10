@@ -89,18 +89,19 @@ export default function Navigation() {
       <NavbarContent justify="end">
         <Button
           isIconOnly
+          size="sm"
           onClick={() => {
             setTheme(theme === 'dark' ? 'light' : 'dark');
           }}
         >
-          {theme === 'dark' ? <Moon /> : <Sun />}
+          {theme === 'dark' ? <Moon size={18} /> : <Sun size={18} />}
         </Button>
         <Dropdown placement="bottom-end">
           <DropdownTrigger>
             <Button
               variant="ghost"
               size="sm"
-              startContent={<CircleUserRound />}
+              startContent={<CircleUserRound size={18} />}
             >
               {session?.user?.name}
             </Button>

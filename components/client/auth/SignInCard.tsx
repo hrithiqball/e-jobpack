@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useTransition } from 'react';
 import {
   Card,
   Button,
@@ -10,32 +10,34 @@ import {
   Divider,
   Link,
 } from '@nextui-org/react';
-import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import { login } from '@/lib/actions/login';
+import { toast } from 'sonner';
 
 export default function SignInCard() {
-  const router = useRouter();
+  let [isPending, startTransition] = useTransition();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl');
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  async function signInClient() {
-    try {
-      const res = await signIn('credentials', {
-        email,
-        password,
-        redirect: false,
+  function signInClient() {
+    startTransition(() => {
+      login({ email, password }, callbackUrl).then(data => {
+        if (data?.error) {
+          if (!isPending) console.error(data.error);
+          toast.error(data.error);
+          setEmail('');
+          setPassword('');
+          return;
+        }
+
+        toast.success('Login successful', {
+          position: 'top-center',
+        });
       });
-
-      if (res?.error) {
-        console.error(res.error);
-        router.replace('/login?message=Invalid credentials');
-        return;
-      }
-
-      router.replace('/dashboard');
-    } catch (error) {
-      console.error(error);
-    }
+    });
   }
 
   function handleEmail(event: React.ChangeEvent<HTMLInputElement>) {

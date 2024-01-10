@@ -11,8 +11,9 @@ import {
   Link,
 } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
-import { createNewUser } from '@/app/api/server-actions';
 import { toast } from 'sonner';
+
+import { createUser } from '@/lib/actions/user';
 
 export default function SignUpCard() {
   let [isPending, startTransition] = useTransition();
@@ -31,7 +32,7 @@ export default function SignUpCard() {
     try {
       startTransition(() => {
         isPending = true;
-        createNewUser(name, email, password)
+        createUser(name, email, password)
           .then(res => {
             if (isPending) console.log(res);
             isPending = false;

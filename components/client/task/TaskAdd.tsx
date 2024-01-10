@@ -14,12 +14,12 @@ import {
   SelectItem,
 } from '@nextui-org/react';
 import { TaskType, Task } from '@prisma/client';
-import { createTask } from '@/app/api/server-actions';
 import moment from 'moment';
-import { selectionChoices } from '@/utils/data/task-type-options';
+import { selectionChoices } from '@/public/utils/task-type-options';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Trash2 } from 'lucide-react';
+import { createTask } from '@/lib/actions/task';
 
 export default function TaskAdd({ checklistUid }: { checklistUid: string }) {
   let [isPending, startTransition] = useTransition();

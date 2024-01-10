@@ -1,12 +1,11 @@
 import React from 'react';
 import { Maintenance } from '@prisma/client';
-import {
-  fetchChecklistList,
-  fetchChecklistLibraryList,
-  fetchAssetList,
-} from '@/app/api/server-actions';
+
 import MaintenanceChecklistList from '@/components/server/MaintenanceChecklistList';
 import TaskMaintenance from '@/components/client/task/TaskMaintenance';
+import { fetchAssetList } from '@/lib/actions/asset';
+import { fetchChecklistList } from '@/lib/actions/checklist';
+import { fetchChecklistLibraryList } from '@/lib/actions/checklist-library';
 
 export default async function TaskItemPage({
   params,

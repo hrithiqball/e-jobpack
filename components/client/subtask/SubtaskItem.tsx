@@ -2,10 +2,10 @@
 
 import React, { KeyboardEvent, useMemo, useState, useTransition } from 'react';
 import { Subtask } from '@prisma/client';
-import { updateSubtask } from '@/app/api/server-actions';
 import { Checkbox, Input, Select, SelectItem, Switch } from '@nextui-org/react';
 import { UpdateSubtask } from '@/app/api/subtask/[uid]/route';
 import { CornerDownRight, MoreVertical } from 'lucide-react';
+import { updateSubtask } from '@/lib/actions/subtask';
 
 export enum InputType {
   remarks,

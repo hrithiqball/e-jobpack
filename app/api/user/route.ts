@@ -1,5 +1,5 @@
 import { prisma } from '@/prisma/prisma';
-import { ResponseMessage } from '@/utils/function/result';
+import { ResponseMessage } from '@/lib/function/result';
 import { Prisma, user } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 

@@ -1,7 +1,10 @@
 import React, { useState, useTransition } from 'react';
 import { Asset, ChecklistUse, Maintenance } from '@prisma/client';
+import { FilePenLine, UsersRound, Wrench, Clock, History } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import moment from 'moment';
+import { toast } from 'sonner';
 import {
   Avatar,
   AvatarGroup,
@@ -24,10 +27,7 @@ import {
   TableRow,
   User,
 } from '@nextui-org/react';
-import { createMaintenance } from '@/app/api/server-actions';
-import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
-import { FilePenLine, UsersRound, Wrench, Clock, History } from 'lucide-react';
+import { createMaintenance } from '@/lib/actions/maintenance';
 
 export default function AssetDetails({
   asset,

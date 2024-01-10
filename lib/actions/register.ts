@@ -1,12 +1,12 @@
 'use server';
 
-import z from 'zod';
-import bcrypt from 'bcryptjs';
-
-import { db } from '@/lib/db';
-import { RegisterSchema } from '@/schemas';
-import { getUserByEmail } from '@/data/user';
 import { User } from '@prisma/client';
+import bcrypt from 'bcryptjs';
+import z from 'zod';
+
+import { RegisterSchema } from '@/lib/schemas';
+import { getUserByEmail } from '@/data/user';
+import { db } from '@/lib/prisma/db';
 
 export async function register(values: z.infer<typeof RegisterSchema>) {
   const validatedFields = RegisterSchema.safeParse(values);

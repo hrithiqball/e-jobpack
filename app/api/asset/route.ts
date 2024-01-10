@@ -1,6 +1,6 @@
 import { Prisma, Asset } from '@prisma/client';
 import { prisma } from '@/prisma/prisma';
-import { ResponseMessage } from '@/utils/function/result';
+import { ResponseMessage } from '@/lib/function/result';
 import { NextRequest, NextResponse } from 'next/server';
 import moment from 'moment';
 

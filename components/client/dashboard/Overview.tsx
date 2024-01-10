@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { CategoryScale, Chart as ChartJS } from 'chart.js/auto';
 import { Bar } from 'react-chartjs-2';
-import { Data } from '@/utils/data/dummy-data';
+import { Data } from '@/public/utils/dummy-data';
 
 ChartJS.register(CategoryScale);
 

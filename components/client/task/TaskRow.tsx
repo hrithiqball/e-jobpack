@@ -15,10 +15,10 @@ import {
   Switch,
   Textarea,
 } from '@nextui-org/react';
-import { deleteTask, updateTask } from '@/app/api/server-actions';
 import { UpdateTask } from '@/app/api/task/[uid]/route';
 import { toast } from 'sonner';
 import { MoreVertical } from 'lucide-react';
+import { deleteTask, updateTask } from '@/lib/actions/task';
 
 export default function TaskRow({ task }: { task: Task }) {
   let [isPending, startTransition] = useTransition();

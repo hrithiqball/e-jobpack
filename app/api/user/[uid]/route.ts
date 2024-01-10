@@ -1,5 +1,5 @@
 import { prisma } from '@/prisma/prisma';
-import { ResponseMessage } from '@/utils/function/result';
+import { ResponseMessage } from '@/lib/function/result';
 import { User } from '@prisma/client';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';

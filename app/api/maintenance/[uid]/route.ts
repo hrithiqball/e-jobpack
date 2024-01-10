@@ -1,9 +1,9 @@
-import { prisma } from '@/prisma/prisma';
-import { ResponseMessage } from '@/utils/function/result';
-import { maintenance } from '@prisma/client';
+import { fetchMaintenanceItem } from '@/lib/actions/maintenance';
+import { ResponseMessage } from '@/lib/function/result';
+import { db } from '@/lib/prisma/db';
+import { Maintenance } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { fetchMaintenanceItemById } from '../../server-actions';
 
 /**
  * @description Validator for updating a maintenance
@@ -32,7 +32,7 @@ export async function GET(
   nextRequest: NextRequest,
   { params }: { params: { uid: string } },
 ): Promise<NextResponse> {
-  const maintenance = fetchMaintenanceItemById(params.uid);
+  const maintenance = fetchMaintenanceItem(params.uid);
 
   if (maintenance) {
     return new NextResponse(
@@ -80,7 +80,7 @@ export async function PATCH(
 
     if (result.success) {
       const updateMaintenanceValue: UpdateMaintenance = result.data;
-      const updatedMaintenance: maintenance = await prisma.maintenance.update({
+      const updatedMaintenance: Maintenance = await db.maintenance.update({
         where: { uid },
         data: updateMaintenanceValue,
       });
@@ -155,7 +155,7 @@ export async function DELETE(
 ): Promise<NextResponse> {
   try {
     const uid = params.uid;
-    await prisma.maintenance.delete({
+    await db.maintenance.delete({
       where: { uid },
     });
 

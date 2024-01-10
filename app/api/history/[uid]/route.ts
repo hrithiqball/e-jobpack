@@ -1,7 +1,7 @@
 // GET one history
 
 import { prisma } from '@/prisma/prisma';
-import { ResponseMessage } from '@/utils/function/result';
+import { ResponseMessage } from '@/lib/function/result';
 import { history } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 

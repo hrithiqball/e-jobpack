@@ -1,4 +1,4 @@
-import Navigation from '@/components/client/Navigation';
+import Navigation from '@/components/client/NavBar';
 import { PropsWithChildren } from 'react';
 
 export default function Layout({ children }: PropsWithChildren) {

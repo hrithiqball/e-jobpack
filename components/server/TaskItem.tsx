@@ -1,8 +1,8 @@
 import React from 'react';
 import SubtaskList from '@/components/server/SubtaskList';
-import { fetchSubtaskListByTaskUid } from '@/app/api/server-actions';
 import { Subtask, Task } from '@prisma/client';
 import TaskRow from '@/components/client/task/TaskRow';
+import { fetchSubtaskListByTaskUid } from '@/lib/actions/subtask';
 
 export default async function TaskItem({ task }: { task: Task }) {
   let subtaskList: Subtask[] = [];
