@@ -1,16 +1,10 @@
 import SignInCard from '@/components/client/auth/SignInCard';
-import { redirect } from 'next/navigation';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/utils/data/auth';
 
 export default async function SignInPage({
   searchParams,
 }: {
   searchParams: { message: string };
 }) {
-  const session = await getServerSession(authOptions);
-  if (session) redirect('/dashboard');
-
   return (
     <div className="flex items-center justify-center h-full">
       {searchParams?.message && (

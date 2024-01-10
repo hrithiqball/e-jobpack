@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useTransition } from 'react';
-// import { SignUpUser } from '@/utils/model/user';
 import {
   Button,
   Card,
@@ -37,7 +36,7 @@ export default function SignUpCard() {
             if (isPending) console.log(res);
             isPending = false;
 
-            router.replace('/sign-in');
+            router.replace('/auth/login');
             toast.success('User created successfully');
           })
           .catch(err => {
@@ -126,7 +125,7 @@ export default function SignUpCard() {
           Sign Up
         </Button>
         <Link
-          href="/sign-in"
+          href="/auth/login"
           className="text-blue-500 hover:underline mt-4 align-middle self-center text-center"
         >
           Sign In

@@ -28,7 +28,7 @@ export default function SignInCard() {
 
       if (res?.error) {
         console.error(res.error);
-        router.replace('/sign-in?message=Invalid credentials');
+        router.replace('/login?message=Invalid credentials');
         return;
       }
 
@@ -80,7 +80,7 @@ export default function SignInCard() {
           Login
         </Button>
         <Link
-          href="/sign-up"
+          href="/auth/register"
           className="text-blue-500 hover:underline mt-4 align-middle self-center text-center"
         >
           Sign Up

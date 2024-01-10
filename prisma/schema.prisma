@@ -345,14 +345,14 @@ model TaskUse {
 model Account {
   id                   String    @id
   user_id              String
-  provider_type        String
-  provider_id          String
+  provider             String
   provider_account_id  String
   refresh_token        String?
   access_token         String?
   access_token_expires DateTime?
-  created_at           DateTime
-  updated_at           DateTime?
+    token_type         String?
+    scope String?
+    sessionState String? @map("session_state")
   user                 User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@map("account")

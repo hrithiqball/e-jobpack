@@ -3,7 +3,6 @@ import { ReactNode } from 'react';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Providers } from '@/app/providers';
-import { getServerSession } from 'next-auth';
 import { Toaster } from 'sonner';
 import { authOptions } from '@/utils/data/auth';
 import Navigation from '@/components/client/Navigation';
@@ -19,14 +18,11 @@ export default async function RootLayout({
 }: {
   children: ReactNode;
 }) {
-  const session = await getServerSession(authOptions);
-
   return (
     <html lang="en" className="light">
       <body className={inter.className}>
         <Providers>
           <div className="flex flex-col h-screen">
-            {session ? <Navigation /> : null}
             <div className="flex-1">
               {children}
               <Toaster richColors />

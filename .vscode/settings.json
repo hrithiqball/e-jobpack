@@ -9,6 +9,7 @@
     "lib/redux": "redux-actions",
     "asset": "",
     "callback": "error",
-    "(route)": "routes"
+    "(route)": "routes",
+    "actions": "tasks"
   }
 }

@@ -1,15 +1,14 @@
 /* eslint-disable no-unused-vars */
-import NextAuth, { DefaultSession } from 'next-auth';
+import NextAuth, { type DefaultSession } from 'next-auth';
+import { Role } from '@prisma/client';
+
+export type ExtendedUser = DefaultSession['user'] & {
+  role: Role;
+};
 
 declare module 'next-auth' {
-  /**
-   * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
-   */
   interface Session {
-    user: {
-      id: string;
-      role: string;
-    } & DefaultSession['user'];
+    user: ExtendedUser;
   }
 
   /**
@@ -20,6 +19,6 @@ declare module 'next-auth' {
     id: string;
     email: string;
     emailVerified: Date | null;
-    role: string | null;
+    role: Role;
   }
 }

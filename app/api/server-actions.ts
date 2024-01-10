@@ -14,7 +14,7 @@ import { UpdateTask } from '@/app/api/task/[uid]/route';
 import { UpdateSubtask } from '@/app/api/subtask/[uid]/route';
 import { prisma } from '@/prisma/prisma';
 import moment from 'moment';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 // user
 
