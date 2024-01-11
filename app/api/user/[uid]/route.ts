@@ -1,5 +1,5 @@
-import { prisma } from '@/prisma/prisma';
 import { ResponseMessage } from '@/lib/function/result';
+import { db } from '@/lib/prisma/db';
 import { User } from '@prisma/client';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -34,18 +34,18 @@ type UpdateUser = z.infer<typeof UpdateUserSchema> & {
  */
 export async function GET(
   request: Request,
-  { params }: { params: { uid: any } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   try {
-    const uid = params.uid;
-    const user = await prisma.user.findUnique({
-      where: { user_id: uid },
+    const id = params.id;
+    const user = await db.user.findUnique({
+      where: { id },
     });
 
     if (user) {
       return new NextResponse(
         JSON.stringify(
-          ResponseMessage(200, `Successfully fetched user ${uid}!`, user),
+          ResponseMessage(200, `Successfully fetched user ${id}!`, user),
         ),
         {
           status: 200,
@@ -55,7 +55,7 @@ export async function GET(
     } else {
       return new NextResponse(
         JSON.stringify(
-          ResponseMessage(404, `User with ${params.uid} not found`),
+          ResponseMessage(404, `User with ${params.id} not found`),
         ),
         {
           status: 404,
@@ -70,7 +70,7 @@ export async function GET(
         JSON.stringify(
           ResponseMessage(
             404,
-            `User uid ${params.uid} not found.`,
+            `User uid ${params.id} not found.`,
             null,
             error.message,
           ),
@@ -114,7 +114,7 @@ export async function PATCH(
         ...result.data,
         updated_on: new Date(),
       };
-      const updatedUser: User = await prisma.user.update({
+      const updatedUser: User = await db.user.update({
         where: { id },
         data: updateUserValue,
       });
@@ -185,7 +185,7 @@ export async function DELETE(
 ): Promise<NextResponse> {
   try {
     const id = params.uid;
-    await prisma.user.delete({
+    await db.user.delete({
       where: { id },
     });
 

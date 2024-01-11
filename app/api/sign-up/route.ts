@@ -1,7 +1,6 @@
-import { prisma } from '@/prisma/prisma';
 import { ResponseMessage } from '@/lib/function/result';
+import { db } from '@/lib/prisma/db';
 import { User } from '@prisma/client';
-import moment from 'moment';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -10,6 +9,8 @@ import { z } from 'zod';
  */
 const SignUpUserSchema = z.object({
   name: z.string(),
+  email: z.string().email(),
+  password: z.string().min(6),
 });
 
 /**
@@ -23,25 +24,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const result = SignUpUserSchema.safeParse(json);
 
     if (result.success) {
-      const request: User = {
-        ...result.data,
-        id: `USER-${moment().format('YYMMDDHHmmssSSS')}`,
-        first_page: 0,
-        enable_dashboard: false,
-        is_dark_mode: true,
-        created_at: new Date(),
-        updated_at: new Date(),
-        email: '',
-        password: '',
-        role: 'supervisor',
-        department: 'exploration',
-        user_id: '',
-        image: '',
-        email_verified: null,
-      };
-
-      const user: User = await prisma.user.create({
-        data: request,
+      const user: User = await db.user.create({
+        data: {
+          ...result.data,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
       });
 
       return new NextResponse(

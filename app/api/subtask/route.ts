@@ -1,9 +1,9 @@
-import { Prisma, subtask } from '@prisma/client';
-import { prisma } from '@/prisma/prisma';
+import { Prisma } from '@prisma/client';
 import { ResponseMessage } from '@/lib/function/result';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import moment from 'moment';
+import { db } from '@/lib/prisma/db';
 
 /**
  * @description Validate the request body for adding a new subtask
@@ -42,8 +42,8 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
 
     const task_uid = nextRequest.nextUrl.searchParams.get('task_uid');
 
-    const filters: Prisma.subtaskWhereInput[] = [];
-    const orderBy: Prisma.subtaskOrderByWithRelationInput[] = [];
+    const filters: Prisma.SubtaskWhereInput[] = [];
+    const orderBy: Prisma.SubtaskOrderByWithRelationInput[] = [];
 
     if (task_uid) {
       filters.push({
@@ -60,7 +60,7 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
       [sortBy]: 'asc',
     });
 
-    const subtasks: subtask[] = await prisma.subtask.findMany({
+    const subtasks = await db.subtask.findMany({
       where: {
         AND: filters,
       },
@@ -122,7 +122,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
         completed_by: null,
       };
 
-      const subtask: subtask = await prisma.subtask.create({
+      const subtask = await db.subtask.create({
         data: request,
       });
 

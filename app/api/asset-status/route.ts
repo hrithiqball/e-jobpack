@@ -1,5 +1,5 @@
-import { prisma } from '@/prisma/prisma';
 import { ResponseMessage } from '@/lib/function/result';
+import { db } from '@/lib/prisma/db';
 import { AssetStatus } from '@prisma/client';
 import moment from 'moment';
 import { NextRequest, NextResponse } from 'next/server';
@@ -26,7 +26,7 @@ type AddAssetStatus = z.infer<typeof AddAssetStatusSchema> & { uid: string };
  */
 export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
   try {
-    const assetStatuses: AssetStatus[] = await prisma.assetStatus.findMany();
+    const assetStatuses: AssetStatus[] = await db.assetStatus.findMany();
 
     if (assetStatuses.length > 0) {
       return new NextResponse(
@@ -78,7 +78,7 @@ export async function POST(nextRequest: NextRequest) {
         uid: `ASTATUS-${moment().format('YYMMDDHHmmssSSS')}`,
       };
 
-      const assetStatus: AssetStatus = await prisma.assetStatus.create({
+      const assetStatus: AssetStatus = await db.assetStatus.create({
         data: req,
       });
 

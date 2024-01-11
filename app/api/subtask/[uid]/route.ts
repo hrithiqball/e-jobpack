@@ -1,6 +1,5 @@
-import { prisma } from '@/prisma/prisma';
 import { ResponseMessage } from '@/lib/function/result';
-import { subtask } from '@prisma/client';
+import { db } from '@/lib/prisma/db';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -38,7 +37,7 @@ export async function GET(
   { params }: { params: { uid: string } },
 ): Promise<NextResponse> {
   const uid = params.uid;
-  const subtask: subtask | null = await prisma.subtask.findUnique({
+  const subtask = await db.subtask.findUnique({
     where: { uid },
   });
 
@@ -82,7 +81,7 @@ export async function PATCH(
 
     if (result.success) {
       const updateSubtaskValue: UpdateSubtask = result.data;
-      const updatedSubtask: subtask = await prisma.subtask.update({
+      const updatedSubtask = await db.subtask.update({
         where: { uid },
         data: updateSubtaskValue,
       });
@@ -157,7 +156,7 @@ export async function DELETE(
 ): Promise<NextResponse> {
   try {
     const uid = params.uid;
-    await prisma.subtask.delete({
+    await db.subtask.delete({
       where: { uid },
     });
 

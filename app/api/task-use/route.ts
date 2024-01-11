@@ -1,9 +1,9 @@
-import { Prisma, task_use } from '@prisma/client';
-import { prisma } from '@/prisma/prisma';
+import { Prisma } from '@prisma/client';
 import { ResponseMessage } from '@/lib/function/result';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import moment from 'moment';
+import { db } from '@/lib/prisma/db';
 
 /**
  * @description Validate the request body for adding a new task_use
@@ -47,8 +47,8 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
     const checklistUid =
       nextRequest.nextUrl.searchParams.get('checklistUseUid');
 
-    const filters: Prisma.task_useWhereInput[] = [];
-    const orderBy: Prisma.task_useOrderByWithRelationInput[] = [];
+    const filters: Prisma.TaskUseWhereInput[] = [];
+    const orderBy: Prisma.TaskUseOrderByWithRelationInput[] = [];
 
     if (checklistUid) {
       filters.push({ checklist_use_uid: checklistUid });
@@ -66,7 +66,7 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
       orderBy.push({ [sortBy]: 'desc' });
     }
 
-    const tasks: task_use[] = await prisma.task_use.findMany({
+    const tasks = await db.taskUse.findMany({
       skip,
       take: limit,
       orderBy: {
@@ -134,7 +134,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
 
       console.log(request);
 
-      const taskUse: task_use = await prisma.task_use.create({
+      const taskUse = await db.taskUse.create({
         data: request,
       });
 

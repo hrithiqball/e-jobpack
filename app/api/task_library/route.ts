@@ -1,9 +1,8 @@
-import { task_library } from '@prisma/client';
-import { prisma } from '@/prisma/prisma';
 import { ResponseMessage } from '@/lib/function/result';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import moment from 'moment';
+import { db } from '@/lib/prisma/db';
 
 /**
  * @description Validate the request body for adding a new task_library
@@ -34,7 +33,7 @@ type AddTaskLibrary = z.infer<typeof AddTaskLibrarySchema> & {
  */
 export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
   try {
-    const taskLibraries: task_library[] = await prisma.task_library.findMany();
+    const taskLibraries = await db.taskLibrary.findMany();
 
     if (taskLibraries.length > 0) {
       return new NextResponse(
@@ -90,7 +89,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
         updated_on: new Date(),
       };
 
-      const taskLibrary: task_library = await prisma.task_library.create({
+      const taskLibrary = await db.taskLibrary.create({
         data: request,
       });
 

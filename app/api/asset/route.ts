@@ -1,8 +1,8 @@
 import { Prisma, Asset } from '@prisma/client';
-import { prisma } from '@/prisma/prisma';
 import { ResponseMessage } from '@/lib/function/result';
 import { NextRequest, NextResponse } from 'next/server';
 import moment from 'moment';
+import { db } from '@/lib/prisma/db';
 
 /**
  * This asynchronous function handles GET requests.
@@ -58,7 +58,7 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
       });
     }
 
-    const assets: Asset[] = await prisma.asset.findMany({
+    const assets: Asset[] = await db.asset.findMany({
       skip,
       take: limit,
       orderBy: {
@@ -119,7 +119,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
         updated_by: assetRequest.data.created_by,
       };
 
-      const asset: Asset = await prisma.asset.create({
+      const asset: Asset = await db.asset.create({
         data: req,
       });
 

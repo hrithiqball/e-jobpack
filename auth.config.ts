@@ -26,7 +26,7 @@ export default {
               return {
                 id: user.id,
                 email: user.email,
-                emailVerified: user.email_verified,
+                emailVerified: user.emailVerified,
                 name: user.name,
                 image: user.image,
                 role: user.role!,

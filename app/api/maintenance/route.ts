@@ -1,9 +1,9 @@
-import { Prisma, maintenance } from '@prisma/client';
-import { prisma } from '@/prisma/prisma';
+import { Prisma } from '@prisma/client';
 import { ResponseMessage } from '@/lib/function/result';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import moment from 'moment';
+import { db } from '@/lib/prisma/db';
 
 /**
  * @description Validate the request body for adding a new maintenance
@@ -38,8 +38,8 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
     const is_ascending = nextRequest.nextUrl.searchParams.get('is_ascending');
     const asset_uid = nextRequest.nextUrl.searchParams.get('asset_uid');
 
-    const filters: Prisma.maintenanceWhereInput[] = [];
-    const orderBy: Prisma.maintenanceOrderByWithRelationInput[] = [];
+    const filters: Prisma.MaintenanceWhereInput[] = [];
+    const orderBy: Prisma.MaintenanceOrderByWithRelationInput[] = [];
 
     if (asset_uid) {
       filters.push({ asset_uid });
@@ -67,7 +67,7 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
       });
     }
 
-    const maintenances: maintenance[] = await prisma.maintenance.findMany({
+    const maintenances = await db.maintenance.findMany({
       skip,
       take: limit,
       orderBy,
@@ -125,7 +125,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
         uid: `MT-${moment().format('YYMMDDHHmmssSSS')}`,
       };
 
-      const maintenance: maintenance = await prisma.maintenance.create({
+      const maintenance = await db.maintenance.create({
         data: request,
       });
 

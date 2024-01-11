@@ -1,6 +1,5 @@
 'use server';
 
-import { User } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import z from 'zod';
 
@@ -22,23 +21,23 @@ export async function register(values: z.infer<typeof RegisterSchema>) {
     return { error: 'Email already in use!' };
   }
 
-  const data: User = {
-    id: email,
-    name,
-    email,
-    password: hashedPassword,
-    first_page: 0,
-    enable_dashboard: true,
-    is_dark_mode: true,
-    created_at: new Date(),
-    updated_at: new Date(),
-    role: 'admin',
-    email_verified: null,
-    department: 'management',
-    image: null,
-  };
+  try {
+    await db.user.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    });
 
-  await db.user.create({ data });
-
-  return { success: 'User created successfully!' };
+    return { success: 'User created successfully!' };
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error(error);
+      return { error: error.message };
+    }
+    return { error: 'Something went wrong!' };
+  }
 }

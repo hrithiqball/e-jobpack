@@ -1,6 +1,5 @@
-import { prisma } from '@/prisma/prisma';
 import { ResponseMessage } from '@/lib/function/result';
-import { task_use } from '@prisma/client';
+import { db } from '@/lib/prisma/db';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -32,7 +31,7 @@ export async function GET(
   { params }: { params: { uid: string } },
 ): Promise<NextResponse> {
   const uid = params.uid;
-  const taskUse: task_use | null = await prisma.task_use.findUnique({
+  const taskUse = await db.taskUse.findUnique({
     where: { uid },
   });
 
@@ -76,7 +75,7 @@ export async function PATCH(
 
     if (result.success) {
       const updateTaskUseValue: UpdateTaskUse = result.data;
-      const updatedTaskUse: task_use = await prisma.task_use.update({
+      const updatedTaskUse = await db.taskUse.update({
         where: { uid },
         data: updateTaskUseValue,
       });
@@ -151,7 +150,7 @@ export async function DELETE(
 ): Promise<NextResponse> {
   try {
     const uid = params.uid;
-    await prisma.task_use.delete({
+    await db.taskUse.delete({
       where: { uid },
     });
 

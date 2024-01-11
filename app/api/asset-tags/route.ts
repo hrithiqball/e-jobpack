@@ -1,9 +1,9 @@
 import { AssetTag } from '@prisma/client';
-import { prisma } from '@/prisma/prisma';
 import { ResponseMessage } from '@/lib/function/result';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import moment from 'moment';
+import { db } from '@/lib/prisma/db';
 
 /**
  * @description Validate the request body for adding a new asset-tags
@@ -30,7 +30,7 @@ type AddAssetTags = z.infer<typeof AddAssetTagsSchema> & {
  */
 export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
   try {
-    const assetTags: AssetTag[] = await prisma.assetTag.findMany();
+    const assetTags: AssetTag[] = await db.assetTag.findMany();
 
     if (assetTags.length > 0) {
       return new NextResponse(
@@ -83,7 +83,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
         uid: `ATAGS-${moment().format('YYMMDDHHmmssSSS')}`,
       };
 
-      const assetTags: AssetTag = await prisma.assetTag.create({
+      const assetTags: AssetTag = await db.assetTag.create({
         data: request,
       });
 

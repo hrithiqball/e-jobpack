@@ -1,9 +1,9 @@
-import { Prisma, subtask_use } from '@prisma/client';
-import { prisma } from '@/prisma/prisma';
+import { Prisma } from '@prisma/client';
 import { ResponseMessage } from '@/lib/function/result';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import moment from 'moment';
+import { db } from '@/lib/prisma/db';
 
 /**
  * @description Validate the request body for adding a new subtask_use
@@ -45,8 +45,8 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
 
     const taskUseUid = nextRequest.nextUrl.searchParams.get('taskUseUid');
 
-    const filters: Prisma.subtask_useWhereInput[] = [];
-    const orderBy: Prisma.subtask_useOrderByWithRelationInput[] = [];
+    const filters: Prisma.SubtaskUseWhereInput[] = [];
+    const orderBy: Prisma.SubtaskUseOrderByWithRelationInput[] = [];
 
     if (taskUseUid) {
       filters.push({ task_use_uid: taskUseUid });
@@ -64,7 +64,7 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
       orderBy.push({ [sortBy]: 'desc' });
     }
 
-    const subtasksUse: subtask_use[] = await prisma.subtask_use.findMany({
+    const subtasksUse = await db.subtaskUse.findMany({
       where: {
         AND: filters,
       },
@@ -124,7 +124,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
         uid: `STUSE-${moment().format('YYMMDDHHmmssSSS')}`,
       };
 
-      const subtaskUse: subtask_use = await prisma.subtask_use.create({
+      const subtaskUse = await db.subtaskUse.create({
         data: request,
       });
 

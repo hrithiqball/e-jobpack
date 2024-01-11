@@ -1,9 +1,9 @@
 import { AssetTagLibrary } from '@prisma/client';
-import { prisma } from '@/prisma/prisma';
 import { ResponseMessage } from '@/lib/function/result';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import moment from 'moment';
+import { db } from '@/lib/prisma/db';
 
 /**
  * @description Validate the request body for adding a new asset-tags from library
@@ -34,7 +34,7 @@ type AddAssetTagsLibrary = z.infer<typeof AddAssetTagsLibrarySchema> & {
 export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
   try {
     const assetTagsLibrary: AssetTagLibrary[] =
-      await prisma.assetTagLibrary.findMany();
+      await db.assetTagLibrary.findMany();
 
     if (assetTagsLibrary.length > 0) {
       return new NextResponse(
@@ -90,10 +90,11 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
         updated_on: new Date(),
       };
 
-      const assetTagsLibrary: AssetTagLibrary =
-        await prisma.assetTagLibrary.create({
+      const assetTagsLibrary: AssetTagLibrary = await db.assetTagLibrary.create(
+        {
           data: request,
-        });
+        },
+      );
 
       return new NextResponse(
         JSON.stringify(

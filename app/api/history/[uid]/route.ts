@@ -1,8 +1,7 @@
 // GET one history
 
-import { prisma } from '@/prisma/prisma';
 import { ResponseMessage } from '@/lib/function/result';
-import { history } from '@prisma/client';
+import { db } from '@/lib/prisma/db';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
@@ -17,7 +16,7 @@ export async function GET(
   { params }: { params: { uid: string } },
 ): Promise<NextResponse> {
   const uid = params.uid;
-  const history: history | null = await prisma.history.findUnique({
+  const history = await db.history.findUnique({
     where: { uid },
   });
 

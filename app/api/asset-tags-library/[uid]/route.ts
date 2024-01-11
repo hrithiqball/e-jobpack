@@ -1,5 +1,5 @@
-import { prisma } from '@/prisma/prisma';
 import { ResponseMessage } from '@/lib/function/result';
+import { db } from '@/lib/prisma/db';
 import { AssetTagLibrary } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -33,7 +33,7 @@ export async function GET(
 ): Promise<NextResponse> {
   const uid = params.uid;
   const assetTagsLibrary: AssetTagLibrary | null =
-    await prisma.assetTagLibrary.findUnique({
+    await db.assetTagLibrary.findUnique({
       where: { uid },
     });
 
@@ -87,7 +87,7 @@ export async function PATCH(
         updated_on: new Date(),
       };
       const updatedAssetTagsLibrary: AssetTagLibrary =
-        await prisma.assetTagLibrary.update({
+        await db.assetTagLibrary.update({
           where: { uid },
           data: updateAssetTagsValue,
         });
@@ -162,7 +162,7 @@ export async function DELETE(
 ): Promise<NextResponse> {
   try {
     const uid = params.uid;
-    await prisma.assetTagLibrary.delete({
+    await db.assetTagLibrary.delete({
       where: { uid },
     });
 

@@ -1,9 +1,9 @@
-import { Prisma, task } from '@prisma/client';
-import { prisma } from '@/prisma/prisma';
+import { Prisma } from '@prisma/client';
 import { ResponseMessage } from '@/lib/function/result';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import moment from 'moment';
+import { db } from '@/lib/prisma/db';
 
 /**
  * @description Validate the request body for adding a new task
@@ -43,8 +43,8 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
     const sort_by = nextRequest.nextUrl.searchParams.get('sort_by');
     const checklist_uid = nextRequest.nextUrl.searchParams.get('checklist_uid');
 
-    const filters: Prisma.taskWhereInput[] = [];
-    const orderBy: Prisma.taskOrderByWithRelationInput[] = [];
+    const filters: Prisma.TaskWhereInput[] = [];
+    const orderBy: Prisma.TaskOrderByWithRelationInput[] = [];
 
     if (checklist_uid) {
       filters.push({
@@ -68,7 +68,7 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
       });
     }
 
-    const tasks: task[] = await prisma.task.findMany({
+    const tasks = await db.task.findMany({
       skip,
       take: limit,
       orderBy,
@@ -130,7 +130,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
         completed_by: null,
       };
 
-      const task: task = await prisma.task.create({
+      const task = await db.task.create({
         data: request,
       });
 

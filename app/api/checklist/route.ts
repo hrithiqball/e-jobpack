@@ -1,9 +1,9 @@
 import { Prisma, Checklist } from '@prisma/client';
-import { prisma } from '@/prisma/prisma';
 import { ResponseMessage } from '@/lib/function/result';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import moment from 'moment';
+import { db } from '@/lib/prisma/db';
 
 /**
  * @description Validate the request body for adding a new checklist
@@ -15,6 +15,7 @@ const AddChecklistSchema = z.object({
   color: z.string().optional(),
   icon: z.string().optional(),
   created_by: z.string(),
+  asset_id: z.string(),
 });
 
 /**
@@ -63,7 +64,7 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
       [sortBy]: isAscending ? 'asc' : 'desc',
     });
 
-    const checklists: Checklist[] = await prisma.checklist.findMany({
+    const checklists: Checklist[] = await db.checklist.findMany({
       skip,
       take: limit,
       orderBy,
@@ -126,7 +127,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
         updated_by: result.data.created_by,
       };
 
-      const checklist: Checklist = await prisma.checklist.create({
+      const checklist: Checklist = await db.checklist.create({
         data: request,
       });
 

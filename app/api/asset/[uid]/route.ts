@@ -1,5 +1,5 @@
-import { prisma } from '@/prisma/prisma';
 import { ResponseMessage } from '@/lib/function/result';
+import { db } from '@/lib/prisma/db';
 import { Asset } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 // import { z } from 'zod';
@@ -31,7 +31,7 @@ export async function GET(
   { params }: { params: { uid: string } },
 ): Promise<NextResponse> {
   const uid = params.uid;
-  const asset: Asset | null = await prisma.asset.findUnique({
+  const asset: Asset | null = await db.asset.findUnique({
     where: { uid },
   });
 
@@ -148,7 +148,7 @@ export async function DELETE(
 ): Promise<NextResponse> {
   try {
     const uid = params.uid;
-    await prisma.asset.delete({
+    await db.asset.delete({
       where: { uid },
     });
 
