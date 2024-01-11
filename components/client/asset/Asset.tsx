@@ -84,7 +84,7 @@ export default function AssetComponent({
                 <div className="flex items-center space-x-2">
                   <span>Maintenance</span>
                   <Chip size="sm" variant="faded">
-                    {maintenanceList.length}
+                    <span>{maintenanceList.length}</span>
                   </Chip>
                 </div>
               }
@@ -95,7 +95,7 @@ export default function AssetComponent({
                 <div className="flex items-center space-x-2">
                   <span>Attachment</span>
                   <Chip size="sm" variant="faded">
-                    3
+                    <span>1</span>
                   </Chip>
                 </div>
               }
@@ -107,6 +107,16 @@ export default function AssetComponent({
               <DropdownTrigger>
                 <Button size="sm" variant="faded">
                   {selectedTab.charAt(0).toUpperCase() + selectedTab.slice(1)}
+                  {selectedTab === 'maintenance' && (
+                    <Chip size="sm" variant="faded">
+                      <span>{maintenanceList.length}</span>
+                    </Chip>
+                  )}
+                  {selectedTab === 'attachment' && (
+                    <Chip size="sm" variant="faded">
+                      1
+                    </Chip>
+                  )}
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
@@ -114,8 +124,18 @@ export default function AssetComponent({
                 onAction={key => setSelectedTab(key as string)}
               >
                 <DropdownItem key="details">Details</DropdownItem>
-                <DropdownItem key="maintenance">Maintenance</DropdownItem>
-                <DropdownItem key="attachment">Attachment</DropdownItem>
+                <DropdownItem key="maintenance">
+                  Maintenance
+                  <Chip className="ml-1" size="sm" variant="faded">
+                    <span>{maintenanceList.length}</span>
+                  </Chip>
+                </DropdownItem>
+                <DropdownItem key="attachment">
+                  Attachment
+                  <Chip className="ml-1" size="sm" variant="faded">
+                    <span>1</span>
+                  </Chip>
+                </DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>

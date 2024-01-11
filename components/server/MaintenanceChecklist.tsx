@@ -15,8 +15,8 @@ export default async function MaintenanceChecklist({
   const asset = await fetchAssetItem(checklist.asset_id);
 
   return (
-    <TaskMaintenanceChecklist asset={asset}>
-      <TaskList checklistUid={checklist.uid} taskList={taskList} />
+    <TaskMaintenanceChecklist checklist={checklist} asset={asset}>
+      <TaskList taskList={taskList} />
     </TaskMaintenanceChecklist>
   );
 }

@@ -1,7 +1,12 @@
 'use client';
 
-import React, { useEffect, useState, useTransition, ReactNode } from 'react';
-import { useTheme } from 'next-themes';
+import React, {
+  useEffect,
+  useState,
+  useTransition,
+  ReactNode,
+  Key,
+} from 'react';
 import Loading from '@/components/client/Loading';
 import {
   Button,
@@ -19,6 +24,12 @@ import {
   ModalHeader,
   Select,
   SelectItem,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
 } from '@nextui-org/react';
 import Link from 'next/link';
 import {
@@ -40,14 +51,19 @@ import { toast } from 'sonner';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import {
+  AlarmClock,
   ChevronDown,
   ChevronLeft,
-  FilePieChart,
-  FilePlus2,
-  PencilLine,
-  Table2,
+  Contact2,
+  FileDown,
+  FileUp,
+  MoreVertical,
+  PackageOpen,
+  PackagePlus,
 } from 'lucide-react';
 import { createChecklist } from '@/lib/actions/checklist';
+import { useCurrentRole } from '@/hooks/use-current-role';
+import dayjs from 'dayjs';
 
 export default function TaskMaintenance({
   maintenance,
@@ -62,8 +78,8 @@ export default function TaskMaintenance({
 }) {
   const user = useSession();
   const router = useRouter();
+  const role = useCurrentRole();
   let [isPending, startTransition] = useTransition();
-  const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [openAddChecklist, setOpenAddChecklist] = useState(false);
   const [newChecklistDescription, setNewChecklistDescription] = useState('');
@@ -527,34 +543,121 @@ export default function TaskMaintenance({
 
   if (!mounted) return <Loading label="Hang on tight" />;
 
+  function handleAction(key: Key) {
+    switch (key) {
+      case 'add-asset':
+        setOpenAddChecklist(!openAddChecklist);
+        break;
+      case 'edit-asset':
+        //TODO enable edit asset
+        break;
+      case 'import-excel':
+        //TODO enable import excel
+        break;
+      case 'export-excel':
+        exportToExcel();
+        break;
+      default:
+        break;
+    }
+  }
+
   return (
-    <Card
-      className={`rounded-md p-4 m-4 flex-grow ${
-        theme === 'dark' ? 'bg-gray-800' : 'bg-gray-200'
-      }`}
-    >
-      <div className="flex flex-row">
+    <div className="rounded-md flex-grow">
+      <div className="flex flex-row justify-between">
         <Button
           className="max-w-min"
           as={Link}
           href="/task"
-          startContent={<ChevronLeft />}
+          startContent={<ChevronLeft size={18} />}
           variant="faded"
-          size="md"
+          size="sm"
         >
           Back
         </Button>
+        <Dropdown>
+          <DropdownTrigger>
+            <Button isIconOnly size="sm" variant="faded">
+              <MoreVertical size={18} />
+            </Button>
+          </DropdownTrigger>
+          {role === 'ADMIN' && (
+            <DropdownMenu onAction={handleAction}>
+              <DropdownItem
+                key="add-asset"
+                startContent={<PackagePlus size={18} />}
+              >
+                Add Asset
+              </DropdownItem>
+              <DropdownItem
+                key="edit-asset"
+                startContent={<PackageOpen size={18} />}
+              >
+                Edit Asset
+              </DropdownItem>
+              <DropdownItem
+                key="import-excel"
+                startContent={<FileUp size={18} />}
+              >
+                Upload Excel
+              </DropdownItem>
+              <DropdownItem
+                key="export-excel"
+                startContent={<FileDown size={18} />}
+              >
+                Download Excel
+              </DropdownItem>
+            </DropdownMenu>
+          )}
+          <DropdownMenu>
+            <DropdownItem
+              key="import-excel"
+              startContent={<FileUp size={18} />}
+            >
+              Upload Excel
+            </DropdownItem>
+            <DropdownItem
+              key="export-excel"
+              startContent={<FileDown size={18} />}
+            >
+              Download Excel
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
       </div>
-      <div className="flex flex-row justify-between items-center my-4 ">
+      <div className="flex flex-col my-4 ">
         <h2 className="text-xl font-semibold">{maintenance.uid}</h2>
+        <Table isStriped removeWrapper hideHeader aria-label="Asset info table">
+          <TableHeader>
+            <TableColumn>Key</TableColumn>
+            <TableColumn>Value</TableColumn>
+          </TableHeader>
+          <TableBody>
+            <TableRow key="deadline">
+              <TableCell className="flex items-center space-x-2">
+                <AlarmClock size={18} />
+                <span className="font-bold">Deadline</span>
+              </TableCell>
+              <TableCell>
+                <span>
+                  {maintenance.deadline
+                    ? dayjs(maintenance.deadline).format('DD/MM/YYYY hh:mmA')
+                    : 'Not Specified'}
+                </span>
+              </TableCell>
+            </TableRow>
+            <TableRow key="person-in-charge">
+              <TableCell className="flex items-center space-x-2">
+                <Contact2 size={18} />
+                <span className="font-bold">Person in charge</span>
+              </TableCell>
+              <TableCell>
+                <span>Harith Iqbal</span>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
         <div className="flex flex-row space-x-1">
-          <Button
-            isIconOnly
-            variant="faded"
-            onPress={() => setOpenAddChecklist(!openAddChecklist)}
-          >
-            <FilePlus2 />
-          </Button>
           <Modal isOpen={openAddChecklist} hideCloseButton backdrop="blur">
             <ModalContent>
               <ModalHeader className="flex flex-col gap-1">
@@ -643,15 +746,6 @@ export default function TaskMaintenance({
               </ModalFooter>
             </ModalContent>
           </Modal>
-          <Button isIconOnly variant="faded">
-            <PencilLine />
-          </Button>
-          <Button isIconOnly variant="faded">
-            <FilePieChart />
-          </Button>
-          <Button isIconOnly variant="faded" onClick={exportToExcel}>
-            <Table2 />
-          </Button>
         </div>
       </div>
       <Divider />
@@ -660,6 +754,6 @@ export default function TaskMaintenance({
           <div className="flex-shrink-0 w-full">{children}</div>
         </div>
       </Card>
-    </Card>
+    </div>
   );
 }

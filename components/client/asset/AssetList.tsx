@@ -27,7 +27,6 @@ import {
   TableRow,
 } from '@nextui-org/react';
 import Loading from '@/components/client/Loading';
-import Link from 'next/link';
 import { Asset, AssetStatus, AssetType } from '@prisma/client';
 import moment from 'moment';
 import { useSession } from 'next-auth/react';
@@ -69,17 +68,6 @@ export default function AssetList({
     const cellValue = asset[columnKey as keyof Asset];
 
     switch (columnKey) {
-      case 'name':
-        return (
-          <Link
-            className="hover:underline hover:text-blue-400"
-            href={{
-              pathname: `/asset/${asset.uid}`,
-            }}
-          >
-            {asset.name}
-          </Link>
-        );
       case 'type':
         return (
           <span>
