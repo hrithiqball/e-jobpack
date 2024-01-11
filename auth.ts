@@ -1,9 +1,9 @@
 import NextAuth from 'next-auth';
-import { PrismaAdapter } from '@auth/prisma-adapter';
+import { Role } from '@prisma/client';
+
 import { db } from '@/lib/prisma/db';
 import authConfig from '@/auth.config';
 import { getUserById } from '@/data/user';
-import { Role } from '@prisma/client';
 
 export const {
   handlers: { GET, POST },
@@ -12,10 +12,6 @@ export const {
   signOut,
   update,
 } = NextAuth({
-  // TODO: Fix this type
-  adapter: PrismaAdapter(
-    db,
-  ) as import('s:/asset-management-app/node_modules/next-auth/node_modules/@auth/core/adapters').Adapter,
   pages: {
     signIn: '/auth/login',
     error: '/auth/error',
@@ -24,7 +20,7 @@ export const {
     async linkAccount({ user }) {
       await db.user.update({
         where: { id: user.id },
-        data: { email_verified: new Date() },
+        data: { emailVerified: new Date() },
       });
     },
   },

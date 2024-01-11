@@ -1,17 +1,46 @@
-generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["multiSchema"]
-  binaryTargets   = ["native", "linux-musl-openssl-3.0.x"]
-}
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
   schemas  = ["public"]
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+  binaryTargets   = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+enum Department {
+  management
+  exploration
+  INSTRUMENT
+  ELECTRICAL
+  MECHANICAL
+  MANAGEMENT
+
+  @@schema("public")
+}
+
+enum Role {
+  ADMIN
+  TECHNICIAN
+  admin
+  supervisor
+  maintainer
+
+  @@schema("public")
+}
+
+enum TaskType {
+  choice
+  selectOne
+  check
+  number
+  selectMultiple
+
+  @@schema("public")
+}
+
 model Asset {
   uid                               String         @id
   name                              String
@@ -42,8 +71,6 @@ model Asset {
   @@schema("public")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model AssetStatus {
   uid   String  @id
   title String
@@ -54,8 +81,6 @@ model AssetStatus {
   @@schema("public")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model AssetTag {
   uid                    String          @id
   title                  String
@@ -69,8 +94,6 @@ model AssetTag {
   @@schema("public")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model AssetTagLibrary {
   uid                                      String     @id
   title                                    String
@@ -87,8 +110,6 @@ model AssetTagLibrary {
   @@schema("public")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model AssetType {
   uid                              String   @id
   created_on                       DateTime
@@ -106,8 +127,6 @@ model AssetType {
   @@schema("public")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Checklist {
   uid                             String      @id
   created_on                      DateTime
@@ -130,8 +149,6 @@ model Checklist {
   @@schema("public")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model ChecklistLibrary {
   uid                                     String         @id
   created_on                              DateTime
@@ -150,7 +167,6 @@ model ChecklistLibrary {
   @@schema("public")
 }
 
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model ChecklistUse {
   uid                                 String            @id
   created_on                          DateTime?
@@ -173,7 +189,6 @@ model ChecklistUse {
   @@schema("public")
 }
 
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model History {
   uid                   String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   created_on            DateTime
@@ -200,8 +215,6 @@ model History {
   @@schema("public")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Maintenance {
   uid             String      @id
   asset_uid       String?
@@ -219,8 +232,6 @@ model Maintenance {
   @@schema("public")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Subtask {
   uid             String    @id
   task_activity   String
@@ -244,7 +255,6 @@ model Subtask {
   @@schema("public")
 }
 
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model SubtaskLibrary {
   uid                                   String       @id
   task_activity                         String
@@ -262,7 +272,6 @@ model SubtaskLibrary {
   @@schema("public")
 }
 
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model SubtaskUse {
   uid                 String          @id
   task_activity       String
@@ -277,8 +286,6 @@ model SubtaskUse {
   @@schema("public")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Task {
   uid             String    @id(map: "task2_pkey")
   task_activity   String?
@@ -304,8 +311,6 @@ model Task {
   @@schema("public")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model TaskLibrary {
   uid                                String    @id
   created_on                         DateTime
@@ -324,7 +329,6 @@ model TaskLibrary {
   @@schema("public")
 }
 
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model TaskUse {
   uid               String       @id
   task_activity     String
@@ -341,40 +345,23 @@ model TaskUse {
   @@schema("public")
 }
 
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Account {
   id                   String    @id
   user_id              String
-  provider             String
   provider_account_id  String
   refresh_token        String?
   access_token         String?
   access_token_expires DateTime?
-    token_type         String?
-    scope String?
-    sessionState String? @map("session_state")
+  provider             String
+  scope                String?
+  sessionState         String?   @map("session_state")
+  token_type           String?
   user                 User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@map("account")
   @@schema("public")
 }
 
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model Session {
-  id            String   @id
-  user_id       String
-  expires       DateTime
-  session_token String   @unique
-  access_token  String   @unique
-  created_at    DateTime
-  updated_at    DateTime
-  user          User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-
-  @@map("session")
-  @@schema("public")
-}
-
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model VerificationRequest {
   id         String   @id
   identifier String
@@ -387,18 +374,15 @@ model VerificationRequest {
 }
 
 model User {
-  id                                                     String             @id
+  id                                                     String             @id @default(cuid())
   name                                                   String
-  first_page                                             Int                @db.SmallInt
-  enable_dashboard                                       Boolean            @default(false)
-  is_dark_mode                                           Boolean            @default(false)
-  created_at                                             DateTime
-  updated_at                                             DateTime
-  department                                             Department?        @default(management)
-  role                                                   Role?              @default(maintainer)
+  createdAt                                              DateTime           @map("created_at")
+  updatedAt                                              DateTime           @map("updated_at")
+  department                                             Department?        @default(MANAGEMENT)
+  role                                                   Role?              @default(ADMIN)
   email                                                  String             @unique
   password                                               String
-  email_verified                                         DateTime?
+  emailVerified                                          DateTime?          @map("email_verified")
   image                                                  String?
   account                                                Account[]
   asset_asset_created_byTouser                           Asset[]            @relation("asset_created_byTouser")
@@ -415,37 +399,11 @@ model User {
   checklist_use_checklist_use_created_byTouser           ChecklistUse[]     @relation("checklist_use_created_byTouser")
   checklist_use_checklist_use_updated_byTouser           ChecklistUse[]     @relation("checklist_use_updated_byTouser")
   history                                                History[]
-  session                                                Session[]
   subtask_library_subtask_library_created_byTouser       SubtaskLibrary[]   @relation("subtask_library_created_byTouser")
   subtask_library_subtask_library_updated_byTouser       SubtaskLibrary[]   @relation("subtask_library_updated_byTouser")
   task_library_task_library_created_byTouser             TaskLibrary[]      @relation("task_library_created_byTouser")
   task_library_task_library_updated_byTouser             TaskLibrary[]      @relation("task_library_updated_byTouser")
 
   @@map("user")
-  @@schema("public")
-}
-
-enum Department {
-  management
-  exploration
-
-  @@schema("public")
-}
-
-enum Role {
-  admin
-  supervisor
-  maintainer
-
-  @@schema("public")
-}
-
-enum TaskType {
-  choice
-  selectOne
-  check
-  number
-  selectMultiple
-
   @@schema("public")
 }
