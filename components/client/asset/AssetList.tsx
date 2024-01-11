@@ -12,6 +12,7 @@ import React, {
 import {
   Button,
   Input,
+  Link,
   Modal,
   ModalBody,
   ModalContent,
@@ -25,6 +26,7 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
+  User,
 } from '@nextui-org/react';
 import Loading from '@/components/client/Loading';
 import { Asset, AssetStatus, AssetType } from '@prisma/client';
@@ -75,6 +77,36 @@ export default function AssetList({
               ? 'Not Specified'
               : asset.type}
           </span>
+        );
+      case 'description':
+        return (
+          <span>
+            {asset.description === null || asset.description === ''
+              ? 'No description'
+              : asset.description}
+          </span>
+        );
+      case 'location':
+        return (
+          <span>
+            {asset.location === null || asset.location === ''
+              ? 'Not specified'
+              : asset.location}
+          </span>
+        );
+      case 'person-in-charge':
+        return (
+          <User
+            name="Junior Garcia"
+            description={
+              <Link href="https://twitter.com/jrgarciadev" size="sm" isExternal>
+                @jrgarciadev
+              </Link>
+            }
+            avatarProps={{
+              src: 'https://avatars.githubusercontent.com/u/30373425?v=4',
+            }}
+          />
         );
       default:
         return cellValue;
@@ -147,7 +179,7 @@ export default function AssetList({
         <span>Asset List</span>
         <Button
           onClick={() => setOpenAddAsset(!openAddAsset)}
-          variant="ghost"
+          variant="faded"
           size="sm"
           endContent={<PackagePlus />}
         >
@@ -260,7 +292,7 @@ export default function AssetList({
               <TableColumn key="description">Description</TableColumn>
               <TableColumn key="type">Type</TableColumn>
               <TableColumn key="location">Location</TableColumn>
-              <TableColumn key="person_in_charge">Person In Charge</TableColumn>
+              <TableColumn key="person-in-charge">Person In Charge</TableColumn>
             </TableHeader>
             <TableBody items={assetList}>
               {(item: Asset) => (

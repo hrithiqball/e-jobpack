@@ -32,7 +32,7 @@ export default function TaskComponent({
             </p>
             <Divider />
             {maintenanceList.map(maintenance => (
-              <Card key={maintenance.uid} className="w-full my-4">
+              <Card key={maintenance.id} className="w-full my-4">
                 <CardHeader className="flex gap-3">
                   <Button color="danger" isIconOnly>
                     <Wrench />
@@ -40,18 +40,16 @@ export default function TaskComponent({
                   <div className="flex flex-col">
                     <Link
                       href={{
-                        pathname: `/task/${maintenance.uid}`,
+                        pathname: `/task/${maintenance.id}`,
                         query: {
                           maintenance: JSON.stringify(maintenance),
                         },
                       }}
                       className="text-md font-bold"
                     >
-                      {maintenance.uid}
+                      {maintenance.id}
                     </Link>
-                    <p className=" text-sm">
-                      Maintenance ID: {maintenance.uid}
-                    </p>
+                    <p className=" text-sm">Maintenance ID: {maintenance.id}</p>
                   </div>
                 </CardHeader>
                 {/* <CardBody>
@@ -63,14 +61,14 @@ export default function TaskComponent({
 														{checklist.title}
 													</p>
 													<div className="flex items-center">
-														<Button className="mr-1" variant="ghost" isIconOnly>
+														<Button className="mr-1" variant="faded" isIconOnly>
 															<FaRegFilePdf />
 														</Button>
 														<Button
 															// onClick={() =>
 															// 	exportToExcel(checklist, nestedMaintenance)
 															// }
-															variant="ghost"
+															variant="faded"
 															isIconOnly
 														>
 															<FaRegFileExcel />
@@ -101,7 +99,7 @@ export default function TaskComponent({
 									<ButtonGroup>
 										<Button
 											color="primary"
-											variant="ghost"
+											variant="faded"
 											startContent={<FaRegFileExcel />}
 											onClick={() => {
 												// handleButtonClick();
@@ -119,7 +117,7 @@ export default function TaskComponent({
 										/>
 										<Button
 											color="primary"
-											variant="ghost"
+											variant="faded"
 											isIconOnly
 											isDisabled={!nestedMaintenance.fileName}
 											isLoading={nestedMaintenance.loadingReadExcel}

@@ -11,7 +11,7 @@ export default async function TaskItemPage({
   params,
   searchParams,
 }: {
-  params: { uid: string };
+  params: { id: string };
   searchParams: { maintenance: string };
 }) {
   const parsedMaintenance = JSON.parse(
@@ -19,7 +19,7 @@ export default async function TaskItemPage({
   ) satisfies Maintenance;
 
   const assetList = await fetchAssetList();
-  const checklistList = await fetchChecklistList(params.uid);
+  const checklistList = await fetchChecklistList(params.id);
   const checklistLibrary = await fetchChecklistLibraryList();
 
   return (

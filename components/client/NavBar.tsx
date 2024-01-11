@@ -106,7 +106,7 @@ export default function Navigation() {
         <Dropdown placement="bottom-end">
           <DropdownTrigger>
             <Button
-              variant="ghost"
+              variant="faded"
               size="sm"
               startContent={<CircleUserRound size={18} />}
             >
@@ -114,7 +114,7 @@ export default function Navigation() {
             </Button>
           </DropdownTrigger>
           {role === 'ADMIN' ? (
-            <DropdownMenu aria-label="Profile Actions" variant="flat">
+            <DropdownMenu aria-label="Profile Actions" variant="faded">
               <DropdownItem key="name">{user?.name}</DropdownItem>
               <DropdownItem key="email">{user?.email}</DropdownItem>
               <DropdownItem key="account">My Account</DropdownItem>
@@ -126,12 +126,9 @@ export default function Navigation() {
               </DropdownItem>
             </DropdownMenu>
           ) : (
-            <DropdownMenu aria-label="Profile Actions" variant="flat">
-              <DropdownItem key="name">{user?.name}</DropdownItem>
-              <DropdownItem key="email">{user?.email}</DropdownItem>
+            <DropdownMenu aria-label="Profile Actions" variant="faded">
               <DropdownItem key="account">My Account</DropdownItem>
-              <Divider />
-              <DropdownItem color="danger" key="real" onClick={onClick}>
+              <DropdownItem color="danger" key="sign-out" onClick={onClick}>
                 Sign Out
               </DropdownItem>
             </DropdownMenu>

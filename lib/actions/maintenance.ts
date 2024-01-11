@@ -15,10 +15,10 @@ export async function createMaintenance(data: Maintenance) {
   }
 }
 
-export async function fetchMaintenanceItem(uid: string) {
+export async function fetchMaintenanceItem(id: string) {
   try {
     return await db.maintenance.findUnique({
-      where: { uid },
+      where: { id },
     });
   } catch (error) {
     console.error(error);
@@ -27,15 +27,15 @@ export async function fetchMaintenanceItem(uid: string) {
 }
 
 export async function fetchMaintenanceList(
-  assetUid?: string,
+  assetId?: string,
 ): Promise<Maintenance[]> {
   try {
     const filters: Prisma.MaintenanceWhereInput[] = [];
     const orderBy: Prisma.MaintenanceOrderByWithRelationInput[] = [];
 
-    if (assetUid) {
+    if (assetId) {
       filters.push({
-        asset_uid: assetUid,
+        assetId,
       });
     }
 

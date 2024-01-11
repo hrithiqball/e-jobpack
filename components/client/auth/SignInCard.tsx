@@ -78,7 +78,7 @@ export default function SignInCard() {
           className="mb-4"
         />
         <Divider />
-        <Button variant="solid" className="w-full mt-4" onClick={signInClient}>
+        <Button variant="faded" className="w-full mt-4" onClick={signInClient}>
           Login
         </Button>
         <Link

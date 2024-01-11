@@ -237,7 +237,7 @@ export default function TaskAdd({ checklist, open, setOpen }: TaskAddProps) {
           )}
         </ModalBody>
         <ModalFooter>
-          <Button color="danger" variant="light" onPress={closeModal}>
+          <Button color="danger" variant="faded" onPress={closeModal}>
             Close
           </Button>
           <Button

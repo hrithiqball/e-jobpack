@@ -70,10 +70,10 @@ export async function GET(
  */
 export async function PATCH(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   try {
-    const uid = params.uid;
+    const id = params.id;
     let json = await nextRequest.json();
 
     const result = UpdateMaintenanceSchema.safeParse(json);
@@ -81,7 +81,7 @@ export async function PATCH(
     if (result.success) {
       const updateMaintenanceValue: UpdateMaintenance = result.data;
       const updatedMaintenance: Maintenance = await db.maintenance.update({
-        where: { uid },
+        where: { id },
         data: updateMaintenanceValue,
       });
 
@@ -89,7 +89,7 @@ export async function PATCH(
         JSON.stringify(
           ResponseMessage(
             200,
-            `Successfully updated maintenance ${uid}`,
+            `Successfully updated maintenance ${id}`,
             updatedMaintenance,
           ),
         ),
@@ -120,7 +120,7 @@ export async function PATCH(
         JSON.stringify(
           ResponseMessage(
             404,
-            `Maintenance ${params.uid} not found.`,
+            `Maintenance ${params.id} not found.`,
             null,
             error.message,
           ),
@@ -151,16 +151,16 @@ export async function PATCH(
  */
 export async function DELETE(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   try {
-    const uid = params.uid;
+    const id = params.id;
     await db.maintenance.delete({
-      where: { uid },
+      where: { id },
     });
 
     return new NextResponse(
-      JSON.stringify(ResponseMessage(200, `Maintenance ${uid} deleted`)),
+      JSON.stringify(ResponseMessage(200, `Maintenance ${id} deleted`)),
       { status: 200, headers: { 'Content-Type': 'application/json' } },
     );
   } catch (error: any) {
@@ -169,7 +169,7 @@ export async function DELETE(
         JSON.stringify(
           ResponseMessage(
             404,
-            `Maintenance ${params.uid} not found`,
+            `Maintenance ${params.id} not found`,
             null,
             error.message,
           ),

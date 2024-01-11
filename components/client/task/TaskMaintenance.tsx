@@ -52,6 +52,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import {
   AlarmClock,
+  CheckCircle2,
   ChevronDown,
   ChevronLeft,
   Contact2,
@@ -132,7 +133,7 @@ export default function TaskMaintenance({
       created_on: new Date(),
       updated_by: user.data.user.id,
       updated_on: new Date(),
-      maintenance_uid: maintenance.uid,
+      maintenance_uid: maintenance.id,
       color: null,
       icon: null,
       title: '',
@@ -205,9 +206,9 @@ export default function TaskMaintenance({
 
   async function exportToExcel() {
     const workbook = new Workbook();
-    const worksheetName = `${maintenance.uid}`;
-    const filename = `Maintenance-${maintenance.uid}`;
-    const title = `Maintenance ${maintenance.uid}`;
+    const worksheetName = `${maintenance.id}`;
+    const filename = `Maintenance-${maintenance.id}`;
+    const title = `Maintenance ${maintenance.id}`;
     const columns: Partial<Column>[] = [
       { key: 'no', width: 5 },
       { key: 'uid', width: 20 },
@@ -228,7 +229,7 @@ export default function TaskMaintenance({
     const borderWidth: Partial<Border> = { style: 'thin' };
 
     const checklistResult: Result<Checklist[]> = await fetch(
-      `/api/checklist?maintenance_uid=${maintenance.uid}`,
+      `/api/checklist?maintenance_uid=${maintenance.id}`,
     ).then(res => res.json());
 
     if (
@@ -274,19 +275,19 @@ export default function TaskMaintenance({
         worksheet.mergeCells('A4:B4');
         worksheet.mergeCells('C4:E4');
         worksheet.getCell('A4').value = 'Location';
-        worksheet.getCell('C4').value = maintenance.approved_by;
+        worksheet.getCell('C4').value = maintenance.approvedBy;
 
         // Row 5
         worksheet.mergeCells('A5:B5');
         worksheet.mergeCells('C5:E5');
         worksheet.getCell('A5').value = 'Tag No.';
-        worksheet.getCell('C5').value = maintenance.attachment_path;
+        worksheet.getCell('C5').value = maintenance.attachmentPath;
 
         // Row 6
         worksheet.mergeCells('A6:B6');
         worksheet.mergeCells('C6:E6');
         worksheet.getCell('A6').value = 'Maintenance No.';
-        worksheet.getCell('C6').value = maintenance.uid;
+        worksheet.getCell('C6').value = maintenance.id;
 
         // Row 7
         worksheet.addRow([]);
@@ -557,6 +558,9 @@ export default function TaskMaintenance({
       case 'export-excel':
         exportToExcel();
         break;
+      case 'mark-complete':
+        //TODO enable mark complete
+        break;
       default:
         break;
     }
@@ -564,17 +568,22 @@ export default function TaskMaintenance({
 
   return (
     <div className="rounded-md flex-grow">
-      <div className="flex flex-row justify-between">
-        <Button
-          className="max-w-min"
-          as={Link}
-          href="/task"
-          startContent={<ChevronLeft size={18} />}
-          variant="faded"
-          size="sm"
-        >
-          Back
-        </Button>
+      <div className="flex flex-row items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <Button
+            className="max-w-min"
+            as={Link}
+            href="/task"
+            startContent={<ChevronLeft size={18} />}
+            variant="faded"
+            size="sm"
+          >
+            Back
+          </Button>
+          <h2 className="text-medium sm:text-xl font-semibold">
+            {maintenance.id}
+          </h2>
+        </div>
         <Dropdown>
           <DropdownTrigger>
             <Button isIconOnly size="sm" variant="faded">
@@ -607,6 +616,12 @@ export default function TaskMaintenance({
               >
                 Download Excel
               </DropdownItem>
+              <DropdownItem
+                key="mark-complete"
+                startContent={<FileDown size={18} />}
+              >
+                Mark as complete
+              </DropdownItem>
             </DropdownMenu>
           )}
           <DropdownMenu>
@@ -622,11 +637,17 @@ export default function TaskMaintenance({
             >
               Download Excel
             </DropdownItem>
+            <DropdownItem
+              key="mark-complete"
+              color="success"
+              startContent={<CheckCircle2 size={18} />}
+            >
+              Mark as complete
+            </DropdownItem>
           </DropdownMenu>
         </Dropdown>
       </div>
       <div className="flex flex-col my-4 ">
-        <h2 className="text-xl font-semibold">{maintenance.uid}</h2>
         <Table isStriped removeWrapper hideHeader aria-label="Asset info table">
           <TableHeader>
             <TableColumn>Key</TableColumn>

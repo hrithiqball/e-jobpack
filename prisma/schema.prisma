@@ -110,7 +110,7 @@ model Checklist {
   asset_id                        String
   asset                           Asset       @relation(fields: [asset_id], references: [uid], onDelete: Cascade, map: "checklist_asset_fk")
   user_checklist_created_byTouser User        @relation("checklist_created_byTouser", fields: [created_by], references: [id], onDelete: Cascade)
-  maintenance                     Maintenance @relation(fields: [maintenance_uid], references: [uid], onDelete: Cascade)
+  maintenance                     Maintenance @relation(fields: [maintenance_uid], references: [id], onDelete: Cascade)
   user_checklist_updated_byTouser User        @relation("checklist_updated_byTouser", fields: [updated_by], references: [id], onDelete: Cascade)
   task                            Task[]
 
@@ -185,17 +185,18 @@ model History {
 }
 
 model Maintenance {
-  uid             String      @id
-  asset_uid       String?
+  id              String      @id @default(cuid())
+  assetId       String?       @map("asset_id")
   date            DateTime
   maintainee      String?
-  attachment_path String?
-  approved_by     String?
-  approved_on     DateTime?
-  asset_ids       String[]
+  attachmentPath String?     @map("attachment_path")
+  approvedBy     String?     @map("approved_by")
+  approvedOn     DateTime?   @map("approved_on")
+  isComplete      Boolean     @default(false) @map("is_complete")
+  assetIds       String[]    @map("asset_ids")
   deadline        DateTime?
   checklist       Checklist[]
-  asset           Asset?      @relation(fields: [asset_uid], references: [uid], onDelete: Cascade)
+  asset           Asset?      @relation(fields: [assetId], references: [uid], onDelete: Cascade)
 
   @@map("maintenance")
   @@schema("public")

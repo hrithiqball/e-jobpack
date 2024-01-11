@@ -122,7 +122,7 @@ export default function SignUpCard() {
           className="mt-4 mb-4"
         />
         <Divider />
-        <Button variant="solid" className="w-full mt-4" onClick={signUpClient}>
+        <Button variant="faded" className="w-full mt-4" onClick={signUpClient}>
           Sign Up
         </Button>
         <Link

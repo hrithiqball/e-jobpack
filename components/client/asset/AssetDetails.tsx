@@ -44,15 +44,16 @@ export default function AssetDetails({
   function handleCreateMaintenance() {
     startTransition(() => {
       const newMaintenance = {
-        uid: `WO-${Date.now().toString()}`,
-        asset_uid: null,
+        id: `WO-${Date.now().toString()}`,
+        assetId: null,
         date: new Date(),
         maintainee: null,
-        attachment_path: null,
-        approved_by: null,
-        approved_on: null,
-        asset_ids: [asset.uid],
+        attachmentPath: null,
+        approvedBy: null,
+        approvedOn: null,
+        assetIds: [asset.uid],
         deadline: null,
+        isComplete: false,
       } satisfies Maintenance;
 
       createMaintenance(newMaintenance)
@@ -185,7 +186,7 @@ export default function AssetDetails({
           <div className="">
             {checklistUse.map(checklist => (
               <div key={checklist.uid} className="flex flex-row items-center">
-                <Chip variant="flat">{checklist.title}</Chip>
+                <Chip variant="faded">{checklist.title}</Chip>
               </div>
             ))}
           </div>
@@ -212,7 +213,7 @@ export default function AssetDetails({
                   Next Maintenance
                 </TableCell>
                 <TableCell className="justify-center">
-                  <Chip variant="flat" startContent={<Clock />}>
+                  <Chip variant="faded" startContent={<Clock />}>
                     {asset.nextMaintenance !== null
                       ? moment(asset.nextMaintenance).format('DD/MM/yyyy')
                       : 'No Scheduled Maintenance'}
@@ -222,7 +223,7 @@ export default function AssetDetails({
               <TableRow>
                 <TableCell className="semi-bold">Last Maintenance</TableCell>
                 <TableCell>
-                  <Chip variant="flat" startContent={<History />}>
+                  <Chip variant="faded" startContent={<History />}>
                     {asset.lastMaintenance !== null
                       ? moment(asset.lastMaintenance).format('DD/MM/yyyy')
                       : 'No Maintenance Completed'}

@@ -179,6 +179,7 @@ export default function TaskRow({ task }: { task: Task }) {
               aria-label="Task Issue"
               variant="faded"
               maxRows={1}
+              size="sm"
               value={taskIssue}
               onValueChange={setTaskIssue}
             />
