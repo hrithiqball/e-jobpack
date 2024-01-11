@@ -4,8 +4,6 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Providers } from '@/app/providers';
 import { Toaster } from 'sonner';
-import { authOptions } from '@/utils/data/auth';
-import Navigation from '@/components/client/NavBar';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {

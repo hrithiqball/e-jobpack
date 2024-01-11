@@ -19,6 +19,7 @@ import {
   DropdownMenu,
   Dropdown,
   DropdownItem,
+  Divider,
 } from '@nextui-org/react';
 import { CircleUserRound, Moon, Sun } from 'lucide-react';
 import { useCurrentRole } from '@/hooks/use-current-role';
@@ -59,7 +60,7 @@ export default function Navigation() {
       <NavbarContent justify="start">
         <NavbarMenuToggle
           aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-          className="pr-8 sm:hidden"
+          className="px-4 sm:hidden"
         />
         <NavbarBrand>
           <Image
@@ -129,6 +130,7 @@ export default function Navigation() {
               <DropdownItem key="name">{user?.name}</DropdownItem>
               <DropdownItem key="email">{user?.email}</DropdownItem>
               <DropdownItem key="account">My Account</DropdownItem>
+              <Divider />
               <DropdownItem color="danger" key="real" onClick={onClick}>
                 Sign Out
               </DropdownItem>

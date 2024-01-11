@@ -75,21 +75,6 @@ export default function AssetList({
             className="hover:underline hover:text-blue-400"
             href={{
               pathname: `/asset/${asset.uid}`,
-              query: {
-                name: asset.name,
-                description: asset.description,
-                type: asset.type,
-                created_by: asset.createdBy,
-                created_on: asset.createdOn.toString(),
-                updated_by: asset.updatedBy,
-                updated_on: asset.updatedOn.toString(),
-                last_maintenance: asset.lastMaintenance?.toString(),
-                last_maintainee: asset.lastMaintainee,
-                location: asset.location,
-                next_maintenance: asset.nextMaintenance?.toString(),
-                status_uid: asset.statusId,
-                person_in_charge: asset.personInCharge,
-              },
             }}
           >
             {asset.name}
@@ -147,6 +132,12 @@ export default function AssetList({
     });
   }
 
+  function handleRowAction(key: Key) {
+    const asset = assetList.find(asset => asset.uid === key);
+
+    router.push(`/asset/${asset?.uid}`);
+  }
+
   function closeAddAssetModal() {
     setOpenAddAsset(false);
     setNewAssetName('');
@@ -200,22 +191,6 @@ export default function AssetList({
                 value={newAssetTag}
                 onValueChange={setNewAssetTag}
               />
-              {/* <Dropdown>
-                <DropdownTrigger>
-                  <Button>Open Menu</Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  onAction={(e: Key) => console.log(e)}
-                  aria-label="Type of asset"
-                  items={assetTypeList}
-                >
-                  {(item) => (
-                    <DropdownItem key={item.uid}>
-                      {item.title}
-                    </DropdownItem>
-                  )}
-                </DropdownMenu>
-              </Dropdown> */}
               <Select
                 label="Type of asset"
                 variant="faded"
@@ -289,6 +264,7 @@ export default function AssetList({
             className="mt-4"
             aria-label="Asset List"
             removeWrapper
+            onRowAction={handleRowAction}
           >
             <TableHeader>
               <TableColumn key="name">Name</TableColumn>

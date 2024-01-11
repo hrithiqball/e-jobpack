@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useTheme } from 'next-themes';
 import { Maintenance } from '@prisma/client';
 import Loading from '@/components/client/Loading';
 import { Button, Card, CardHeader, Chip, Divider } from '@nextui-org/react';
@@ -13,7 +12,6 @@ export default function TaskComponent({
 }: {
   maintenanceList: Maintenance[];
 }) {
-  const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -22,13 +20,9 @@ export default function TaskComponent({
 
   if (!mounted) return <Loading label="Hang on tight" />;
   return (
-    <Card
-      className={`flex rounded-md p-4 m-4 h-full flex-grow ${
-        theme === 'dark' ? 'bg-gray-800' : 'bg-gray-200'
-      }`}
-    >
-      <div className="flex flex-col space-y-4 h-full sm:flex-row sm:space-y-0 sm:space-x-4">
-        <Card className="flex-1 p-4">
+    <div className="flex rounded-md flex-grow">
+      <div className="flex flex-col space-y-4 h-full w-full sm:flex-row sm:space-y-0 sm:space-x-4">
+        <Card className="flex-1 p-4 w-100">
           <div>
             <p className="text-lg font-semibold text-center mb-4">
               My Tasks{' '}
@@ -58,12 +52,6 @@ export default function TaskComponent({
                     <p className=" text-sm">
                       Maintenance ID: {maintenance.uid}
                     </p>
-                    {/* <Link
-                      className=" text-sm hover:text-blue-500 hover:underline transition-all"
-                      href={`/asset/${maintenance.asset_uid}`}
-                    >
-                      Asset Details
-                    </Link> */}
                   </div>
                 </CardHeader>
                 {/* <CardBody>
@@ -169,6 +157,6 @@ export default function TaskComponent({
           </div>
         </Card>
       </div>
-    </Card>
+    </div>
   );
 }
