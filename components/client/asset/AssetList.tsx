@@ -7,10 +7,10 @@ import React, {
   ReactNode,
   Key,
   useTransition,
+  Fragment,
 } from 'react';
 import {
   Button,
-  Card,
   Input,
   Modal,
   ModalBody,
@@ -26,7 +26,6 @@ import {
   TableHeader,
   TableRow,
 } from '@nextui-org/react';
-import { useTheme } from 'next-themes';
 import Loading from '@/components/client/Loading';
 import Link from 'next/link';
 import { Asset, AssetStatus, AssetType } from '@prisma/client';
@@ -49,7 +48,6 @@ export default function AssetList({
   let [isPending, startTransition] = useTransition();
   const { data: session } = useSession();
   const router = useRouter();
-  const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [openAddAsset, setOpenAddAsset] = useState(false);
   const [newAssetName, setNewAssetName] = useState('');
@@ -165,11 +163,7 @@ export default function AssetList({
   if (!mounted) return <Loading label="Hang on tight" />;
 
   return (
-    <Card
-      className={`rounded-md p-4 m-4 flex-grow ${
-        theme === 'dark' ? 'bg-gray-800' : 'bg-gray-200'
-      }`}
-    >
+    <Fragment>
       <div className="flex justify-between">
         <span>Asset List</span>
         <Button
@@ -294,6 +288,7 @@ export default function AssetList({
             selectionMode="single"
             className="mt-4"
             aria-label="Asset List"
+            removeWrapper
           >
             <TableHeader>
               <TableColumn key="name">Name</TableColumn>
@@ -317,6 +312,6 @@ export default function AssetList({
           </Table>
         </div>
       </div>
-    </Card>
+    </Fragment>
   );
 }

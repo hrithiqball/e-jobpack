@@ -1,44 +1,13 @@
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-  schemas  = ["public"]
-}
-
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["multiSchema"]
   binaryTargets   = ["native", "linux-musl-openssl-3.0.x"]
 }
 
-enum Department {
-  management
-  exploration
-  INSTRUMENT
-  ELECTRICAL
-  MECHANICAL
-  MANAGEMENT
-
-  @@schema("public")
-}
-
-enum Role {
-  ADMIN
-  TECHNICIAN
-  admin
-  supervisor
-  maintainer
-
-  @@schema("public")
-}
-
-enum TaskType {
-  choice
-  selectOne
-  check
-  number
-  selectMultiple
-
-  @@schema("public")
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["public"]
 }
 
 model Asset {
@@ -384,6 +353,7 @@ model User {
   password                                               String
   emailVerified                                          DateTime?          @map("email_verified")
   image                                                  String?
+  phone                                                  String?
   account                                                Account[]
   asset_asset_created_byTouser                           Asset[]            @relation("asset_created_byTouser")
   asset_asset_person_in_chargeTouser                     Asset[]            @relation("asset_person_in_chargeTouser")
@@ -405,5 +375,36 @@ model User {
   task_library_task_library_updated_byTouser             TaskLibrary[]      @relation("task_library_updated_byTouser")
 
   @@map("user")
+  @@schema("public")
+}
+
+enum Department {
+  management
+  exploration
+  INSTRUMENT
+  ELECTRICAL
+  MECHANICAL
+  MANAGEMENT
+
+  @@schema("public")
+}
+
+enum Role {
+  admin
+  supervisor
+  maintainer
+  ADMIN
+  TECHNICIAN
+
+  @@schema("public")
+}
+
+enum TaskType {
+  choice
+  selectOne
+  check
+  number
+  selectMultiple
+
   @@schema("public")
 }

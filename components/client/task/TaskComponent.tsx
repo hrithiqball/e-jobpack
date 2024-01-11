@@ -8,7 +8,7 @@ import { Button, Card, CardHeader, Chip, Divider } from '@nextui-org/react';
 import Link from 'next/link';
 import { Wrench } from 'lucide-react';
 
-export default function Task({
+export default function TaskComponent({
   maintenanceList,
 }: {
   maintenanceList: Maintenance[];

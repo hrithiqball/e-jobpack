@@ -20,22 +20,28 @@ import {
   Dropdown,
   DropdownItem,
 } from '@nextui-org/react';
-import { signOut } from 'next-auth/react';
-import { useSession } from 'next-auth/react';
 import { CircleUserRound, Moon, Sun } from 'lucide-react';
+import { useCurrentRole } from '@/hooks/use-current-role';
+import { useCurrentUser } from '@/hooks/use-current-user';
+import { logout } from '@/lib/actions/logout';
 
 export default function Navigation() {
   const { theme, setTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
-  const { data: session } = useSession();
+  const role = useCurrentRole();
+  const user = useCurrentUser();
 
   const navLinks = [
     { href: '/dashboard', label: 'Dashboard' },
     { href: '/asset', label: 'Asset' },
     { href: '/task', label: 'Task' },
   ];
+
+  function onClick() {
+    logout();
+  }
 
   useEffect(() => {
     setMounted(true);
@@ -103,17 +109,31 @@ export default function Navigation() {
               size="sm"
               startContent={<CircleUserRound size={18} />}
             >
-              {session?.user?.name}
+              {user?.name}
             </Button>
           </DropdownTrigger>
-          <DropdownMenu aria-label="Profile Actions" variant="flat">
-            <DropdownItem key="real-name">{session?.user?.name}</DropdownItem>
-            <DropdownItem key="profile">{session?.user?.email}</DropdownItem>
-            <DropdownItem key="settings">My Settings</DropdownItem>
-            <DropdownItem color="danger" key="real" onClick={() => signOut()}>
-              Sign Out
-            </DropdownItem>
-          </DropdownMenu>
+          {role === 'ADMIN' ? (
+            <DropdownMenu aria-label="Profile Actions" variant="flat">
+              <DropdownItem key="name">{user?.name}</DropdownItem>
+              <DropdownItem key="email">{user?.email}</DropdownItem>
+              <DropdownItem key="account">My Account</DropdownItem>
+              <DropdownItem key="admin" href="/admin">
+                Admin Settings
+              </DropdownItem>
+              <DropdownItem color="danger" key="real" onClick={onClick}>
+                Sign Out
+              </DropdownItem>
+            </DropdownMenu>
+          ) : (
+            <DropdownMenu aria-label="Profile Actions" variant="flat">
+              <DropdownItem key="name">{user?.name}</DropdownItem>
+              <DropdownItem key="email">{user?.email}</DropdownItem>
+              <DropdownItem key="account">My Account</DropdownItem>
+              <DropdownItem color="danger" key="real" onClick={onClick}>
+                Sign Out
+              </DropdownItem>
+            </DropdownMenu>
+          )}
         </Dropdown>
       </NavbarContent>
       <NavbarMenu>

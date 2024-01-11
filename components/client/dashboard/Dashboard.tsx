@@ -1,8 +1,7 @@
 'use client';
 
 import React, { Key, useEffect, useState } from 'react';
-import { Card, Tab, Tabs } from '@nextui-org/react';
-import { useTheme } from 'next-themes';
+import { Tab, Tabs } from '@nextui-org/react';
 import Overview from '@/components/client/dashboard/Overview';
 import Calendar from '@/components/client/dashboard/Calendar';
 import Report from '@/components/client/dashboard/Report';
@@ -10,20 +9,6 @@ import Report from '@/components/client/dashboard/Report';
 export default function Dashboard() {
   const [activeComponent, setActiveComponent] = useState('overview');
   const [mounted, setMounted] = useState(false);
-  const { theme } = useTheme();
-
-  const renderComponent = () => {
-    switch (activeComponent) {
-      case 'overview':
-        return <Overview />;
-      case 'report':
-        return <Report />;
-      case 'calendar':
-        return <Calendar />;
-      default:
-        return null;
-    }
-  };
 
   useEffect(() => {
     setMounted(true);
@@ -32,11 +17,7 @@ export default function Dashboard() {
   if (!mounted) return null;
 
   return (
-    <Card
-      className={`rounded-md p-4 m-4 flex-grow ${
-        theme === 'dark' ? 'bg-gray-800' : 'bg-gray-200'
-      }`}
-    >
+    <div className="space-y-4 h-full">
       <Tabs
         radius="md"
         color="primary"
@@ -49,7 +30,21 @@ export default function Dashboard() {
         <Tab key="report" title="Report" />
         <Tab key="calendar" title="Calendar" />
       </Tabs>
-      <div className="flex-grow h-full mt-4">{renderComponent()}</div>
-    </Card>
+      {activeComponent === 'overview' && (
+        <div className="flex grow h-full">
+          <Overview />
+        </div>
+      )}
+      {activeComponent === 'report' && (
+        <div className="flex-grow h-full">
+          <Report />
+        </div>
+      )}
+      {activeComponent === 'calendar' && (
+        <div className="flex-grow h-full">
+          <Calendar />
+        </div>
+      )}
+    </div>
   );
 }

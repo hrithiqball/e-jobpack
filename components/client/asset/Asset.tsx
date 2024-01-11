@@ -1,7 +1,6 @@
 'use client';
 
 import React, { Key, useEffect, useState } from 'react';
-import { useTheme } from 'next-themes';
 import Loading from '@/components/client/Loading';
 import { Asset, ChecklistUse, Maintenance } from '@prisma/client';
 import AssetDetails from '@/components/client/asset/AssetDetails';
@@ -27,7 +26,6 @@ export default function AssetComponent({
   maintenanceList: Maintenance[];
   checklistUse: ChecklistUse[];
 }) {
-  const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [selectedTab, setSelectedTab] = useState('details');
 
@@ -38,25 +36,21 @@ export default function AssetComponent({
   if (!mounted) return <Loading label="Hang on tight" />;
 
   return (
-    <Card
-      className={`rounded-md p-4 m-4 flex-grow ${
-        theme === 'dark' ? 'bg-gray-800' : 'bg-gray-200'
-      }`}
-    >
-      <div className="flex flex-row">
+    <div>
+      <div className="flex flex-row items-center">
         <Button
           className="max-w-min"
           as={Link}
           href="/asset"
-          startContent={<ChevronLeft />}
+          startContent={<ChevronLeft size={18} />}
           variant="faded"
-          size="md"
+          size="sm"
         >
           Back
         </Button>
         <Tabs
           aria-label="Asset Attribute"
-          size="md"
+          size="sm"
           className="ml-4"
           selectedKey={selectedTab}
           onSelectionChange={(key: Key) => setSelectedTab(key as string)}
@@ -95,16 +89,16 @@ export default function AssetComponent({
         <div className="flex flex-row">
           <div className="flex flex-row">
             <Button isIconOnly className="ml-1" variant="faded">
-              <PencilLine />
+              <PencilLine size={18} />
             </Button>
             <Button isIconOnly className="ml-1" variant="faded">
-              <PackagePlus />
+              <PackagePlus size={18} />
             </Button>
           </div>
         </div>
       </div>
       <Divider />
-      <Card className="rounded-md overflow-hidden mt-4">
+      <div className="overflow-hidden">
         {selectedTab === 'details' && (
           <AssetDetails asset={asset} checklistUse={checklistUse} />
         )}
@@ -112,7 +106,7 @@ export default function AssetComponent({
           <AssetMaintenance maintenanceList={maintenanceList} />
         )}
         {selectedTab === 'attachment' && <AssetAttachment />}
-      </Card>
-    </Card>
+      </div>
+    </div>
   );
 }
