@@ -27,18 +27,16 @@ import { deleteTask, updateTask } from '@/lib/actions/task';
 
 export default function TaskRow({ task }: { task: Task }) {
   let [isPending, startTransition] = useTransition();
-  const [taskActivity, setTaskActivity] = useState(task.task_activity);
+  const [taskActivity, setTaskActivity] = useState(task.taskActivity);
   const [taskDescription, setTaskDescription] = useState(task.description);
-  const [taskType, setTaskType] = useState(task.task_type);
-  const [taskSelected, setTaskSelected] = useState<string[]>(
-    task.task_selected,
-  );
-  const [taskBool, setTaskBool] = useState(task.task_bool ?? false);
+  const [taskType, setTaskType] = useState(task.taskType);
+  const [taskSelected, setTaskSelected] = useState<string[]>(task.taskSelected);
+  const [taskBool, setTaskBool] = useState(task.taskBool ?? false);
   const [taskRemark, setTaskRemark] = useState(task.remarks ?? '');
-  const [taskIsComplete, setTaskIsComplete] = useState(task.is_complete);
+  const [taskIsComplete, setTaskIsComplete] = useState(task.isComplete);
   const [taskIssue, setTaskIssue] = useState(task.issue ?? '');
   const [taskNumberValue, setTaskNumberValue] = useState<string>(
-    task.task_number_val?.toString() ?? '',
+    task.taskNumberVal?.toString() ?? '',
   );
   const numericRegex = /^-?\d+(\.\d+)?$/;
 
@@ -71,11 +69,11 @@ export default function TaskRow({ task }: { task: Task }) {
     ) {
       setTaskSelected(changedValue);
       const taskUpdate: UpdateTask = {
-        task_selected: changedValue,
+        taskSelected: changedValue,
       };
 
       startTransition(() => {
-        updateTask(task.uid, taskUpdate).then(() => {
+        updateTask(task.id, taskUpdate).then(() => {
           if (!isPending) toast.success('Task updated successfully');
         });
       });
@@ -84,7 +82,7 @@ export default function TaskRow({ task }: { task: Task }) {
 
   function updateTaskClient(taskUpdate: UpdateTask) {
     startTransition(() => {
-      updateTask(task.uid, taskUpdate).then(() => {
+      updateTask(task.id, taskUpdate).then(() => {
         toast.success('Task updated successfully');
       });
     });
@@ -94,7 +92,7 @@ export default function TaskRow({ task }: { task: Task }) {
     if (key === 'edit') toast.info('editing');
     else {
       startTransition(() => {
-        deleteTask(task.uid)
+        deleteTask(task.id)
           .then(() => toast.success('Task deleted'))
           .catch(() => toast.error('Task not deleted'));
       });
@@ -118,7 +116,7 @@ export default function TaskRow({ task }: { task: Task }) {
               onValueChange={() => {
                 setTaskIsComplete(!taskIsComplete);
                 const updateTask: UpdateTask = {
-                  is_complete: !taskIsComplete,
+                  isComplete: !taskIsComplete,
                 };
                 updateTaskClient(updateTask);
               }}
@@ -135,14 +133,17 @@ export default function TaskRow({ task }: { task: Task }) {
               onValueChange={() => {
                 setTaskBool(!taskBool);
                 const taskUpdate: UpdateTask = {
-                  task_bool: !taskBool,
+                  taskBool: !taskBool,
                 };
                 updateTaskClient(taskUpdate);
               }}
             />
           </div>
         )}
-        {(taskType === 'selectOne' || taskType === 'selectMultiple') && (
+        {(taskType === 'selectOne' ||
+          taskType === 'selectMultiple' ||
+          taskType === 'MULTIPLE_SELECT' ||
+          taskType === 'SINGLE_SELECT') && (
           <Select
             aria-label="Task Select"
             variant="faded"
@@ -154,7 +155,7 @@ export default function TaskRow({ task }: { task: Task }) {
             size="sm"
             placeholder="Choose one"
           >
-            {task.list_choice.map(choice => (
+            {task.listChoice.map(choice => (
               <SelectItem key={choice} value={choice}>
                 {choice}
               </SelectItem>
@@ -208,11 +209,16 @@ export default function TaskRow({ task }: { task: Task }) {
               aria-label="Action event example"
               onAction={handleActions}
             >
-              <DropdownItem key="edit" startContent={<PencilLine size={18} />}>
+              <DropdownItem
+                key="edit"
+                variant="faded"
+                startContent={<PencilLine size={18} />}
+              >
                 Edit Task
               </DropdownItem>
               <DropdownItem
                 key="delete"
+                variant="faded"
                 className="text-danger"
                 color="danger"
                 startContent={<ClipboardX size={18} />}
@@ -223,16 +229,22 @@ export default function TaskRow({ task }: { task: Task }) {
           ) : (
             <DropdownMenu>
               <DropdownItem
+                variant="faded"
                 key="add-remarks"
                 startContent={<MessageCircleWarning size={18} />}
               >
                 Add Remarks
               </DropdownItem>
-              <DropdownItem key="edit" startContent={<PencilLine size={18} />}>
+              <DropdownItem
+                key="edit"
+                variant="faded"
+                startContent={<PencilLine size={18} />}
+              >
                 Edit Task
               </DropdownItem>
               <DropdownItem
                 key="delete"
+                variant="faded"
                 className="text-danger"
                 color="danger"
                 startContent={<ClipboardX size={18} />}

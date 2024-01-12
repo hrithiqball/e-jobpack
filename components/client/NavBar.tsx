@@ -19,7 +19,6 @@ import {
   DropdownMenu,
   Dropdown,
   DropdownItem,
-  Divider,
 } from '@nextui-org/react';
 import { CircleUserRound, Moon, Sun } from 'lucide-react';
 import { useCurrentRole } from '@/hooks/use-current-role';

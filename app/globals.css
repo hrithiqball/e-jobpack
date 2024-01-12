@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --black: #333333;
+    --black: #000000;
     --white: #ffffff;
     --silver: #c9cccd;
     --emerald-green-dark: #006359;

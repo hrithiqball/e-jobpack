@@ -1,13 +1,28 @@
 'use server';
 
 import { Asset } from '@prisma/client';
+import dayjs from 'dayjs';
+import z from 'zod';
 
 import { db } from '@/lib/prisma/db';
+import { CreateAsset } from '@/lib/schemas/asset';
 
-export async function createAsset(data: Asset): Promise<Asset> {
+export async function createAsset(
+  values: z.infer<typeof CreateAsset>,
+): Promise<Asset> {
   try {
+    const validatedFields = CreateAsset.safeParse(values);
+
+    if (!validatedFields.success) {
+      throw new Error(validatedFields.error.message);
+    }
+
     return await db.asset.create({
-      data,
+      data: {
+        id: `AS-${dayjs().format('YYMMDDHHmmssSSS')}`,
+        updatedBy: validatedFields.data.createdBy,
+        ...validatedFields.data,
+      },
     });
   } catch (error) {
     console.error(error);

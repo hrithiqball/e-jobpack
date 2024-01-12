@@ -16,21 +16,21 @@ export enum InputType {
 export default function SubtaskItem({ subtask }: { subtask: Subtask }) {
   let [isPending, startTransition] = useTransition();
   const [subtaskIsComplete, setSubtaskIsComplete] = useState(
-    subtask.is_complete,
+    subtask.isComplete,
   );
-  const [subtaskActivity, setSubtaskActivity] = useState(subtask.task_activity);
+  const [subtaskActivity, setSubtaskActivity] = useState(subtask.taskActivity);
   const [subtaskDescription, setSubtaskDescription] = useState(
     subtask.description,
   );
-  const [taskType, setTaskType] = useState(subtask.task_type);
+  const [taskType, setTaskType] = useState(subtask.taskType);
   const [taskSelected, setTaskSelected] = useState<string[]>(
-    subtask.task_selected,
+    subtask.taskSelected,
   );
-  const [taskBool, setTaskBool] = useState(subtask.task_bool ?? false);
+  const [taskBool, setTaskBool] = useState(subtask.taskBool ?? false);
   const [subtaskIssue, setSubtaskIssue] = useState(subtask.issue ?? '');
   const [subtaskRemarks, setSubtaskRemarks] = useState(subtask.remarks ?? '');
   const [taskNumberValue, setTaskNumberValue] = useState<string>(
-    subtask.task_number_val?.toString() ?? '',
+    subtask.taskNumberVal?.toString() ?? '',
   );
 
   const numericRegex = /^-?\d+(\.\d+)?$/;
@@ -71,14 +71,14 @@ export default function SubtaskItem({ subtask }: { subtask: Subtask }) {
       };
 
       startTransition(() => {
-        updateSubtask(subtask.uid, taskUpdate);
+        updateSubtask(subtask.id, taskUpdate);
       });
     }
   }
 
   function updateSubtaskClient(subtaskUpdate: UpdateSubtask) {
     startTransition(() => {
-      updateSubtask(subtask.uid, subtaskUpdate);
+      updateSubtask(subtask.id, subtaskUpdate);
     });
   }
 
@@ -136,7 +136,7 @@ export default function SubtaskItem({ subtask }: { subtask: Subtask }) {
             size="sm"
             placeholder="Choose one"
           >
-            {subtask.list_choice.map(choice => (
+            {subtask.listChoice.map(choice => (
               <SelectItem key={choice} value={choice}>
                 {choice}
               </SelectItem>
@@ -172,9 +172,6 @@ export default function SubtaskItem({ subtask }: { subtask: Subtask }) {
       </div>
       <div className="flex-2 hover:cursor-not-allowed">
         <MoreVertical />
-        {/* <Button isDisabled={!isEdit} isIconOnly color="danger">
-          <LuTrash2 />
-        </Button> */}
       </div>
     </div>
   );

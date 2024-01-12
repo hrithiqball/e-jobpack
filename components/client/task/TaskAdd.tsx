@@ -72,23 +72,23 @@ export default function TaskAdd({ checklist, open, setOpen }: TaskAddProps) {
 
   function addTaskClient() {
     const taskAdd: Task = {
-      uid: `TK-${moment().format('YYMMDDHHmmssSSS')}`,
-      checklist_uid: checklist.uid,
-      task_activity: taskActivity,
+      id: `TK-${moment().format('YYMMDDHHmmssSSS')}`,
+      checklistId: checklist.id,
+      taskActivity: taskActivity,
       description: taskDescription,
-      task_type: TaskType[selection],
-      list_choice: choices,
-      task_bool: false,
-      task_selected: [],
-      is_complete: false,
+      taskType: TaskType[selection],
+      listChoice: choices,
+      taskBool: false,
+      taskSelected: [],
+      isComplete: false,
       remarks: '',
       issue: '',
       deadline: null,
-      completed_by: null,
-      have_subtask: false,
-      task_number_val: 0,
-      task_check: false,
-      task_order: 0,
+      completedBy: null,
+      haveSubtask: false,
+      taskNumberVal: 0,
+      taskCheck: false,
+      taskOrder: 0,
     };
 
     startTransition(() => {

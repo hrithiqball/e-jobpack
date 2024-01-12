@@ -33,25 +33,25 @@ const config: Config = {
         light: {
           colors: {
             background: {
-              DEFAULT: '#f0f0f0',
+              DEFAULT: '#ffffff',
             },
             foreground: {
               DEFAULT: '#000000',
             },
             focus: {
-              DEFAULT: '#a2e9c1',
+              DEFAULT: '#309975',
             },
             primary: {
               DEFAULT: '#00a89c',
             },
             secondary: {
-              DEFAULT: '#f0f0f0',
+              DEFAULT: '#ffffff',
             },
             success: {
-              DEFAULT: '#23ff71',
+              DEFAULT: '#58b368',
             },
             warning: {
-              DEFAULT: '#f7d154',
+              DEFAULT: '#dad873',
             },
             danger: {
               DEFAULT: '#f87979',
@@ -64,22 +64,22 @@ const config: Config = {
               DEFAULT: '#0c0c0c',
             },
             foreground: {
-              DEFAULT: '#f0f0f0',
+              DEFAULT: '#ffffff',
             },
             focus: {
-              DEFAULT: '#a2e9c1',
+              DEFAULT: '#309975',
             },
             primary: {
               DEFAULT: '#00a89c',
             },
             secondary: {
-              DEFAULT: '#f0f0f0',
+              DEFAULT: '#ffffff',
             },
             success: {
-              DEFAULT: '#23ff71',
+              DEFAULT: '#58b368',
             },
             warning: {
-              DEFAULT: '#f7d154',
+              DEFAULT: '#dad873',
             },
             danger: {
               DEFAULT: '#f87979',

@@ -66,6 +66,7 @@ export default function SignInCard() {
           value={email}
           onChange={handleEmail}
           name="email"
+          size="sm"
           placeholder="Email"
           className="mt-4 mb-4"
         />
@@ -75,6 +76,7 @@ export default function SignInCard() {
           name="password"
           type="password"
           placeholder="Password"
+          size="sm"
           className="mb-4"
         />
         <Divider />

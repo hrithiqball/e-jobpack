@@ -11,7 +11,6 @@ import Loading from '@/components/client/Loading';
 import {
   Button,
   ButtonGroup,
-  Card,
   Divider,
   Dropdown,
   DropdownItem,
@@ -126,22 +125,14 @@ export default function TaskMaintenance({
       return;
     }
 
-    const newChecklist = {
-      uid: `CL-${moment().format('YYMMDDHHmmssSSS')}`,
-      asset_id: selectedAsset.currentKey,
-      created_by: user.data.user.id,
-      created_on: new Date(),
-      updated_by: user.data.user.id,
-      updated_on: new Date(),
-      maintenance_uid: maintenance.id,
-      color: null,
-      icon: null,
-      title: '',
-      description: newChecklistDescription,
-    } satisfies Checklist;
-
     startTransition(() => {
-      createChecklist(newChecklist).then(() => {
+      createChecklist({
+        assetId: selectedAsset.currentKey,
+        createdBy: user.data!.user.id,
+        maintenanceId: maintenance.id,
+        title: 'My Checklist',
+        description: newChecklistDescription,
+      }).then(() => {
         console.log(isPending);
         toast.success('Asset added to maintenance');
         router.refresh();
@@ -298,7 +289,7 @@ export default function TaskMaintenance({
 
         for (const checklist of checklistResult.data) {
           const taskListResult: Result<Task[]> = await fetch(
-            `/api/task?checklist_uid=${checklist.uid}`,
+            `/api/task?checklistId=${checklist.id}`,
           ).then(res => res.json());
 
           if (!taskListResult.data) return;
@@ -334,22 +325,22 @@ export default function TaskMaintenance({
 
           for (const task of taskListResult.data) {
             worksheet.addRow([
-              task.task_order,
-              task.task_activity ?? '',
+              task.taskOrder,
+              task.taskActivity ?? '',
               task.description ?? '',
               task.remarks ?? ' ',
             ]);
             rowTracker++;
-            worksheet.getCell(`O${rowTracker}`).value = task.uid;
+            worksheet.getCell(`O${rowTracker}`).value = task.id;
 
-            switch (task.task_type) {
+            switch (task.taskType) {
               case 'selectMultiple':
               case 'selectOne':
                 worksheet.getCell(`E${rowTracker}`).value = 'Select One';
                 worksheet.getCell(`E${rowTracker}`).dataValidation = {
                   type: 'list',
                   allowBlank: true,
-                  formulae: [`"${task.list_choice}"`],
+                  formulae: [`"${task.listChoice}"`],
                   showInputMessage: true,
                   promptTitle: 'Select',
                   prompt: 'Please select value(s)',
@@ -411,9 +402,9 @@ export default function TaskMaintenance({
               };
             });
 
-            if (task.have_subtask) {
+            if (task.haveSubtask) {
               const subtaskListResult: Result<Subtask[]> = await fetch(
-                `/api/subtask?task_uid=${task.uid}`,
+                `/api/subtask?taskId=${task.id}`,
               ).then(res => res.json());
 
               if (!subtaskListResult.data) return;
@@ -421,24 +412,24 @@ export default function TaskMaintenance({
               console.log(subtaskListResult.data);
 
               for (const subtask of subtaskListResult.data) {
-                const roman = convertToRoman(subtask.task_order);
+                const roman = convertToRoman(subtask.taskOrder);
                 worksheet.addRow([
                   roman,
-                  subtask.task_activity ?? '',
+                  subtask.taskActivity ?? '',
                   subtask.description ?? '',
                   subtask.remarks ?? '',
                 ]);
                 rowTracker++;
-                worksheet.getCell(`O${rowTracker}`).value = subtask.uid;
+                worksheet.getCell(`O${rowTracker}`).value = subtask.id;
 
-                switch (subtask.task_type) {
+                switch (subtask.taskType) {
                   case 'selectMultiple':
                   case 'selectOne':
                     worksheet.getCell(`E${rowTracker}`).value = 'Select One';
                     worksheet.getCell(`E${rowTracker}`).dataValidation = {
                       type: 'list',
                       allowBlank: true,
-                      formulae: [`"${subtask.list_choice}"`],
+                      formulae: [`"${subtask.listChoice}"`],
                       showInputMessage: true,
                       promptTitle: 'Select',
                       prompt: 'Please select value(s)',
@@ -590,40 +581,42 @@ export default function TaskMaintenance({
               <MoreVertical size={18} />
             </Button>
           </DropdownTrigger>
-          {role === 'ADMIN' && (
-            <DropdownMenu onAction={handleAction}>
-              <DropdownItem
-                key="add-asset"
-                startContent={<PackagePlus size={18} />}
-              >
-                Add Asset
-              </DropdownItem>
-              <DropdownItem
-                key="edit-asset"
-                startContent={<PackageOpen size={18} />}
-              >
-                Edit Asset
-              </DropdownItem>
-              <DropdownItem
-                key="import-excel"
-                startContent={<FileUp size={18} />}
-              >
-                Upload Excel
-              </DropdownItem>
-              <DropdownItem
-                key="export-excel"
-                startContent={<FileDown size={18} />}
-              >
-                Download Excel
-              </DropdownItem>
-              <DropdownItem
-                key="mark-complete"
-                startContent={<FileDown size={18} />}
-              >
-                Mark as complete
-              </DropdownItem>
-            </DropdownMenu>
-          )}
+          {role === 'ADMIN' ||
+            (role === 'SUPERVISOR' && (
+              <DropdownMenu onAction={handleAction}>
+                <DropdownItem
+                  key="add-asset"
+                  startContent={<PackagePlus size={18} />}
+                >
+                  Add Asset
+                </DropdownItem>
+                <DropdownItem
+                  key="edit-asset"
+                  startContent={<PackageOpen size={18} />}
+                >
+                  Edit Asset
+                </DropdownItem>
+                <DropdownItem
+                  key="import-excel"
+                  startContent={<FileUp size={18} />}
+                >
+                  Upload Excel
+                </DropdownItem>
+                <DropdownItem
+                  key="export-excel"
+                  startContent={<FileDown size={18} />}
+                >
+                  Download Excel
+                </DropdownItem>
+                <DropdownItem
+                  key="mark-complete"
+                  color="success"
+                  startContent={<CheckCircle2 size={18} />}
+                >
+                  Mark as complete
+                </DropdownItem>
+              </DropdownMenu>
+            ))}
           <DropdownMenu>
             <DropdownItem
               key="import-excel"
@@ -694,7 +687,7 @@ export default function TaskMaintenance({
                   variant="faded"
                 >
                   {asset => (
-                    <SelectItem key={asset.uid}>{asset.name}</SelectItem>
+                    <SelectItem key={asset.id}>{asset.name}</SelectItem>
                   )}
                 </Select>
                 <Select label="Asset Checklist Library" variant="faded">
@@ -702,7 +695,7 @@ export default function TaskMaintenance({
                     <SelectItem key="err">No library found</SelectItem>
                   ) : (
                     checklistLibraryList.map(library => (
-                      <SelectItem key={library.uid} value={library.uid}>
+                      <SelectItem key={library.id} value={library.id}>
                         <span>{library.title}</span>
                       </SelectItem>
                     ))
@@ -770,11 +763,11 @@ export default function TaskMaintenance({
         </div>
       </div>
       <Divider />
-      <Card className="rounded-md mt-4">
-        <div className="flex flex-col h-full p-4 overflow-y-auto">
-          <div className="flex-shrink-0 w-full">{children}</div>
+      <div className="rounded-md mt-4">
+        <div className="flex flex-col h-full overflow-y-auto">
+          <div className="flex-shrink-0 w-full p-1 rounded-2xl">{children}</div>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }

@@ -4,32 +4,44 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  const hashedPassword = await bcrypt.hash('password', 10);
+  let hashedPassword = await bcrypt.hash('password', 10);
 
-  await prisma.user.createMany({
-    data: [
-      {
-        id: '-99',
-        name: 'system',
-        email: 'mishu@mail.com',
-        password: 'password',
-        role: 'ADMIN',
-      },
-      {
-        name: 'Anis Zahidah',
-        email: 'anis@mail.co',
-        password: hashedPassword,
-        role: 'SUPERVISOR',
-      },
-      {
-        name: 'Harith Iqbal',
-        email: 'harith@mail.co',
-        password: hashedPassword,
-        role: 'TECHNICIAN',
-      },
-    ],
+  await prisma.user.deleteMany({});
+  await prisma.user.create({
+    data: {
+      id: '-99',
+      name: 'system',
+      email: 'mishu@mail.com',
+      password: hashedPassword,
+      role: 'ADMIN',
+    },
   });
 
+  hashedPassword = await bcrypt.hash('password', 10);
+
+  await prisma.user.create({
+    data: {
+      id: '-98',
+      name: 'Anis Zahidah',
+      email: 'anis@mail.co',
+      password: hashedPassword,
+      role: 'SUPERVISOR',
+    },
+  });
+
+  hashedPassword = await bcrypt.hash('password', 10);
+
+  await prisma.user.create({
+    data: {
+      id: '-97',
+      name: 'Harith Iqbal',
+      email: 'harith@mail.co',
+      password: hashedPassword,
+      role: 'TECHNICIAN',
+    },
+  });
+
+  await prisma.assetType.deleteMany({});
   await prisma.assetType.createMany({
     data: [
       {
@@ -53,8 +65,13 @@ async function main() {
     ],
   });
 
+  await prisma.assetStatus.deleteMany({});
   await prisma.assetStatus.createMany({
-    data: [],
+    data: [
+      { id: '-1', title: 'Operating' },
+      { id: '-2', title: 'Under Maintenance' },
+      { id: '-3', title: 'Non-operating' },
+    ],
   });
 }
 

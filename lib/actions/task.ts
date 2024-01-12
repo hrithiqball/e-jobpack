@@ -66,6 +66,7 @@ export async function fetchTaskList(checklistId?: string): Promise<Task[]> {
 // TODO: use schema
 export async function updateTask(id: string, data: UpdateTask) {
   try {
+    console.log(data);
     return await db.task.update({
       where: { id },
       data,

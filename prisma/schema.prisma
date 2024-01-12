@@ -100,7 +100,7 @@ model Checklist {
   createdBy                       String      @map("created_by")
   updatedOn                       DateTime    @default(now()) @map("updated_on")
   updatedBy                       String      @map("updated_by")
-  title                           String
+  isClose                         Boolean     @map("is_close") @default(false)
   description                     String?
   color                           String?
   icon                            String?

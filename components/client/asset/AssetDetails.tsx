@@ -28,6 +28,7 @@ import {
   User,
 } from '@nextui-org/react';
 import { createMaintenance } from '@/lib/actions/maintenance';
+import dayjs from 'dayjs';
 
 export default function AssetDetails({
   asset,
@@ -45,13 +46,12 @@ export default function AssetDetails({
     startTransition(() => {
       const newMaintenance = {
         id: `WO-${Date.now().toString()}`,
-        assetId: null,
         date: new Date(),
         maintainee: null,
         attachmentPath: null,
         approvedBy: null,
         approvedOn: null,
-        assetIds: [asset.uid],
+        assetIds: [asset.id],
         deadline: null,
         isComplete: false,
       } satisfies Maintenance;
@@ -185,7 +185,7 @@ export default function AssetDetails({
           </div>
           <div className="">
             {checklistUse.map(checklist => (
-              <div key={checklist.uid} className="flex flex-row items-center">
+              <div key={checklist.id} className="flex flex-row items-center">
                 <Chip variant="faded">{checklist.title}</Chip>
               </div>
             ))}
@@ -209,24 +209,34 @@ export default function AssetDetails({
             </TableHeader>
             <TableBody>
               <TableRow>
-                <TableCell className="font-semibold">
-                  Next Maintenance
-                </TableCell>
+                <TableCell className="font-semibold">Upcoming</TableCell>
                 <TableCell className="justify-center">
-                  <Chip variant="faded" startContent={<Clock />}>
-                    {asset.nextMaintenance !== null
-                      ? moment(asset.nextMaintenance).format('DD/MM/yyyy')
-                      : 'No Scheduled Maintenance'}
+                  <Chip
+                    variant="faded"
+                    size="sm"
+                    startContent={<Clock size={18} />}
+                  >
+                    <span className="ml-1">
+                      {asset.nextMaintenance !== null
+                        ? dayjs(asset.nextMaintenance).format('DD/MM/yyyy')
+                        : 'No Scheduled Maintenance'}
+                    </span>
                   </Chip>
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="semi-bold">Last Maintenance</TableCell>
-                <TableCell>
-                  <Chip variant="faded" startContent={<History />}>
-                    {asset.lastMaintenance !== null
-                      ? moment(asset.lastMaintenance).format('DD/MM/yyyy')
-                      : 'No Maintenance Completed'}
+                <TableCell className="font-semibold">Last</TableCell>
+                <TableCell className="justify-center">
+                  <Chip
+                    variant="faded"
+                    size="sm"
+                    startContent={<History size={18} />}
+                  >
+                    <span className="ml-1">
+                      {asset.lastMaintenance !== null
+                        ? moment(asset.lastMaintenance).format('DD/MM/yyyy')
+                        : 'No Maintenance Completed'}
+                    </span>
                   </Chip>
                 </TableCell>
               </TableRow>

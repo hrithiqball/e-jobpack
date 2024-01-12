@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Checklist } from '@prisma/client';
 import MaintenanceChecklist from '@/components/server/MaintenanceChecklist';
 
@@ -10,7 +10,9 @@ export default async function MaintenanceChecklistList({
   return (
     <div className="space-y-4">
       {checklistList.map(checklist => (
-        <MaintenanceChecklist key={checklist.uid} checklist={checklist} />
+        <Fragment key={checklist.id}>
+          <MaintenanceChecklist checklist={checklist} />
+        </Fragment>
       ))}
     </div>
   );

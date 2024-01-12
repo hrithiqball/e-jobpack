@@ -6,11 +6,11 @@ import { fetchAssetItem } from '@/lib/actions/asset';
 export default async function AssetItemPage({
   params,
 }: {
-  params: { uid: string };
+  params: { id: string };
 }) {
-  const maintenanceList = await fetchMaintenanceList(params.uid);
-  const checklistUse = await fetchChecklistUseList(params.uid);
-  const asset = await fetchAssetItem(params.uid);
+  const maintenanceList = await fetchMaintenanceList(params.id);
+  const checklistUse = await fetchChecklistUseList(params.id);
+  const asset = await fetchAssetItem(params.id);
 
   return (
     <div className="flex flex-col h-full">

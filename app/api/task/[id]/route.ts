@@ -7,17 +7,17 @@ import { z } from 'zod';
  * @description Validator for updating a task
  */
 const UpdateTaskSchema = z.object({
-  task_activity: z.string().optional(),
+  taskActivity: z.string().optional(),
   description: z.string().optional(),
-  is_complete: z.boolean().optional(),
+  isComplete: z.boolean().optional(),
   remarks: z.string().optional(),
   issue: z.string().optional(),
   deadline: z.date().optional(),
-  completed_by: z.string().optional(),
-  task_order: z.number().optional(),
-  have_subtask: z.boolean().optional(),
-  task_selected: z.string().array().optional(),
-  task_bool: z.boolean().optional(),
+  completedBy: z.string().optional(),
+  taskOrder: z.number().optional(),
+  haveSubtask: z.boolean().optional(),
+  taskSelected: z.string().array().optional(),
+  taskBool: z.boolean().optional(),
 });
 
 /**

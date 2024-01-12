@@ -1,4 +1,5 @@
-import React, { Key, useState } from 'react';
+import React, { Key, useState, useTransition } from 'react';
+import { Checklist } from '@prisma/client';
 import {
   Button,
   Dropdown,
@@ -14,16 +15,20 @@ import {
   PackageMinus,
 } from 'lucide-react';
 
-import { useCurrentRole } from '@/hooks/use-current-role';
-import { Checklist } from '@prisma/client';
 import TaskAdd from '@/components/client/task/TaskAdd';
+import { useCurrentRole } from '@/hooks/use-current-role';
+import { updateChecklist } from '@/lib/actions/checklist';
+import { useCurrentUser } from '@/hooks/use-current-user';
+import { toast } from 'sonner';
 
 interface AssetActionsProps {
   checklist: Checklist;
 }
 
 export default function AssetActions({ checklist }: AssetActionsProps) {
+  let [isPending, startTransition] = useTransition();
   const role = useCurrentRole();
+  const user = useCurrentUser();
 
   const [open, setOpen] = useState(false);
 
@@ -37,8 +42,30 @@ export default function AssetActions({ checklist }: AssetActionsProps) {
       case 'delete-asset':
         break;
 
-      //TODO: implement this
-      case 'close-asset':
+      case 'close-checklist':
+        if (user?.id === null || user?.id === undefined) {
+          toast.error('Session expired');
+          return;
+        }
+
+        startTransition(() => {
+          toast.promise(
+            updateChecklist(checklist.id, {
+              updatedBy: user?.id,
+              isClose: true,
+            }),
+            {
+              loading: 'Closing checklist...',
+              success: res => {
+                return `${res.assetId} is closed!`;
+              },
+              error: 'Failed to close checklist 😥',
+            },
+          );
+          if (!isPending) {
+            console.log('success');
+          }
+        });
         break;
 
       //TODO: implement this
@@ -61,29 +88,37 @@ export default function AssetActions({ checklist }: AssetActionsProps) {
         <DropdownMenu
           aria-label="Actions"
           disabledKeys={
-            role === 'ADMIN'
+            role === 'ADMIN' || role === 'SUPERVISOR'
               ? []
-              : ['import-checklist', 'delete-asset', 'close-asset']
+              : ['import-checklist', 'delete-asset', 'close-checklist']
           }
           onAction={handleAction}
         >
-          <DropdownItem key="add-task" startContent={<FilePlus2 size={18} />}>
+          <DropdownItem
+            key="add-task"
+            variant="faded"
+            startContent={<FilePlus2 size={18} />}
+          >
             Add Task
           </DropdownItem>
           <DropdownItem
             key="import-checklist"
+            variant="faded"
             startContent={<FileBox size={18} />}
           >
             Import checklist
           </DropdownItem>
           <DropdownItem
-            key="close-asset"
+            key="close-checklist"
+            variant="faded"
             startContent={<PackageCheck size={18} />}
           >
             Mark as Close
           </DropdownItem>
           <DropdownItem
             key="delete-asset"
+            variant="faded"
+            className="text-danger"
             startContent={<PackageMinus size={18} />}
             color="danger"
           >

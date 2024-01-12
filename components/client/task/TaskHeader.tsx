@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Divider } from '@nextui-org/react';
 import { MoreVertical } from 'lucide-react';
 
 export default function TaskHeader() {
@@ -39,7 +38,6 @@ export default function TaskHeader() {
           <MoreVertical size={18} className="hidden" />
         </div>
       </div>
-      <Divider />
     </div>
   );
 }

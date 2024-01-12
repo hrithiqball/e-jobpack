@@ -30,7 +30,6 @@ import {
 } from '@nextui-org/react';
 import Loading from '@/components/client/Loading';
 import { Asset, AssetStatus, AssetType } from '@prisma/client';
-import moment from 'moment';
 import { useSession } from 'next-auth/react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
@@ -119,43 +118,33 @@ export default function AssetList({
       return;
     }
 
-    const newAsset = {
-      uid: `AS-${moment().format('YYMMDDHHmmssSSS')}`,
-      name: newAssetName,
-      description: newAssetDescription,
-      type: newAssetType || null,
-      location: newAssetLocation,
-      createdBy: session.user.id,
-      createdOn: new Date(),
-      updatedBy: session.user.id,
-      updatedOn: new Date(),
-      personInCharge: null,
-      lastMaintenance: null,
-      nextMaintenance: null,
-      lastMaintainee: [],
-      tag: newAssetTag,
-      statusId: newAssetStatus || null,
-    } satisfies Asset;
-
     startTransition(() => {
-      createAsset(newAsset)
+      createAsset({
+        createdBy: session.user.id,
+        name: newAssetName,
+        description: newAssetDescription,
+        type: newAssetType,
+        location: newAssetLocation,
+        personInCharge: null,
+        tag: newAssetTag,
+      })
         .then(res => {
           if (isPending) console.info(res);
-          toast.success(`Asset ${newAsset.name} created successfully`);
+          toast.success(`Asset ${res.name} created successfully`);
           closeAddAssetModal();
           router.refresh();
         })
         .catch(err => {
           console.log(err);
-          toast.error(`Asset ${newAsset.name} not created`);
+          toast.error(`Asset cannot created, ${err}`);
         });
     });
   }
 
   function handleRowAction(key: Key) {
-    const asset = assetList.find(asset => asset.uid === key);
+    const asset = assetList.find(asset => asset.id === key);
 
-    router.push(`/asset/${asset?.uid}`);
+    router.push(`/asset/${asset?.id}`);
   }
 
   function closeAddAssetModal() {
@@ -181,7 +170,7 @@ export default function AssetList({
           onClick={() => setOpenAddAsset(!openAddAsset)}
           variant="faded"
           size="sm"
-          endContent={<PackagePlus />}
+          endContent={<PackagePlus size={18} />}
         >
           Add Asset
         </Button>
@@ -218,7 +207,7 @@ export default function AssetList({
                 onSelectionChange={e => handleAssetType(e)}
               >
                 {assetTypeList.map(assetType => (
-                  <SelectItem key={assetType.uid} value={assetType.uid}>
+                  <SelectItem key={assetType.id} value={assetType.id}>
                     {assetType.title}
                   </SelectItem>
                 ))}
@@ -236,7 +225,7 @@ export default function AssetList({
                 onSelectionChange={e => handleAssetStatus(e)}
               >
                 {assetStatusList.map(assetStatus => (
-                  <SelectItem key={assetStatus.uid} value={assetStatus.uid}>
+                  <SelectItem key={assetStatus.id} value={assetStatus.id}>
                     {assetStatus.title}
                   </SelectItem>
                 ))}
@@ -296,7 +285,7 @@ export default function AssetList({
             </TableHeader>
             <TableBody items={assetList}>
               {(item: Asset) => (
-                <TableRow key={item.uid}>
+                <TableRow key={item.id}>
                   {columnKey => (
                     <TableCell>
                       {renderCell(item, columnKey) as ReactNode}
