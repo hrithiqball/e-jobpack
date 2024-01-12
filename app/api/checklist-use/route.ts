@@ -22,7 +22,7 @@ export type AddChecklistUseClient = z.infer<typeof AddChecklistUseSchema>;
  * @description Type for adding a new checklist-use
  */
 type AddChecklistUse = z.infer<typeof AddChecklistUseSchema> & {
-  uid: string;
+  id: string;
   updated_on: Date;
   created_on: Date;
   updated_by: string;
@@ -86,7 +86,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
     if (result.success) {
       const request: AddChecklistUse = {
         ...result.data,
-        uid: `CLUSE-${moment().format('YYMMDDHHmmssSSS')}`,
+        id: `CLUSE-${moment().format('YYMMDDHHmmssSSS')}`,
         updated_on: new Date(),
         created_on: new Date(),
         updated_by: result.data.created_by,
@@ -100,7 +100,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
         JSON.stringify(
           ResponseMessage(
             201,
-            `Checklist-use ${checklistUse.uid} has been successfully created`,
+            `Checklist-use ${checklistUse.id} has been successfully created`,
             checklistUse,
           ),
         ),

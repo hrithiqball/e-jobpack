@@ -1,49 +1,49 @@
 import { ResponseMessage } from '@/lib/function/result';
 import { db } from '@/lib/prisma/db';
+import { AssetType } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 /**
- * @description Validator for updating an checklist-library
+ * @description Validator for updating an asset-type
  */
-const UpdateChecklistLibrarySchema = z.object({
+const UpdateAssetTypeSchema = z.object({
   updated_by: z.string(),
   title: z.string().optional(),
   description: z.string().optional(),
-  color: z.string().optional(),
   icon: z.string().optional(),
 });
 
 /**
- * @description Type for updating an checklist-library
+ * @description Type for updating an asset-type
  */
-type UpdateChecklistLibrary = z.infer<typeof UpdateChecklistLibrarySchema> & {
+type UpdateAssetType = z.infer<typeof UpdateAssetTypeSchema> & {
   updated_on: Date;
 };
 
 /**
  * This asynchronous function handles GET requests.
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the checklist-library.
+ * @param {string} id - The unique identifier of the asset-type.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the checklist-library.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset-type.
  */
 export async function GET(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
-  const uid = params.uid;
-  const checklistLibrary = await db.checklistLibrary.findUnique({
-    where: { uid },
+  const id = params.id;
+  const assetType: AssetType | null = await db.assetType.findUnique({
+    where: { id },
   });
 
-  if (checklistLibrary) {
+  if (assetType) {
     return new NextResponse(
       JSON.stringify(
         ResponseMessage(
           200,
-          `Successfully fetched checklist-library ${uid}!`,
-          checklistLibrary,
+          `Successfully fetched asset type ${id}!`,
+          assetType,
         ),
       ),
       {
@@ -53,9 +53,7 @@ export async function GET(
     );
   } else {
     return new NextResponse(
-      JSON.stringify(
-        ResponseMessage(404, `Checklist library ${uid} not found`),
-      ),
+      JSON.stringify(ResponseMessage(404, `Asset type ${id} not found`)),
       {
         status: 404,
         headers: { 'Content-Type': 'application/json' },
@@ -67,36 +65,36 @@ export async function GET(
 /**
  *
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the checklist library.
+ * @param {string} id - The unique identifier of the asset-type.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the checklist-library.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset-type.
  */
 export async function PATCH(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   try {
-    const uid = params.uid;
+    const id = params.id;
     let json = await nextRequest.json();
 
-    const result = UpdateChecklistLibrarySchema.safeParse(json);
+    const result = UpdateAssetTypeSchema.safeParse(json);
 
     if (result.success) {
-      const updateChecklistLibraryValue: UpdateChecklistLibrary = {
+      const updateAssetTypeValue: UpdateAssetType = {
         ...result.data,
         updated_on: new Date(),
       };
-      const updatedChecklistLibrary = await db.checklistLibrary.update({
-        where: { uid },
-        data: updateChecklistLibraryValue,
+      const updatedAssetType: AssetType = await db.assetType.update({
+        where: { id },
+        data: updateAssetTypeValue,
       });
 
       return new NextResponse(
         JSON.stringify(
           ResponseMessage(
             200,
-            `Successfully updated checklist-library type ${uid}`,
-            updatedChecklistLibrary,
+            `Successfully updated asset type ${id}`,
+            updatedAssetType,
           ),
         ),
         {
@@ -126,7 +124,7 @@ export async function PATCH(
         JSON.stringify(
           ResponseMessage(
             404,
-            `Checklist library ${params.uid} not found.`,
+            `Asset-type ${params.id} not found.`,
             null,
             error.message,
           ),
@@ -151,22 +149,22 @@ export async function PATCH(
 /**
  *
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the checklist-library.
+ * @param {string} id - The unique identifier of the asset-type.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the checklist-library.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset-type.
  */
 export async function DELETE(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   try {
-    const uid = params.uid;
-    await db.checklistLibrary.delete({
-      where: { uid },
+    const id = params.id;
+    await db.assetType.delete({
+      where: { id },
     });
 
     return new NextResponse(
-      JSON.stringify(ResponseMessage(200, `Checklist library ${uid} deleted`)),
+      JSON.stringify(ResponseMessage(200, `Asset-type ${id} deleted`)),
       { status: 200, headers: { 'Content-Type': 'application/json' } },
     );
   } catch (error: any) {
@@ -175,7 +173,7 @@ export async function DELETE(
         JSON.stringify(
           ResponseMessage(
             404,
-            `Checklist-library ${params.uid} not found`,
+            `Asset-type ${params.id} not found`,
             null,
             error.message,
           ),

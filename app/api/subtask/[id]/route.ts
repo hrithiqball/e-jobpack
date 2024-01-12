@@ -1,50 +1,50 @@
 import { ResponseMessage } from '@/lib/function/result';
 import { db } from '@/lib/prisma/db';
-import { AssetType } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 /**
- * @description Validator for updating an asset-type
+ * @description Validator for updating a subtask
  */
-const UpdateAssetTypeSchema = z.object({
-  updated_by: z.string(),
-  title: z.string().optional(),
+const UpdateSubtaskSchema = z.object({
+  task_activity: z.string().optional(),
   description: z.string().optional(),
-  icon: z.string().optional(),
+  is_complete: z.boolean().optional(),
+  remarks: z.string().optional(),
+  issue: z.string().optional(),
+  deadline: z.date().optional(),
+  completed_by: z.string().optional(),
+  task_order: z.number().optional(),
+  task_bool: z.boolean().optional(),
+  task_selected: z.string().array().optional(),
+  task_number_val: z.number().optional(),
 });
 
 /**
- * @description Type for updating an asset-type
+ * @description Type for updating an subtask
  */
-type UpdateAssetType = z.infer<typeof UpdateAssetTypeSchema> & {
-  updated_on: Date;
-};
+export type UpdateSubtask = z.infer<typeof UpdateSubtaskSchema>;
 
 /**
  * This asynchronous function handles GET requests.
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the asset-type.
+ * @param {string} id - The unique identifier of the subtask.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset-type.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the subtask.
  */
 export async function GET(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
-  const uid = params.uid;
-  const assetType: AssetType | null = await db.assetType.findUnique({
-    where: { uid },
+  const id = params.id;
+  const subtask = await db.subtask.findUnique({
+    where: { id },
   });
 
-  if (assetType) {
+  if (subtask) {
     return new NextResponse(
       JSON.stringify(
-        ResponseMessage(
-          200,
-          `Successfully fetched asset type ${uid}!`,
-          assetType,
-        ),
+        ResponseMessage(200, `Successfully fetched subtask ${id}!`, subtask),
       ),
       {
         status: 200,
@@ -53,7 +53,7 @@ export async function GET(
     );
   } else {
     return new NextResponse(
-      JSON.stringify(ResponseMessage(404, `Asset type ${uid} not found`)),
+      JSON.stringify(ResponseMessage(404, `Subtask ${id} not found`)),
       {
         status: 404,
         headers: { 'Content-Type': 'application/json' },
@@ -65,36 +65,33 @@ export async function GET(
 /**
  *
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the asset-type.
+ * @param {string} id - The unique identifier of the subtask.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset-type.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the subtask.
  */
 export async function PATCH(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   try {
-    const uid = params.uid;
+    const id = params.id;
     let json = await nextRequest.json();
 
-    const result = UpdateAssetTypeSchema.safeParse(json);
+    const result = UpdateSubtaskSchema.safeParse(json);
 
     if (result.success) {
-      const updateAssetTypeValue: UpdateAssetType = {
-        ...result.data,
-        updated_on: new Date(),
-      };
-      const updatedAssetType: AssetType = await db.assetType.update({
-        where: { uid },
-        data: updateAssetTypeValue,
+      const updateSubtaskValue: UpdateSubtask = result.data;
+      const updatedSubtask = await db.subtask.update({
+        where: { id },
+        data: updateSubtaskValue,
       });
 
       return new NextResponse(
         JSON.stringify(
           ResponseMessage(
             200,
-            `Successfully updated asset type ${uid}`,
-            updatedAssetType,
+            `Successfully updated subtask ${updatedSubtask.id}`,
+            updatedSubtask,
           ),
         ),
         {
@@ -124,7 +121,7 @@ export async function PATCH(
         JSON.stringify(
           ResponseMessage(
             404,
-            `Asset-type ${params.uid} not found.`,
+            `Subtask ${params.id} not found.`,
             null,
             error.message,
           ),
@@ -149,22 +146,22 @@ export async function PATCH(
 /**
  *
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the asset-type.
+ * @param {string} id - The unique identifier of the subtask.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset-type.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the subtask.
  */
 export async function DELETE(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   try {
-    const uid = params.uid;
-    await db.assetType.delete({
-      where: { uid },
+    const id = params.id;
+    await db.subtask.delete({
+      where: { id },
     });
 
     return new NextResponse(
-      JSON.stringify(ResponseMessage(200, `Asset-type ${uid} deleted`)),
+      JSON.stringify(ResponseMessage(200, `Subtask ${id} deleted`)),
       { status: 200, headers: { 'Content-Type': 'application/json' } },
     );
   } catch (error: any) {
@@ -173,7 +170,7 @@ export async function DELETE(
         JSON.stringify(
           ResponseMessage(
             404,
-            `Asset-type ${params.uid} not found`,
+            `Subtask ${params.id} not found`,
             null,
             error.message,
           ),

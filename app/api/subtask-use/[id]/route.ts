@@ -1,46 +1,46 @@
-import { fetchMaintenanceItem } from '@/lib/actions/maintenance';
 import { ResponseMessage } from '@/lib/function/result';
 import { db } from '@/lib/prisma/db';
-import { Maintenance } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 /**
- * @description Validator for updating a maintenance
+ * @description Validator for updating a subtask_use
  */
-const UpdateMaintenanceSchema = z.object({
-  date: z.date().optional(),
-  maintainee: z.string().optional(),
-  attachment_path: z.string().optional(),
-  approved_by: z.string().optional(),
-  approved_on: z.date().optional(),
+const UpdateSubtaskUseSchema = z.object({
+  task_activity: z.string().optional(),
+  description: z.string().optional(),
+  task_order: z.number().optional(),
+  subtask_library_uid: z.string().optional(),
 });
 
 /**
- * @description Type for updating an maintenance
+ * @description Type for updating an subtask_use
  */
-type UpdateMaintenance = z.infer<typeof UpdateMaintenanceSchema>;
+type UpdateSubtaskUse = z.infer<typeof UpdateSubtaskUseSchema>;
 
 /**
  * This asynchronous function handles GET requests.
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the maintenance.
+ * @param {string} id - The unique identifier of the subtask_use.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the maintenance.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the subtask_use.
  */
 export async function GET(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
-  const maintenance = fetchMaintenanceItem(params.uid);
+  const id = params.id;
+  const subtaskUse = await db.subtaskUse.findUnique({
+    where: { id },
+  });
 
-  if (maintenance) {
+  if (subtaskUse) {
     return new NextResponse(
       JSON.stringify(
         ResponseMessage(
           200,
-          `Successfully fetched maintenance ${params.uid}!`,
-          maintenance,
+          `Successfully fetched subtask use ${id}!`,
+          subtaskUse,
         ),
       ),
       {
@@ -50,9 +50,7 @@ export async function GET(
     );
   } else {
     return new NextResponse(
-      JSON.stringify(
-        ResponseMessage(404, `Maintenance ${params.uid} not found`),
-      ),
+      JSON.stringify(ResponseMessage(404, `Subtask use ${id} not found`)),
       {
         status: 404,
         headers: { 'Content-Type': 'application/json' },
@@ -64,9 +62,9 @@ export async function GET(
 /**
  *
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the maintenance.
+ * @param {string} id - The unique identifier of the subtask_use.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the maintenance.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the subtask_use.
  */
 export async function PATCH(
   nextRequest: NextRequest,
@@ -76,21 +74,21 @@ export async function PATCH(
     const id = params.id;
     let json = await nextRequest.json();
 
-    const result = UpdateMaintenanceSchema.safeParse(json);
+    const result = UpdateSubtaskUseSchema.safeParse(json);
 
     if (result.success) {
-      const updateMaintenanceValue: UpdateMaintenance = result.data;
-      const updatedMaintenance: Maintenance = await db.maintenance.update({
+      const updateSubtaskUseValue: UpdateSubtaskUse = result.data;
+      const updatedSubtaskUse = await db.subtaskUse.update({
         where: { id },
-        data: updateMaintenanceValue,
+        data: updateSubtaskUseValue,
       });
 
       return new NextResponse(
         JSON.stringify(
           ResponseMessage(
             200,
-            `Successfully updated maintenance ${id}`,
-            updatedMaintenance,
+            `Successfully updated subtask_use ${updatedSubtaskUse.id}`,
+            updatedSubtaskUse,
           ),
         ),
         {
@@ -120,7 +118,7 @@ export async function PATCH(
         JSON.stringify(
           ResponseMessage(
             404,
-            `Maintenance ${params.id} not found.`,
+            `Subtask use ${params.id} not found.`,
             null,
             error.message,
           ),
@@ -145,9 +143,9 @@ export async function PATCH(
 /**
  *
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the maintenance.
+ * @param {string} id - The unique identifier of the subtask_use.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the maintenance.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the subtask_use.
  */
 export async function DELETE(
   nextRequest: NextRequest,
@@ -155,12 +153,12 @@ export async function DELETE(
 ): Promise<NextResponse> {
   try {
     const id = params.id;
-    await db.maintenance.delete({
+    await db.subtaskUse.delete({
       where: { id },
     });
 
     return new NextResponse(
-      JSON.stringify(ResponseMessage(200, `Maintenance ${id} deleted`)),
+      JSON.stringify(ResponseMessage(200, `Subtask use ${id} deleted`)),
       { status: 200, headers: { 'Content-Type': 'application/json' } },
     );
   } catch (error: any) {
@@ -169,7 +167,7 @@ export async function DELETE(
         JSON.stringify(
           ResponseMessage(
             404,
-            `Maintenance ${params.id} not found`,
+            `Subtask use ${params.id} not found`,
             null,
             error.message,
           ),

@@ -9,9 +9,9 @@ import { db } from '@/lib/prisma/db';
  * @description Validate the request body for adding a new subtask
  */
 const AddSubtaskSchema = z.object({
-  task_activity: z.string(),
-  task_uid: z.string(),
-  task_order: z.number(),
+  taskActivity: z.string(),
+  taskId: z.string(),
+  taskOrder: z.number(),
   description: z.string().optional(),
   remarks: z.string().optional(),
   issue: z.string().optional(),
@@ -22,9 +22,9 @@ const AddSubtaskSchema = z.object({
  * @description Type for adding a new subtask
  */
 type AddSubtask = z.infer<typeof AddSubtaskSchema> & {
-  uid: string;
-  is_complete: boolean;
-  completed_by: string | null;
+  id: string;
+  isComplete: boolean;
+  completedBy: string | null;
 };
 
 /**
@@ -40,14 +40,14 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
     const limit_str = nextRequest.nextUrl.searchParams.get('limit');
     const sort_by = nextRequest.nextUrl.searchParams.get('sort_by');
 
-    const task_uid = nextRequest.nextUrl.searchParams.get('task_uid');
+    const taskId = nextRequest.nextUrl.searchParams.get('taskId');
 
     const filters: Prisma.SubtaskWhereInput[] = [];
     const orderBy: Prisma.SubtaskOrderByWithRelationInput[] = [];
 
-    if (task_uid) {
+    if (taskId) {
       filters.push({
-        task_uid,
+        taskId,
       });
     }
 
@@ -117,9 +117,9 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
     if (result.success) {
       const request: AddSubtask = {
         ...result.data,
-        uid: `CL-${moment().format('YYMMDDHHmmssSSS')}`,
-        is_complete: false,
-        completed_by: null,
+        id: `CL-${moment().format('YYMMDDHHmmssSSS')}`,
+        isComplete: false,
+        completedBy: null,
       };
 
       const subtask = await db.subtask.create({
@@ -130,7 +130,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
         JSON.stringify(
           ResponseMessage(
             201,
-            `Subtask ${subtask.uid} has been successfully created`,
+            `Subtask ${subtask.id} has been successfully created`,
             subtask,
           ),
         ),

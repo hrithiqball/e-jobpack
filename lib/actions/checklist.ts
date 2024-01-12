@@ -17,14 +17,14 @@ export async function createChecklist(data: Checklist) {
   }
 }
 
-export async function fetchChecklistList(maintenance_uid?: string) {
+export async function fetchChecklistList(maintenanceId?: string) {
   try {
     const filters: Prisma.ChecklistWhereInput[] = [];
     const orderBy: Prisma.ChecklistOrderByWithRelationInput[] = [];
 
-    if (maintenance_uid) {
+    if (maintenanceId) {
       filters.push({
-        maintenance_uid,
+        maintenanceId,
       });
     }
 

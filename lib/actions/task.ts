@@ -3,15 +3,15 @@
 import { Prisma, Task } from '@prisma/client';
 
 import { db } from '@/lib/prisma/db';
-import { UpdateTask } from '@/app/api/task/[uid]/route';
+import { UpdateTask } from '@/app/api/task/[id]/route';
 
 export async function createTask(task: Task): Promise<Task | null> {
   try {
     const filters: Prisma.TaskWhereInput[] = [
-      { checklist_uid: task.checklist_uid },
+      { checklistId: task.checklistId },
     ];
     const orderBy: Prisma.TaskOrderByWithRelationInput[] = [
-      { task_order: 'desc' },
+      { taskOrder: 'desc' },
     ];
 
     const tasks: Task[] = await db.task.findMany({
@@ -22,9 +22,9 @@ export async function createTask(task: Task): Promise<Task | null> {
     });
 
     if (tasks.length === 0) {
-      task.task_order = 1;
+      task.taskOrder = 1;
     } else {
-      task.task_order = tasks[0].task_order + 1;
+      task.taskOrder = tasks[0].taskOrder + 1;
     }
 
     return await db.task.create({
@@ -36,18 +36,18 @@ export async function createTask(task: Task): Promise<Task | null> {
   }
 }
 
-export async function fetchTaskList(checklist_uid?: string): Promise<Task[]> {
+export async function fetchTaskList(checklistId?: string): Promise<Task[]> {
   try {
     const filters: Prisma.TaskWhereInput[] = [];
     const orderBy: Prisma.TaskOrderByWithRelationInput[] = [];
 
     orderBy.push({
-      task_order: 'asc',
+      taskOrder: 'asc',
     });
 
-    if (checklist_uid) {
+    if (checklistId) {
       filters.push({
-        checklist_uid,
+        checklistId,
       });
     }
 
@@ -64,10 +64,10 @@ export async function fetchTaskList(checklist_uid?: string): Promise<Task[]> {
 }
 
 // TODO: use schema
-export async function updateTask(uid: string, data: UpdateTask) {
+export async function updateTask(id: string, data: UpdateTask) {
   try {
     return await db.task.update({
-      where: { uid },
+      where: { id },
       data,
     });
   } catch (error) {
@@ -76,10 +76,10 @@ export async function updateTask(uid: string, data: UpdateTask) {
   }
 }
 
-export async function deleteTask(uid: string) {
+export async function deleteTask(id: string) {
   try {
     return db.task.delete({
-      where: { uid },
+      where: { id },
     });
   } catch (error) {
     console.error(error);

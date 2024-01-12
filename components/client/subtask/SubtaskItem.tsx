@@ -3,7 +3,7 @@
 import React, { KeyboardEvent, useMemo, useState, useTransition } from 'react';
 import { Subtask } from '@prisma/client';
 import { Checkbox, Input, Select, SelectItem, Switch } from '@nextui-org/react';
-import { UpdateSubtask } from '@/app/api/subtask/[uid]/route';
+import { UpdateSubtask } from '@/app/api/subtask/[id]/route';
 import { CornerDownRight, MoreVertical } from 'lucide-react';
 import { updateSubtask } from '@/lib/actions/subtask';
 

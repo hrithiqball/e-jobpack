@@ -5,11 +5,11 @@ import { ChecklistUse } from '@prisma/client';
 import { db } from '@/lib/prisma/db';
 
 export async function fetchChecklistUseList(
-  uid: string,
+  id: string,
 ): Promise<ChecklistUse[]> {
   try {
     return await db.checklistUse.findMany({
-      where: { uid },
+      where: { id },
     });
   } catch (error) {
     console.error(error);

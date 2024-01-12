@@ -9,11 +9,11 @@ import { db } from '@/lib/prisma/db';
  * @description Validate the request body for adding a new subtask_use
  */
 const AddSubtaskUseSchema = z.object({
-  task_activity: z.string(),
-  task_order: z.number(),
+  taskActivity: z.string(),
+  taskOrder: z.number(),
   description: z.string().optional(),
-  subtask_library_uid: z.string().optional(),
-  task_use_uid: z.string(),
+  subtaskLibraryId: z.string().optional(),
+  taskUseId: z.string(),
 });
 
 export type AddSubtaskUseClient = Omit<
@@ -27,7 +27,7 @@ export type AddSubtaskUseServer = z.infer<typeof AddSubtaskUseSchema>;
  * @description Type for adding a new subtask_use
  */
 type AddSubtaskUse = z.infer<typeof AddSubtaskUseSchema> & {
-  uid: string;
+  id: string;
 };
 
 /**
@@ -43,13 +43,13 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
     const sort_by = nextRequest.nextUrl.searchParams.get('sortBy');
     const is_ascending = nextRequest.nextUrl.searchParams.get('isAscending');
 
-    const taskUseUid = nextRequest.nextUrl.searchParams.get('taskUseUid');
+    const taskUseId = nextRequest.nextUrl.searchParams.get('taskUseId');
 
     const filters: Prisma.SubtaskUseWhereInput[] = [];
     const orderBy: Prisma.SubtaskUseOrderByWithRelationInput[] = [];
 
-    if (taskUseUid) {
-      filters.push({ task_use_uid: taskUseUid });
+    if (taskUseId) {
+      filters.push({ taskUseId });
     }
 
     const page = page_str ? parseInt(page_str, 10) : 1;
@@ -121,7 +121,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
     if (result.success) {
       const request: AddSubtaskUse = {
         ...result.data,
-        uid: `STUSE-${moment().format('YYMMDDHHmmssSSS')}`,
+        id: `STUSE-${moment().format('YYMMDDHHmmssSSS')}`,
       };
 
       const subtaskUse = await db.subtaskUse.create({
@@ -132,7 +132,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
         JSON.stringify(
           ResponseMessage(
             201,
-            `Subtask use ${subtaskUse.uid} has been successfully created`,
+            `Subtask use ${subtaskUse.id} has been successfully created`,
             subtaskUse,
           ),
         ),

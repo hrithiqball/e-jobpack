@@ -11,39 +11,38 @@ datasource db {
 }
 
 model Asset {
-  uid                               String         @id
   name                              String
   description                       String?
   type                              String?
   createdBy                         String         @map("created_by")
-  createdOn                         DateTime       @map("created_on")
+  createdOn                         DateTime       @default(now()) @map("created_on")
   updatedBy                         String         @map("updated_by")
   lastMaintenance                   DateTime?      @map("last_maintenance")
   lastMaintainee                    String[]       @map("last_maintainee")
   location                          String?
   nextMaintenance                   DateTime?      @map("next_maintenance")
-  statusId                          String?        @map("status_uid")
-  updatedOn                         DateTime       @map("updated_on")
+  updatedOn                         DateTime       @default(now()) @map("updated_on")
   personInCharge                    String?        @map("person_in_charge")
   tag                               String?
+  id                                String         @id
+  statusId                          String?        @map("status_id")
   user_asset_created_byTouser       User           @relation("asset_created_byTouser", fields: [createdBy], references: [id], onDelete: Cascade)
   user_asset_person_in_chargeTouser User?          @relation("asset_person_in_chargeTouser", fields: [personInCharge], references: [id], onDelete: Cascade)
-  asset_status                      AssetStatus?   @relation(fields: [statusId], references: [uid], onDelete: Cascade)
-  asset_type                        AssetType?     @relation(fields: [type], references: [uid], onDelete: Cascade)
+  asset_status                      AssetStatus?   @relation(fields: [statusId], references: [id], onDelete: Cascade)
+  asset_type                        AssetType?     @relation(fields: [type], references: [id], onDelete: Cascade)
   user_asset_updated_byTouser       User           @relation("asset_updated_byTouser", fields: [updatedBy], references: [id], onDelete: Cascade)
   asset_tags                        AssetTag[]
   checklist                         Checklist[]
   checklist_use                     ChecklistUse[]
-  maintenance                       Maintenance[]
 
   @@map("asset")
   @@schema("public")
 }
 
 model AssetStatus {
-  uid   String  @id
   title String
   color String?
+  id    String  @id
   asset Asset[]
 
   @@map("asset_status")
@@ -51,67 +50,67 @@ model AssetStatus {
 }
 
 model AssetTag {
-  uid                    String          @id
-  title                  String
-  color                  String?
-  asset_uid              String
-  asset_tags_library_uid String
-  asset_tags_library     AssetTagLibrary @relation(fields: [asset_tags_library_uid], references: [uid], onDelete: Cascade)
-  asset                  Asset           @relation(fields: [asset_uid], references: [uid], onDelete: Cascade)
+  title              String
+  color              String?
+  assetId            String          @map("asset_id")
+  assetTagsLibraryId String          @map("asset_tags_library_id")
+  id                 String          @id
+  asset              Asset           @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  asset_tags_library AssetTagLibrary @relation(fields: [assetTagsLibraryId], references: [id], onDelete: Cascade)
 
   @@map("asset_tags")
   @@schema("public")
 }
 
 model AssetTagLibrary {
-  uid                                      String     @id
   title                                    String
   color                                    String?
-  created_on                               DateTime
-  updated_on                               DateTime
-  created_by                               String
-  updated_by                               String
+  createdOn                                DateTime   @default(now()) @map("created_on")
+  updatedOn                                DateTime   @default(now()) @map("updated_on")
+  createdBy                                String     @map("created_by")
+  updatedBy                                String     @map("updated_by")
+  id                                       String     @id
   asset_tags                               AssetTag[]
-  user_asset_tags_library_created_byTouser User       @relation("asset_tags_library_created_byTouser", fields: [created_by], references: [id], onDelete: Cascade)
-  user_asset_tags_library_updated_byTouser User       @relation("asset_tags_library_updated_byTouser", fields: [updated_by], references: [id], onDelete: Cascade)
+  user_asset_tags_library_created_byTouser User       @relation("asset_tags_library_created_byTouser", fields: [createdBy], references: [id], onDelete: Cascade)
+  user_asset_tags_library_updated_byTouser User       @relation("asset_tags_library_updated_byTouser", fields: [updatedBy], references: [id], onDelete: Cascade)
 
   @@map("asset_tags_library")
   @@schema("public")
 }
 
 model AssetType {
-  uid                              String   @id
-  created_on                       DateTime
-  created_by                       String
-  updated_on                       DateTime
-  updated_by                       String
+  createdOn                        DateTime @default(now()) @map("created_on")
+  createdBy                        String   @map("created_by")
+  updatedOn                        DateTime @default(now()) @map("updated_on")
+  updatedBy                        String   @map("updated_by")
   title                            String
   description                      String?
   icon                             String?
+  id                               String   @id @default(cuid())
   asset                            Asset[]
-  user_asset_type_created_byTouser User     @relation("asset_type_created_byTouser", fields: [created_by], references: [id], onDelete: Cascade)
-  user_asset_type_updated_byTouser User     @relation("asset_type_updated_byTouser", fields: [updated_by], references: [id], onDelete: Cascade)
+  user_asset_type_created_byTouser User     @relation("asset_type_created_byTouser", fields: [createdBy], references: [id], onDelete: Cascade)
+  user_asset_type_updated_byTouser User     @relation("asset_type_updated_byTouser", fields: [updatedBy], references: [id], onDelete: Cascade)
 
   @@map("asset_type")
   @@schema("public")
 }
 
 model Checklist {
-  uid                             String      @id
-  created_on                      DateTime
-  created_by                      String
-  updated_on                      DateTime
-  updated_by                      String
+  createdOn                       DateTime    @default(now()) @map("created_on")
+  createdBy                       String      @map("created_by")
+  updatedOn                       DateTime    @default(now()) @map("updated_on")
+  updatedBy                       String      @map("updated_by")
   title                           String
   description                     String?
   color                           String?
   icon                            String?
-  maintenance_uid                 String
-  asset_id                        String
-  asset                           Asset       @relation(fields: [asset_id], references: [uid], onDelete: Cascade, map: "checklist_asset_fk")
-  user_checklist_created_byTouser User        @relation("checklist_created_byTouser", fields: [created_by], references: [id], onDelete: Cascade)
-  maintenance                     Maintenance @relation(fields: [maintenance_uid], references: [id], onDelete: Cascade)
-  user_checklist_updated_byTouser User        @relation("checklist_updated_byTouser", fields: [updated_by], references: [id], onDelete: Cascade)
+  assetId                         String      @map("asset_id")
+  id                              String      @id
+  maintenanceId                   String      @map("maintenance_id")
+  asset                           Asset       @relation(fields: [assetId], references: [id], onDelete: Cascade, map: "checklist_asset_fk")
+  user_checklist_created_byTouser User        @relation("checklist_created_byTouser", fields: [createdBy], references: [id], onDelete: Cascade)
+  maintenance                     Maintenance @relation(fields: [maintenanceId], references: [id], onDelete: Cascade)
+  user_checklist_updated_byTouser User        @relation("checklist_updated_byTouser", fields: [updatedBy], references: [id], onDelete: Cascade)
   task                            Task[]
 
   @@map("checklist")
@@ -119,17 +118,17 @@ model Checklist {
 }
 
 model ChecklistLibrary {
-  uid                                     String         @id
-  created_on                              DateTime
-  created_by                              String
-  updated_on                              DateTime
-  updated_by                              String
+  createdOn                               DateTime       @default(now()) @map("created_on")
+  createdBy                               String         @map("created_by")
+  updatedOn                               DateTime       @default(now()) @map("updated_on")
+  updatedBy                               String         @map("updated_by")
   title                                   String
   description                             String?
   color                                   String?
   icon                                    String?
-  user_checklist_library_created_byTouser User           @relation("checklist_library_created_byTouser", fields: [created_by], references: [id], onDelete: Cascade)
-  user_checklist_library_updated_byTouser User           @relation("checklist_library_updated_byTouser", fields: [updated_by], references: [id], onDelete: Cascade)
+  id                                      String         @id
+  user_checklist_library_created_byTouser User           @relation("checklist_library_created_byTouser", fields: [createdBy], references: [id], onDelete: Cascade)
+  user_checklist_library_updated_byTouser User           @relation("checklist_library_updated_byTouser", fields: [updatedBy], references: [id], onDelete: Cascade)
   checklist_use                           ChecklistUse[]
 
   @@map("checklist_library")
@@ -137,21 +136,21 @@ model ChecklistLibrary {
 }
 
 model ChecklistUse {
-  uid                                 String            @id
-  created_on                          DateTime?
-  created_by                          String?
-  updated_on                          DateTime?
-  updated_by                          String?
+  createdOn                           DateTime?         @default(now()) @map("created_on")
+  createdBy                           String?           @map("created_by")
+  updatedOn                           DateTime?         @default(now()) @map("updated_on")
+  updatedBy                           String?           @map("updated_by")
   title                               String
   description                         String?
   color                               String?
   icon                                String?
-  checklist_library_uid               String?
-  asset_uid                           String
-  asset                               Asset             @relation(fields: [asset_uid], references: [uid], onDelete: Cascade)
-  checklist_library                   ChecklistLibrary? @relation(fields: [checklist_library_uid], references: [uid], onDelete: Cascade)
-  user_checklist_use_created_byTouser User?             @relation("checklist_use_created_byTouser", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  user_checklist_use_updated_byTouser User?             @relation("checklist_use_updated_byTouser", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  assetId                             String            @map("asset_id")
+  checklistLibraryId                  String?           @map("checklist_library_id")
+  id                                  String            @id
+  asset                               Asset             @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  checklist_library                   ChecklistLibrary? @relation(fields: [checklistLibraryId], references: [id], onDelete: Cascade)
+  user_checklist_use_created_byTouser User?             @relation("checklist_use_created_byTouser", fields: [createdBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_checklist_use_updated_byTouser User?             @relation("checklist_use_updated_byTouser", fields: [updatedBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
   task_use                            TaskUse[]
 
   @@map("checklist_use")
@@ -185,57 +184,55 @@ model History {
 }
 
 model Maintenance {
-  id              String      @id @default(cuid())
-  assetId       String?       @map("asset_id")
-  date            DateTime
-  maintainee      String?
+  date           DateTime
+  maintainee     String?
   attachmentPath String?     @map("attachment_path")
   approvedBy     String?     @map("approved_by")
   approvedOn     DateTime?   @map("approved_on")
-  isComplete      Boolean     @default(false) @map("is_complete")
   assetIds       String[]    @map("asset_ids")
-  deadline        DateTime?
-  checklist       Checklist[]
-  asset           Asset?      @relation(fields: [assetId], references: [uid], onDelete: Cascade)
+  deadline       DateTime?
+  id             String      @id @default(cuid())
+  isComplete     Boolean     @default(false) @map("is_complete")
+  checklist      Checklist[]
 
   @@map("maintenance")
   @@schema("public")
 }
 
 model Subtask {
-  uid             String    @id
-  task_activity   String
-  description     String?
-  is_complete     Boolean   @default(false)
-  remarks         String?
-  issue           String?
-  deadline        DateTime?
-  completed_by    String?
-  task_uid        String
-  task_order      Int       @db.SmallInt
-  task_type       TaskType? @default(choice)
-  list_choice     String[]  @default([])
-  task_number_val Int?      @db.SmallInt
-  task_check      Boolean?
-  task_selected   String[]
-  task_bool       Boolean?  @default(false)
-  task            Task      @relation(fields: [task_uid], references: [uid], onDelete: Cascade)
+  taskActivity  String    @map("task_activity")
+  description   String?
+  isComplete    Boolean   @default(false) @map("is_complete")
+  remarks       String?
+  issue         String?
+  deadline      DateTime?
+  completedBy   String?   @map("completed_by")
+  taskOrder     Int       @map("task_order") @db.SmallInt
+  taskType      TaskType? @default(choice) @map("task_type")
+  listChoice    String[]  @default([]) @map("list_choice")
+  taskNumberVal Int?      @map("task_number_val") @db.SmallInt
+  taskCheck     Boolean?  @default(false) @map("task_check")
+  taskSelected  String[]  @default([]) @map("task_selected")
+  id            String    @id
+  taskBool      Boolean?  @default(false)
+  taskId        String    @map("task_id")
+  task          Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
 
   @@map("subtask")
   @@schema("public")
 }
 
 model SubtaskLibrary {
-  uid                                   String       @id
-  task_activity                         String
+  taskActivity                          String       @map("task_activity")
   description                           String?
-  task_order                            BigInt
-  created_on                            DateTime
-  created_by                            String
-  updated_on                            DateTime
-  updated_by                            String
-  user_subtask_library_created_byTouser User         @relation("subtask_library_created_byTouser", fields: [created_by], references: [id], onDelete: Cascade)
-  user_subtask_library_updated_byTouser User         @relation("subtask_library_updated_byTouser", fields: [updated_by], references: [id], onDelete: Cascade)
+  taskOrder                             BigInt       @map("task_order")
+  createdOn                             DateTime     @default(now()) @map("created_on")
+  createdBy                             String       @map("created_by")
+  updatedOn                             DateTime     @default(now()) @map("updated_on")
+  updatedBy                             String       @map("updated_by")
+  id                                    String       @id
+  user_subtask_library_created_byTouser User         @relation("subtask_library_created_byTouser", fields: [createdBy], references: [id], onDelete: Cascade)
+  user_subtask_library_updated_byTouser User         @relation("subtask_library_updated_byTouser", fields: [updatedBy], references: [id], onDelete: Cascade)
   subtask_use                           SubtaskUse[]
 
   @@map("subtask_library")
@@ -243,56 +240,56 @@ model SubtaskLibrary {
 }
 
 model SubtaskUse {
-  uid                 String          @id
-  task_activity       String
-  description         String?
-  task_use_uid        String
-  task_order          Int             @db.SmallInt
-  subtask_library_uid String?
-  subtask_library     SubtaskLibrary? @relation(fields: [subtask_library_uid], references: [uid], onDelete: Cascade)
-  task_use            TaskUse         @relation(fields: [task_use_uid], references: [uid], onDelete: Cascade)
+  taskActivity     String          @map("task_activity")
+  description      String?
+  taskOrder        Int             @map("task_order") @db.SmallInt
+  id               String          @id
+  subtaskLibraryId String?         @map("subtask_library_id")
+  taskUseId        String          @map("task_use_id")
+  subtask_library  SubtaskLibrary? @relation(fields: [subtaskLibraryId], references: [id], onDelete: Cascade)
+  task_use         TaskUse         @relation(fields: [taskUseId], references: [id], onDelete: Cascade)
 
   @@map("subtask_use")
   @@schema("public")
 }
 
 model Task {
-  uid             String    @id(map: "task2_pkey")
-  task_activity   String?
-  description     String?
-  is_complete     Boolean   @default(false)
-  remarks         String?
-  issue           String?
-  deadline        DateTime?
-  completed_by    String?
-  task_order      Int       @db.SmallInt
-  have_subtask    Boolean   @default(false)
-  checklist_uid   String
-  task_type       TaskType  @default(check)
-  list_choice     String[]  @default([])
-  task_bool       Boolean?
-  task_selected   String[]  @default([])
-  task_number_val Int?      @db.SmallInt
-  task_check      Boolean?  @default(false)
-  subtask         Subtask[]
-  checklist       Checklist @relation(fields: [checklist_uid], references: [uid], onDelete: Cascade)
+  taskActivity  String?   @map("task_activity")
+  description   String?
+  isComplete    Boolean   @default(false) @map("is_complete")
+  remarks       String?
+  issue         String?
+  deadline      DateTime?
+  completedBy   String?   @map("completed_by")
+  taskOrder     Int       @map("task_order") @db.SmallInt
+  haveSubtask   Boolean   @default(false) @map("have_subtask")
+  taskType      TaskType  @default(check) @map("task_type")
+  listChoice    String[]  @default([]) @map("list_choice")
+  taskBool      Boolean?  @default(false) @map("task_bool")
+  taskSelected  String[]  @default([]) @map("task_selected")
+  taskNumberVal Int?      @map("task_number_val") @db.SmallInt
+  taskCheck     Boolean?  @default(false) @map("task_check")
+  checklistId   String    @map("checklist_id")
+  id            String    @id(map: "task2_pkey")
+  subtask       Subtask[]
+  checklist     Checklist @relation(fields: [checklistId], references: [id], onDelete: Cascade)
 
   @@map("task")
   @@schema("public")
 }
 
 model TaskLibrary {
-  uid                                String    @id
-  created_on                         DateTime
-  created_by                         String
-  updated_by                         String
-  updated_on                         DateTime
-  task_activity                      String
+  createdOn                          DateTime  @default(now()) @map("created_on")
+  createdBy                          String    @map("created_by")
+  updatedBy                          String    @map("updated_by")
+  updatedOn                          DateTime  @default(now()) @map("updated_on")
+  taskActivity                       String    @map("task_activity")
   description                        String?
-  have_subtask                       Boolean
-  task_order                         BigInt
-  user_task_library_created_byTouser User      @relation("task_library_created_byTouser", fields: [created_by], references: [id], onDelete: Cascade)
-  user_task_library_updated_byTouser User      @relation("task_library_updated_byTouser", fields: [updated_by], references: [id], onDelete: Cascade)
+  haveSubtask                        Boolean   @default(false) @map("have_subtask")
+  taskOrder                          BigInt    @map("task_order")
+  id                                 String    @id
+  user_task_library_created_byTouser User      @relation("task_library_created_byTouser", fields: [createdBy], references: [id], onDelete: Cascade)
+  user_task_library_updated_byTouser User      @relation("task_library_updated_byTouser", fields: [updatedBy], references: [id], onDelete: Cascade)
   task_use                           TaskUse[]
 
   @@map("task_library")
@@ -300,33 +297,29 @@ model TaskLibrary {
 }
 
 model TaskUse {
-  uid               String       @id
-  task_activity     String
-  description       String?
-  task_order        Int          @db.SmallInt
-  have_subtask      Boolean      @default(false)
-  checklist_use_uid String
-  task_library_uid  String?
-  subtask_use       SubtaskUse[]
-  checklist_use     ChecklistUse @relation(fields: [checklist_use_uid], references: [uid], onDelete: Cascade)
-  task_library      TaskLibrary? @relation(fields: [task_library_uid], references: [uid], onDelete: Cascade)
+  taskActivity   String       @map("task_activity")
+  description    String?
+  taskOrder      Int          @map("task_order") @db.SmallInt
+  haveSubtask    Boolean      @default(false) @map("have_subtask")
+  checklistUseId String       @map("checklist_use_id")
+  id             String       @id
+  taskLibraryId  String?      @map("task_library_id")
+  subtask_use    SubtaskUse[]
+  checklist_use  ChecklistUse @relation(fields: [checklistUseId], references: [id], onDelete: Cascade)
+  task_library   TaskLibrary? @relation(fields: [taskLibraryId], references: [id], onDelete: Cascade)
 
   @@map("task_use")
   @@schema("public")
 }
 
 model Account {
-  id                   String    @id
-  user_id              String
-  provider_account_id  String
-  refresh_token        String?
-  access_token         String?
-  access_token_expires DateTime?
-  provider             String
-  scope                String?
-  sessionState         String?   @map("session_state")
-  token_type           String?
-  user                 User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  id                 String    @id
+  userId             String    @map("user_id")
+  refreshToken       String?   @map("refresh_token")
+  accessToken        String?   @map("access_token")
+  accessTokenExpires DateTime? @map("access_token_expires")
+  provider           String
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("account")
   @@schema("public")
@@ -336,8 +329,8 @@ model VerificationRequest {
   id         String   @id
   identifier String
   token      String   @unique
-  created_at DateTime
-  updated_at DateTime
+  createdAt  DateTime @map("created_at")
+  updatedAt  DateTime @map("updated_at")
 
   @@map("verification_request")
   @@schema("public")
@@ -346,8 +339,8 @@ model VerificationRequest {
 model User {
   id                                                     String             @id @default(cuid())
   name                                                   String
-  createdAt                                              DateTime           @map("created_at")
-  updatedAt                                              DateTime           @map("updated_at")
+  createdAt                                              DateTime           @default(now()) @map("created_at")
+  updatedAt                                              DateTime           @default(now()) @map("updated_at")
   department                                             Department?        @default(MANAGEMENT)
   role                                                   Role?              @default(ADMIN)
   email                                                  String             @unique
@@ -380,8 +373,6 @@ model User {
 }
 
 enum Department {
-  management
-  exploration
   INSTRUMENT
   ELECTRICAL
   MECHANICAL
@@ -391,10 +382,8 @@ enum Department {
 }
 
 enum Role {
-  admin
-  supervisor
-  maintainer
   ADMIN
+  SUPERVISOR
   TECHNICIAN
 
   @@schema("public")
@@ -406,6 +395,11 @@ enum TaskType {
   check
   number
   selectMultiple
+  CHOICE
+  NUMBER
+  CHECK
+  MULTIPLE_SELECT
+  SINGLE_SELECT
 
   @@schema("public")
 }

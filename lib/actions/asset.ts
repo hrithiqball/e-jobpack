@@ -28,11 +28,11 @@ export async function fetchAssetList(): Promise<Asset[]> {
   }
 }
 
-export async function fetchAssetItem(uid: string): Promise<Asset> {
+export async function fetchAssetItem(id: string): Promise<Asset> {
   try {
     return await db.asset.findUniqueOrThrow({
       where: {
-        uid,
+        id,
       },
     });
   } catch (error) {
@@ -45,7 +45,7 @@ export async function fetchFilteredAssetList(assetIds: string[]) {
   try {
     return await db.asset.findMany({
       where: {
-        uid: {
+        id: {
           in: assetIds,
         },
       },

@@ -12,17 +12,15 @@ const AddAssetTypeSchema = z.object({
   title: z.string(),
   description: z.string().optional(),
   icon: z.string().optional(),
-  created_by: z.string(),
+  createdBy: z.string(),
 });
 
 /**
  * @description Type for adding a new asset-type
  */
 type AddAssetType = z.infer<typeof AddAssetTypeSchema> & {
-  uid: string;
-  updated_on: Date;
-  created_on: Date;
-  updated_by: string;
+  id: string;
+  updatedBy: string;
 };
 
 /**
@@ -83,10 +81,8 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
     if (result.success) {
       const request: AddAssetType = {
         ...result.data,
-        uid: `ATYPE-${moment().format('YYMMDDHHmmssSSS')}`,
-        updated_on: new Date(),
-        created_on: new Date(),
-        updated_by: result.data.created_by,
+        id: `ATYPE-${moment().format('YYMMDDHHmmssSSS')}`,
+        updatedBy: result.data.createdBy,
       };
 
       const assetType: AssetType = await db.assetType.create({
@@ -97,7 +93,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
         JSON.stringify(
           ResponseMessage(
             201,
-            `Asset-type ${assetType.uid} has been successfully created`,
+            `Asset-type ${assetType.id} has been successfully created`,
             assetType,
           ),
         ),

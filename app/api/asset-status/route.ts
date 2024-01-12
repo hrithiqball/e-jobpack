@@ -16,7 +16,7 @@ const AddAssetStatusSchema = z.object({
 /**
  * @description Type for adding a new asset-status
  */
-type AddAssetStatus = z.infer<typeof AddAssetStatusSchema> & { uid: string };
+type AddAssetStatus = z.infer<typeof AddAssetStatusSchema> & { id: string };
 
 /**
  * This asynchronous function handles GET requests.
@@ -75,7 +75,7 @@ export async function POST(nextRequest: NextRequest) {
     if (result.success) {
       const req: AddAssetStatus = {
         ...result.data,
-        uid: `ASTATUS-${moment().format('YYMMDDHHmmssSSS')}`,
+        id: `ASTATUS-${moment().format('YYMMDDHHmmssSSS')}`,
       };
 
       const assetStatus: AssetStatus = await db.assetStatus.create({
@@ -86,7 +86,7 @@ export async function POST(nextRequest: NextRequest) {
         JSON.stringify(
           ResponseMessage(
             200,
-            `Successfully created asset status ${assetStatus.uid}`,
+            `Successfully created asset status ${assetStatus.id}`,
             assetStatus,
           ),
         ),

@@ -10,22 +10,20 @@ import { db } from '@/lib/prisma/db';
  */
 const AddChecklistSchema = z.object({
   title: z.string(),
-  maintenance_uid: z.string(),
+  maintenanceId: z.string(),
   description: z.string().optional(),
   color: z.string().optional(),
   icon: z.string().optional(),
-  created_by: z.string(),
-  asset_id: z.string(),
+  createdBy: z.string(),
+  assetId: z.string(),
 });
 
 /**
  * @description Type for adding a new checklist
  */
 type AddChecklist = z.infer<typeof AddChecklistSchema> & {
-  uid: string;
-  updated_on: Date;
-  created_on: Date;
-  updated_by: string;
+  id: string;
+  updatedBy: string;
 };
 
 /**
@@ -42,15 +40,14 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
     const sort_by = nextRequest.nextUrl.searchParams.get('sort_by');
     const is_ascending = nextRequest.nextUrl.searchParams.get('is_ascending');
 
-    const maintenance_uid =
-      nextRequest.nextUrl.searchParams.get('maintenance_uid');
+    const maintenanceId = nextRequest.nextUrl.searchParams.get('maintenanceId');
 
     const filters: Prisma.ChecklistWhereInput[] = [];
     const orderBy: Prisma.ChecklistOrderByWithRelationInput[] = [];
 
-    if (maintenance_uid) {
+    if (maintenanceId) {
       filters.push({
-        maintenance_uid,
+        maintenanceId,
       });
     }
 
@@ -121,10 +118,8 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
     if (result.success) {
       const request: AddChecklist = {
         ...result.data,
-        uid: `CL-${moment().format('YYMMDDHHmmssSSS')}`,
-        updated_on: new Date(),
-        created_on: new Date(),
-        updated_by: result.data.created_by,
+        id: `CL-${moment().format('YYMMDDHHmmssSSS')}`,
+        updatedBy: result.data.createdBy,
       };
 
       const checklist: Checklist = await db.checklist.create({
@@ -135,7 +130,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
         JSON.stringify(
           ResponseMessage(
             201,
-            `Checklist ${checklist.uid} has been successfully created`,
+            `Checklist ${checklist.id} has been successfully created`,
             checklist,
           ),
         ),

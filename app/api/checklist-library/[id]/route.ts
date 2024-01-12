@@ -4,47 +4,47 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 /**
- * @description Validator for updating a task
+ * @description Validator for updating an checklist-library
  */
-const UpdateTaskSchema = z.object({
-  task_activity: z.string().optional(),
+const UpdateChecklistLibrarySchema = z.object({
+  updated_by: z.string(),
+  title: z.string().optional(),
   description: z.string().optional(),
-  is_complete: z.boolean().optional(),
-  remarks: z.string().optional(),
-  issue: z.string().optional(),
-  deadline: z.date().optional(),
-  completed_by: z.string().optional(),
-  task_order: z.number().optional(),
-  have_subtask: z.boolean().optional(),
-  task_selected: z.string().array().optional(),
-  task_bool: z.boolean().optional(),
+  color: z.string().optional(),
+  icon: z.string().optional(),
 });
 
 /**
- * @description Type for updating an task
+ * @description Type for updating an checklist-library
  */
-export type UpdateTask = z.infer<typeof UpdateTaskSchema>;
+type UpdateChecklistLibrary = z.infer<typeof UpdateChecklistLibrarySchema> & {
+  updated_on: Date;
+};
 
 /**
  * This asynchronous function handles GET requests.
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the task.
+ * @param {string} id - The unique identifier of the checklist-library.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the task.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the checklist-library.
  */
 export async function GET(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
-  const uid = params.uid;
-  const task = await db.task.findUnique({
-    where: { uid },
+  const id = params.id;
+  const checklistLibrary = await db.checklistLibrary.findUnique({
+    where: { id },
   });
 
-  if (task) {
+  if (checklistLibrary) {
     return new NextResponse(
       JSON.stringify(
-        ResponseMessage(200, `Successfully fetched task ${uid}!`, task),
+        ResponseMessage(
+          200,
+          `Successfully fetched checklist-library ${id}!`,
+          checklistLibrary,
+        ),
       ),
       {
         status: 200,
@@ -53,7 +53,7 @@ export async function GET(
     );
   } else {
     return new NextResponse(
-      JSON.stringify(ResponseMessage(404, `Task ${uid} not found`)),
+      JSON.stringify(ResponseMessage(404, `Checklist library ${id} not found`)),
       {
         status: 404,
         headers: { 'Content-Type': 'application/json' },
@@ -65,34 +65,36 @@ export async function GET(
 /**
  *
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the task.
+ * @param {string} id - The unique identifier of the checklist library.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the task.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the checklist-library.
  */
 export async function PATCH(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   try {
-    const uid = params.uid;
+    const id = params.id;
     let json = await nextRequest.json();
 
-    const result = UpdateTaskSchema.safeParse(json);
-    console.log(result);
+    const result = UpdateChecklistLibrarySchema.safeParse(json);
 
     if (result.success) {
-      const updateTaskValue: UpdateTask = result.data;
-      const updatedTask = await db.task.update({
-        where: { uid },
-        data: updateTaskValue,
+      const updateChecklistLibraryValue: UpdateChecklistLibrary = {
+        ...result.data,
+        updated_on: new Date(),
+      };
+      const updatedChecklistLibrary = await db.checklistLibrary.update({
+        where: { id },
+        data: updateChecklistLibraryValue,
       });
 
       return new NextResponse(
         JSON.stringify(
           ResponseMessage(
             200,
-            `Successfully updated task ${updatedTask.uid}`,
-            updatedTask,
+            `Successfully updated checklist-library type ${id}`,
+            updatedChecklistLibrary,
           ),
         ),
         {
@@ -101,7 +103,6 @@ export async function PATCH(
         },
       );
     } else {
-      console.error(result.error.message);
       return new NextResponse(
         JSON.stringify(
           ResponseMessage(
@@ -118,13 +119,12 @@ export async function PATCH(
       );
     }
   } catch (error: any) {
-    console.error(error);
     if (error.code === 'P2025') {
       return new NextResponse(
         JSON.stringify(
           ResponseMessage(
             404,
-            `Task ${params.uid} not found.`,
+            `Checklist library ${params.id} not found.`,
             null,
             error.message,
           ),
@@ -149,22 +149,22 @@ export async function PATCH(
 /**
  *
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the task.
+ * @param {string} id - The unique identifier of the checklist-library.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the task.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the checklist-library.
  */
 export async function DELETE(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   try {
-    const uid = params.uid;
-    await db.task.delete({
-      where: { uid },
+    const id = params.id;
+    await db.checklistLibrary.delete({
+      where: { id },
     });
 
     return new NextResponse(
-      JSON.stringify(ResponseMessage(200, `Task ${uid} deleted`)),
+      JSON.stringify(ResponseMessage(200, `Checklist library ${id} deleted`)),
       { status: 200, headers: { 'Content-Type': 'application/json' } },
     );
   } catch (error: any) {
@@ -173,7 +173,7 @@ export async function DELETE(
         JSON.stringify(
           ResponseMessage(
             404,
-            `Task ${params.uid} not found`,
+            `Checklist-library ${params.id} not found`,
             null,
             error.message,
           ),

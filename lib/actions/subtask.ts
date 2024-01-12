@@ -3,23 +3,23 @@
 import { Prisma, Subtask } from '@prisma/client';
 
 import { db } from '@/lib/prisma/db';
-import { UpdateSubtask } from '@/app/api/subtask/[uid]/route';
+import { UpdateSubtask } from '@/app/api/subtask/[id]/route';
 
 export async function fetchSubtaskListByTaskUid(
-  task_uid?: string,
+  taskId?: string,
 ): Promise<Subtask[]> {
   try {
     const filters: Prisma.SubtaskWhereInput[] = [];
     const orderBy: Prisma.SubtaskOrderByWithRelationInput[] = [];
 
-    if (task_uid) {
+    if (taskId) {
       filters.push({
-        task_uid,
+        taskId,
       });
     }
 
     orderBy.push({
-      task_order: 'asc',
+      taskOrder: 'asc',
     });
 
     return await db.subtask.findMany({
@@ -35,10 +35,10 @@ export async function fetchSubtaskListByTaskUid(
 }
 
 // TODO: use schema
-export async function updateSubtask(uid: string, data: UpdateSubtask) {
+export async function updateSubtask(id: string, data: UpdateSubtask) {
   try {
     return await db.subtask.update({
-      where: { uid },
+      where: { id },
       data,
     });
   } catch (error) {

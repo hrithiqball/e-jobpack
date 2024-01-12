@@ -1,49 +1,49 @@
 import { ResponseMessage } from '@/lib/function/result';
 import { db } from '@/lib/prisma/db';
-import { AssetTagLibrary } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 /**
- * @description Validator for updating an asset-tags in library
+ * @description Validator for updating an checklist-use
  */
-const UpdateAssetTagsLibrarySchema = z.object({
-  title: z.string().optional(),
-  color: z.string().optional(),
+const UpdateChecklistUseSchema = z.object({
   updated_by: z.string(),
+  title: z.string().optional(),
+  description: z.string().optional(),
+  color: z.string().optional(),
+  icon: z.string().optional(),
 });
 
 /**
- * @description Type for updating an asset-tags in library
+ * @description Type for updating an checklist-use
  */
-type UpdateAssetTagsLibrary = z.infer<typeof UpdateAssetTagsLibrarySchema> & {
+type UpdateChecklistUse = z.infer<typeof UpdateChecklistUseSchema> & {
   updated_on: Date;
 };
 
 /**
  * This asynchronous function handles GET requests.
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the asset-tags in library.
+ * @param {string} id - The unique identifier of the checklist-use.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset-tags in library.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the checklist-use.
  */
 export async function GET(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
-  const uid = params.uid;
-  const assetTagsLibrary: AssetTagLibrary | null =
-    await db.assetTagLibrary.findUnique({
-      where: { uid },
-    });
+  const id = params.id;
+  const checklistUse = await db.checklistUse.findUnique({
+    where: { id },
+  });
 
-  if (assetTagsLibrary) {
+  if (checklistUse) {
     return new NextResponse(
       JSON.stringify(
         ResponseMessage(
           200,
-          `Successfully fetched asset-tags ${uid} from library`,
-          assetTagsLibrary,
+          `Successfully fetched checklist-use ${id}!`,
+          checklistUse,
         ),
       ),
       {
@@ -53,9 +53,7 @@ export async function GET(
     );
   } else {
     return new NextResponse(
-      JSON.stringify(
-        ResponseMessage(404, `Asset-tags ${uid} from library not found`),
-      ),
+      JSON.stringify(ResponseMessage(404, `Checklist-use ${id} not found`)),
       {
         status: 404,
         headers: { 'Content-Type': 'application/json' },
@@ -67,37 +65,36 @@ export async function GET(
 /**
  *
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the asset-tags from library.
+ * @param {string} id - The unique identifier of the checklist-use.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset-tags from library.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the checklist-use.
  */
 export async function PATCH(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   try {
-    const uid = params.uid;
+    const id = params.id;
     let json = await nextRequest.json();
 
-    const result = UpdateAssetTagsLibrarySchema.safeParse(json);
+    const result = UpdateChecklistUseSchema.safeParse(json);
 
     if (result.success) {
-      const updateAssetTagsValue: UpdateAssetTagsLibrary = {
+      const updateChecklistUseValue: UpdateChecklistUse = {
         ...result.data,
         updated_on: new Date(),
       };
-      const updatedAssetTagsLibrary: AssetTagLibrary =
-        await db.assetTagLibrary.update({
-          where: { uid },
-          data: updateAssetTagsValue,
-        });
+      const updatedChecklistUse = await db.checklistUse.update({
+        where: { id },
+        data: updateChecklistUseValue,
+      });
 
       return new NextResponse(
         JSON.stringify(
           ResponseMessage(
             200,
-            `Successfully updated asset-tags ${uid} from library`,
-            updatedAssetTagsLibrary,
+            `Successfully updated checklist-use ${id}`,
+            updatedChecklistUse,
           ),
         ),
         {
@@ -127,7 +124,7 @@ export async function PATCH(
         JSON.stringify(
           ResponseMessage(
             404,
-            `Asset-tag ${params.uid} not found from library.`,
+            `Checklist-use ${params.id} not found.`,
             null,
             error.message,
           ),
@@ -152,24 +149,22 @@ export async function PATCH(
 /**
  *
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the asset-tags from library.
+ * @param {string} id - The unique identifier of the checklist-use.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset-tags from library.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the checklist-use.
  */
 export async function DELETE(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   try {
-    const uid = params.uid;
-    await db.assetTagLibrary.delete({
-      where: { uid },
+    const id = params.id;
+    await db.checklistUse.delete({
+      where: { id },
     });
 
     return new NextResponse(
-      JSON.stringify(
-        ResponseMessage(200, `Asset-tags ${uid} deleted from library`),
-      ),
+      JSON.stringify(ResponseMessage(200, `Checklist-use ${id} deleted`)),
       { status: 200, headers: { 'Content-Type': 'application/json' } },
     );
   } catch (error: any) {
@@ -178,7 +173,7 @@ export async function DELETE(
         JSON.stringify(
           ResponseMessage(
             404,
-            `Asset-tags ${params.uid} not found from library`,
+            `Checklist-use ${params.id} not found`,
             null,
             error.message,
           ),

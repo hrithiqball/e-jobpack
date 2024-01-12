@@ -4,44 +4,47 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 /**
- * @description Validator for updating a subtask_use
+ * @description Validator for updating a task
  */
-const UpdateSubtaskUseSchema = z.object({
+const UpdateTaskSchema = z.object({
   task_activity: z.string().optional(),
   description: z.string().optional(),
+  is_complete: z.boolean().optional(),
+  remarks: z.string().optional(),
+  issue: z.string().optional(),
+  deadline: z.date().optional(),
+  completed_by: z.string().optional(),
   task_order: z.number().optional(),
-  subtask_library_uid: z.string().optional(),
+  have_subtask: z.boolean().optional(),
+  task_selected: z.string().array().optional(),
+  task_bool: z.boolean().optional(),
 });
 
 /**
- * @description Type for updating an subtask_use
+ * @description Type for updating an task
  */
-type UpdateSubtaskUse = z.infer<typeof UpdateSubtaskUseSchema>;
+export type UpdateTask = z.infer<typeof UpdateTaskSchema>;
 
 /**
  * This asynchronous function handles GET requests.
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the subtask_use.
+ * @param {string} id - The unique identifier of the task.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the subtask_use.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the task.
  */
 export async function GET(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
-  const uid = params.uid;
-  const subtaskUse = await db.subtaskUse.findUnique({
-    where: { uid },
+  const id = params.id;
+  const task = await db.task.findUnique({
+    where: { id },
   });
 
-  if (subtaskUse) {
+  if (task) {
     return new NextResponse(
       JSON.stringify(
-        ResponseMessage(
-          200,
-          `Successfully fetched subtask use ${uid}!`,
-          subtaskUse,
-        ),
+        ResponseMessage(200, `Successfully fetched task ${id}!`, task),
       ),
       {
         status: 200,
@@ -50,7 +53,7 @@ export async function GET(
     );
   } else {
     return new NextResponse(
-      JSON.stringify(ResponseMessage(404, `Subtask use ${uid} not found`)),
+      JSON.stringify(ResponseMessage(404, `Task ${id} not found`)),
       {
         status: 404,
         headers: { 'Content-Type': 'application/json' },
@@ -62,33 +65,34 @@ export async function GET(
 /**
  *
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the subtask_use.
+ * @param {string} id - The unique identifier of the task.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the subtask_use.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the task.
  */
 export async function PATCH(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   try {
-    const uid = params.uid;
+    const id = params.id;
     let json = await nextRequest.json();
 
-    const result = UpdateSubtaskUseSchema.safeParse(json);
+    const result = UpdateTaskSchema.safeParse(json);
+    console.log(result);
 
     if (result.success) {
-      const updateSubtaskUseValue: UpdateSubtaskUse = result.data;
-      const updatedSubtaskUse = await db.subtaskUse.update({
-        where: { uid },
-        data: updateSubtaskUseValue,
+      const updateTaskValue: UpdateTask = result.data;
+      const updatedTask = await db.task.update({
+        where: { id },
+        data: updateTaskValue,
       });
 
       return new NextResponse(
         JSON.stringify(
           ResponseMessage(
             200,
-            `Successfully updated subtask_use ${updatedSubtaskUse.uid}`,
-            updatedSubtaskUse,
+            `Successfully updated task ${updatedTask.id}`,
+            updatedTask,
           ),
         ),
         {
@@ -97,6 +101,7 @@ export async function PATCH(
         },
       );
     } else {
+      console.error(result.error.message);
       return new NextResponse(
         JSON.stringify(
           ResponseMessage(
@@ -113,12 +118,13 @@ export async function PATCH(
       );
     }
   } catch (error: any) {
+    console.error(error);
     if (error.code === 'P2025') {
       return new NextResponse(
         JSON.stringify(
           ResponseMessage(
             404,
-            `Subtask use ${params.uid} not found.`,
+            `Task ${params.id} not found.`,
             null,
             error.message,
           ),
@@ -143,22 +149,22 @@ export async function PATCH(
 /**
  *
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the subtask_use.
+ * @param {string} id - The unique identifier of the task.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the subtask_use.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the task.
  */
 export async function DELETE(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   try {
-    const uid = params.uid;
-    await db.subtaskUse.delete({
-      where: { uid },
+    const id = params.id;
+    await db.task.delete({
+      where: { id },
     });
 
     return new NextResponse(
-      JSON.stringify(ResponseMessage(200, `Subtask use ${uid} deleted`)),
+      JSON.stringify(ResponseMessage(200, `Task ${id} deleted`)),
       { status: 200, headers: { 'Content-Type': 'application/json' } },
     );
   } catch (error: any) {
@@ -167,7 +173,7 @@ export async function DELETE(
         JSON.stringify(
           ResponseMessage(
             404,
-            `Subtask use ${params.uid} not found`,
+            `Task ${params.id} not found`,
             null,
             error.message,
           ),

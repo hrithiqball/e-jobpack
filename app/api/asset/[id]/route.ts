@@ -28,17 +28,17 @@ import { NextRequest, NextResponse } from 'next/server';
  */
 export async function GET(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
-  const uid = params.uid;
+  const id = params.id;
   const asset: Asset | null = await db.asset.findUnique({
-    where: { uid },
+    where: { id },
   });
 
   if (asset) {
     return new NextResponse(
       JSON.stringify(
-        ResponseMessage(200, `Successfully fetched asset ${uid}`, asset),
+        ResponseMessage(200, `Successfully fetched asset ${id}`, asset),
       ),
       {
         status: 200,
@@ -47,7 +47,7 @@ export async function GET(
     );
   } else {
     return new NextResponse(
-      JSON.stringify(ResponseMessage(404, `Asset ${uid} not found`)),
+      JSON.stringify(ResponseMessage(404, `Asset ${id} not found`)),
       {
         status: 404,
         headers: { 'Content-Type': 'application/json' },
@@ -144,16 +144,16 @@ export async function GET(
  */
 export async function DELETE(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   try {
-    const uid = params.uid;
+    const id = params.id;
     await db.asset.delete({
-      where: { uid },
+      where: { id },
     });
 
     return new NextResponse(
-      JSON.stringify(ResponseMessage(200, `Asset ${uid} deleted`)),
+      JSON.stringify(ResponseMessage(200, `Asset ${id} deleted`)),
       { status: 200, headers: { 'Content-Type': 'application/json' } },
     );
   } catch (error: any) {
@@ -162,7 +162,7 @@ export async function DELETE(
         JSON.stringify(
           ResponseMessage(
             404,
-            `Asset ${params.uid} not found`,
+            `Asset ${params.id} not found`,
             null,
             error.message,
           ),

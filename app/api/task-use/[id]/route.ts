@@ -1,46 +1,44 @@
 import { ResponseMessage } from '@/lib/function/result';
 import { db } from '@/lib/prisma/db';
-import { AssetTag } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 /**
- * @description Validator for updating an asset-tags
+ * @description Validator for updating a task_use
  */
-const UpdateAssetTagsSchema = z.object({
-  title: z.string().optional(),
-  color: z.string().optional(),
+const UpdateTaskUseSchema = z.object({
+  task_activity: z.string().optional(),
+  description: z.string().optional(),
+  task_order: z.number().optional(),
+  have_subtask: z.boolean().optional(),
+  task_list_uid: z.string().optional(),
 });
 
 /**
- * @description Type for updating an asset-tags
+ * @description Type for updating an task_use
  */
-type UpdateAssetTags = z.infer<typeof UpdateAssetTagsSchema>;
+type UpdateTaskUse = z.infer<typeof UpdateTaskUseSchema>;
 
 /**
  * This asynchronous function handles GET requests.
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the asset.
+ * @param {string} id - The unique identifier of the task_use.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset-tags.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the task_use.
  */
 export async function GET(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
-  const uid = params.uid;
-  const assetTags: AssetTag | null = await db.assetTag.findUnique({
-    where: { uid },
+  const id = params.id;
+  const taskUse = await db.taskUse.findUnique({
+    where: { id },
   });
 
-  if (assetTags) {
+  if (taskUse) {
     return new NextResponse(
       JSON.stringify(
-        ResponseMessage(
-          200,
-          `Successfully fetched asset-tags ${uid}!`,
-          assetTags,
-        ),
+        ResponseMessage(200, `Successfully fetched task_use ${id}!`, taskUse),
       ),
       {
         status: 200,
@@ -49,7 +47,7 @@ export async function GET(
     );
   } else {
     return new NextResponse(
-      JSON.stringify(ResponseMessage(404, `Asset-tags ${uid} not found`)),
+      JSON.stringify(ResponseMessage(404, `Task use ${id} not found`)),
       {
         status: 404,
         headers: { 'Content-Type': 'application/json' },
@@ -61,33 +59,33 @@ export async function GET(
 /**
  *
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the asset-tags.
+ * @param {string} id - The unique identifier of the task_use.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset-tags.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the task_use.
  */
 export async function PATCH(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   try {
-    const uid = params.uid;
+    const id = params.id;
     let json = await nextRequest.json();
 
-    const result = UpdateAssetTagsSchema.safeParse(json);
+    const result = UpdateTaskUseSchema.safeParse(json);
 
     if (result.success) {
-      const updateAssetTagsValue: UpdateAssetTags = result.data;
-      const updatedAssetTags: AssetTag = await db.assetTag.update({
-        where: { uid },
-        data: updateAssetTagsValue,
+      const updateTaskUseValue: UpdateTaskUse = result.data;
+      const updatedTaskUse = await db.taskUse.update({
+        where: { id },
+        data: updateTaskUseValue,
       });
 
       return new NextResponse(
         JSON.stringify(
           ResponseMessage(
             200,
-            `Successfully updated asset-tags ${uid}`,
-            updatedAssetTags,
+            `Successfully updated task_use ${updatedTaskUse.id}`,
+            updatedTaskUse,
           ),
         ),
         {
@@ -117,7 +115,7 @@ export async function PATCH(
         JSON.stringify(
           ResponseMessage(
             404,
-            `Asset-tag ${params.uid} not found.`,
+            `Task use ${params.id} not found.`,
             null,
             error.message,
           ),
@@ -142,22 +140,22 @@ export async function PATCH(
 /**
  *
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the asset.
+ * @param {string} id - The unique identifier of the task_use.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset-tags.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the task_use.
  */
 export async function DELETE(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   try {
-    const uid = params.uid;
-    await db.assetTag.delete({
-      where: { uid },
+    const id = params.id;
+    await db.taskUse.delete({
+      where: { id },
     });
 
     return new NextResponse(
-      JSON.stringify(ResponseMessage(200, `Asset-tags ${uid} deleted`)),
+      JSON.stringify(ResponseMessage(200, `Task use ${id} deleted`)),
       { status: 200, headers: { 'Content-Type': 'application/json' } },
     );
   } catch (error: any) {
@@ -166,7 +164,7 @@ export async function DELETE(
         JSON.stringify(
           ResponseMessage(
             404,
-            `Asset-tags ${params.uid} not found`,
+            `Task ${params.id} not found`,
             null,
             error.message,
           ),

@@ -8,21 +8,19 @@ import { db } from '@/lib/prisma/db';
  * @description Validate the request body for adding a new task_library
  */
 const AddTaskLibrarySchema = z.object({
-  created_by: z.string(),
-  task_activity: z.string(),
+  createdBy: z.string(),
+  taskActivity: z.string(),
   description: z.string().optional(),
-  have_subtask: z.boolean(),
-  task_order: z.number(),
+  haveSubtask: z.boolean(),
+  taskOrder: z.number(),
 });
 
 /**
  * @description Type for adding a new task_library
  */
 type AddTaskLibrary = z.infer<typeof AddTaskLibrarySchema> & {
-  uid: string;
-  created_on: Date;
-  updated_by: string;
-  updated_on: Date;
+  id: string;
+  updatedBy: string;
 };
 
 /**
@@ -83,10 +81,8 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
     if (result.success) {
       const request: AddTaskLibrary = {
         ...result.data,
-        uid: `TSL-${moment().format('YYMMDDHHmmssSSS')}`,
-        created_on: new Date(),
-        updated_by: result.data.created_by,
-        updated_on: new Date(),
+        id: `TSL-${moment().format('YYMMDDHHmmssSSS')}`,
+        updatedBy: result.data.createdBy,
       };
 
       const taskLibrary = await db.taskLibrary.create({
@@ -97,7 +93,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
         JSON.stringify(
           ResponseMessage(
             201,
-            `Task ${taskLibrary.uid} has been successfully created`,
+            `Task ${taskLibrary.id} has been successfully created`,
             taskLibrary,
           ),
         ),

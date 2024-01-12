@@ -1,49 +1,49 @@
 import { ResponseMessage } from '@/lib/function/result';
 import { db } from '@/lib/prisma/db';
+import { AssetTagLibrary } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 /**
- * @description Validator for updating a task_library
+ * @description Validator for updating an asset-tags in library
  */
-const UpdateTaskLibrarySchema = z.object({
+const UpdateAssetTagsLibrarySchema = z.object({
+  title: z.string().optional(),
+  color: z.string().optional(),
   updated_by: z.string(),
-  task_activity: z.string().optional(),
-  description: z.string().optional(),
-  task_order: z.number().optional(),
-  have_subtask: z.boolean().optional(),
 });
 
 /**
- * @description Type for updating an task_library
+ * @description Type for updating an asset-tags in library
  */
-type UpdateTaskLibrary = z.infer<typeof UpdateTaskLibrarySchema> & {
+type UpdateAssetTagsLibrary = z.infer<typeof UpdateAssetTagsLibrarySchema> & {
   updated_on: Date;
 };
 
 /**
  * This asynchronous function handles GET requests.
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the task_library.
+ * @param {string} id - The unique identifier of the asset-tags in library.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the task_library.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset-tags in library.
  */
 export async function GET(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
-  const uid = params.uid;
-  const taskLibrary = await db.taskLibrary.findUnique({
-    where: { uid },
-  });
+  const id = params.id;
+  const assetTagsLibrary: AssetTagLibrary | null =
+    await db.assetTagLibrary.findUnique({
+      where: { id },
+    });
 
-  if (taskLibrary) {
+  if (assetTagsLibrary) {
     return new NextResponse(
       JSON.stringify(
         ResponseMessage(
           200,
-          `Successfully fetched task_library ${uid}!`,
-          taskLibrary,
+          `Successfully fetched asset-tags ${id} from library`,
+          assetTagsLibrary,
         ),
       ),
       {
@@ -53,7 +53,9 @@ export async function GET(
     );
   } else {
     return new NextResponse(
-      JSON.stringify(ResponseMessage(404, `Task library ${uid} not found`)),
+      JSON.stringify(
+        ResponseMessage(404, `Asset-tags ${id} from library not found`),
+      ),
       {
         status: 404,
         headers: { 'Content-Type': 'application/json' },
@@ -65,36 +67,37 @@ export async function GET(
 /**
  *
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the task_library.
+ * @param {string} id - The unique identifier of the asset-tags from library.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the task_library.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset-tags from library.
  */
 export async function PATCH(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   try {
-    const uid = params.uid;
+    const id = params.id;
     let json = await nextRequest.json();
 
-    const result = UpdateTaskLibrarySchema.safeParse(json);
+    const result = UpdateAssetTagsLibrarySchema.safeParse(json);
 
     if (result.success) {
-      const updateTaskLibraryValue: UpdateTaskLibrary = {
+      const updateAssetTagsValue: UpdateAssetTagsLibrary = {
         ...result.data,
         updated_on: new Date(),
       };
-      const updatedTaskLibrary = await db.taskLibrary.update({
-        where: { uid },
-        data: updateTaskLibraryValue,
-      });
+      const updatedAssetTagsLibrary: AssetTagLibrary =
+        await db.assetTagLibrary.update({
+          where: { id },
+          data: updateAssetTagsValue,
+        });
 
       return new NextResponse(
         JSON.stringify(
           ResponseMessage(
             200,
-            `Successfully updated task_library ${updatedTaskLibrary.uid}`,
-            updatedTaskLibrary,
+            `Successfully updated asset-tags ${id} from library`,
+            updatedAssetTagsLibrary,
           ),
         ),
         {
@@ -124,7 +127,7 @@ export async function PATCH(
         JSON.stringify(
           ResponseMessage(
             404,
-            `Task library ${params.uid} not found.`,
+            `Asset-tag ${params.id} not found from library.`,
             null,
             error.message,
           ),
@@ -149,22 +152,24 @@ export async function PATCH(
 /**
  *
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the task_library.
+ * @param {string} id - The unique identifier of the asset-tags from library.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the task_library.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset-tags from library.
  */
 export async function DELETE(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   try {
-    const uid = params.uid;
-    await db.taskLibrary.delete({
-      where: { uid },
+    const id = params.id;
+    await db.assetTagLibrary.delete({
+      where: { id },
     });
 
     return new NextResponse(
-      JSON.stringify(ResponseMessage(200, `Task library ${uid} deleted`)),
+      JSON.stringify(
+        ResponseMessage(200, `Asset-tags ${id} deleted from library`),
+      ),
       { status: 200, headers: { 'Content-Type': 'application/json' } },
     );
   } catch (error: any) {
@@ -173,7 +178,7 @@ export async function DELETE(
         JSON.stringify(
           ResponseMessage(
             404,
-            `Task library ${params.uid} not found`,
+            `Asset-tags ${params.id} not found from library`,
             null,
             error.message,
           ),

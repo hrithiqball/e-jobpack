@@ -15,7 +15,7 @@ import {
   Switch,
   Textarea,
 } from '@nextui-org/react';
-import { UpdateTask } from '@/app/api/task/[uid]/route';
+import { UpdateTask } from '@/app/api/task/[id]/route';
 import { toast } from 'sonner';
 import {
   ClipboardX,

@@ -13,17 +13,15 @@ const AddChecklistLibrarySchema = z.object({
   description: z.string().optional(),
   icon: z.string().optional(),
   color: z.string().optional(),
-  created_by: z.string(),
+  createdBy: z.string(),
 });
 
 /**
  * @description Type for adding a new checklist library
  */
 type AddChecklistLibrary = z.infer<typeof AddChecklistLibrarySchema> & {
-  uid: string;
-  updated_on: Date;
-  created_on: Date;
-  updated_by: string;
+  id: string;
+  updatedBy: string;
 };
 
 /**
@@ -85,10 +83,8 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
     if (result.success) {
       const request: AddChecklistLibrary = {
         ...result.data,
-        uid: `CLLIB-${moment().format('YYMMDDHHmmssSSS')}`,
-        updated_on: new Date(),
-        created_on: new Date(),
-        updated_by: result.data.created_by,
+        id: `CLLIB-${moment().format('YYMMDDHHmmssSSS')}`,
+        updatedBy: result.data.createdBy,
       };
 
       const checklistLibrary: ChecklistLibrary =
@@ -100,7 +96,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
         JSON.stringify(
           ResponseMessage(
             201,
-            `Checklist library ${checklistLibrary.uid} has been successfully created`,
+            `Checklist library ${checklistLibrary.id} has been successfully created`,
             checklistLibrary,
           ),
         ),

@@ -11,18 +11,16 @@ import { db } from '@/lib/prisma/db';
 const AddAssetTagsLibrarySchema = z.object({
   title: z.string(),
   color: z.string().optional(),
-  asset_tags_library_uid: z.string(),
-  created_by: z.string(),
+  assetTagsLibraryId: z.string(),
+  createdBy: z.string(),
 });
 
 /**
  * @description Type for adding a new asset-tags from library
  */
 type AddAssetTagsLibrary = z.infer<typeof AddAssetTagsLibrarySchema> & {
-  uid: string;
-  created_on: Date;
-  updated_by: string;
-  updated_on: Date;
+  id: string;
+  updatedBy: string;
 };
 
 /**
@@ -84,10 +82,8 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
     if (result.success) {
       const request: AddAssetTagsLibrary = {
         ...result.data,
-        uid: `ATAGS-${moment().format('YYMMDDHHmmssSSS')}`,
-        created_on: new Date(),
-        updated_by: result.data.created_by,
-        updated_on: new Date(),
+        id: `ATAGS-${moment().format('YYMMDDHHmmssSSS')}`,
+        updatedBy: result.data.createdBy,
       };
 
       const assetTagsLibrary: AssetTagLibrary = await db.assetTagLibrary.create(
@@ -100,7 +96,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
         JSON.stringify(
           ResponseMessage(
             201,
-            `Asset-tags ${request.uid} has been successfully created`,
+            `Asset-tags ${request.id} has been successfully created`,
             assetTagsLibrary,
           ),
         ),

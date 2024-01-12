@@ -27,8 +27,6 @@ export async function register(values: z.infer<typeof RegisterSchema>) {
         name,
         email,
         password: hashedPassword,
-        createdAt: new Date(),
-        updatedAt: new Date(),
       },
     });
 

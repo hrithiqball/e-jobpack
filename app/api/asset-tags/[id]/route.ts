@@ -1,47 +1,45 @@
 import { ResponseMessage } from '@/lib/function/result';
 import { db } from '@/lib/prisma/db';
-import { AssetStatus } from '@prisma/client';
+import { AssetTag } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 /**
- * @description Validator for updating an asset-status
+ * @description Validator for updating an asset-tags
  */
-const UpdateAssetStatusSchema = z.object({
+const UpdateAssetTagsSchema = z.object({
   title: z.string().optional(),
   color: z.string().optional(),
 });
 
 /**
- * @description Type for updating an asset-status
+ * @description Type for updating an asset-tags
  */
-type UpdateAssetStatus = z.infer<typeof UpdateAssetStatusSchema> & {
-  uid: string;
-};
+type UpdateAssetTags = z.infer<typeof UpdateAssetTagsSchema>;
 
 /**
- *
+ * This asynchronous function handles GET requests.
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the asset-status.
+ * @param {string} id - The unique identifier of the asset.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset-status.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset-tags.
  */
 export async function GET(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
-  const uid = params.uid;
-  const assetStatus: AssetStatus | null = await db.assetStatus.findUnique({
-    where: { uid },
+  const id = params.id;
+  const assetTags: AssetTag | null = await db.assetTag.findUnique({
+    where: { id },
   });
 
-  if (assetStatus) {
+  if (assetTags) {
     return new NextResponse(
       JSON.stringify(
         ResponseMessage(
           200,
-          `Successfully fetched asset-status ${uid}`,
-          assetStatus,
+          `Successfully fetched asset-tags ${id}!`,
+          assetTags,
         ),
       ),
       {
@@ -51,7 +49,7 @@ export async function GET(
     );
   } else {
     return new NextResponse(
-      JSON.stringify(ResponseMessage(404, `Asset-status ${uid} not found`)),
+      JSON.stringify(ResponseMessage(404, `Asset-tags ${id} not found`)),
       {
         status: 404,
         headers: { 'Content-Type': 'application/json' },
@@ -63,36 +61,33 @@ export async function GET(
 /**
  *
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the asset-status.
+ * @param {string} id - The unique identifier of the asset-tags.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset-status.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset-tags.
  */
 export async function PATCH(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   try {
-    const uid = params.uid;
+    const id = params.id;
     let json = await nextRequest.json();
 
-    const result = UpdateAssetStatusSchema.safeParse(json);
+    const result = UpdateAssetTagsSchema.safeParse(json);
 
     if (result.success) {
-      const updateAssetValue: UpdateAssetStatus = {
-        ...result.data,
-        uid: uid,
-      };
-      const updatedAssetStatus: AssetStatus = await db.assetStatus.update({
-        where: { uid },
-        data: updateAssetValue,
+      const updateAssetTagsValue: UpdateAssetTags = result.data;
+      const updatedAssetTags: AssetTag = await db.assetTag.update({
+        where: { id },
+        data: updateAssetTagsValue,
       });
 
       return new NextResponse(
         JSON.stringify(
           ResponseMessage(
             200,
-            `Successfully updated asset-status ${uid}`,
-            updatedAssetStatus,
+            `Successfully updated asset-tags ${id}`,
+            updatedAssetTags,
           ),
         ),
         {
@@ -122,7 +117,7 @@ export async function PATCH(
         JSON.stringify(
           ResponseMessage(
             404,
-            `Asset-status ${params.uid} not found.`,
+            `Asset-tag ${params.id} not found.`,
             null,
             error.message,
           ),
@@ -147,22 +142,22 @@ export async function PATCH(
 /**
  *
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the asset-status.
+ * @param {string} id - The unique identifier of the asset.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset-status.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the asset-tags.
  */
 export async function DELETE(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   try {
-    const uid = params.uid;
-    await db.assetStatus.delete({
-      where: { uid },
+    const id = params.id;
+    await db.assetTag.delete({
+      where: { id },
     });
 
     return new NextResponse(
-      JSON.stringify(ResponseMessage(200, `Asset-status ${uid} deleted`)),
+      JSON.stringify(ResponseMessage(200, `Asset-tags ${id} deleted`)),
       { status: 200, headers: { 'Content-Type': 'application/json' } },
     );
   } catch (error: any) {
@@ -171,7 +166,7 @@ export async function DELETE(
         JSON.stringify(
           ResponseMessage(
             404,
-            `Asset status ${params.uid} not found`,
+            `Asset-tags ${params.id} not found`,
             null,
             error.message,
           ),

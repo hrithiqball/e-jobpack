@@ -27,8 +27,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       const user: User = await db.user.create({
         data: {
           ...result.data,
-          createdAt: new Date(),
-          updatedAt: new Date(),
         },
       });
 

@@ -14,8 +14,6 @@ export async function createUser(
 
     return await db.user.create({
       data: {
-        createdAt: new Date(),
-        updatedAt: new Date(),
         name,
         email,
         password: hash,

@@ -1,48 +1,46 @@
+import { fetchMaintenanceItem } from '@/lib/actions/maintenance';
 import { ResponseMessage } from '@/lib/function/result';
 import { db } from '@/lib/prisma/db';
+import { Maintenance } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 /**
- * @description Validator for updating a subtask_library
+ * @description Validator for updating a maintenance
  */
-const UpdateSubtaskLibrarySchema = z.object({
-  task_activity: z.string().optional(),
-  description: z.string().optional(),
-  task_order: z.number().optional(),
-  updated_by: z.string(),
+const UpdateMaintenanceSchema = z.object({
+  date: z.date().optional(),
+  maintainee: z.string().optional(),
+  attachment_path: z.string().optional(),
+  approved_by: z.string().optional(),
+  approved_on: z.date().optional(),
 });
 
 /**
- * @description Type for updating an subtask_library
+ * @description Type for updating an maintenance
  */
-type UpdateSubtaskLibrary = z.infer<typeof UpdateSubtaskLibrarySchema> & {
-  updated_on: Date;
-};
+type UpdateMaintenance = z.infer<typeof UpdateMaintenanceSchema>;
 
 /**
  * This asynchronous function handles GET requests.
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the subtask_library.
+ * @param {string} id - The unique identifier of the maintenance.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the subtask_library.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the maintenance.
  */
 export async function GET(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
-  const uid = params.uid;
-  const subtaskLibrary = await db.subtaskLibrary.findUnique({
-    where: { uid },
-  });
+  const maintenance = fetchMaintenanceItem(params.id);
 
-  if (subtaskLibrary) {
+  if (maintenance) {
     return new NextResponse(
       JSON.stringify(
         ResponseMessage(
           200,
-          `Successfully fetched subtask library ${uid}!`,
-          subtaskLibrary,
+          `Successfully fetched maintenance ${params.id}!`,
+          maintenance,
         ),
       ),
       {
@@ -52,7 +50,9 @@ export async function GET(
     );
   } else {
     return new NextResponse(
-      JSON.stringify(ResponseMessage(404, `Subtask library ${uid} not found`)),
+      JSON.stringify(
+        ResponseMessage(404, `Maintenance ${params.id} not found`),
+      ),
       {
         status: 404,
         headers: { 'Content-Type': 'application/json' },
@@ -64,36 +64,33 @@ export async function GET(
 /**
  *
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the subtask_library.
+ * @param {string} id - The unique identifier of the maintenance.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the subtask_library.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the maintenance.
  */
 export async function PATCH(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   try {
-    const uid = params.uid;
+    const id = params.id;
     let json = await nextRequest.json();
 
-    const result = UpdateSubtaskLibrarySchema.safeParse(json);
+    const result = UpdateMaintenanceSchema.safeParse(json);
 
     if (result.success) {
-      const updateSubtaskLibraryValue: UpdateSubtaskLibrary = {
-        ...result.data,
-        updated_on: new Date(),
-      };
-      const updatedSubtaskLibrary = await db.subtaskLibrary.update({
-        where: { uid },
-        data: updateSubtaskLibraryValue,
+      const updateMaintenanceValue: UpdateMaintenance = result.data;
+      const updatedMaintenance: Maintenance = await db.maintenance.update({
+        where: { id },
+        data: updateMaintenanceValue,
       });
 
       return new NextResponse(
         JSON.stringify(
           ResponseMessage(
             200,
-            `Successfully updated subtask library ${updatedSubtaskLibrary.uid}`,
-            updatedSubtaskLibrary,
+            `Successfully updated maintenance ${id}`,
+            updatedMaintenance,
           ),
         ),
         {
@@ -123,7 +120,7 @@ export async function PATCH(
         JSON.stringify(
           ResponseMessage(
             404,
-            `Subtask library ${params.uid} not found.`,
+            `Maintenance ${params.id} not found.`,
             null,
             error.message,
           ),
@@ -148,22 +145,22 @@ export async function PATCH(
 /**
  *
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the subtask_library.
+ * @param {string} id - The unique identifier of the maintenance.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the subtask_library.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the maintenance.
  */
 export async function DELETE(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   try {
-    const uid = params.uid;
-    await db.subtaskLibrary.delete({
-      where: { uid },
+    const id = params.id;
+    await db.maintenance.delete({
+      where: { id },
     });
 
     return new NextResponse(
-      JSON.stringify(ResponseMessage(200, `Subtask library ${uid} deleted`)),
+      JSON.stringify(ResponseMessage(200, `Maintenance ${id} deleted`)),
       { status: 200, headers: { 'Content-Type': 'application/json' } },
     );
   } catch (error: any) {
@@ -172,7 +169,7 @@ export async function DELETE(
         JSON.stringify(
           ResponseMessage(
             404,
-            `Subtask library ${params.uid} not found`,
+            `Maintenance ${params.id} not found`,
             null,
             error.message,
           ),

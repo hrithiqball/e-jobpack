@@ -4,41 +4,47 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 /**
- * @description Validator for updating a task_use
+ * @description Validator for updating a task_library
  */
-const UpdateTaskUseSchema = z.object({
+const UpdateTaskLibrarySchema = z.object({
+  updated_by: z.string(),
   task_activity: z.string().optional(),
   description: z.string().optional(),
   task_order: z.number().optional(),
   have_subtask: z.boolean().optional(),
-  task_list_uid: z.string().optional(),
 });
 
 /**
- * @description Type for updating an task_use
+ * @description Type for updating an task_library
  */
-type UpdateTaskUse = z.infer<typeof UpdateTaskUseSchema>;
+type UpdateTaskLibrary = z.infer<typeof UpdateTaskLibrarySchema> & {
+  updated_on: Date;
+};
 
 /**
  * This asynchronous function handles GET requests.
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the task_use.
+ * @param {string} id - The unique identifier of the task_library.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the task_use.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the task_library.
  */
 export async function GET(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
-  const uid = params.uid;
-  const taskUse = await db.taskUse.findUnique({
-    where: { uid },
+  const id = params.id;
+  const taskLibrary = await db.taskLibrary.findUnique({
+    where: { id },
   });
 
-  if (taskUse) {
+  if (taskLibrary) {
     return new NextResponse(
       JSON.stringify(
-        ResponseMessage(200, `Successfully fetched task_use ${uid}!`, taskUse),
+        ResponseMessage(
+          200,
+          `Successfully fetched task_library ${id}!`,
+          taskLibrary,
+        ),
       ),
       {
         status: 200,
@@ -47,7 +53,7 @@ export async function GET(
     );
   } else {
     return new NextResponse(
-      JSON.stringify(ResponseMessage(404, `Task use ${uid} not found`)),
+      JSON.stringify(ResponseMessage(404, `Task library ${id} not found`)),
       {
         status: 404,
         headers: { 'Content-Type': 'application/json' },
@@ -59,33 +65,36 @@ export async function GET(
 /**
  *
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the task_use.
+ * @param {string} id - The unique identifier of the task_library.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the task_use.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the task_library.
  */
 export async function PATCH(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   try {
-    const uid = params.uid;
+    const id = params.id;
     let json = await nextRequest.json();
 
-    const result = UpdateTaskUseSchema.safeParse(json);
+    const result = UpdateTaskLibrarySchema.safeParse(json);
 
     if (result.success) {
-      const updateTaskUseValue: UpdateTaskUse = result.data;
-      const updatedTaskUse = await db.taskUse.update({
-        where: { uid },
-        data: updateTaskUseValue,
+      const updateTaskLibraryValue: UpdateTaskLibrary = {
+        ...result.data,
+        updated_on: new Date(),
+      };
+      const updatedTaskLibrary = await db.taskLibrary.update({
+        where: { id },
+        data: updateTaskLibraryValue,
       });
 
       return new NextResponse(
         JSON.stringify(
           ResponseMessage(
             200,
-            `Successfully updated task_use ${updatedTaskUse.uid}`,
-            updatedTaskUse,
+            `Successfully updated task_library ${updatedTaskLibrary.id}`,
+            updatedTaskLibrary,
           ),
         ),
         {
@@ -115,7 +124,7 @@ export async function PATCH(
         JSON.stringify(
           ResponseMessage(
             404,
-            `Task use ${params.uid} not found.`,
+            `Task library ${params.id} not found.`,
             null,
             error.message,
           ),
@@ -140,22 +149,22 @@ export async function PATCH(
 /**
  *
  * @param {NextRequest} nextRequest - The incoming HTTP request.
- * @param {string} uid - The unique identifier of the task_use.
+ * @param {string} id - The unique identifier of the task_library.
  *
- * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the task_use.
+ * @returns {Promise<NextResponse>} Returns a promise that resolves with the result of the operation on the task_library.
  */
 export async function DELETE(
   nextRequest: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   try {
-    const uid = params.uid;
-    await db.taskUse.delete({
-      where: { uid },
+    const id = params.id;
+    await db.taskLibrary.delete({
+      where: { id },
     });
 
     return new NextResponse(
-      JSON.stringify(ResponseMessage(200, `Task use ${uid} deleted`)),
+      JSON.stringify(ResponseMessage(200, `Task library ${id} deleted`)),
       { status: 200, headers: { 'Content-Type': 'application/json' } },
     );
   } catch (error: any) {
@@ -164,7 +173,7 @@ export async function DELETE(
         JSON.stringify(
           ResponseMessage(
             404,
-            `Task ${params.uid} not found`,
+            `Task library ${params.id} not found`,
             null,
             error.message,
           ),

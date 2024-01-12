@@ -1,7 +1,6 @@
 import { Prisma, Asset } from '@prisma/client';
 import { ResponseMessage } from '@/lib/function/result';
 import { NextRequest, NextResponse } from 'next/server';
-import moment from 'moment';
 import { db } from '@/lib/prisma/db';
 
 /**
@@ -113,9 +112,6 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
     if (assetRequest) {
       const req = {
         ...assetRequest,
-        uid: `ASSET-${moment().format('YYMMDDHHmmssSSS')}`,
-        updated_on: new Date(),
-        created_on: new Date(),
         updated_by: assetRequest.data.created_by,
       };
 

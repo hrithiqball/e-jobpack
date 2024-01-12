@@ -27,17 +27,19 @@ export async function fetchMaintenanceItem(id: string) {
 }
 
 export async function fetchMaintenanceList(
-  assetId?: string,
+  assetIds?: string,
 ): Promise<Maintenance[]> {
   try {
     const filters: Prisma.MaintenanceWhereInput[] = [];
     const orderBy: Prisma.MaintenanceOrderByWithRelationInput[] = [];
 
-    if (assetId) {
-      filters.push({
-        assetId,
-      });
-    }
+    console.log('assetIds actually used', assetIds);
+
+    // if (assetIds) {
+    //   filters.push({
+    //     assetIds ,
+    //   });
+    // }
 
     orderBy.push({
       date: 'desc',

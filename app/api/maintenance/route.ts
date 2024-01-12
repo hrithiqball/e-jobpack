@@ -21,7 +21,7 @@ const AddMaintenanceSchema = z.object({
  * @description Type for adding a new maintenance
  */
 type AddMaintenance = z.infer<typeof AddMaintenanceSchema> & {
-  uid: string;
+  id: string;
 };
 
 /**
@@ -36,19 +36,19 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
     const limit_str = nextRequest.nextUrl.searchParams.get('limit');
     const sort_by = nextRequest.nextUrl.searchParams.get('sort_by');
     const is_ascending = nextRequest.nextUrl.searchParams.get('is_ascending');
-    const asset_uid = nextRequest.nextUrl.searchParams.get('asset_uid');
+    // const assetIds = nextRequest.nextUrl.searchParams.get('assetIds');
 
     const filters: Prisma.MaintenanceWhereInput[] = [];
     const orderBy: Prisma.MaintenanceOrderByWithRelationInput[] = [];
 
-    if (asset_uid) {
-      filters.push({ asset_uid });
-    }
+    // if (assetIds) {
+    //   filters.push({ assetIds });
+    // }
 
     const page = page_str ? parseInt(page_str, 10) : 1;
     const limit = limit_str ? parseInt(limit_str, 10) : 10;
     const isAscending = !!is_ascending;
-    const sortBy = sort_by || 'uid';
+    const sortBy = sort_by || 'id';
     const skip = (page - 1) * limit;
 
     if (sortBy) {
@@ -63,7 +63,7 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
       }
     } else {
       orderBy.push({
-        uid: 'desc',
+        id: 'desc',
       });
     }
 
@@ -122,7 +122,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
     if (result.success) {
       const request: AddMaintenance = {
         ...result.data,
-        uid: `MT-${moment().format('YYMMDDHHmmssSSS')}`,
+        id: `MT-${moment().format('YYMMDDHHmmssSSS')}`,
       };
 
       const maintenance = await db.maintenance.create({
@@ -133,7 +133,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
         JSON.stringify(
           ResponseMessage(
             201,
-            `Maintenance ${maintenance.uid} has been successfully created`,
+            `Maintenance ${maintenance.id} has been successfully created`,
             maintenance,
           ),
         ),

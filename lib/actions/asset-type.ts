@@ -8,7 +8,7 @@ export async function fetchAssetTypeList(): Promise<AssetType[]> {
   try {
     return await db.assetType.findMany({
       orderBy: {
-        updated_on: 'desc',
+        updatedOn: 'desc',
       },
     });
   } catch (error) {
