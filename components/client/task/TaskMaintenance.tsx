@@ -55,10 +55,10 @@ import {
   ChevronDown,
   ChevronLeft,
   Contact2,
+  FileBox,
   FileDown,
   FileUp,
   MoreVertical,
-  PackageOpen,
   PackagePlus,
 } from 'lucide-react';
 import { createChecklist } from '@/lib/actions/checklist';
@@ -130,7 +130,6 @@ export default function TaskMaintenance({
         assetId: selectedAsset.currentKey,
         createdBy: user.data!.user.id,
         maintenanceId: maintenance.id,
-        title: 'My Checklist',
         description: newChecklistDescription,
       }).then(() => {
         console.log(isPending);
@@ -294,7 +293,7 @@ export default function TaskMaintenance({
 
           if (!taskListResult.data) return;
 
-          worksheet.addRow([checklist.title]);
+          worksheet.addRow([checklist.assetId]);
           rowTracker++;
           worksheet.getRow(rowTracker).font = {
             name: 'Calibri',
@@ -550,7 +549,7 @@ export default function TaskMaintenance({
         exportToExcel();
         break;
       case 'mark-complete':
-        //TODO enable mark complete
+        //TODO priority enable mark complete
         break;
       default:
         break;
@@ -591,8 +590,8 @@ export default function TaskMaintenance({
                   Add Asset
                 </DropdownItem>
                 <DropdownItem
-                  key="edit-asset"
-                  startContent={<PackageOpen size={18} />}
+                  key="edit-maintenance"
+                  startContent={<FileBox size={18} />}
                 >
                   Edit Asset
                 </DropdownItem>
@@ -610,10 +609,11 @@ export default function TaskMaintenance({
                 </DropdownItem>
                 <DropdownItem
                   key="mark-complete"
+                  className="text-success"
                   color="success"
                   startContent={<CheckCircle2 size={18} />}
                 >
-                  Mark as complete
+                  Mark as Complete
                 </DropdownItem>
               </DropdownMenu>
             ))}
@@ -632,10 +632,11 @@ export default function TaskMaintenance({
             </DropdownItem>
             <DropdownItem
               key="mark-complete"
+              className="text-success"
               color="success"
               startContent={<CheckCircle2 size={18} />}
             >
-              Mark as complete
+              Mark as Complete
             </DropdownItem>
           </DropdownMenu>
         </Dropdown>

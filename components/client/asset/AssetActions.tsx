@@ -10,16 +10,17 @@ import {
 import {
   FileBox,
   FilePlus2,
+  ImagePlus,
   MoreVertical,
   PackageCheck,
   PackageMinus,
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 import TaskAdd from '@/components/client/task/TaskAdd';
-import { useCurrentRole } from '@/hooks/use-current-role';
 import { updateChecklist } from '@/lib/actions/checklist';
+import { useCurrentRole } from '@/hooks/use-current-role';
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { toast } from 'sonner';
 
 interface AssetActionsProps {
   checklist: Checklist;
@@ -100,6 +101,13 @@ export default function AssetActions({ checklist }: AssetActionsProps) {
             startContent={<FilePlus2 size={18} />}
           >
             Add Task
+          </DropdownItem>
+          <DropdownItem
+            key="add-attachment"
+            variant="faded"
+            startContent={<ImagePlus size={18} />}
+          >
+            Add Attachment
           </DropdownItem>
           <DropdownItem
             key="import-checklist"

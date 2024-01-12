@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useTheme } from 'next-themes';
-import clientIcon from '@/public/image/client-icon.svg';
 import {
   Navbar,
   NavbarBrand,
@@ -20,18 +19,21 @@ import {
   Dropdown,
   DropdownItem,
 } from '@nextui-org/react';
-import { CircleUserRound, Moon, Sun } from 'lucide-react';
+import { CircleUserRound, DoorOpen, Moon, Sun } from 'lucide-react';
+
 import { useCurrentRole } from '@/hooks/use-current-role';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { logout } from '@/lib/actions/logout';
+import clientIcon from '@/public/image/client-icon.svg';
 
 export default function Navigation() {
   const { theme, setTheme } = useTheme();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const role = useCurrentRole();
   const user = useCurrentUser();
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const navLinks = [
     { href: '/dashboard', label: 'Dashboard' },
@@ -126,8 +128,18 @@ export default function Navigation() {
             </DropdownMenu>
           ) : (
             <DropdownMenu aria-label="Profile Actions" variant="faded">
-              <DropdownItem key="account">My Account</DropdownItem>
-              <DropdownItem color="danger" key="sign-out" onClick={onClick}>
+              <DropdownItem
+                key="account"
+                startContent={<CircleUserRound size={18} />}
+              >
+                My Account
+              </DropdownItem>
+              <DropdownItem
+                color="danger"
+                key="sign-out"
+                startContent={<DoorOpen size={18} />}
+                onClick={onClick}
+              >
                 Sign Out
               </DropdownItem>
             </DropdownMenu>
