@@ -1,6 +1,6 @@
 import { ResponseMessage } from '@/lib/function/result';
 import { db } from '@/lib/prisma/db';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { NextRequest, NextResponse } from 'next/server';
 import z from 'zod';
 
@@ -81,7 +81,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
     if (result.success) {
       const request: AddHistory = {
         ...result.data,
-        uid: `H-${moment().format('YYMMDDHHmmssSSS')}`,
+        uid: `H-${dayjs().format('YYMMDDHHmmssSSS')}`,
         created_on: new Date(),
         action_on: new Date(),
       };

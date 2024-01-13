@@ -14,12 +14,12 @@ import {
   SelectItem,
 } from '@nextui-org/react';
 import { TaskType, Task, Checklist } from '@prisma/client';
-import moment from 'moment';
 import { selectionChoices } from '@/public/utils/task-type-options';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Trash2 } from 'lucide-react';
 import { createTask } from '@/lib/actions/task';
+import dayjs from 'dayjs';
 
 interface TaskAddProps {
   checklist: Checklist;
@@ -72,7 +72,7 @@ export default function TaskAdd({ checklist, open, setOpen }: TaskAddProps) {
 
   function addTaskClient() {
     const taskAdd: Task = {
-      id: `TK-${moment().format('YYMMDDHHmmssSSS')}`,
+      id: `TK-${dayjs().format('YYMMDDHHmmssSSS')}`,
       checklistId: checklist.id,
       taskActivity: taskActivity,
       description: taskDescription,

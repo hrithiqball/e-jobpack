@@ -2,8 +2,8 @@ import { Prisma } from '@prisma/client';
 import { ResponseMessage } from '@/lib/function/result';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import moment from 'moment';
 import { db } from '@/lib/prisma/db';
+import dayjs from 'dayjs';
 
 /**
  * @description Validate the request body for adding a new subtask
@@ -117,7 +117,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
     if (result.success) {
       const request: AddSubtask = {
         ...result.data,
-        id: `CL-${moment().format('YYMMDDHHmmssSSS')}`,
+        id: `CL-${dayjs().format('YYMMDDHHmmssSSS')}`,
         isComplete: false,
         completedBy: null,
       };

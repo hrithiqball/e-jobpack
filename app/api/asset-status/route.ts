@@ -1,7 +1,7 @@
 import { ResponseMessage } from '@/lib/function/result';
 import { db } from '@/lib/prisma/db';
 import { AssetStatus } from '@prisma/client';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { NextRequest, NextResponse } from 'next/server';
 import z from 'zod';
 
@@ -75,7 +75,7 @@ export async function POST(nextRequest: NextRequest) {
     if (result.success) {
       const req: AddAssetStatus = {
         ...result.data,
-        id: `ASTATUS-${moment().format('YYMMDDHHmmssSSS')}`,
+        id: `ASTATUS-${dayjs().format('YYMMDDHHmmssSSS')}`,
       };
 
       const assetStatus: AssetStatus = await db.assetStatus.create({
