@@ -10,10 +10,10 @@ import { db } from '@/lib/prisma/db';
  */
 const AddChecklistUseSchema = z.object({
   title: z.string(),
-  asset_uid: z.string(),
+  assetId: z.string(),
   description: z.string().optional(),
   icon: z.string().optional(),
-  created_by: z.string(),
+  createdBy: z.string(),
 });
 
 export type AddChecklistUseClient = z.infer<typeof AddChecklistUseSchema>;
@@ -23,9 +23,9 @@ export type AddChecklistUseClient = z.infer<typeof AddChecklistUseSchema>;
  */
 type AddChecklistUse = z.infer<typeof AddChecklistUseSchema> & {
   id: string;
-  updated_on: Date;
-  created_on: Date;
-  updated_by: string;
+  updatedOn: Date;
+  createdOn: Date;
+  updatedBy: string;
 };
 
 /**
@@ -87,9 +87,9 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
       const request: AddChecklistUse = {
         ...result.data,
         id: `CLUSE-${moment().format('YYMMDDHHmmssSSS')}`,
-        updated_on: new Date(),
-        created_on: new Date(),
-        updated_by: result.data.created_by,
+        updatedOn: new Date(),
+        createdOn: new Date(),
+        updatedBy: result.data.createdBy,
       };
 
       const checklistUse: ChecklistUse = await db.checklistUse.create({
