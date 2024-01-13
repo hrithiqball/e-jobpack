@@ -1,3 +1,10 @@
+# [2.2.0](https://github.com/hrithiqball/e-jobpack/compare/v2.1.0...v2.2.0) (2024-01-13)
+
+
+### Features
+
+* add TRPC server and client, update asset page ([e8cb49d](https://github.com/hrithiqball/e-jobpack/commit/e8cb49d9a5cc380c7084e5fca5c43e0610fc69c4))
+
 # [2.1.0](https://github.com/hrithiqball/asset-management-app/compare/v2.0.0...v2.1.0) (2024-01-13)
 
 
