@@ -1,28 +1,10 @@
 import React from 'react';
-import { CategoryScale, Chart as ChartJS } from 'chart.js/auto';
-import RecentActivity from './RecentActivity';
-import OverviewGraph from './OverviewGraph';
-import MaintenanceRequestWidget from './MaintenanceRequestWidget';
-// import { Bar } from 'react-chartjs-2';
-// import { Data } from '@/public/utils/dummy-data';
 
-ChartJS.register(CategoryScale);
+import RecentActivity from '@/components/client/dashboard/RecentActivity';
+import OverviewGraph from '@/components/client/dashboard/OverviewGraph';
+import MaintenanceRequestWidget from '@/components/client/dashboard/MaintenanceRequestWidget';
 
 export default function Overview() {
-  // const [chartData, setChartData] = useState({
-  //   labels: Data.map(data => data.year),
-  //   backgroundColor: 'rgba(255, 99, 132, 0.2)',
-  //   datasets: [
-  //     {
-  //       label: 'Maintenance Completed',
-  //       data: Data.map(data => data.userGain),
-  //       backgroundColor: ['#2a71d0', '#50AF95', '#f3ba2f'],
-  //       borderColor: 'black',
-  //       borderWidth: 2,
-  //     },
-  //   ],
-  // });
-
   return (
     <div className="flex grow h-full w-full">
       <div className="flex flex-col w-4/5">
