@@ -10,7 +10,7 @@ import React, {
   Fragment,
 } from 'react';
 import { useRouter } from 'next/navigation';
-import { Asset, AssetStatus, AssetType } from '@prisma/client';
+import { AssetStatus, AssetType } from '@prisma/client';
 import { useSession } from 'next-auth/react';
 
 import {
@@ -37,19 +37,23 @@ import { PackagePlus } from 'lucide-react';
 
 import { createAsset } from '@/lib/actions/asset';
 import Loading from '@/components/client/Loading';
+import { serverClient } from '@/app/_trpc/serverClient';
 
-export default function AssetList({
-  assetList,
-  assetTypeList,
-  assetStatusList,
-}: {
-  assetList: Asset[];
+interface AssetListProps {
+  assetList2: Awaited<ReturnType<(typeof serverClient)['getAssets']>>;
   assetTypeList: AssetType[];
   assetStatusList: AssetStatus[];
-}) {
+}
+
+export default function AssetList({
+  assetList2,
+  assetTypeList,
+  assetStatusList,
+}: AssetListProps) {
   let [isPending, startTransition] = useTransition();
   const { data: session } = useSession();
   const router = useRouter();
+
   const [mounted, setMounted] = useState(false);
   const [openAddAsset, setOpenAddAsset] = useState(false);
   const [newAssetName, setNewAssetName] = useState('');
@@ -67,52 +71,57 @@ export default function AssetList({
     setNewAssetStatus(e.currentKey);
   }
 
-  const renderCell = useCallback((asset: Asset, columnKey: Key) => {
-    const cellValue = asset[columnKey as keyof Asset];
+  const renderCell = useCallback(
+    (asset: (typeof assetList2)[0], columnKey: Key) => {
+      const cellValue = asset[columnKey as keyof (typeof assetList2)[0]];
 
-    switch (columnKey) {
-      case 'type':
-        return (
-          <span>
-            {asset.type === null || asset.type === ''
-              ? 'Not Specified'
-              : asset.type}
-          </span>
-        );
-      case 'description':
-        return (
-          <span>
-            {asset.description === null || asset.description === ''
-              ? 'No description'
-              : asset.description}
-          </span>
-        );
-      case 'location':
-        return (
-          <span>
-            {asset.location === null || asset.location === ''
-              ? 'Not specified'
-              : asset.location}
-          </span>
-        );
-      case 'person-in-charge':
-        return (
-          <User
-            name="Junior Garcia"
-            description={
-              <Link href="https://twitter.com/jrgarciadev" size="sm" isExternal>
-                @harith
-              </Link>
-            }
-            avatarProps={{
-              src: 'https://avatars.githubusercontent.com/u/30373425?v=4',
-            }}
-          />
-        );
-      default:
-        return cellValue;
-    }
-  }, []);
+      switch (columnKey) {
+        case 'type':
+          return (
+            <span>
+              {asset.type === null ? 'Not Specified' : asset.type.title}
+            </span>
+          );
+        case 'description':
+          return (
+            <span>
+              {asset.description === null || asset.description === ''
+                ? 'No description'
+                : asset.description}
+            </span>
+          );
+        case 'location':
+          return (
+            <span>
+              {asset.location === null || asset.location === ''
+                ? 'Not specified'
+                : asset.location}
+            </span>
+          );
+        case 'person-in-charge':
+          return (
+            <User
+              name="Junior Garcia"
+              description={
+                <Link
+                  href="https://twitter.com/jrgarciadev"
+                  size="sm"
+                  isExternal
+                >
+                  @harith
+                </Link>
+              }
+              avatarProps={{
+                src: 'https://avatars.githubusercontent.com/u/30373425?v=4',
+              }}
+            />
+          );
+        default:
+          return cellValue;
+      }
+    },
+    [],
+  );
 
   function handleAddAsset() {
     if (session?.user.id === undefined || session?.user.id === null) {
@@ -144,7 +153,7 @@ export default function AssetList({
   }
 
   function handleRowAction(key: Key) {
-    const asset = assetList.find(asset => asset.id === key);
+    const asset = assetList2.find(asset => asset.id === key);
 
     router.push(`/asset/${asset?.id}`);
   }
@@ -285,12 +294,12 @@ export default function AssetList({
               <TableColumn key="location">Location</TableColumn>
               <TableColumn key="person-in-charge">Person In Charge</TableColumn>
             </TableHeader>
-            <TableBody items={assetList}>
-              {(item: Asset) => (
-                <TableRow key={item.id}>
+            <TableBody items={assetList2}>
+              {asset => (
+                <TableRow key={asset.id}>
                   {columnKey => (
                     <TableCell>
-                      {renderCell(item, columnKey) as ReactNode}
+                      {renderCell(asset, columnKey) as ReactNode}
                     </TableCell>
                   )}
                 </TableRow>

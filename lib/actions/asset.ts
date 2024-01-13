@@ -43,22 +43,6 @@ export async function fetchAssetList() {
 
     revalidatePath('/asset');
     return assetList;
-
-    // @abbas solution
-    // return cache(
-    //   async () => {
-    //     return await db.asset.findMany({
-    //       orderBy: {
-    //         name: 'asc',
-    //       },
-    //     });
-    //   },
-    //   ['fetchAssetList'],
-    //   { revalidate: 3600, tags: ['fetchAssetList'] },
-    // )();
-
-    // revalidatePath('/asset');
-    // return assetList;
   } catch (error) {
     console.error(error);
     return [];

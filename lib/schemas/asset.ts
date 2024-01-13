@@ -14,3 +14,5 @@ export const CreateAsset = z.object({
   tag: z.string().optional(),
   statusId: z.string().optional(),
 });
+
+export const UpdateAsset = '';
