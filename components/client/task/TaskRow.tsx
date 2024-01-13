@@ -2,6 +2,7 @@
 
 import React, { Key, useEffect, useMemo, useState, useTransition } from 'react';
 import { Task } from '@prisma/client';
+
 import {
   Button,
   Checkbox,
@@ -15,17 +16,23 @@ import {
   Switch,
   Textarea,
 } from '@nextui-org/react';
-import { UpdateTask } from '@/app/api/task/[id]/route';
-import { toast } from 'sonner';
 import {
   ClipboardX,
   MessageCircleWarning,
   MoreVertical,
   PencilLine,
 } from 'lucide-react';
+
+import { toast } from 'sonner';
+
+import { UpdateTask } from '@/app/api/task/[id]/route';
 import { deleteTask, updateTask } from '@/lib/actions/task';
 
-export default function TaskRow({ task }: { task: Task }) {
+interface TaskRowProps {
+  task: Task;
+}
+
+export default function TaskRow({ task }: TaskRowProps) {
   let [isPending, startTransition] = useTransition();
   const [taskActivity, setTaskActivity] = useState(task.taskActivity);
   const [taskDescription, setTaskDescription] = useState(task.description);

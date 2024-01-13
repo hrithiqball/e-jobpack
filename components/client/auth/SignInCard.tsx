@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useTransition } from 'react';
+import { useSearchParams } from 'next/navigation';
+
 import {
   Card,
   Button,
@@ -10,9 +12,9 @@ import {
   Divider,
   Link,
 } from '@nextui-org/react';
-import { useSearchParams } from 'next/navigation';
-import { login } from '@/lib/actions/login';
 import { toast } from 'sonner';
+
+import { login } from '@/lib/actions/login';
 
 export default function SignInCard() {
   let [isPending, startTransition] = useTransition();

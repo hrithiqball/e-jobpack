@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-
-import { Card } from '@nextui-org/react';
-import { defaults } from 'chart.js/auto';
 import { Bar, Doughnut } from 'react-chartjs-2';
+import { defaults } from 'chart.js/auto';
 
 import { useTheme } from 'next-themes';
+import { Card } from '@nextui-org/react';
+
 import { AssetStatus, MaintenanceCompleted } from '@/public/utils/dummy-data';
 
 defaults.maintainAspectRatio = false;

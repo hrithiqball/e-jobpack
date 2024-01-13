@@ -4,7 +4,11 @@ import { Task } from '@prisma/client';
 import TaskItem from '@/components/server/TaskItem';
 import TaskHeader from '@/components/client/task/TaskHeader';
 
-export default function TaskList({ taskList }: { taskList: Task[] }) {
+interface TaskListProps {
+  taskList: Task[];
+}
+
+export default function TaskList({ taskList }: TaskListProps) {
   return (
     <Fragment>
       {taskList.length ? (

@@ -1,15 +1,16 @@
 'use client';
 
-import { NextUIProvider } from '@nextui-org/react';
-import { ThemeProvider as NextThemeProvider } from 'next-themes';
-import { SessionProvider } from 'next-auth/react';
 import { PropsWithChildren } from 'react';
+
+import { SessionProvider } from 'next-auth/react';
+import { NextUIProvider } from '@nextui-org/react';
+import { ThemeProvider } from 'next-themes';
 
 export function Providers({ children }: PropsWithChildren) {
   return (
     <SessionProvider>
       <NextUIProvider>
-        <NextThemeProvider attribute="class">{children}</NextThemeProvider>
+        <ThemeProvider attribute="class">{children}</ThemeProvider>
       </NextUIProvider>
     </SessionProvider>
   );

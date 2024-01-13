@@ -6,11 +6,13 @@ import TaskList from '@/components/server/TaskList';
 import { fetchTaskList } from '@/lib/actions/task';
 import { fetchAssetItem } from '@/lib/actions/asset';
 
+interface MaintenanceChecklistProps {
+  checklist: Checklist;
+}
+
 export default async function MaintenanceChecklist({
   checklist,
-}: {
-  checklist: Checklist;
-}) {
+}: MaintenanceChecklistProps) {
   const taskList = await fetchTaskList(checklist.id);
   const asset = await fetchAssetItem(checklist.assetId);
 

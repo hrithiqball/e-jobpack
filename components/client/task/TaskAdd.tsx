@@ -1,6 +1,10 @@
 'use client';
 
 import React, { Fragment, useState, useTransition } from 'react';
+import { TaskType, Task, Checklist } from '@prisma/client';
+import { useRouter } from 'next/navigation';
+import dayjs from 'dayjs';
+
 import {
   Button,
   Checkbox,
@@ -13,13 +17,11 @@ import {
   Select,
   SelectItem,
 } from '@nextui-org/react';
-import { TaskType, Task, Checklist } from '@prisma/client';
-import { selectionChoices } from '@/public/utils/task-type-options';
-import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Trash2 } from 'lucide-react';
+
 import { createTask } from '@/lib/actions/task';
-import dayjs from 'dayjs';
+import { selectionChoices } from '@/public/utils/task-type-options';
 
 interface TaskAddProps {
   checklist: Checklist;

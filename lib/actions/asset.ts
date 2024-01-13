@@ -43,25 +43,54 @@ export async function fetchAssetList() {
 
     revalidatePath('/asset');
     return assetList;
-
-    // @abbas solution
-    // return cache(
-    //   async () => {
-    //     return await db.asset.findMany({
-    //       orderBy: {
-    //         name: 'asc',
-    //       },
-    //     });
-    //   },
-    //   ['fetchAssetList'],
-    //   { revalidate: 3600, tags: ['fetchAssetList'] },
-    // )();
-
-    // revalidatePath('/asset');
-    // return assetList;
   } catch (error) {
     console.error(error);
     return [];
+  }
+}
+
+export async function fetchMutatedAssetList() {
+  try {
+    const assetList = await db.asset.findMany({
+      orderBy: {
+        name: 'asc',
+      },
+    });
+
+    const mutatedAssetList = await Promise.all(
+      assetList.map(async asset => {
+        let status = null;
+        let type = null;
+
+        if (asset.statusId !== null) {
+          status = await db.assetStatus.findFirst({
+            where: {
+              id: asset.statusId,
+            },
+          });
+        }
+
+        if (asset.type !== null) {
+          type = await db.assetType.findFirst({
+            where: {
+              id: asset.type,
+            },
+          });
+        }
+
+        return {
+          ...asset,
+          status: status,
+          type: type,
+        };
+      }),
+    );
+
+    revalidatePath('/asset');
+    return mutatedAssetList;
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
 }
 

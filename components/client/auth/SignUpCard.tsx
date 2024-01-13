@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
+
 import {
   Button,
   Card,
@@ -10,7 +12,6 @@ import {
   Input,
   Link,
 } from '@nextui-org/react';
-import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { createUser } from '@/lib/actions/user';
