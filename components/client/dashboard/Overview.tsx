@@ -21,10 +21,10 @@ export default function Overview() {
   // });
 
   return (
-    <div className="flex h-full w-full">
-      <div className="flex-col w-4/5">
-        <div className="bg-blue-500 p-4">Left Box 1</div>
-        <div className="bg-green-500 p-4">Left Box 2</div>
+    <div className="flex grow h-full w-full">
+      <div className="flex flex-col w-4/5">
+        <div className="flex-1 bg-blue-500 p-4">Left Box 1</div>
+        <div className="flex-1 bg-green-500 p-4">Left Box 2</div>
       </div>
       <div className="w-1/5 bg-red-500 p-4">Right Box</div>
     </div>
