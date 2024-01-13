@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 
 import {
   Card,
@@ -12,7 +13,6 @@ import {
   User,
 } from '@nextui-org/react';
 import { Calendar, ClipboardCheck, ExternalLink } from 'lucide-react';
-import Link from 'next/link';
 
 export default function MaintenanceRequestWidget() {
   return (
