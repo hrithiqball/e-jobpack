@@ -29,8 +29,8 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
   if (!mounted) return <Loading label="Hang on tight" />;
 
   return (
-    <div className="flex rounded-md flex-grow">
-      <div className="flex flex-col space-y-4 h-full w-full sm:flex-row sm:space-y-0 sm:space-x-4">
+    <div className="flex flex-col flex-1 rounded-md flex-grow">
+      <div className="flex flex-1 flex-col space-y-4 h-full w-full sm:flex-row sm:space-y-0 sm:space-x-4">
         <Card className="flex-1 p-4 w-100">
           <div>
             <div className="space-x-4 items-center flex justify-center mb-4">

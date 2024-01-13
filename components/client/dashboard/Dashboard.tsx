@@ -19,6 +19,7 @@ export default function Dashboard() {
   return (
     <div className="flex grow flex-col space-y-4 h-full">
       <Tabs
+        size="sm"
         radius="md"
         color="primary"
         aria-label="Tabs radius"

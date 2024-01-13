@@ -1,8 +1,8 @@
 import { ResponseMessage } from '@/lib/function/result';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import moment from 'moment';
 import { db } from '@/lib/prisma/db';
+import dayjs from 'dayjs';
 
 /**
  * @description Validate the request body for adding a new subtask_library
@@ -80,7 +80,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
     if (result.success) {
       const request: AddSubtaskLibrary = {
         ...result.data,
-        id: `ST-${moment().format('YYMMDDHHmmssSSS')}`,
+        id: `ST-${dayjs().format('YYMMDDHHmmssSSS')}`,
         updatedBy: result.data.createdBy,
       };
 

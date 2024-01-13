@@ -1,7 +1,7 @@
 import React from 'react';
 
 import RecentActivity from '@/components/client/dashboard/RecentActivity';
-import OverviewGraph from '@/components/client/dashboard/GraphWidget';
+import GraphWidget from '@/components/client/dashboard/GraphWidget';
 import MaintenanceRequestWidget from '@/components/client/dashboard/MaintenanceRequestWidget';
 
 export default function Overview() {
@@ -9,7 +9,7 @@ export default function Overview() {
     <div className="flex grow h-full w-full">
       <div className="flex flex-col w-4/5">
         <div className="flex flex-1 p-2">
-          <OverviewGraph />
+          <GraphWidget />
         </div>
         <div className="flex flex-1 p-2">
           <MaintenanceRequestWidget />
