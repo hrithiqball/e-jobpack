@@ -9,6 +9,7 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'eJobpack',
   description: 'A digital asset management system solution for your business.',
+  icons: { icon: '/app/favicon.ico' },
 };
 
 export default async function RootLayout({
