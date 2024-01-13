@@ -1,12 +1,15 @@
 'use server';
 
+import {
+  unstable_cache as cache,
+  unstable_noStore as noStore,
+} from 'next/cache';
 import { Asset } from '@prisma/client';
 import dayjs from 'dayjs';
 import z from 'zod';
 
 import { db } from '@/lib/prisma/db';
 import { CreateAsset } from '@/lib/schemas/asset';
-import { revalidatePath } from 'next/cache';
 
 export async function createAsset(
   values: z.infer<typeof CreateAsset>,
@@ -17,6 +20,8 @@ export async function createAsset(
     if (!validatedFields.success) {
       throw new Error(validatedFields.error.message);
     }
+
+    if (validatedFields.data.type === '') validatedFields.data.type = null;
 
     return await db.asset.create({
       data: {
@@ -31,7 +36,7 @@ export async function createAsset(
   }
 }
 
-export async function fetchAssetList(): Promise<Asset[]> {
+export async function fetchAssetList() {
   try {
     const assetList = await db.asset.findMany({
       orderBy: {
@@ -39,8 +44,23 @@ export async function fetchAssetList(): Promise<Asset[]> {
       },
     });
 
-    revalidatePath('/asset');
     return assetList;
+
+    // @abbas solution
+    // return cache(
+    //   async () => {
+    //     return await db.asset.findMany({
+    //       orderBy: {
+    //         name: 'asc',
+    //       },
+    //     });
+    //   },
+    //   ['fetchAssetList'],
+    //   { revalidate: 3600, tags: ['fetchAssetList'] },
+    // )();
+
+    // revalidatePath('/asset');
+    // return assetList;
   } catch (error) {
     console.error(error);
     return [];

@@ -52,6 +52,8 @@ export async function fetchMaintenanceList(
     const filters: Prisma.MaintenanceWhereInput[] = [];
     const orderBy: Prisma.MaintenanceOrderByWithRelationInput[] = [];
 
+    console.log(assetIds);
+
     // if (assetIds) {
     //   filters.push({
     //     assetIds ,
