@@ -1,3 +1,33 @@
+# [2.0.0](https://github.com/hrithiqball/asset-management-app/compare/v1.1.0...v2.0.0) (2024-01-13)
+
+
+### Bug Fixes
+
+* able to redirect to dashboard after sign in ([a107eea](https://github.com/hrithiqball/asset-management-app/commit/a107eeab69667a6caff6bc361c21ba547ab21222))
+
+
+### chore
+
+* removed redux, added react email ([44326fc](https://github.com/hrithiqball/asset-management-app/commit/44326fc1c4bbd5f04568afd7d40ff75cf847d877))
+
+
+### Features
+
+* added asset as an option in maintenance ([2b42345](https://github.com/hrithiqball/asset-management-app/commit/2b423450346c40f76e250d7ae49230c7384e4f02))
+* added db migration for dev environment ([19eef10](https://github.com/hrithiqball/asset-management-app/commit/19eef109192b3ba78c8ce07f7fb1e9b07203cc7f))
+* added spell checking script ([fcc5061](https://github.com/hrithiqball/asset-management-app/commit/fcc50616f952866ce6dae2085abe63656712fbd3))
+* auth and revalidate task maintenance page ([5e000a4](https://github.com/hrithiqball/asset-management-app/commit/5e000a4d195e538dd91beb740e183c25f3bd8c2d))
+* can close a checklist ([6dd0b07](https://github.com/hrithiqball/asset-management-app/commit/6dd0b07c8ef665e80b880c636f7a3014b4eff9ec))
+* implemented asset as property for checklist ([8b9dbb9](https://github.com/hrithiqball/asset-management-app/commit/8b9dbb9e16f20a1afe72322f241788df9924fcc9))
+* implemented auth server sided ([4c899be](https://github.com/hrithiqball/asset-management-app/commit/4c899be9473a125b9eb1ea3462a9b2177a07b893))
+
+
+### BREAKING CHANGES
+
+* updated user db column
+* using next-auth-v5(beta)
+* mapped every table to capital letter for types in typescript mapping conventional name
+
 # [1.1.0](https://github.com/hrithiqball/asset-management-app/compare/v1.0.0...v1.1.0) (2023-12-28)
 
 ### Features
