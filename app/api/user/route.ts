@@ -1,6 +1,6 @@
-import { prisma } from '@/prisma/prisma';
-import { ResponseMessage } from '@/utils/function/result';
-import { Prisma, user } from '@prisma/client';
+import { ResponseMessage } from '@/lib/function/result';
+import { db } from '@/lib/prisma/db';
+import { Prisma } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
@@ -17,8 +17,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const sort_by = request.nextUrl.searchParams.get('sort_by');
   const is_ascending = request.nextUrl.searchParams.get('is_ascending');
 
-  const filters: Prisma.userWhereInput[] = [];
-  const orderBy: Prisma.userOrderByWithRelationInput[] = [];
+  const filters: Prisma.UserWhereInput[] = [];
+  const orderBy: Prisma.UserOrderByWithRelationInput[] = [];
 
   const page = page_str ? parseInt(page_str, 10) : 1;
   const limit = limit_str ? parseInt(limit_str, 10) : 10;
@@ -38,11 +38,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
   } else {
     orderBy.push({
-      updated_at: 'desc',
+      updatedAt: 'desc',
     });
   }
 
-  const users: user[] = await prisma.user.findMany({
+  const users = await db.user.findMany({
     skip,
     take: limit,
     orderBy: orderBy,

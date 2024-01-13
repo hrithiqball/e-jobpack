@@ -1,20 +1,20 @@
-import { Prisma, task_use } from '@prisma/client';
-import { prisma } from '@/prisma/prisma';
-import { ResponseMessage } from '@/utils/function/result';
+import { Prisma } from '@prisma/client';
+import { ResponseMessage } from '@/lib/function/result';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import moment from 'moment';
+import { db } from '@/lib/prisma/db';
 
 /**
  * @description Validate the request body for adding a new task_use
  */
 const AddTaskUseSchema = z.object({
-  task_activity: z.string(),
+  taskActivity: z.string(),
   description: z.string().optional(),
-  task_order: z.number(),
-  have_subtask: z.boolean(),
-  checklist_use_uid: z.string(),
-  task_library_uid: z.string().optional(),
+  taskOrder: z.number(),
+  haveSubtask: z.boolean(),
+  checklistUseId: z.string(),
+  taskLibraryId: z.string().optional(),
 });
 
 export type AddTaskUseClient = Omit<
@@ -28,7 +28,7 @@ export type AddTaskUseServer = z.infer<typeof AddTaskUseSchema>;
  * @description Type for adding a new task_use
  */
 type AddTaskUse = z.infer<typeof AddTaskUseSchema> & {
-  uid: string;
+  id: string;
 };
 
 /**
@@ -44,14 +44,14 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
     const sort_by = nextRequest.nextUrl.searchParams.get('sortBy');
     const is_ascending = nextRequest.nextUrl.searchParams.get('isAscending');
 
-    const checklistUid =
-      nextRequest.nextUrl.searchParams.get('checklistUseUid');
+    const checklistUseId =
+      nextRequest.nextUrl.searchParams.get('checklistUseId');
 
-    const filters: Prisma.task_useWhereInput[] = [];
-    const orderBy: Prisma.task_useOrderByWithRelationInput[] = [];
+    const filters: Prisma.TaskUseWhereInput[] = [];
+    const orderBy: Prisma.TaskUseOrderByWithRelationInput[] = [];
 
-    if (checklistUid) {
-      filters.push({ checklist_use_uid: checklistUid });
+    if (checklistUseId) {
+      filters.push({ checklistUseId });
     }
 
     const page = page_str ? parseInt(page_str, 10) : 1;
@@ -66,11 +66,11 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
       orderBy.push({ [sortBy]: 'desc' });
     }
 
-    const tasks: task_use[] = await prisma.task_use.findMany({
+    const tasks = await db.taskUse.findMany({
       skip,
       take: limit,
       orderBy: {
-        task_order: 'asc',
+        taskOrder: 'asc',
       },
       where: {
         AND: filters,
@@ -123,18 +123,16 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
 
     const result = AddTaskUseSchema.safeParse(json);
     if (result.success) {
-      result.data.task_library_uid =
-        result.data.task_library_uid == ''
-          ? undefined
-          : result.data.task_library_uid;
+      result.data.taskLibraryId =
+        result.data.taskLibraryId == '' ? undefined : result.data.taskLibraryId;
       const request: AddTaskUse = {
         ...result.data,
-        uid: `TSUSE-${moment().format('YYMMDDHHmmssSSS')}`,
+        id: `TSUSE-${moment().format('YYMMDDHHmmssSSS')}`,
       };
 
       console.log(request);
 
-      const taskUse: task_use = await prisma.task_use.create({
+      const taskUse = await db.taskUse.create({
         data: request,
       });
 
@@ -144,7 +142,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
         JSON.stringify(
           ResponseMessage(
             201,
-            `Task ${taskUse.uid} has been successfully created`,
+            `Task ${taskUse.id} has been successfully created`,
             taskUse,
           ),
         ),

@@ -1,9 +1,9 @@
-import { asset_tags_library } from '@prisma/client';
-import { prisma } from '@/prisma/prisma';
-import { ResponseMessage } from '@/utils/function/result';
+import { AssetTagLibrary } from '@prisma/client';
+import { ResponseMessage } from '@/lib/function/result';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import moment from 'moment';
+import { db } from '@/lib/prisma/db';
 
 /**
  * @description Validate the request body for adding a new asset-tags from library
@@ -11,18 +11,16 @@ import moment from 'moment';
 const AddAssetTagsLibrarySchema = z.object({
   title: z.string(),
   color: z.string().optional(),
-  asset_tags_library_uid: z.string(),
-  created_by: z.string(),
+  assetTagsLibraryId: z.string(),
+  createdBy: z.string(),
 });
 
 /**
  * @description Type for adding a new asset-tags from library
  */
 type AddAssetTagsLibrary = z.infer<typeof AddAssetTagsLibrarySchema> & {
-  uid: string;
-  created_on: Date;
-  updated_by: string;
-  updated_on: Date;
+  id: string;
+  updatedBy: string;
 };
 
 /**
@@ -33,8 +31,8 @@ type AddAssetTagsLibrary = z.infer<typeof AddAssetTagsLibrarySchema> & {
  */
 export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
   try {
-    const assetTagsLibrary: asset_tags_library[] =
-      await prisma.asset_tags_library.findMany();
+    const assetTagsLibrary: AssetTagLibrary[] =
+      await db.assetTagLibrary.findMany();
 
     if (assetTagsLibrary.length > 0) {
       return new NextResponse(
@@ -84,22 +82,21 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
     if (result.success) {
       const request: AddAssetTagsLibrary = {
         ...result.data,
-        uid: `ATAGS-${moment().format('YYMMDDHHmmssSSS')}`,
-        created_on: new Date(),
-        updated_by: result.data.created_by,
-        updated_on: new Date(),
+        id: `ATAGS-${moment().format('YYMMDDHHmmssSSS')}`,
+        updatedBy: result.data.createdBy,
       };
 
-      const assetTagsLibrary: asset_tags_library =
-        await prisma.asset_tags_library.create({
+      const assetTagsLibrary: AssetTagLibrary = await db.assetTagLibrary.create(
+        {
           data: request,
-        });
+        },
+      );
 
       return new NextResponse(
         JSON.stringify(
           ResponseMessage(
             201,
-            `Asset-tags ${request.uid} has been successfully created`,
+            `Asset-tags ${request.id} has been successfully created`,
             assetTagsLibrary,
           ),
         ),

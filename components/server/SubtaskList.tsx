@@ -1,16 +1,16 @@
 import React from 'react';
 import SubtaskItem from '@/components/client/subtask/SubtaskItem';
-import { subtask } from '@prisma/client';
+import { Subtask } from '@prisma/client';
 
 export default function SubtaskList({
   subtaskList,
 }: {
-  subtaskList: subtask[];
+  subtaskList: Subtask[];
 }) {
   return (
     <div className="space-y-4">
       {subtaskList.map(subtask => (
-        <SubtaskItem key={subtask.uid} subtask={subtask} />
+        <SubtaskItem key={subtask.id} subtask={subtask} />
       ))}
     </div>
   );

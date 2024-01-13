@@ -1,6 +1,5 @@
-import { prisma } from '@/prisma/prisma';
-import { ResponseMessage } from '@/utils/function/result';
-import { history } from '@prisma/client';
+import { ResponseMessage } from '@/lib/function/result';
+import { db } from '@/lib/prisma/db';
 import moment from 'moment';
 import { NextRequest, NextResponse } from 'next/server';
 import z from 'zod';
@@ -38,7 +37,7 @@ type AddHistory = z.infer<typeof AddHistorySchema> & {
 
 export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
   try {
-    const histories: history[] = await prisma.history.findMany();
+    const histories = await db.history.findMany();
 
     if (histories.length > 0) {
       return new NextResponse(
@@ -87,7 +86,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
         action_on: new Date(),
       };
 
-      const history: history = await prisma.history.create({
+      const history = await db.history.create({
         data: request,
       });
 

@@ -1,17 +1,16 @@
-import { subtask_library } from '@prisma/client';
-import { prisma } from '@/prisma/prisma';
-import { ResponseMessage } from '@/utils/function/result';
+import { ResponseMessage } from '@/lib/function/result';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import moment from 'moment';
+import { db } from '@/lib/prisma/db';
 
 /**
  * @description Validate the request body for adding a new subtask_library
  */
 const AddSubtaskLibrarySchema = z.object({
-  created_by: z.string(),
-  task_activity: z.string(),
-  task_order: z.number(),
+  createdBy: z.string(),
+  taskActivity: z.string(),
+  taskOrder: z.number(),
   description: z.string().optional(),
 });
 
@@ -19,10 +18,8 @@ const AddSubtaskLibrarySchema = z.object({
  * @description Type for adding a new subtask_library
  */
 type AddSubtaskLibrary = z.infer<typeof AddSubtaskLibrarySchema> & {
-  uid: string;
-  created_on: Date;
-  updated_on: Date;
-  updated_by: string;
+  id: string;
+  updatedBy: string;
 };
 
 /**
@@ -33,8 +30,7 @@ type AddSubtaskLibrary = z.infer<typeof AddSubtaskLibrarySchema> & {
  */
 export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
   try {
-    const subtaskLibraries: subtask_library[] =
-      await prisma.subtask_library.findMany();
+    const subtaskLibraries = await db.subtaskLibrary.findMany();
 
     if (subtaskLibraries.length > 0) {
       return new NextResponse(
@@ -84,22 +80,19 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
     if (result.success) {
       const request: AddSubtaskLibrary = {
         ...result.data,
-        uid: `ST-${moment().format('YYMMDDHHmmssSSS')}`,
-        created_on: new Date(),
-        updated_on: new Date(),
-        updated_by: result.data.created_by,
+        id: `ST-${moment().format('YYMMDDHHmmssSSS')}`,
+        updatedBy: result.data.createdBy,
       };
 
-      const subtaskLibrary: subtask_library =
-        await prisma.subtask_library.create({
-          data: request,
-        });
+      const subtaskLibrary = await db.subtaskLibrary.create({
+        data: request,
+      });
 
       return new NextResponse(
         JSON.stringify(
           ResponseMessage(
             201,
-            `Subtask ${subtaskLibrary.uid} has been successfully created`,
+            `Subtask ${subtaskLibrary.id} has been successfully created`,
             subtaskLibrary,
           ),
         ),

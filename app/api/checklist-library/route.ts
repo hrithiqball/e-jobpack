@@ -1,9 +1,9 @@
-import { checklist_library } from '@prisma/client';
-import { prisma } from '@/prisma/prisma';
-import { ResponseMessage } from '@/utils/function/result';
+import { ChecklistLibrary } from '@prisma/client';
+import { ResponseMessage } from '@/lib/function/result';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import moment from 'moment';
+import { db } from '@/lib/prisma/db';
 
 /**
  * @description Validate the request body for adding a new checklist library
@@ -13,17 +13,15 @@ const AddChecklistLibrarySchema = z.object({
   description: z.string().optional(),
   icon: z.string().optional(),
   color: z.string().optional(),
-  created_by: z.string(),
+  createdBy: z.string(),
 });
 
 /**
  * @description Type for adding a new checklist library
  */
 type AddChecklistLibrary = z.infer<typeof AddChecklistLibrarySchema> & {
-  uid: string;
-  updated_on: Date;
-  created_on: Date;
-  updated_by: string;
+  id: string;
+  updatedBy: string;
 };
 
 /**
@@ -34,8 +32,8 @@ type AddChecklistLibrary = z.infer<typeof AddChecklistLibrarySchema> & {
  */
 export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
   try {
-    const checklistLibraries: checklist_library[] =
-      await prisma.checklist_library.findMany();
+    const checklistLibraries: ChecklistLibrary[] =
+      await db.checklistLibrary.findMany();
 
     if (checklistLibraries.length > 0) {
       return new NextResponse(
@@ -85,14 +83,12 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
     if (result.success) {
       const request: AddChecklistLibrary = {
         ...result.data,
-        uid: `CLLIB-${moment().format('YYMMDDHHmmssSSS')}`,
-        updated_on: new Date(),
-        created_on: new Date(),
-        updated_by: result.data.created_by,
+        id: `CLLIB-${moment().format('YYMMDDHHmmssSSS')}`,
+        updatedBy: result.data.createdBy,
       };
 
-      const checklistLibrary: checklist_library =
-        await prisma.checklist_library.create({
+      const checklistLibrary: ChecklistLibrary =
+        await db.checklistLibrary.create({
           data: request,
         });
 
@@ -100,7 +96,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
         JSON.stringify(
           ResponseMessage(
             201,
-            `Checklist library ${checklistLibrary.uid} has been successfully created`,
+            `Checklist library ${checklistLibrary.id} has been successfully created`,
             checklistLibrary,
           ),
         ),

@@ -1,6 +1,6 @@
-import { prisma } from '@/prisma/prisma';
-import { ResponseMessage } from '@/utils/function/result';
-import { asset_status } from '@prisma/client';
+import { ResponseMessage } from '@/lib/function/result';
+import { db } from '@/lib/prisma/db';
+import { AssetStatus } from '@prisma/client';
 import moment from 'moment';
 import { NextRequest, NextResponse } from 'next/server';
 import z from 'zod';
@@ -16,7 +16,7 @@ const AddAssetStatusSchema = z.object({
 /**
  * @description Type for adding a new asset-status
  */
-type AddAssetStatus = z.infer<typeof AddAssetStatusSchema> & { uid: string };
+type AddAssetStatus = z.infer<typeof AddAssetStatusSchema> & { id: string };
 
 /**
  * This asynchronous function handles GET requests.
@@ -26,7 +26,7 @@ type AddAssetStatus = z.infer<typeof AddAssetStatusSchema> & { uid: string };
  */
 export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
   try {
-    const assetStatuses: asset_status[] = await prisma.asset_status.findMany();
+    const assetStatuses: AssetStatus[] = await db.assetStatus.findMany();
 
     if (assetStatuses.length > 0) {
       return new NextResponse(
@@ -75,10 +75,10 @@ export async function POST(nextRequest: NextRequest) {
     if (result.success) {
       const req: AddAssetStatus = {
         ...result.data,
-        uid: `ASTATUS-${moment().format('YYMMDDHHmmssSSS')}`,
+        id: `ASTATUS-${moment().format('YYMMDDHHmmssSSS')}`,
       };
 
-      const assetStatus: asset_status = await prisma.asset_status.create({
+      const assetStatus: AssetStatus = await db.assetStatus.create({
         data: req,
       });
 
@@ -86,7 +86,7 @@ export async function POST(nextRequest: NextRequest) {
         JSON.stringify(
           ResponseMessage(
             200,
-            `Successfully created asset status ${assetStatus.uid}`,
+            `Successfully created asset status ${assetStatus.id}`,
             assetStatus,
           ),
         ),

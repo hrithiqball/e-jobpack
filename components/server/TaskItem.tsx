@@ -1,20 +1,20 @@
 import React from 'react';
 import SubtaskList from '@/components/server/SubtaskList';
-import { fetchSubtaskListByTaskUid } from '@/app/api/server-actions';
-import { subtask, task } from '@prisma/client';
+import { Subtask, Task } from '@prisma/client';
 import TaskRow from '@/components/client/task/TaskRow';
+import { fetchSubtaskListByTaskUid } from '@/lib/actions/subtask';
 
-export default async function TaskItem({ task }: { task: task }) {
-  let subtaskList: subtask[] = [];
+export default async function TaskItem({ task }: { task: Task }) {
+  let subtaskList: Subtask[] = [];
 
-  if (task.have_subtask) {
-    subtaskList = await fetchSubtaskListByTaskUid(task.uid);
+  if (task.haveSubtask) {
+    subtaskList = await fetchSubtaskListByTaskUid(task.id);
   }
 
   return (
     <div>
       <TaskRow task={task} />
-      {task.have_subtask && (
+      {task.haveSubtask && (
         <div className="mt-4 mb-1">
           <SubtaskList subtaskList={subtaskList} />
         </div>

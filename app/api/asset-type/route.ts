@@ -1,9 +1,9 @@
-import { asset_type } from '@prisma/client';
-import { prisma } from '@/prisma/prisma';
-import { ResponseMessage } from '@/utils/function/result';
+import { AssetType } from '@prisma/client';
+import { ResponseMessage } from '@/lib/function/result';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import moment from 'moment';
+import { db } from '@/lib/prisma/db';
 
 /**
  * @description Validate the request body for adding a new asset-type
@@ -12,17 +12,15 @@ const AddAssetTypeSchema = z.object({
   title: z.string(),
   description: z.string().optional(),
   icon: z.string().optional(),
-  created_by: z.string(),
+  createdBy: z.string(),
 });
 
 /**
  * @description Type for adding a new asset-type
  */
 type AddAssetType = z.infer<typeof AddAssetTypeSchema> & {
-  uid: string;
-  updated_on: Date;
-  created_on: Date;
-  updated_by: string;
+  id: string;
+  updatedBy: string;
 };
 
 /**
@@ -33,7 +31,7 @@ type AddAssetType = z.infer<typeof AddAssetTypeSchema> & {
  */
 export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
   try {
-    const assetTypes: asset_type[] = await prisma.asset_type.findMany();
+    const assetTypes: AssetType[] = await db.assetType.findMany();
 
     if (assetTypes.length > 0) {
       return new NextResponse(
@@ -83,13 +81,11 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
     if (result.success) {
       const request: AddAssetType = {
         ...result.data,
-        uid: `ATYPE-${moment().format('YYMMDDHHmmssSSS')}`,
-        updated_on: new Date(),
-        created_on: new Date(),
-        updated_by: result.data.created_by,
+        id: `ATYPE-${moment().format('YYMMDDHHmmssSSS')}`,
+        updatedBy: result.data.createdBy,
       };
 
-      const assetType: asset_type = await prisma.asset_type.create({
+      const assetType: AssetType = await db.assetType.create({
         data: request,
       });
 
@@ -97,7 +93,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
         JSON.stringify(
           ResponseMessage(
             201,
-            `Asset-type ${assetType.uid} has been successfully created`,
+            `Asset-type ${assetType.id} has been successfully created`,
             assetType,
           ),
         ),

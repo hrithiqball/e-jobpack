@@ -1,8 +1,7 @@
-import { Prisma, asset } from '@prisma/client';
-import { prisma } from '@/prisma/prisma';
-import { ResponseMessage } from '@/utils/function/result';
+import { Prisma, Asset } from '@prisma/client';
+import { ResponseMessage } from '@/lib/function/result';
 import { NextRequest, NextResponse } from 'next/server';
-import moment from 'moment';
+import { db } from '@/lib/prisma/db';
 
 /**
  * This asynchronous function handles GET requests.
@@ -25,8 +24,8 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
       'upcoming_maintenance',
     );
 
-    const filters: Prisma.assetWhereInput[] = [];
-    const orderBy: Prisma.assetOrderByWithRelationInput[] = [];
+    const filters: Prisma.AssetWhereInput[] = [];
+    const orderBy: Prisma.AssetOrderByWithRelationInput[] = [];
 
     if (type) {
       filters.push({ type });
@@ -36,7 +35,7 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
     }
     if (upcoming_maintenance) {
       filters.push({
-        next_maintenance: {
+        nextMaintenance: {
           gte: new Date(upcoming_maintenance),
         },
       });
@@ -44,7 +43,7 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
 
     const page = page_str ? parseInt(page_str, 10) : 1;
     const limit = limit_str ? parseInt(limit_str, 10) : 10;
-    const isAscending = !!is_ascending;
+    const isAscending = Boolean(is_ascending);
     const sortBy = sort_by || 'updated_on';
     const skip = (page - 1) * limit;
 
@@ -58,11 +57,11 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
       });
     }
 
-    const assets: asset[] = await prisma.asset.findMany({
+    const assets: Asset[] = await db.asset.findMany({
       skip,
       take: limit,
       orderBy: {
-        updated_on: 'desc',
+        updatedOn: 'desc',
       },
     });
 
@@ -113,13 +112,10 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
     if (assetRequest) {
       const req = {
         ...assetRequest,
-        uid: `ASSET-${moment().format('YYMMDDHHmmssSSS')}`,
-        updated_on: new Date(),
-        created_on: new Date(),
         updated_by: assetRequest.data.created_by,
       };
 
-      const asset: asset = await prisma.asset.create({
+      const asset: Asset = await db.asset.create({
         data: req,
       });
 

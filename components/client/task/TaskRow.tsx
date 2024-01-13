@@ -1,7 +1,7 @@
 'use client';
 
-import React, { Key, useMemo, useState, useTransition } from 'react';
-import { task } from '@prisma/client';
+import React, { Key, useEffect, useMemo, useState, useTransition } from 'react';
+import { Task } from '@prisma/client';
 import {
   Button,
   Checkbox,
@@ -10,36 +10,46 @@ import {
   DropdownMenu,
   DropdownTrigger,
   Input,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
   Select,
   SelectItem,
   Switch,
   Textarea,
 } from '@nextui-org/react';
-import { deleteTask, updateTask } from '@/app/api/server-actions';
-import { UpdateTask } from '@/app/api/task/[uid]/route';
-import { LuMoreVertical } from 'react-icons/lu';
+import { UpdateTask } from '@/app/api/task/[id]/route';
 import { toast } from 'sonner';
+import {
+  ClipboardX,
+  MessageCircleWarning,
+  MoreVertical,
+  PencilLine,
+} from 'lucide-react';
+import { deleteTask, updateTask } from '@/lib/actions/task';
 
-export default function TaskRow({ task }: { task: task }) {
+export default function TaskRow({ task }: { task: Task }) {
   let [isPending, startTransition] = useTransition();
-  const [taskActivity, setTaskActivity] = useState(task.task_activity);
+  const [taskActivity, setTaskActivity] = useState(task.taskActivity);
   const [taskDescription, setTaskDescription] = useState(task.description);
-  const [taskType, setTaskType] = useState(task.task_type);
-  const [taskSelected, setTaskSelected] = useState<string[]>(
-    task.task_selected,
-  );
-  const [taskBool, setTaskBool] = useState(task.task_bool ?? false);
+  const [taskType, setTaskType] = useState(task.taskType);
+  const [taskSelected, setTaskSelected] = useState<string[]>(task.taskSelected);
+  const [taskBool, setTaskBool] = useState(task.taskBool ?? false);
   const [taskRemark, setTaskRemark] = useState(task.remarks ?? '');
-  const [taskIsComplete, setTaskIsComplete] = useState(task.is_complete);
+  const [taskIsComplete, setTaskIsComplete] = useState(task.isComplete);
   const [taskIssue, setTaskIssue] = useState(task.issue ?? '');
   const [taskNumberValue, setTaskNumberValue] = useState<string>(
-    task.task_number_val?.toString() ?? '',
+    task.taskNumberVal?.toString() ?? '',
   );
   const numericRegex = /^-?\d+(\.\d+)?$/;
+
+  const [isDesktop, setDesktop] = useState(window.innerWidth > 650);
+
+  function updateMedia() {
+    setDesktop(window.innerWidth > 650);
+  }
+
+  useEffect(() => {
+    window.addEventListener('resize', updateMedia);
+    return () => window.removeEventListener('resize', updateMedia);
+  }, []);
 
   const validateNumericInput = (value: string) => value.match(numericRegex);
 
@@ -59,12 +69,12 @@ export default function TaskRow({ task }: { task: task }) {
     ) {
       setTaskSelected(changedValue);
       const taskUpdate: UpdateTask = {
-        task_selected: changedValue,
+        taskSelected: changedValue,
       };
 
       startTransition(() => {
-        updateTask(task.uid, taskUpdate).then(() => {
-          toast.success('Task updated successfully');
+        updateTask(task.id, taskUpdate).then(() => {
+          if (!isPending) toast.success('Task updated successfully');
         });
       });
     }
@@ -72,7 +82,7 @@ export default function TaskRow({ task }: { task: task }) {
 
   function updateTaskClient(taskUpdate: UpdateTask) {
     startTransition(() => {
-      updateTask(task.uid, taskUpdate).then(() => {
+      updateTask(task.id, taskUpdate).then(() => {
         toast.success('Task updated successfully');
       });
     });
@@ -82,7 +92,7 @@ export default function TaskRow({ task }: { task: task }) {
     if (key === 'edit') toast.info('editing');
     else {
       startTransition(() => {
-        deleteTask(task.uid)
+        deleteTask(task.id)
           .then(() => toast.success('Task deleted'))
           .catch(() => toast.error('Task not deleted'));
       });
@@ -93,8 +103,8 @@ export default function TaskRow({ task }: { task: task }) {
     <div className="flex items-center">
       <div className="flex-1 px-4">
         <div className="flex flex-col">
-          <span className="text-medium font-medium">{taskActivity}</span>
-          <span className="text-sm font-thin">{taskDescription}</span>
+          <span className="text-sm font-light">{taskActivity}</span>
+          <span className="text-sm font-light">{taskDescription}</span>
         </div>
       </div>
       <div className="flex-1 px-4">
@@ -106,7 +116,7 @@ export default function TaskRow({ task }: { task: task }) {
               onValueChange={() => {
                 setTaskIsComplete(!taskIsComplete);
                 const updateTask: UpdateTask = {
-                  is_complete: !taskIsComplete,
+                  isComplete: !taskIsComplete,
                 };
                 updateTaskClient(updateTask);
               }}
@@ -116,20 +126,24 @@ export default function TaskRow({ task }: { task: task }) {
         {taskType === 'choice' && (
           <div className="flex justify-center">
             <Switch
+              size="sm"
               aria-label="Task Switch"
               className="flex-1"
               isSelected={taskBool}
               onValueChange={() => {
                 setTaskBool(!taskBool);
                 const taskUpdate: UpdateTask = {
-                  task_bool: !taskBool,
+                  taskBool: !taskBool,
                 };
                 updateTaskClient(taskUpdate);
               }}
             />
           </div>
         )}
-        {(taskType === 'selectOne' || taskType === 'selectMultiple') && (
+        {(taskType === 'selectOne' ||
+          taskType === 'selectMultiple' ||
+          taskType === 'MULTIPLE_SELECT' ||
+          taskType === 'SINGLE_SELECT') && (
           <Select
             aria-label="Task Select"
             variant="faded"
@@ -141,7 +155,7 @@ export default function TaskRow({ task }: { task: task }) {
             size="sm"
             placeholder="Choose one"
           >
-            {task.list_choice.map(choice => (
+            {task.listChoice.map(choice => (
               <SelectItem key={choice} value={choice}>
                 {choice}
               </SelectItem>
@@ -159,40 +173,86 @@ export default function TaskRow({ task }: { task: task }) {
           />
         )}
       </div>
-      <div className="flex-1 px-4">
-        <Textarea
-          aria-label="Task Issue"
-          variant="faded"
-          maxRows={1}
-          value={taskIssue}
-          onValueChange={setTaskIssue}
-        />
-      </div>
-      <div className="flex-1 px-4">
-        <Textarea
-          aria-label="Task Remark"
-          variant="faded"
-          maxRows={1}
-          value={taskRemark}
-          onValueChange={setTaskRemark}
-        />
-      </div>
+      {isDesktop && (
+        <>
+          <div className="flex-1 px-4">
+            <Textarea
+              aria-label="Task Issue"
+              variant="faded"
+              maxRows={1}
+              size="sm"
+              value={taskIssue}
+              onValueChange={setTaskIssue}
+            />
+          </div>
+          <div className="flex-1 px-4">
+            <Textarea
+              aria-label="Task Remark"
+              variant="faded"
+              maxRows={1}
+              size="sm"
+              value={taskRemark}
+              onValueChange={setTaskRemark}
+            />
+          </div>
+        </>
+      )}
       <div className="flex-2">
         <Dropdown>
           <DropdownTrigger>
-            <Button variant="flat" isIconOnly>
-              <LuMoreVertical />
+            <Button variant="faded" size="sm" isIconOnly>
+              <MoreVertical size={18} />
             </Button>
           </DropdownTrigger>
-          <DropdownMenu
-            aria-label="Action event example"
-            onAction={handleActions}
-          >
-            <DropdownItem key="edit">Edit Task</DropdownItem>
-            <DropdownItem key="delete" className="text-danger" color="danger">
-              Delete Task
-            </DropdownItem>
-          </DropdownMenu>
+          {isDesktop ? (
+            <DropdownMenu
+              aria-label="Action event example"
+              onAction={handleActions}
+            >
+              <DropdownItem
+                key="edit"
+                variant="faded"
+                startContent={<PencilLine size={18} />}
+              >
+                Edit Task
+              </DropdownItem>
+              <DropdownItem
+                key="delete"
+                variant="faded"
+                className="text-danger"
+                color="danger"
+                startContent={<ClipboardX size={18} />}
+              >
+                Delete Task
+              </DropdownItem>
+            </DropdownMenu>
+          ) : (
+            <DropdownMenu>
+              <DropdownItem
+                variant="faded"
+                key="add-remarks"
+                startContent={<MessageCircleWarning size={18} />}
+              >
+                Add Remarks
+              </DropdownItem>
+              <DropdownItem
+                key="edit"
+                variant="faded"
+                startContent={<PencilLine size={18} />}
+              >
+                Edit Task
+              </DropdownItem>
+              <DropdownItem
+                key="delete"
+                variant="faded"
+                className="text-danger"
+                color="danger"
+                startContent={<ClipboardX size={18} />}
+              >
+                Delete Task
+              </DropdownItem>
+            </DropdownMenu>
+          )}
         </Dropdown>
       </div>
     </div>

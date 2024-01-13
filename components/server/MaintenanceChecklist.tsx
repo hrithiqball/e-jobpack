@@ -1,21 +1,22 @@
-import React, { Fragment } from 'react';
-import { fetchTaskList } from '@/app/api/server-actions';
-import { checklist } from '@prisma/client';
-import TaskMaintenanceChecklist from '@/components/client/task/TaskMaintenanceChecklist';
+import React from 'react';
+import { Checklist } from '@prisma/client';
+
+import TaskMaintenanceChecklist from '@/components/client/checklist/ChecklistItemComponent';
 import TaskList from '@/components/server/TaskList';
+import { fetchTaskList } from '@/lib/actions/task';
+import { fetchAssetItem } from '@/lib/actions/asset';
 
 export default async function MaintenanceChecklist({
   checklist,
 }: {
-  checklist: checklist;
+  checklist: Checklist;
 }) {
-  const taskList = await fetchTaskList(checklist.uid);
+  const taskList = await fetchTaskList(checklist.id);
+  const asset = await fetchAssetItem(checklist.assetId);
 
   return (
-    <Fragment>
-      <TaskMaintenanceChecklist checklist={checklist}>
-        <TaskList checklistUid={checklist.uid} taskList={taskList} />
-      </TaskMaintenanceChecklist>
-    </Fragment>
+    <TaskMaintenanceChecklist checklist={checklist} asset={asset}>
+      <TaskList taskList={taskList} />
+    </TaskMaintenanceChecklist>
   );
 }

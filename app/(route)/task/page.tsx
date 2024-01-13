@@ -1,5 +1,5 @@
-import { fetchMaintenanceList } from '@/app/api/server-actions';
-import Task from '@/components/client/task/Task';
+import Task from '@/components/client/task/TaskComponent';
+import { fetchMaintenanceList } from '@/lib/actions/maintenance';
 
 export default async function TaskPage() {
   const maintenanceList = await fetchMaintenanceList();

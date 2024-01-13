@@ -1,19 +1,11 @@
 'use client';
 
 import React, { KeyboardEvent, useMemo, useState, useTransition } from 'react';
-import { subtask } from '@prisma/client';
-import { updateSubtask } from '@/app/api/server-actions';
-import {
-  Button,
-  Checkbox,
-  Input,
-  Select,
-  SelectItem,
-  Switch,
-} from '@nextui-org/react';
-import { UpdateSubtask } from '@/app/api/subtask/[uid]/route';
-import { LuCornerDownRight, LuMoreVertical, LuTrash2 } from 'react-icons/lu';
-import { isEditState, useSelector } from '@/lib/redux';
+import { Subtask } from '@prisma/client';
+import { Checkbox, Input, Select, SelectItem, Switch } from '@nextui-org/react';
+import { UpdateSubtask } from '@/app/api/subtask/[id]/route';
+import { CornerDownRight, MoreVertical } from 'lucide-react';
+import { updateSubtask } from '@/lib/actions/subtask';
 
 export enum InputType {
   remarks,
@@ -21,25 +13,24 @@ export enum InputType {
   numberVal,
 }
 
-export default function SubtaskItem({ subtask }: { subtask: subtask }) {
-  const isEdit = useSelector(isEditState);
+export default function SubtaskItem({ subtask }: { subtask: Subtask }) {
   let [isPending, startTransition] = useTransition();
   const [subtaskIsComplete, setSubtaskIsComplete] = useState(
-    subtask.is_complete,
+    subtask.isComplete,
   );
-  const [subtaskActivity, setSubtaskActivity] = useState(subtask.task_activity);
+  const [subtaskActivity, setSubtaskActivity] = useState(subtask.taskActivity);
   const [subtaskDescription, setSubtaskDescription] = useState(
     subtask.description,
   );
-  const [taskType, setTaskType] = useState(subtask.task_type);
+  const [taskType, setTaskType] = useState(subtask.taskType);
   const [taskSelected, setTaskSelected] = useState<string[]>(
-    subtask.task_selected,
+    subtask.taskSelected,
   );
-  const [taskBool, setTaskBool] = useState(subtask.task_bool ?? false);
+  const [taskBool, setTaskBool] = useState(subtask.taskBool ?? false);
   const [subtaskIssue, setSubtaskIssue] = useState(subtask.issue ?? '');
   const [subtaskRemarks, setSubtaskRemarks] = useState(subtask.remarks ?? '');
   const [taskNumberValue, setTaskNumberValue] = useState<string>(
-    subtask.task_number_val?.toString() ?? '',
+    subtask.taskNumberVal?.toString() ?? '',
   );
 
   const numericRegex = /^-?\d+(\.\d+)?$/;
@@ -80,14 +71,14 @@ export default function SubtaskItem({ subtask }: { subtask: subtask }) {
       };
 
       startTransition(() => {
-        updateSubtask(subtask.uid, taskUpdate);
+        updateSubtask(subtask.id, taskUpdate);
       });
     }
   }
 
   function updateSubtaskClient(subtaskUpdate: UpdateSubtask) {
     startTransition(() => {
-      updateSubtask(subtask.uid, subtaskUpdate);
+      updateSubtask(subtask.id, subtaskUpdate);
     });
   }
 
@@ -96,7 +87,7 @@ export default function SubtaskItem({ subtask }: { subtask: subtask }) {
       <div className="flex-1 px-4">
         <div className="flex flex-col">
           <div className="flex flex-row items-center">
-            <LuCornerDownRight />
+            <CornerDownRight />
             <span className="text-medium font-medium ml-2">
               {subtaskActivity}
             </span>
@@ -145,7 +136,7 @@ export default function SubtaskItem({ subtask }: { subtask: subtask }) {
             size="sm"
             placeholder="Choose one"
           >
-            {subtask.list_choice.map(choice => (
+            {subtask.listChoice.map(choice => (
               <SelectItem key={choice} value={choice}>
                 {choice}
               </SelectItem>
@@ -180,10 +171,7 @@ export default function SubtaskItem({ subtask }: { subtask: subtask }) {
         />
       </div>
       <div className="flex-2 hover:cursor-not-allowed">
-        <LuMoreVertical />
-        {/* <Button isDisabled={!isEdit} isIconOnly color="danger">
-          <LuTrash2 />
-        </Button> */}
+        <MoreVertical />
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import Dashboard from '@/components/client/Dashboard';
+import Dashboard from '@/components/client/dashboard/Dashboard';
 
 export default async function DashboardPage() {
   return (

@@ -1,30 +1,29 @@
-import { Prisma, checklist } from '@prisma/client';
-import { prisma } from '@/prisma/prisma';
-import { ResponseMessage } from '@/utils/function/result';
+import { Prisma, Checklist } from '@prisma/client';
+import { ResponseMessage } from '@/lib/function/result';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import moment from 'moment';
+import { db } from '@/lib/prisma/db';
 
 /**
  * @description Validate the request body for adding a new checklist
  */
 const AddChecklistSchema = z.object({
   title: z.string(),
-  maintenance_uid: z.string(),
+  maintenanceId: z.string(),
   description: z.string().optional(),
   color: z.string().optional(),
   icon: z.string().optional(),
-  created_by: z.string(),
+  createdBy: z.string(),
+  assetId: z.string(),
 });
 
 /**
  * @description Type for adding a new checklist
  */
 type AddChecklist = z.infer<typeof AddChecklistSchema> & {
-  uid: string;
-  updated_on: Date;
-  created_on: Date;
-  updated_by: string;
+  id: string;
+  updatedBy: string;
 };
 
 /**
@@ -38,32 +37,23 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
     // filter params (all optional)
     const page_str = nextRequest.nextUrl.searchParams.get('page');
     const limit_str = nextRequest.nextUrl.searchParams.get('limit');
-    const sort_by = nextRequest.nextUrl.searchParams.get('sort_by');
-    const is_ascending = nextRequest.nextUrl.searchParams.get('is_ascending');
 
-    const maintenance_uid =
-      nextRequest.nextUrl.searchParams.get('maintenance_uid');
+    const maintenanceId = nextRequest.nextUrl.searchParams.get('maintenanceId');
 
-    const filters: Prisma.checklistWhereInput[] = [];
-    const orderBy: Prisma.checklistOrderByWithRelationInput[] = [];
+    const filters: Prisma.ChecklistWhereInput[] = [];
+    const orderBy: Prisma.ChecklistOrderByWithRelationInput[] = [];
 
-    if (maintenance_uid) {
+    if (maintenanceId) {
       filters.push({
-        maintenance_uid,
+        maintenanceId,
       });
     }
 
     const page = page_str ? parseInt(page_str, 10) : 1;
     const limit = limit_str ? parseInt(limit_str, 10) : 10;
-    const isAscending = !!is_ascending;
-    const sortBy = sort_by || 'title';
     const skip = (page - 1) * limit;
 
-    orderBy.push({
-      [sortBy]: isAscending ? 'asc' : 'desc',
-    });
-
-    const checklists: checklist[] = await prisma.checklist.findMany({
+    const checklists: Checklist[] = await db.checklist.findMany({
       skip,
       take: limit,
       orderBy,
@@ -120,13 +110,11 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
     if (result.success) {
       const request: AddChecklist = {
         ...result.data,
-        uid: `CL-${moment().format('YYMMDDHHmmssSSS')}`,
-        updated_on: new Date(),
-        created_on: new Date(),
-        updated_by: result.data.created_by,
+        id: `CL-${moment().format('YYMMDDHHmmssSSS')}`,
+        updatedBy: result.data.createdBy,
       };
 
-      const checklist: checklist = await prisma.checklist.create({
+      const checklist: Checklist = await db.checklist.create({
         data: request,
       });
 
@@ -134,7 +122,7 @@ export async function POST(nextRequest: NextRequest): Promise<NextResponse> {
         JSON.stringify(
           ResponseMessage(
             201,
-            `Checklist ${checklist.uid} has been successfully created`,
+            `Checklist ${checklist.id} has been successfully created`,
             checklist,
           ),
         ),
