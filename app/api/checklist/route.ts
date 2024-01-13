@@ -37,8 +37,6 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
     // filter params (all optional)
     const page_str = nextRequest.nextUrl.searchParams.get('page');
     const limit_str = nextRequest.nextUrl.searchParams.get('limit');
-    const sort_by = nextRequest.nextUrl.searchParams.get('sort_by');
-    const is_ascending = nextRequest.nextUrl.searchParams.get('is_ascending');
 
     const maintenanceId = nextRequest.nextUrl.searchParams.get('maintenanceId');
 
@@ -53,13 +51,7 @@ export async function GET(nextRequest: NextRequest): Promise<NextResponse> {
 
     const page = page_str ? parseInt(page_str, 10) : 1;
     const limit = limit_str ? parseInt(limit_str, 10) : 10;
-    const isAscending = !!is_ascending;
-    const sortBy = sort_by || 'title';
     const skip = (page - 1) * limit;
-
-    orderBy.push({
-      [sortBy]: isAscending ? 'asc' : 'desc',
-    });
 
     const checklists: Checklist[] = await db.checklist.findMany({
       skip,

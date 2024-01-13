@@ -6,8 +6,21 @@ import React, {
   useTransition,
   ReactNode,
   Key,
+  useRef,
+  ChangeEvent,
 } from 'react';
-import Loading from '@/components/client/Loading';
+import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import {
+  Asset,
+  Checklist,
+  ChecklistLibrary,
+  Maintenance,
+  Subtask,
+  Task,
+} from '@prisma/client';
+
 import {
   Button,
   ButtonGroup,
@@ -30,25 +43,6 @@ import {
   TableHeader,
   TableRow,
 } from '@nextui-org/react';
-import Link from 'next/link';
-import {
-  Asset,
-  Checklist,
-  ChecklistLibrary,
-  Maintenance,
-  Subtask,
-  Task,
-} from '@prisma/client';
-import moment from 'moment';
-import { Border, Cell, Column, Workbook } from 'exceljs';
-// import { SimplifiedTask } from '@/utils/model/nested-maintenance';
-import { base64Image } from '@/public/client-icon-base64';
-import { saveAs } from 'file-saver';
-import { Result } from '@/lib/function/result';
-import { convertToRoman } from '@/lib/function/convertToRoman';
-import { toast } from 'sonner';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import {
   AlarmClock,
   CheckCircle2,
@@ -58,50 +52,54 @@ import {
   FileBox,
   FileDown,
   FileUp,
+  FolderSync,
   MoreVertical,
   PackagePlus,
+  Table2,
 } from 'lucide-react';
-import { createChecklist } from '@/lib/actions/checklist';
-import { useCurrentRole } from '@/hooks/use-current-role';
+import { Border, Cell, Column, Workbook } from 'exceljs';
+import { saveAs } from 'file-saver';
+import { toast } from 'sonner';
 import dayjs from 'dayjs';
 
-export default function TaskMaintenance({
-  maintenance,
-  checklistLibraryList,
-  assetList,
-  children,
-}: {
+import { base64Image } from '@/public/client-icon-base64';
+import { labelsMap, descriptionsMap } from '@/public/utils/labels';
+import { Result } from '@/lib/function/result';
+import { convertToRoman } from '@/lib/function/convertToRoman';
+import { createChecklist } from '@/lib/actions/checklist';
+import { updateMaintenance } from '@/lib/actions/maintenance';
+import { useCurrentRole } from '@/hooks/use-current-role';
+import { SimplifiedTask } from '@/types/nested-maintenance';
+import Loading from '@/components/client/Loading';
+
+interface MaintenanceComponentProps {
   maintenance: Maintenance;
   checklistLibraryList: ChecklistLibrary[];
   assetList: Asset[];
   children: ReactNode;
-}) {
+}
+
+export default function MaintenanceComponent({
+  maintenance,
+  checklistLibraryList,
+  assetList,
+  children,
+}: MaintenanceComponentProps) {
+  let [isPending, startTransition] = useTransition();
   const user = useSession();
   const router = useRouter();
   const role = useCurrentRole();
-  let [isPending, startTransition] = useTransition();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   const [mounted, setMounted] = useState(false);
   const [openAddChecklist, setOpenAddChecklist] = useState(false);
   const [newChecklistDescription, setNewChecklistDescription] = useState('');
+  const [selectedAsset, setSelectedAsset] = useState<any>([]);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedSaveOption, setSelectedSaveOption] = useState(
     new Set(['saveOnly']),
   );
-  const [selectedAsset, setSelectedAsset] = useState<any>([]);
-  // const [selectedFile, setSelectedFile] = useState(null);
-  // const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  const descriptionsMap = {
-    saveOnly: 'Save only for this maintenance.',
-    saveAsLibrary:
-      'Save for current maintenance and create a new library for future use.',
-    onlyLibrary: 'Only save as library and not use for current maintenance.',
-  };
-
-  const labelsMap: { [key: string]: string } = {
-    saveOnly: 'Save only',
-    saveAsLibrary: 'Save and create library',
-    onlyLibrary: 'Only save as library',
-  };
+  const [isDesktop, setDesktop] = useState(window.innerWidth > 650);
 
   const selectedSaveOptionCurrent = Array.from(selectedSaveOption)[0];
 
@@ -109,8 +107,47 @@ export default function TaskMaintenance({
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    window.addEventListener('resize', updateMedia);
+    return () => window.removeEventListener('resize', updateMedia);
+  }, []);
+
+  function updateMedia() {
+    setDesktop(window.innerWidth > 650);
+  }
+
+  function handleAction(key: Key) {
+    switch (key) {
+      case 'add-asset':
+        setOpenAddChecklist(!openAddChecklist);
+        break;
+
+      case 'edit-asset':
+        //TODO enable edit asset
+        break;
+
+      case 'download-excel':
+        handleDownloadExcel();
+        break;
+
+      case 'upload-excel':
+        //TODO: for mobile display modal and add excel file and upload
+        break;
+
+      // TODO enable download pdf
+      // case 'download-pdf':
+      //   return <MaintenanceForm maintenance={maintenance} />;
+      case 'mark-complete':
+        handleMarkMaintenanceComplete();
+        break;
+
+      default:
+        break;
+    }
+  }
+
   function handleAddAsset() {
-    createChecklistClient();
+    handleCreateChecklist();
 
     setOpenAddChecklist(false);
     setSelectedAsset([]);
@@ -119,7 +156,7 @@ export default function TaskMaintenance({
     setOpenAddChecklist(!openAddChecklist);
   }
 
-  async function createChecklistClient() {
+  function handleCreateChecklist() {
     if (user.data?.user.id === undefined || user.data?.user.id === null) {
       console.error('not found');
       return;
@@ -139,62 +176,75 @@ export default function TaskMaintenance({
     });
   }
 
-  // function handleButtonClick() {
-  //   if (fileInputRef.current) {
-  //     fileInputRef.current.click();
-  //   }
-  // }
+  function handleMarkMaintenanceComplete() {
+    if (
+      user.data === null ||
+      user.data?.user.id === undefined ||
+      user.data?.user.id === null
+    ) {
+      console.error('session expired');
+      return;
+    }
 
-  // function handleFileChange(event: any) {
-  //   const file = event.target.files[0];
+    startTransition(() => {
+      updateMaintenance(maintenance.id, {
+        closedOn: new Date(),
+        isClose: true,
+        closedBy: user.data.user.id,
+      }).then(res => console.log(res));
+    });
+  }
 
-  //   if (file) {
-  //     setSelectedFile(file);
-  //   }
-  // }
+  function handleUploadExcel(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files;
 
-  // async function importExcel() {
-  //   if (selectedFile) {
-  //     const workbook = new Workbook();
-  //     const reader = new FileReader();
+    if (file !== null) {
+      setSelectedFile(file[0]);
+    }
+  }
 
-  //     reader.onload = async (event: any) => {
-  //       const buffer = event.target.result;
-  //       await workbook.xlsx.load(buffer);
-  //       //const worksheet = workbook.getWorksheet(1);
-  //       const worksheet = workbook.worksheets[0];
+  async function handleSyncExcel() {
+    if (selectedFile) {
+      const workbook = new Workbook();
+      const reader = new FileReader();
 
-  //       let simplifiedTask: SimplifiedTask[] = [];
+      reader.onload = async (event: any) => {
+        const buffer = event.target.result;
+        await workbook.xlsx.load(buffer);
+        //const worksheet = workbook.getWorksheet(1);
+        const worksheet = workbook.worksheets[0];
 
-  //       for (let index = 9; index <= worksheet.rowCount; index++) {
-  //         const row = worksheet.getRow(index);
+        let simplifiedTask: SimplifiedTask[] = [];
 
-  //         const task: SimplifiedTask = {
-  //           no: row.getCell(1).value as number,
-  //           uid: row.getCell(2).value as string,
-  //           taskActivity: 'Monkey',
-  //           remarks: 'remarks',
-  //           isComplete: '/',
-  //         };
+        for (let index = 9; index <= worksheet.rowCount; index++) {
+          const row = worksheet.getRow(index);
 
-  //         simplifiedTask.push(task);
-  //       }
+          const task: SimplifiedTask = {
+            no: row.getCell(1).value as number,
+            uid: row.getCell(2).value as string,
+            taskActivity: 'Monkey',
+            remarks: 'remarks',
+            isComplete: '/',
+          };
 
-  //       console.log(simplifiedTask);
+          simplifiedTask.push(task);
+        }
 
-  //       setTimeout(() => {
-  //         //loading false
-  //       }, 3000);
+        console.log(simplifiedTask);
 
-  //       reader.readAsArrayBuffer(selectedFile);
-  //       setSelectedFile(null);
-  //     };
-  //   } else {
-  //     console.log('other value');
-  //   }
-  // }
+        setTimeout(() => {
+          //loading false
+        }, 3000);
 
-  async function exportToExcel() {
+        reader.readAsArrayBuffer(selectedFile);
+        setSelectedFile(null);
+      };
+    } else {
+      console.log('other value');
+    }
+  }
+
+  async function handleDownloadExcel() {
     const workbook = new Workbook();
     const worksheetName = `${maintenance.id}`;
     const filename = `Maintenance-${maintenance.id}`;
@@ -219,7 +269,7 @@ export default function TaskMaintenance({
     const borderWidth: Partial<Border> = { style: 'thin' };
 
     const checklistResult: Result<Checklist[]> = await fetch(
-      `/api/checklist?maintenance_uid=${maintenance.id}`,
+      `/api/checklist?maintenanceId=${maintenance.id}`,
     ).then(res => res.json());
 
     if (
@@ -257,7 +307,7 @@ export default function TaskMaintenance({
         worksheet.mergeCells('A3:B3');
         worksheet.mergeCells('C3:E3');
         worksheet.getCell('A3').value = 'Date';
-        worksheet.getCell('C3').value = moment(maintenance.date).format(
+        worksheet.getCell('C3').value = dayjs(maintenance.date).format(
           'DD/MM/YYYY',
         );
 
@@ -534,28 +584,6 @@ export default function TaskMaintenance({
 
   if (!mounted) return <Loading label="Hang on tight" />;
 
-  function handleAction(key: Key) {
-    switch (key) {
-      case 'add-asset':
-        setOpenAddChecklist(!openAddChecklist);
-        break;
-      case 'edit-asset':
-        //TODO enable edit asset
-        break;
-      case 'import-excel':
-        //TODO enable import excel
-        break;
-      case 'export-excel':
-        exportToExcel();
-        break;
-      case 'mark-complete':
-        //TODO priority enable mark complete
-        break;
-      default:
-        break;
-    }
-  }
-
   return (
     <div className="rounded-md flex-grow">
       <div className="flex flex-row items-center justify-between">
@@ -571,18 +599,53 @@ export default function TaskMaintenance({
             Back
           </Button>
           <h2 className="text-medium sm:text-xl font-semibold">
-            {maintenance.id}
+            {maintenance.id} {maintenance.isClose ? 'Closed' : 'Open'}
           </h2>
         </div>
-        <Dropdown>
-          <DropdownTrigger>
-            <Button isIconOnly size="sm" variant="faded">
-              <MoreVertical size={18} />
-            </Button>
-          </DropdownTrigger>
-          {role === 'ADMIN' ||
-            (role === 'SUPERVISOR' && (
-              <DropdownMenu onAction={handleAction}>
+        <div className="space-x-2 sm:space-x-4">
+          {isDesktop && (
+            <ButtonGroup>
+              <Button
+                size="sm"
+                variant="faded"
+                startContent={<FileUp size={18} />}
+              >
+                Upload Excel
+              </Button>
+              <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept=".xlsx, .xls"
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  handleUploadExcel(e)
+                }
+              />
+              <Button
+                size="sm"
+                variant="faded"
+                isIconOnly
+                onClick={handleSyncExcel}
+              >
+                <FolderSync size={18} />
+              </Button>
+            </ButtonGroup>
+          )}
+          <Dropdown>
+            <DropdownTrigger>
+              <Button isIconOnly size="sm" variant="faded">
+                <MoreVertical size={18} />
+              </Button>
+            </DropdownTrigger>
+            {isDesktop ? (
+              <DropdownMenu
+                disabledKeys={
+                  role === 'ADMIN' || role === 'SUPERVISOR'
+                    ? []
+                    : ['add-asset', 'edit-maintenance']
+                }
+                onAction={handleAction}
+              >
                 <DropdownItem
                   key="add-asset"
                   startContent={<PackagePlus size={18} />}
@@ -596,16 +659,18 @@ export default function TaskMaintenance({
                   Edit Asset
                 </DropdownItem>
                 <DropdownItem
-                  key="import-excel"
-                  startContent={<FileUp size={18} />}
-                >
-                  Upload Excel
-                </DropdownItem>
-                <DropdownItem
-                  key="export-excel"
+                  key="download-excel"
                   startContent={<FileDown size={18} />}
                 >
                   Download Excel
+                </DropdownItem>
+                <DropdownItem
+                  key="download-pdf"
+                  startContent={<Table2 size={18} />}
+                >
+                  {/* TODO: figure out how to optimize this behavior */}
+                  {/* <MaintenanceForm maintenance={maintenance} /> */}
+                  Download PDF
                 </DropdownItem>
                 <DropdownItem
                   key="mark-complete"
@@ -616,30 +681,59 @@ export default function TaskMaintenance({
                   Mark as Complete
                 </DropdownItem>
               </DropdownMenu>
-            ))}
-          <DropdownMenu>
-            <DropdownItem
-              key="import-excel"
-              startContent={<FileUp size={18} />}
-            >
-              Upload Excel
-            </DropdownItem>
-            <DropdownItem
-              key="export-excel"
-              startContent={<FileDown size={18} />}
-            >
-              Download Excel
-            </DropdownItem>
-            <DropdownItem
-              key="mark-complete"
-              className="text-success"
-              color="success"
-              startContent={<CheckCircle2 size={18} />}
-            >
-              Mark as Complete
-            </DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
+            ) : (
+              <DropdownMenu
+                disabledKeys={
+                  role === 'ADMIN' || role === 'SUPERVISOR'
+                    ? []
+                    : ['add-asset', 'edit-maintenance']
+                }
+                onAction={handleAction}
+              >
+                <DropdownItem
+                  key="add-asset"
+                  startContent={<PackagePlus size={18} />}
+                >
+                  Add Asset
+                </DropdownItem>
+                <DropdownItem
+                  key="edit-maintenance"
+                  startContent={<FileBox size={18} />}
+                >
+                  Edit Asset
+                </DropdownItem>
+                <DropdownItem
+                  key="download-excel"
+                  startContent={<FileDown size={18} />}
+                >
+                  Download Excel
+                </DropdownItem>
+                <DropdownItem
+                  key="upload-excel"
+                  startContent={<FileUp size={18} />}
+                >
+                  Upload Excel
+                </DropdownItem>
+                <DropdownItem
+                  key="download-pdf"
+                  startContent={<Table2 size={18} />}
+                >
+                  {/* TODO: figure out how to optimize this behavior */}
+                  {/* <MaintenanceForm maintenance={maintenance} /> */}
+                  Download PDF
+                </DropdownItem>
+                <DropdownItem
+                  key="mark-complete"
+                  className="text-success"
+                  color="success"
+                  startContent={<CheckCircle2 size={18} />}
+                >
+                  Mark as Complete
+                </DropdownItem>
+              </DropdownMenu>
+            )}
+          </Dropdown>
+        </div>
       </div>
       <div className="flex flex-col my-4 ">
         <Table isStriped removeWrapper hideHeader aria-label="Asset info table">

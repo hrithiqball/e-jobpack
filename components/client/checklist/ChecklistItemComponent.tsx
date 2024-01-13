@@ -5,17 +5,17 @@ import { Card, Divider } from '@nextui-org/react';
 import { Asset, Checklist } from '@prisma/client';
 import AssetActions from '@/components/client/asset/AssetActions';
 
-interface TaskMaintenanceChecklistProps {
+interface ChecklistItemComponentProps {
   checklist: Checklist;
   asset: Asset;
   children: ReactNode;
 }
 
-export default function TaskMaintenanceChecklist({
+export default function ChecklistItemComponent({
   checklist,
   asset,
   children,
-}: TaskMaintenanceChecklistProps) {
+}: ChecklistItemComponentProps) {
   return (
     <Card shadow="sm" className="flex-1 space-y-4 p-4">
       <div className="flex justify-between items-center">

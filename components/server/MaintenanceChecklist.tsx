@@ -1,7 +1,7 @@
 import React from 'react';
 import { Checklist } from '@prisma/client';
 
-import TaskMaintenanceChecklist from '@/components/client/task/TaskMaintenanceChecklist';
+import TaskMaintenanceChecklist from '@/components/client/checklist/ChecklistItemComponent';
 import TaskList from '@/components/server/TaskList';
 import { fetchTaskList } from '@/lib/actions/task';
 import { fetchAssetItem } from '@/lib/actions/asset';

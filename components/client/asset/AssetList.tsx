@@ -123,7 +123,7 @@ export default function AssetList({
         createdBy: session.user.id,
         name: newAssetName,
         description: newAssetDescription,
-        type: newAssetType,
+        type: newAssetType ?? null,
         location: newAssetLocation,
         personInCharge: null,
         tag: newAssetTag,

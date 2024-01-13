@@ -1,13 +1,16 @@
 import React, { Fragment } from 'react';
 import { Checklist } from '@prisma/client';
-import MaintenanceChecklist from '@/components/server/MaintenanceChecklist';
-import ClosedChecklist from '../client/checklist/ClosedChecklist';
 
-export default async function MaintenanceChecklistList({
-  checklistList,
-}: {
+import MaintenanceChecklist from '@/components/server/MaintenanceChecklist';
+import ClosedChecklist from '@/components/client/checklist/ClosedChecklist';
+
+interface ChecklistComponentProps {
   checklistList: Checklist[];
-}) {
+}
+
+export default async function ChecklistComponent({
+  checklistList,
+}: ChecklistComponentProps) {
   return (
     <div className="space-y-4">
       <ClosedChecklist

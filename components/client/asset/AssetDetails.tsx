@@ -1,5 +1,5 @@
 import React, { useState, useTransition } from 'react';
-import { Asset, ChecklistUse, Maintenance } from '@prisma/client';
+import { Asset, ChecklistUse } from '@prisma/client';
 import { FilePenLine, UsersRound, Wrench, Clock, History } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -44,19 +44,9 @@ export default function AssetDetails({
 
   function handleCreateMaintenance() {
     startTransition(() => {
-      const newMaintenance = {
-        id: `WO-${Date.now().toString()}`,
-        date: new Date(),
-        maintainee: null,
-        attachmentPath: null,
-        approvedBy: null,
-        approvedOn: null,
-        assetIds: [asset.id],
-        deadline: null,
-        isComplete: false,
-      } satisfies Maintenance;
-
-      createMaintenance(newMaintenance)
+      createMaintenance({
+        maintainee: 'Harith',
+      })
         .then(res => {
           if (!isPending) console.log(res);
           toast.success('Work order request created successfully');
@@ -69,7 +59,7 @@ export default function AssetDetails({
   }
 
   return (
-    <div className="flex flex-col sm:flex-row h-full">
+    <div className="flex flex-col flex-1 sm:flex-row h-full">
       <div className="flex-shrink-0 w-full sm:mb-0 sm:w-3/4">
         <Card className="p-4 flex-1 h-full">
           <div className="h-30 min-w-min">
@@ -277,8 +267,6 @@ export default function AssetDetails({
                     John
                   </SelectItem>
                 </Select>
-                {/* TODO: implement date picker like this https://github.com/nextui-org/nextui/discussions/1585 */}
-                {/* TODO: add option to add other asset included in the maintenance */}
               </ModalBody>
               <ModalFooter>
                 <Button

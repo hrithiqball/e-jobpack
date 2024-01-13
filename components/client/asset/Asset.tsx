@@ -50,7 +50,7 @@ export default function AssetComponent({
   if (!mounted) return <Loading label="Hang on tight" />;
 
   return (
-    <div>
+    <div className="flex flex-col flex-1">
       <div className="flex flex-row items-center justify-between sm:justify-normal">
         <Button
           className="max-w-min"
@@ -158,8 +158,10 @@ export default function AssetComponent({
           </div>
         </div>
       </div>
-      <Divider />
-      <div className="overflow-hidden">
+      <div>
+        <Divider />
+      </div>
+      <div className="flex overflow-hidden flex-1">
         {selectedTab === 'details' && (
           <AssetDetails asset={asset} checklistUse={checklistUse} />
         )}
