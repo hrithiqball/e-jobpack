@@ -1,10 +1,6 @@
 'use server';
 
-import {
-  unstable_cache as cache,
-  unstable_noStore as noStore,
-  revalidatePath,
-} from 'next/cache';
+import { revalidatePath } from 'next/cache';
 import { Asset } from '@prisma/client';
 import dayjs from 'dayjs';
 import z from 'zod';
@@ -46,7 +42,6 @@ export async function fetchAssetList() {
     });
 
     revalidatePath('/asset');
-    console.log(assetList);
     return assetList;
 
     // @abbas solution
