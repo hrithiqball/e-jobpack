@@ -5,7 +5,6 @@ import AssetComponent from '@/components/client/asset/AssetList';
 
 export default async function AssetPage() {
   const assetList = await fetchAssetList();
-  console.log(assetList, 'assetList');
   const assetTypeList = await fetchAssetTypeList();
   const assetStatusList = await fetchAssetStatusList();
 
