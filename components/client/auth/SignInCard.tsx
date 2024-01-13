@@ -53,13 +53,13 @@ export default function SignInCard() {
       <Card title="Login" className="w-90 p-4 shadow-md">
         <CardHeader className="flex gap-3">
           <Image
-            alt="Asset Management System"
+            alt="E Jobpack System"
             height={40}
             radius="sm"
             src="../favicon.ico"
             width={40}
           />
-          <p className="text-md">Asset Management System</p>
+          <p className="text-md">E-Jobpack</p>
         </CardHeader>
         <Divider />
         <Input
