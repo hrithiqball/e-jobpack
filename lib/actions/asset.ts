@@ -1,5 +1,6 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
 import { Asset } from '@prisma/client';
 import dayjs from 'dayjs';
 import z from 'zod';
@@ -39,7 +40,7 @@ export async function fetchAssetList(): Promise<Asset[]> {
       },
     });
 
-    revalidatePath('/api/asset');
+    revalidatePath('/asset');
     return assetList;
   } catch (error) {
     console.error(error);
