@@ -13,7 +13,7 @@ defaults.responsive = true;
 defaults.plugins.title.display = true;
 defaults.plugins.title.align = 'start';
 
-export default function OverviewGraph() {
+export default function GraphWidget() {
   const { theme } = useTheme();
 
   const [mounted, setMounted] = useState(false);
@@ -48,6 +48,7 @@ export default function OverviewGraph() {
               options={{
                 plugins: {
                   title: {
+                    font: { size: 16, weight: 'normal' },
                     text: 'Maintenance Completed',
                     color: theme === 'dark' ? 'rgb(255,255,255)' : 'rgb(0,0,0)',
                   },
@@ -85,7 +86,8 @@ export default function OverviewGraph() {
               options={{
                 plugins: {
                   title: {
-                    text: 'Maintenance Status',
+                    text: 'Asset Status',
+                    font: { size: 16, weight: 'normal' },
                     color: theme === 'dark' ? 'rgb(255,255,255)' : 'rgb(0,0,0)',
                   },
                   legend: {

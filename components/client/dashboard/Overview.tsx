@@ -1,7 +1,7 @@
 import React from 'react';
 
 import RecentActivity from '@/components/client/dashboard/RecentActivity';
-import OverviewGraph from '@/components/client/dashboard/OverviewGraph';
+import OverviewGraph from '@/components/client/dashboard/GraphWidget';
 import MaintenanceRequestWidget from '@/components/client/dashboard/MaintenanceRequestWidget';
 
 export default function Overview() {
