@@ -9,6 +9,10 @@ import React, {
   useTransition,
   Fragment,
 } from 'react';
+import { useRouter } from 'next/navigation';
+import { Asset, AssetStatus, AssetType } from '@prisma/client';
+import { useSession } from 'next-auth/react';
+
 import {
   Button,
   Input,
@@ -28,13 +32,11 @@ import {
   TableRow,
   User,
 } from '@nextui-org/react';
-import Loading from '@/components/client/Loading';
-import { Asset, AssetStatus, AssetType } from '@prisma/client';
-import { useSession } from 'next-auth/react';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
 import { PackagePlus } from 'lucide-react';
+
 import { createAsset } from '@/lib/actions/asset';
+import Loading from '@/components/client/Loading';
 
 export default function AssetList({
   assetList,
@@ -99,7 +101,7 @@ export default function AssetList({
             name="Junior Garcia"
             description={
               <Link href="https://twitter.com/jrgarciadev" size="sm" isExternal>
-                @jrgarciadev
+                @harith
               </Link>
             }
             avatarProps={{
@@ -267,7 +269,6 @@ export default function AssetList({
       </div>
       <div className="flex flex-row justify-between h-full">
         <div className="flex-1">
-          <Button onClick={() => console.log(assetList)}>click me</Button>
           <Table
             color="primary"
             selectionMode="single"

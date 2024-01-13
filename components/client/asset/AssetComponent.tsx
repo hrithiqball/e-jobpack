@@ -1,11 +1,8 @@
 'use client';
 
 import React, { Key, useEffect, useState } from 'react';
-import Loading from '@/components/client/Loading';
 import { Asset, ChecklistUse, Maintenance } from '@prisma/client';
-import AssetDetails from '@/components/client/asset/AssetDetails';
-import AssetMaintenance from '@/components/client/asset/AssetMaintenance';
-import AssetAttachment from '@/components/client/asset/AssetAttachment';
+
 import {
   Button,
   Chip,
@@ -21,22 +18,25 @@ import {
 } from '@nextui-org/react';
 import { ChevronLeft, PackagePlus, PencilLine } from 'lucide-react';
 
+import Loading from '@/components/client/Loading';
+import AssetDetails from '@/components/client/asset/AssetDetails';
+import AssetMaintenance from '@/components/client/asset/AssetMaintenance';
+import AssetAttachment from '@/components/client/asset/AssetAttachment';
+
+interface AssetComponentProps {
+  asset: Asset;
+  maintenanceList: Maintenance[];
+  checklistUse: ChecklistUse[];
+}
+
 export default function AssetComponent({
   asset,
   maintenanceList,
   checklistUse,
-}: {
-  asset: Asset;
-  maintenanceList: Maintenance[];
-  checklistUse: ChecklistUse[];
-}) {
+}: AssetComponentProps) {
   const [mounted, setMounted] = useState(false);
   const [selectedTab, setSelectedTab] = useState('details');
   const [isDesktop, setDesktop] = useState(window.innerWidth > 650);
-
-  function updateMedia() {
-    setDesktop(window.innerWidth > 650);
-  }
 
   useEffect(() => {
     window.addEventListener('resize', updateMedia);
@@ -46,6 +46,10 @@ export default function AssetComponent({
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  function updateMedia() {
+    setDesktop(window.innerWidth > 650);
+  }
 
   if (!mounted) return <Loading label="Hang on tight" />;
 
@@ -66,6 +70,7 @@ export default function AssetComponent({
           <Tabs
             aria-label="Asset Attribute"
             size="sm"
+            color="primary"
             className="ml-4"
             selectedKey={selectedTab}
             onSelectionChange={(key: Key) => setSelectedTab(key as string)}
@@ -158,9 +163,7 @@ export default function AssetComponent({
           </div>
         </div>
       </div>
-      <div>
-        <Divider />
-      </div>
+      <Divider />
       <div className="flex overflow-hidden flex-1">
         {selectedTab === 'details' && (
           <AssetDetails asset={asset} checklistUse={checklistUse} />
