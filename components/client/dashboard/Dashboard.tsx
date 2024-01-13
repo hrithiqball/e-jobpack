@@ -17,7 +17,7 @@ export default function Dashboard() {
   if (!mounted) return null;
 
   return (
-    <div className="space-y-4 h-full">
+    <div className="flex grow flex-col space-y-4 h-full">
       <Tabs
         radius="md"
         color="primary"
@@ -31,7 +31,7 @@ export default function Dashboard() {
         <Tab key="calendar" title="Calendar" />
       </Tabs>
       {activeComponent === 'overview' && (
-        <div className="flex grow h-full">
+        <div className="flex flex-col grow h-full">
           <Overview />
         </div>
       )}

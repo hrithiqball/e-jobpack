@@ -1,5 +1,8 @@
 import React from 'react';
 import { CategoryScale, Chart as ChartJS } from 'chart.js/auto';
+import RecentActivity from './RecentActivity';
+import OverviewGraph from './OverviewGraph';
+import MaintenanceRequestWidget from './MaintenanceRequestWidget';
 // import { Bar } from 'react-chartjs-2';
 // import { Data } from '@/public/utils/dummy-data';
 
@@ -21,12 +24,18 @@ export default function Overview() {
   // });
 
   return (
-    <div className="flex h-full w-full">
-      <div className="flex-col w-4/5">
-        <div className="bg-blue-500 p-4">Left Box 1</div>
-        <div className="bg-green-500 p-4">Left Box 2</div>
+    <div className="flex grow h-full w-full">
+      <div className="flex flex-col w-4/5">
+        <div className="flex flex-1 p-2">
+          <OverviewGraph />
+        </div>
+        <div className="flex flex-1 p-2">
+          <MaintenanceRequestWidget />
+        </div>
       </div>
-      <div className="w-1/5 bg-red-500 p-4">Right Box</div>
+      <div className="flex w-1/5 p-2">
+        <RecentActivity />
+      </div>
     </div>
   );
 }
