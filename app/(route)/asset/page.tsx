@@ -1,7 +1,7 @@
-import AssetComponent from '@/components/client/asset/AssetList';
 import { fetchAssetList } from '@/lib/actions/asset';
 import { fetchAssetStatusList } from '@/lib/actions/asset-status';
 import { fetchAssetTypeList } from '@/lib/actions/asset-type';
+import AssetComponent from '@/components/client/asset/AssetList';
 
 export default async function AssetPage() {
   const assetList = await fetchAssetList();

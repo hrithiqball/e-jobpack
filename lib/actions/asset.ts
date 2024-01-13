@@ -6,6 +6,7 @@ import z from 'zod';
 
 import { db } from '@/lib/prisma/db';
 import { CreateAsset } from '@/lib/schemas/asset';
+import { revalidatePath } from 'next/cache';
 
 export async function createAsset(
   values: z.infer<typeof CreateAsset>,
@@ -32,11 +33,14 @@ export async function createAsset(
 
 export async function fetchAssetList(): Promise<Asset[]> {
   try {
-    return await db.asset.findMany({
+    const assetList = await db.asset.findMany({
       orderBy: {
         name: 'asc',
       },
     });
+
+    revalidatePath('/api/asset');
+    return assetList;
   } catch (error) {
     console.error(error);
     return [];
