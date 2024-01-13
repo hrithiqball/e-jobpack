@@ -69,7 +69,7 @@ import { convertToRoman } from '@/lib/function/convertToRoman';
 import { createChecklist } from '@/lib/actions/checklist';
 import { updateMaintenance } from '@/lib/actions/maintenance';
 import { useCurrentRole } from '@/hooks/use-current-role';
-import { SimplifiedTask } from '@/types/nested-maintenance';
+import { SimplifiedTask } from '@/types/simplified-task';
 import Loading from '@/components/client/Loading';
 
 interface MaintenanceComponentProps {
