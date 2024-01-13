@@ -39,7 +39,7 @@ export async function fetchAssetList(): Promise<Asset[]> {
       },
     });
 
-    revalidatePath('/api/asset');
+    revalidatePath('/asset');
     return assetList;
   } catch (error) {
     console.error(error);

@@ -9,6 +9,7 @@ import {
   UpdateMaintenance,
 } from '@/lib/schemas/maintenance';
 import dayjs from 'dayjs';
+import { revalidatePath } from 'next/cache';
 
 export async function createMaintenance(
   values: z.infer<typeof CreateMaintenance>,
@@ -51,8 +52,6 @@ export async function fetchMaintenanceList(
     const filters: Prisma.MaintenanceWhereInput[] = [];
     const orderBy: Prisma.MaintenanceOrderByWithRelationInput[] = [];
 
-    console.log('assetIds actually used', assetIds);
-
     // if (assetIds) {
     //   filters.push({
     //     assetIds ,
@@ -63,12 +62,15 @@ export async function fetchMaintenanceList(
       date: 'desc',
     });
 
-    return await db.maintenance.findMany({
+    const maintenanceList = await db.maintenance.findMany({
       orderBy,
       where: {
         AND: filters,
       },
     });
+
+    revalidatePath('/task');
+    return maintenanceList;
   } catch (error) {
     console.error(error);
     throw error;
