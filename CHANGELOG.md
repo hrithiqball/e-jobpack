@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/hrithiqball/asset-management-app/compare/v2.0.0...v2.1.0) (2024-01-13)
+
+
+### Features
+
+* accessible by vercel ([4343a0f](https://github.com/hrithiqball/asset-management-app/commit/4343a0fac64aa419c90b7ec1b85ce67fee0a40a0))
+
 # [2.0.0](https://github.com/hrithiqball/asset-management-app/compare/v1.1.0...v2.0.0) (2024-01-13)
 
 

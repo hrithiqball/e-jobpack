@@ -7,7 +7,7 @@ import { Toaster } from 'sonner';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Asset Management System',
+  title: 'eJobpack',
   description: 'A digital asset management system solution for your business.',
 };
 

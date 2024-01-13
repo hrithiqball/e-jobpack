@@ -267,6 +267,7 @@ export default function AssetList({
       </div>
       <div className="flex flex-row justify-between h-full">
         <div className="flex-1">
+          <Button onClick={() => console.log(assetList)}>click me</Button>
           <Table
             color="primary"
             selectionMode="single"
