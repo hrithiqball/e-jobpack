@@ -1,12 +1,13 @@
 import React from 'react';
-import SubtaskItem from '@/components/client/subtask/SubtaskItem';
 import { Subtask } from '@prisma/client';
 
-export default function SubtaskList({
-  subtaskList,
-}: {
+import SubtaskItem from '@/components/client/subtask/SubtaskItem';
+
+interface SubtaskListProps {
   subtaskList: Subtask[];
-}) {
+}
+
+export default function SubtaskList({ subtaskList }: SubtaskListProps) {
   return (
     <div className="space-y-4">
       {subtaskList.map(subtask => (

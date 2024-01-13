@@ -1,7 +1,9 @@
 'use client';
 
 import React, { useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import { Checklist } from '@prisma/client';
+
 import {
   Accordion,
   AccordionItem,
@@ -14,7 +16,6 @@ import {
 } from '@nextui-org/react';
 import { CheckCircle2, DoorClosed, DoorOpen } from 'lucide-react';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
 
 import { updateChecklist } from '@/lib/actions/checklist';
 import { useCurrentUser } from '@/hooks/use-current-user';
@@ -66,12 +67,17 @@ export default function ClosedChecklist({
   }
 
   function handleReopenChecklist() {
-    if (user?.id === null || user?.id === undefined) {
+    if (
+      user?.id === null ||
+      user?.id === undefined ||
+      currentChecklist === null ||
+      currentChecklist === undefined
+    ) {
       toast.error('Session expired');
       return;
     }
 
-    if (currentChecklist?.id === null || currentChecklist?.id === undefined) {
+    if (currentChecklist.id === null || currentChecklist.id === undefined) {
       toast.error('Checklist not found');
       return;
     }
@@ -79,7 +85,7 @@ export default function ClosedChecklist({
     startTransition(() => {
       toast.promise(
         updateChecklist(currentChecklist?.id, {
-          updatedBy: user?.id,
+          updatedBy: user.id,
           isClose: false,
         }),
         {

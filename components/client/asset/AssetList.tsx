@@ -10,6 +10,7 @@ import React, {
   Fragment,
 } from 'react';
 import { useRouter } from 'next/navigation';
+
 import { AssetStatus, AssetType } from '@prisma/client';
 import { useSession } from 'next-auth/react';
 
@@ -35,18 +36,17 @@ import {
 import { toast } from 'sonner';
 import { PackagePlus } from 'lucide-react';
 
-import { createAsset } from '@/lib/actions/asset';
+import { createAsset, fetchMutatedAssetList } from '@/lib/actions/asset';
 import Loading from '@/components/client/Loading';
-import { serverClient } from '@/app/_trpc/serverClient';
 
 interface AssetListProps {
-  assetList2: Awaited<ReturnType<(typeof serverClient)['getAssets']>>;
+  mutatedAssetList: Awaited<ReturnType<typeof fetchMutatedAssetList>>;
   assetTypeList: AssetType[];
   assetStatusList: AssetStatus[];
 }
 
 export default function AssetList({
-  assetList2,
+  mutatedAssetList,
   assetTypeList,
   assetStatusList,
 }: AssetListProps) {
@@ -72,8 +72,8 @@ export default function AssetList({
   }
 
   const renderCell = useCallback(
-    (asset: (typeof assetList2)[0], columnKey: Key) => {
-      const cellValue = asset[columnKey as keyof (typeof assetList2)[0]];
+    (asset: (typeof mutatedAssetList)[0], columnKey: Key) => {
+      const cellValue = asset[columnKey as keyof (typeof mutatedAssetList)[0]];
 
       switch (columnKey) {
         case 'type':
@@ -153,7 +153,7 @@ export default function AssetList({
   }
 
   function handleRowAction(key: Key) {
-    const asset = assetList2.find(asset => asset.id === key);
+    const asset = mutatedAssetList.find(asset => asset.id === key);
 
     router.push(`/asset/${asset?.id}`);
   }
@@ -294,7 +294,7 @@ export default function AssetList({
               <TableColumn key="location">Location</TableColumn>
               <TableColumn key="person-in-charge">Person In Charge</TableColumn>
             </TableHeader>
-            <TableBody items={assetList2}>
+            <TableBody items={mutatedAssetList}>
               {asset => (
                 <TableRow key={asset.id}>
                   {columnKey => (

@@ -49,6 +49,51 @@ export async function fetchAssetList() {
   }
 }
 
+export async function fetchMutatedAssetList() {
+  try {
+    const assetList = await db.asset.findMany({
+      orderBy: {
+        name: 'asc',
+      },
+    });
+
+    const mutatedAssetList = await Promise.all(
+      assetList.map(async asset => {
+        let status = null;
+        let type = null;
+
+        if (asset.statusId !== null) {
+          status = await db.assetStatus.findFirst({
+            where: {
+              id: asset.statusId,
+            },
+          });
+        }
+
+        if (asset.type !== null) {
+          type = await db.assetType.findFirst({
+            where: {
+              id: asset.type,
+            },
+          });
+        }
+
+        return {
+          ...asset,
+          status: status,
+          type: type,
+        };
+      }),
+    );
+
+    revalidatePath('/asset');
+    return mutatedAssetList;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 export async function fetchAssetItem(id: string): Promise<Asset> {
   try {
     return await db.asset.findUniqueOrThrow({

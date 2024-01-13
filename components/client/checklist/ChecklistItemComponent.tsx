@@ -1,8 +1,10 @@
 'use client';
 
 import React, { ReactNode } from 'react';
-import { Card, Divider } from '@nextui-org/react';
 import { Asset, Checklist } from '@prisma/client';
+
+import { Card, Divider } from '@nextui-org/react';
+
 import AssetActions from '@/components/client/asset/AssetActions';
 
 interface ChecklistItemComponentProps {
