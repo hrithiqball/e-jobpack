@@ -3,5 +3,5 @@
   "globals": {
     "React": "readonly"
   },
-  "rules": { "no-unused-vars": "warn", "no-unused-expressions": "warn" }
+  "rules": { "no-unused-vars": "off", "no-unused-expressions": "off" }
 }

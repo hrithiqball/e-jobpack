@@ -1,23 +1,13 @@
 'use client';
 
-import React, {
-  useEffect,
-  useState,
-  useCallback,
-  ReactNode,
-  Key,
-  useTransition,
-  Fragment,
-} from 'react';
+import React, { useEffect, useState, Key, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-
-import { AssetStatus, AssetType } from '@prisma/client';
 import { useSession } from 'next-auth/react';
+import { AssetStatus, AssetType } from '@prisma/client';
 
 import {
   Button,
   Input,
-  Link,
   Modal,
   ModalBody,
   ModalContent,
@@ -25,19 +15,13 @@ import {
   ModalHeader,
   Select,
   SelectItem,
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-  User,
 } from '@nextui-org/react';
 import { toast } from 'sonner';
 import { PackagePlus } from 'lucide-react';
 
 import { createAsset, fetchMutatedAssetList } from '@/lib/actions/asset';
 import Loading from '@/components/client/Loading';
+import AssetTable from '@/components/client/asset/AssetTable';
 
 interface AssetListProps {
   mutatedAssetList: Awaited<ReturnType<typeof fetchMutatedAssetList>>;
@@ -70,58 +54,6 @@ export default function AssetList({
   function handleAssetStatus(e: any) {
     setNewAssetStatus(e.currentKey);
   }
-
-  const renderCell = useCallback(
-    (asset: (typeof mutatedAssetList)[0], columnKey: Key) => {
-      const cellValue = asset[columnKey as keyof (typeof mutatedAssetList)[0]];
-
-      switch (columnKey) {
-        case 'type':
-          return (
-            <span>
-              {asset.type === null ? 'Not Specified' : asset.type.title}
-            </span>
-          );
-        case 'description':
-          return (
-            <span>
-              {asset.description === null || asset.description === ''
-                ? 'No description'
-                : asset.description}
-            </span>
-          );
-        case 'location':
-          return (
-            <span>
-              {asset.location === null || asset.location === ''
-                ? 'Not specified'
-                : asset.location}
-            </span>
-          );
-        case 'person-in-charge':
-          return (
-            <User
-              name="Junior Garcia"
-              description={
-                <Link
-                  href="https://twitter.com/jrgarciadev"
-                  size="sm"
-                  isExternal
-                >
-                  @harith
-                </Link>
-              }
-              avatarProps={{
-                src: 'https://avatars.githubusercontent.com/u/30373425?v=4',
-              }}
-            />
-          );
-        default:
-          return cellValue;
-      }
-    },
-    [],
-  );
 
   function handleAddAsset() {
     if (session?.user.id === undefined || session?.user.id === null) {
@@ -174,7 +106,7 @@ export default function AssetList({
   if (!mounted) return <Loading label="Hang on tight" />;
 
   return (
-    <Fragment>
+    <div className="flex-1">
       <div className="flex justify-between">
         <span>Asset List</span>
         <Button
@@ -278,36 +210,12 @@ export default function AssetList({
       </div>
       <div className="flex flex-row justify-between h-full">
         <div className="flex-1">
-          <Table
-            color="primary"
-            selectionMode="single"
-            className="mt-4"
-            aria-label="Asset List"
-            removeWrapper
-            onRowAction={handleRowAction}
-          >
-            <TableHeader>
-              <TableColumn key="name">Name</TableColumn>
-              <TableColumn key="tag">Tag</TableColumn>
-              <TableColumn key="description">Description</TableColumn>
-              <TableColumn key="type">Type</TableColumn>
-              <TableColumn key="location">Location</TableColumn>
-              <TableColumn key="person-in-charge">Person In Charge</TableColumn>
-            </TableHeader>
-            <TableBody items={mutatedAssetList}>
-              {asset => (
-                <TableRow key={asset.id}>
-                  {columnKey => (
-                    <TableCell>
-                      {renderCell(asset, columnKey) as ReactNode}
-                    </TableCell>
-                  )}
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+          <AssetTable
+            handleRowAction={handleRowAction}
+            mutatedAssetList={mutatedAssetList}
+          />
         </div>
       </div>
-    </Fragment>
+    </div>
   );
 }
