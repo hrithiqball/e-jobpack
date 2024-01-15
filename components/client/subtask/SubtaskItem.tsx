@@ -37,18 +37,25 @@ export default function SubtaskItem({ subtask }: { subtask: Subtask }) {
 
   const numericRegex = /^-?\d+(\.\d+)?$/;
 
-  function handleEnter(
-    event: KeyboardEvent<HTMLInputElement>,
-    type: InputType,
-  ) {
-    if (event.key !== 'Enter') return;
-    let updateSubtask: UpdateSubtask = {};
-    if (type === InputType.remarks) updateSubtask.remarks = subtaskRemarks;
-    if (type === InputType.issue) updateSubtask.issue = subtaskIssue;
-    if (type === InputType.numberVal)
-      updateSubtask.task_number_val = parseInt(taskNumberValue, 10);
+  function handleEnter(type: InputType) {
+    return (event: KeyboardEvent<HTMLInputElement>) => {
+      if (event.key === 'Enter') return;
 
-    updateSubtaskClient(updateSubtask);
+      let updateSubtask: UpdateSubtask = {};
+      switch (type) {
+        case InputType.remarks:
+          updateSubtask.remarks = subtaskRemarks;
+          break;
+        case InputType.issue:
+          updateSubtask.issue = subtaskIssue;
+          break;
+        case InputType.numberVal:
+          updateSubtask.task_number_val = parseInt(taskNumberValue, 10);
+          break;
+      }
+
+      updateSubtaskClient(updateSubtask);
+    };
   }
 
   const validateNumericInput = (value: string) => value.match(numericRegex);
@@ -150,7 +157,7 @@ export default function SubtaskItem({ subtask }: { subtask: Subtask }) {
             variant="faded"
             value={taskNumberValue}
             onValueChange={setTaskNumberValue}
-            onKeyDown={e => handleEnter(e, InputType.numberVal)}
+            onKeyDown={handleEnter(InputType.numberVal)}
             isInvalid={isInvalid}
             color={isInvalid ? 'danger' : 'primary'}
           />
@@ -161,7 +168,7 @@ export default function SubtaskItem({ subtask }: { subtask: Subtask }) {
           variant="faded"
           value={subtaskIssue}
           onValueChange={setSubtaskIssue}
-          onKeyDown={e => handleEnter(e, InputType.issue)}
+          onKeyDown={handleEnter(InputType.issue)}
         />
       </div>
       <div className="flex-1 px-4">
@@ -169,7 +176,7 @@ export default function SubtaskItem({ subtask }: { subtask: Subtask }) {
           variant="faded"
           value={subtaskRemarks}
           onValueChange={setSubtaskRemarks}
-          onKeyDown={e => handleEnter(e, InputType.remarks)}
+          onKeyDown={handleEnter(InputType.remarks)}
         />
       </div>
       <div className="flex-2 hover:cursor-not-allowed">

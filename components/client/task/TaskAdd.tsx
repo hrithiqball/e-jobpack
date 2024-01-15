@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Fragment, useState, useTransition } from 'react';
+import React, { ChangeEvent, Fragment, useState, useTransition } from 'react';
 import { TaskType, Task, Checklist } from '@prisma/client';
 import { useRouter } from 'next/navigation';
 import dayjs from 'dayjs';
@@ -120,22 +120,22 @@ export default function TaskAdd({ checklist, open, setOpen }: TaskAddProps) {
     setSubtaskList([...subtaskList, newSubtask]);
   }
 
-  function handleSubtaskTitleChange(
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number,
-  ) {
-    const updatedSubtaskList = [...subtaskList];
-    updatedSubtaskList[index].title = e.target.value;
-    setSubtaskList(updatedSubtaskList);
+  function handleSubtaskTitleChange(index: number) {
+    return (event: ChangeEvent<HTMLInputElement>) => {
+      const updatedSubtaskList = [...subtaskList];
+
+      updatedSubtaskList[index].title = event.target.value;
+      setSubtaskList(updatedSubtaskList);
+    };
   }
 
-  function handleSubtaskDescriptionChange(
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number,
-  ) {
-    const updatedSubtaskList = [...subtaskList];
-    updatedSubtaskList[index].description = e.target.value;
-    setSubtaskList(updatedSubtaskList);
+  function handleSubtaskDescriptionChange(index: number) {
+    return (event: ChangeEvent<HTMLInputElement>) => {
+      const updatedSubtaskList = [...subtaskList];
+
+      updatedSubtaskList[index].description = event.target.value;
+      setSubtaskList(updatedSubtaskList);
+    };
   }
 
   function handleDeleteSubtask(index: number) {
@@ -178,7 +178,7 @@ export default function TaskAdd({ checklist, open, setOpen }: TaskAddProps) {
                     <Input
                       label={`Subtask title ${index + 1}`}
                       value={subtask.title}
-                      onChange={e => handleSubtaskTitleChange(e, index)}
+                      onChange={handleSubtaskTitleChange(index)}
                       variant="faded"
                     />
                     <Button
@@ -192,7 +192,7 @@ export default function TaskAdd({ checklist, open, setOpen }: TaskAddProps) {
                   <Input
                     label={`Subtask description ${index + 1}`}
                     value={subtask.description}
-                    onChange={e => handleSubtaskDescriptionChange(e, index)}
+                    onChange={handleSubtaskDescriptionChange(index)}
                   />
                 </div>
               ))}
