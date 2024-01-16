@@ -10,7 +10,14 @@ export function Providers({ children }: PropsWithChildren) {
   return (
     <SessionProvider>
       <NextUIProvider>
-        <ThemeProvider attribute="class">{children}</ThemeProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
       </NextUIProvider>
     </SessionProvider>
   );

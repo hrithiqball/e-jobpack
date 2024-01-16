@@ -1,7 +1,7 @@
-import React, { useState, useTransition } from 'react';
+import React, { useState, useTransition, ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { Asset } from '@prisma/client';
+import { Asset, User } from '@prisma/client';
 import dayjs from 'dayjs';
 
 import {
@@ -14,6 +14,9 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Select,
   SelectItem,
   Table,
@@ -23,36 +26,57 @@ import {
   TableHeader,
   TableRow,
 } from '@nextui-org/react';
-import { Clock, Wrench, History } from 'lucide-react';
+import { Clock, Wrench, History, CalendarIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { createMaintenance } from '@/lib/actions/maintenance';
+import { Calendar } from '@/components/ui/Calendar';
 
 interface MaintenanceWidgetProps {
   asset: Asset;
+  userList: User[];
 }
 
-export default function MaintenanceWidget({ asset }: MaintenanceWidgetProps) {
+export default function MaintenanceWidget({
+  asset,
+  userList,
+}: MaintenanceWidgetProps) {
   let [isPending, startTransition] = useTransition();
   const router = useRouter();
 
+  const [newMaintenanceId, setNewMaintenanceId] = useState<string>('');
+  const [newMaintenanceDeadLine, setNewMaintenanceDeadLine] = useState<Date>();
+  const [newMaintenanceMaintaineeList, setNewMaintenanceMaintaineeList] =
+    useState<string>();
   const [openCreateMaintenanceModal, setOpenCreateMaintenanceModal] =
     useState(false);
 
   function handleCreateMaintenance() {
-    startTransition(() => {
-      createMaintenance({
-        maintainee: 'Harith',
-      })
-        .then(res => {
-          if (!isPending) console.log(res);
-          toast.success('Work order request created successfully');
-          router.push('/task');
-        })
-        .catch(err => {
-          console.error(err);
-        });
-    });
+    console.log(newMaintenanceMaintaineeList);
+
+    // startTransition(() => {
+    //   createMaintenance({
+    //     id: newMaintenanceId,
+    //     maintainee: newMaintenanceMaintaineeList,
+    //     deadline: newMaintenanceDeadLine ?? null,
+    //   })
+    //     .then(res => {
+    //       if (!isPending) console.log(res);
+    //       toast.success('Work order request created successfully');
+    //       router.push('/task');
+    //     })
+    //     .catch(err => {
+    //       console.error(err);
+    //     });
+    // });
+  }
+
+  function handleMaintaineeSelection() {
+    return (event: ChangeEvent<HTMLSelectElement>) => {
+      console.log(event.target.value);
+      setNewMaintenanceMaintaineeList(event.target.value);
+    };
+    // setNewMaintenanceMaintaineeList(e.value);
   }
 
   return (
@@ -127,21 +151,47 @@ export default function MaintenanceWidget({ asset }: MaintenanceWidgetProps) {
             </ModalHeader>
             <ModalBody>
               <Input
-                isReadOnly
+                isRequired
                 label="Maintenance Request ID"
                 variant="faded"
-                value={`WO-${Date.now().toString()}`}
+                size="sm"
+                value={newMaintenanceId}
+                onValueChange={setNewMaintenanceId}
               />
-              <Select isMultiline label="Assign To" variant="faded">
-                <SelectItem key="1" value="Harith">
-                  Harith
-                </SelectItem>
-                <SelectItem key="2" value="Iqbal">
-                  Iqbal
-                </SelectItem>
-                <SelectItem key="3" value="John">
-                  John
-                </SelectItem>
+              <Popover>
+                <PopoverTrigger>
+                  <Button
+                    variant="faded"
+                    startContent={<CalendarIcon size={18} />}
+                  >
+                    Deadline
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <Calendar
+                    mode="single"
+                    selected={newMaintenanceDeadLine}
+                    onSelect={setNewMaintenanceDeadLine}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+              {/* TODO: https://stackoverflow.com/questions/77068657/nextui-select-component-onchange-option */}
+              <Select
+                selectionMode="multiple"
+                label="Assign To"
+                variant="faded"
+                size="sm"
+                value={newMaintenanceMaintaineeList}
+                onChange={handleMaintaineeSelection}
+              >
+                {userList
+                  .filter(u => u.id !== '-99')
+                  .map(user => (
+                    <SelectItem key={user.id} value={user.id}>
+                      {user.name}
+                    </SelectItem>
+                  ))}
               </Select>
             </ModalBody>
             <ModalFooter>

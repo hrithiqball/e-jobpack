@@ -19,6 +19,8 @@ export async function createAsset(
     }
 
     if (validatedFields.data.type === '') validatedFields.data.type = null;
+    if (validatedFields.data.personInCharge === '')
+      validatedFields.data.personInCharge = null;
 
     return await db.asset.create({
       data: {
@@ -61,6 +63,7 @@ export async function fetchMutatedAssetList() {
       assetList.map(async asset => {
         let status = null;
         let type = null;
+        let personInCharge = null;
 
         if (asset.statusId !== null) {
           status = await db.assetStatus.findFirst({
@@ -78,10 +81,33 @@ export async function fetchMutatedAssetList() {
           });
         }
 
+        if (asset.personInCharge !== null) {
+          personInCharge = await db.user.findFirst({
+            where: {
+              id: asset.personInCharge,
+            },
+          });
+        }
+
+        const createdBy = await db.user.findFirst({
+          where: {
+            id: asset.createdBy,
+          },
+        });
+
+        const updatedBy = await db.user.findFirst({
+          where: {
+            id: asset.updatedBy,
+          },
+        });
+
         return {
           ...asset,
           status: status,
           type: type,
+          personInCharge: personInCharge,
+          createdBy: createdBy,
+          updatedBy: updatedBy,
         };
       }),
     );

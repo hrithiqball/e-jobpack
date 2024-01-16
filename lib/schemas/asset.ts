@@ -12,7 +12,7 @@ export const CreateAsset = z.object({
   }),
   personInCharge: z.string().nullable().optional(),
   tag: z.string().optional(),
-  statusId: z.string().optional(),
+  statusId: z.string().nullable().optional(),
 });
 
 export const UpdateAsset = '';

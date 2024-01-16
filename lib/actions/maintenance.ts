@@ -21,11 +21,13 @@ export async function createMaintenance(
       throw new Error(validatedFields.error.message);
     }
 
+    const maintainee = validatedFields.data.maintainee?.toString();
+
     return await db.maintenance.create({
       data: {
         ...validatedFields.data,
         date: new Date(),
-        id: `WO-${dayjs().format('YYMMDDHHmmssSSS')}`,
+        maintainee,
       },
     });
   } catch (error) {

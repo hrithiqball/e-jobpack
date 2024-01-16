@@ -1,8 +1,11 @@
 import z from 'zod';
 
 export const CreateMaintenance = z.object({
-  // maintainee: z.array(z.string()).optional(),
-  maintainee: z.string().nullable().optional(),
+  id: z.string().min(1, {
+    message: 'ID is required',
+  }),
+  maintainee: z.array(z.string()).optional().nullable(),
+  deadline: z.date().optional().nullable(),
 });
 
 export const UpdateMaintenance = z.object({
