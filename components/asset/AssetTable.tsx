@@ -40,11 +40,6 @@ import {
   DropdownMenu,
   DropdownTrigger,
   Input,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
   Pagination,
 } from '@nextui-org/react';
 import {
@@ -63,14 +58,12 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import {
-  deleteAsset,
-  fetchMutatedAssetList,
-  updateAsset,
-} from '@/lib/actions/asset';
+import { fetchMutatedAssetList, updateAsset } from '@/lib/actions/asset';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import emptyIcon from '@/public/image/empty.svg';
 import { useCurrentRole } from '@/hooks/use-current-role';
+import AddMaintenanceModal from './AddMaintenanceModal';
+import DeleteAssetModal from './DeleteAssetModal';
 
 type MutatedAsset = Awaited<ReturnType<typeof fetchMutatedAssetList>>[0];
 type Type = MutatedAsset['type'];
@@ -78,25 +71,27 @@ type Status = MutatedAsset['status'];
 
 interface AssetTableProps {
   mutatedAssetList: MutatedAsset[];
+  userList: User[];
   children: ReactNode | null;
 }
 
 export default function AssetTable({
   mutatedAssetList,
+  userList,
   children,
 }: AssetTableProps) {
   let [isPending, startTransition] = useTransition();
   const user = useCurrentUser();
   const role = useCurrentRole();
 
+  const [assetIds, setAssetIds] = useState<string[]>([]);
+  const [openAddMaintenanceModal, setOpenAddMaintenanceModal] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const [filterBy, setFilterBy] = useState('name');
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [currentAsset, setCurrentAsset] = useState<MutatedAsset | undefined>(
-    undefined,
-  );
+  const [currentAssetId, setCurrentAssetId] = useState('');
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
     location: false,
     description: false,
@@ -601,7 +596,7 @@ export default function AssetTable({
         return;
       }
 
-      setCurrentAsset(asset);
+      setCurrentAssetId(assetId);
 
       switch (key) {
         case 'archive-asset':
@@ -614,52 +609,44 @@ export default function AssetTable({
     };
   }
 
-  function handleDeleteAsset() {
-    if (currentAsset === undefined) {
-      toast.error('Asset not found');
-      return;
-    }
-
-    if (user?.id === undefined) {
-      toast.error('User session expired');
-      return;
-    }
-
-    startTransition(() => {
-      deleteAsset(user.id, currentAsset.id)
-        .then(() => {
-          if (!isPending) console.debug(`Asset ${currentAsset.name} deleted`);
-          toast.success(`Asset ${currentAsset.name} deleted successfully`);
-          handleCloseDeleteModal();
-        })
-        .catch(err => {
-          console.error(err);
-          toast.error(`Failed to delete asset ${currentAsset.name}`);
-        });
-    });
-  }
-
   function handleArchiveAsset(assetId: string) {
     if (user?.id === undefined) {
       toast.error('User session expired');
       return;
     }
 
+    if (!isPending) console.debug('archiving');
+
     startTransition(() => {
-      updateAsset(user.id, assetId, { isArchive: true })
-        .then(res => {
-          toast.success(`Asset ${res.name} archived successfully`);
-        })
-        .catch(err => {
-          console.error(err);
-          toast.error(`Failed to archive asset ${assetId}`);
-        });
+      toast.promise(updateAsset(user.id, assetId, { isArchive: true }), {
+        loading: 'Archiving asset...',
+        success: res => {
+          return `${res.name} archived successfully`;
+        },
+        error: 'Failed to archive asset',
+      });
     });
   }
 
   function handleCloseDeleteModal() {
     setOpenDeleteModal(false);
-    setCurrentAsset(undefined);
+    setCurrentAssetId('');
+  }
+
+  function handleOpenAddMaintenanceModal() {
+    if (user === undefined) {
+      toast.error('User session expired');
+      return;
+    }
+
+    let assetIds: string[] = [];
+
+    table.getSelectedRowModel().flatRows.forEach(row => {
+      assetIds.push(row.original.id);
+    });
+
+    setAssetIds(assetIds);
+    setOpenAddMaintenanceModal(true);
   }
 
   return (
@@ -676,9 +663,12 @@ export default function AssetTable({
           className="max-w-sm"
         />
         <div className="flex items-center space-x-2">
-          {table.getIsSomeRowsSelected() && (
+          {(table.getIsSomeRowsSelected() || table.getIsAllRowsSelected()) && (
             <Fragment>
-              <Button onClick={handleMe} endContent={<FileBox size={18} />}>
+              <Button
+                onClick={handleOpenAddMaintenanceModal}
+                endContent={<FileBox size={18} />}
+              >
                 Create Maintenance Request
               </Button>
               <Button onClick={handleMe} endContent={<Archive size={18} />}>
@@ -766,10 +756,7 @@ export default function AssetTable({
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows.map(row => (
-              <TableRow
-                key={row.id}
-                // onClick={() => handleRowNavigate(row.original.id)}
-              >
+              <TableRow key={row.id}>
                 {row.getVisibleCells().map(cell => (
                   <TableCell key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -790,9 +777,9 @@ export default function AssetTable({
       </div>
       <div className="flex items-center justify-center space-x-1">
         <Button
-          variant={table.getCanPreviousPage() ? 'faded' : 'ghost'}
-          size="sm"
           isIconOnly
+          size="sm"
+          variant={table.getCanPreviousPage() ? 'ghost' : 'faded'}
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
@@ -807,45 +794,26 @@ export default function AssetTable({
           />
         )}
         <Button
-          variant={table.getCanNextPage() ? 'faded' : 'ghost'}
-          size="sm"
           isIconOnly
+          size="sm"
+          variant={table.getCanNextPage() ? 'ghost' : 'faded'}
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
           <ChevronRight size={18} />
         </Button>
       </div>
-      <Modal isOpen={openDeleteModal} hideCloseButton backdrop="blur">
-        <ModalContent>
-          <ModalHeader>Are you sure?</ModalHeader>
-          <ModalBody>
-            <span>
-              Once you delete this asset, it will be gone forever including the
-              data and history. Please proceed with caution. Archive instead if
-              you want to keep the data and history.
-            </span>
-            <div className="flex items-center justify-center">
-              <Button variant="faded" startContent={<Archive />} className="">
-                Archive
-              </Button>
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button size="sm" variant="faded" onClick={handleCloseDeleteModal}>
-              Cancel
-            </Button>
-            <Button
-              size="sm"
-              variant="faded"
-              color="danger"
-              onClick={handleDeleteAsset}
-            >
-              Delete
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <DeleteAssetModal
+        isOpen={openDeleteModal}
+        onClose={handleCloseDeleteModal}
+        assetId={currentAssetId}
+      />
+      <AddMaintenanceModal
+        isOpen={openAddMaintenanceModal}
+        onClose={() => setOpenAddMaintenanceModal(false)}
+        assetIds={assetIds}
+        userList={userList}
+      />
     </div>
   );
 }

@@ -32,7 +32,7 @@ import { toast } from 'sonner';
 import { createMaintenance } from '@/lib/actions/maintenance';
 import { Calendar } from '@/components/ui/Calendar';
 import { CreateMaintenance } from '@/lib/schemas/maintenance';
-import { useCurrentRole } from '@/hooks/use-current-role';
+import { useCurrentUser } from '@/hooks/use-current-user';
 
 interface MaintenanceWidgetProps {
   asset: Asset;
@@ -45,7 +45,7 @@ export default function MaintenanceWidget({
 }: MaintenanceWidgetProps) {
   let [isPending, startTransition] = useTransition();
   const router = useRouter();
-  const role = useCurrentRole();
+  const user = useCurrentUser();
 
   const [newMaintenanceId, setNewMaintenanceId] = useState<string>('');
   const [newMaintenanceDeadLine, setNewMaintenanceDeadLine] = useState<Date>();
@@ -55,6 +55,11 @@ export default function MaintenanceWidget({
     useState(false);
 
   function handleCreateMaintenance() {
+    if (user === undefined) {
+      toast.error('Session expired');
+      return;
+    }
+
     const maintainee = Array.from(newMaintenanceMaintaineeList);
     const validatedFields = CreateMaintenance.safeParse({
       id: newMaintenanceId,
@@ -69,7 +74,7 @@ export default function MaintenanceWidget({
     }
 
     startTransition(() => {
-      createMaintenance({
+      createMaintenance(user.id, {
         ...validatedFields.data,
       })
         .then(res => {
@@ -142,7 +147,7 @@ export default function MaintenanceWidget({
           color="success"
           variant="faded"
         >
-          {role === 'ADMIN' || role === 'SUPERVISOR'
+          {user?.role === 'ADMIN' || user?.role === 'SUPERVISOR'
             ? 'Create New Maintenance'
             : 'Create Maintenance Request'}
         </Button>
@@ -153,7 +158,7 @@ export default function MaintenanceWidget({
         >
           <ModalContent>
             <ModalHeader className="flex flex-col gap-1">
-              {role === 'ADMIN' || role === 'SUPERVISOR'
+              {user?.role === 'ADMIN' || user?.role === 'SUPERVISOR'
                 ? 'Create New Maintenance'
                 : 'Create Maintenance Request'}
             </ModalHeader>
@@ -195,7 +200,7 @@ export default function MaintenanceWidget({
                 }
               >
                 {userList
-                  .filter(u => u.id !== '-99')
+                  .filter(user => user.id !== '-99')
                   .map(user => (
                     <SelectItem key={user.id} value={user.id}>
                       {user.name}

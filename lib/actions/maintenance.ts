@@ -11,6 +11,7 @@ import {
 } from '@/lib/schemas/maintenance';
 
 export async function createMaintenance(
+  requestedBy: string,
   values: z.infer<typeof CreateMaintenance>,
 ) {
   try {
@@ -25,6 +26,7 @@ export async function createMaintenance(
     return await db.maintenance.create({
       data: {
         ...validatedFields.data,
+        requestedBy,
         date: new Date(),
         maintainee,
       },

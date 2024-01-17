@@ -159,35 +159,36 @@ model ChecklistUse {
 }
 
 model History {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  activity  String
-  actionBy  String   @map("action_by")
-  actionOn  DateTime @map("action_on") @default(now())
-  user      User     @relation(fields: [actionBy], references: [id])
+  activity String
+  actionBy String   @map("action_by")
+  actionOn DateTime @default(now()) @map("action_on")
+  id       String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user     User     @relation(fields: [actionBy], references: [id])
 
   @@map("history")
   @@schema("public")
 }
 
 model Maintenance {
-  date                               DateTime
-  maintainee                         String?
-  attachmentPath                     String?     @map("attachment_path")
-  requestedBy                        String?     @map("requested_by")
-  requestedOn                        DateTime?   @map("requested_on")
-  approvedBy                         String?     @map("approved_by")
-  approvedOn                         DateTime?   @map("approved_on")
-  assetIds                           String[]    @map("asset_ids")
-  startDate                          DateTime?   @default(now()) @map("start_date")
-  deadline                           DateTime?
-  id                                 String      @id @default(cuid())
-  isOpen                             Boolean     @default(false) @map("is_open")
-  isClose                            Boolean     @default(false) @map("is_close")
-  closedBy                           String?     @map("closed_by")
-  closedOn                           DateTime?   @map("closed_on")
-  checklist                          Checklist[]
-  user_maintenance_approved_byTouser User?       @relation("maintenance_approved_byTouser", fields: [approvedBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  user_maintenance_closed_byTouser   User?       @relation("maintenance_closed_byTouser", fields: [closedBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  date                                DateTime    @default(now())
+  maintainee                          String?
+  attachmentPath                      String?     @map("attachment_path")
+  approvedBy                          String?     @map("approved_by")
+  approvedOn                          DateTime?   @map("approved_on")
+  assetIds                            String[]    @map("asset_ids")
+  startDate                           DateTime?   @default(now()) @map("start_date")
+  deadline                            DateTime?
+  id                                  String      @id @default(cuid())
+  isClose                             Boolean     @default(false) @map("is_close")
+  closedBy                            String?     @map("closed_by")
+  closedOn                            DateTime?   @map("closed_on")
+  isOpen                              Boolean     @default(false) @map("is_open")
+  requestedBy                         String?     @map("requested_by")
+  requestedOn                         DateTime?   @map("requested_on") @default(now())
+  checklist                           Checklist[]
+  user_maintenance_approved_byTouser  User?       @relation("maintenance_approved_byTouser", fields: [approvedBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_maintenance_closed_byTouser    User?       @relation("maintenance_closed_byTouser", fields: [closedBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_maintenance_requested_byTouser User?       @relation("maintenance_requested_byTouser", fields: [requestedBy], references: [id], onDelete: Cascade)
 
   @@map("maintenance")
   @@schema("public")
@@ -359,6 +360,7 @@ model User {
   history                                                History[]
   maintenance_maintenance_approved_byTouser              Maintenance[]      @relation("maintenance_approved_byTouser")
   maintenance_maintenance_closed_byTouser                Maintenance[]      @relation("maintenance_closed_byTouser")
+  maintenance_maintenance_requested_byTouser             Maintenance[]      @relation("maintenance_requested_byTouser")
   subtask_library_subtask_library_created_byTouser       SubtaskLibrary[]   @relation("subtask_library_created_byTouser")
   subtask_library_subtask_library_updated_byTouser       SubtaskLibrary[]   @relation("subtask_library_updated_byTouser")
   task_library_task_library_created_byTouser             TaskLibrary[]      @relation("task_library_created_byTouser")
