@@ -113,7 +113,7 @@ export async function fetchMutatedAssetList() {
     );
 
     revalidatePath('/asset');
-    return mutatedAssetList;
+    return mutatedAssetList.filter(asset => asset.isArchive === false);
   } catch (error) {
     console.error(error);
     throw error;

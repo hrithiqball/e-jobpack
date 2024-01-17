@@ -1,7 +1,9 @@
 'use client';
 
 import React, { Key, useEffect, useMemo, useState, useTransition } from 'react';
+
 import { Task } from '@prisma/client';
+import { z } from 'zod';
 
 import {
   Button,
@@ -22,11 +24,11 @@ import {
   MoreVertical,
   PencilLine,
 } from 'lucide-react';
-
 import { toast } from 'sonner';
 
-import { UpdateTask } from '@/app/api/task/[id]/route';
 import { deleteTask, updateTask } from '@/lib/actions/task';
+import { UpdateTask } from '@/lib/schemas/task';
+import { useCurrentUser } from '@/hooks/use-current-user';
 
 interface TaskRowProps {
   task: Task;
@@ -34,6 +36,8 @@ interface TaskRowProps {
 
 export default function TaskRow({ task }: TaskRowProps) {
   let [isPending, startTransition] = useTransition();
+  const user = useCurrentUser();
+
   const [taskActivity, setTaskActivity] = useState(task.taskActivity);
   const [taskDescription, setTaskDescription] = useState(task.description);
   const [taskType, setTaskType] = useState(task.taskType);
@@ -45,9 +49,9 @@ export default function TaskRow({ task }: TaskRowProps) {
   const [taskNumberValue, setTaskNumberValue] = useState<string>(
     task.taskNumberVal?.toString() ?? '',
   );
-  const numericRegex = /^-?\d+(\.\d+)?$/;
-
   const [isDesktop, setDesktop] = useState(window.innerWidth > 650);
+
+  const numericRegex = /^-?\d+(\.\d+)?$/;
 
   function updateMedia() {
     setDesktop(window.innerWidth > 650);
@@ -75,21 +79,36 @@ export default function TaskRow({ task }: TaskRowProps) {
       changedValue.every((value, index) => value === taskSelected[index])
     ) {
       setTaskSelected(changedValue);
-      const taskUpdate: UpdateTask = {
+      const validatedFields = UpdateTask.safeParse({
         taskSelected: changedValue,
-      };
+      });
+
+      if (!validatedFields.success) {
+        toast.error(validatedFields.error.issues[0].message);
+        return;
+      }
+
+      if (user === undefined) {
+        toast.error('Session expired');
+        return;
+      }
 
       startTransition(() => {
-        updateTask(task.id, taskUpdate).then(() => {
+        updateTask(task.id, user.id, { ...validatedFields.data }).then(() => {
           if (!isPending) toast.success('Task updated successfully');
         });
       });
     }
   }
 
-  function updateTaskClient(taskUpdate: UpdateTask) {
+  function updateTaskClient(taskUpdate: z.infer<typeof UpdateTask>) {
+    if (user === undefined) {
+      toast.error('Session expired');
+      return;
+    }
+
     startTransition(() => {
-      updateTask(task.id, taskUpdate).then(() => {
+      updateTask(task.id, user.id, taskUpdate).then(() => {
         toast.success('Task updated successfully');
       });
     });
@@ -122,7 +141,7 @@ export default function TaskRow({ task }: TaskRowProps) {
               isSelected={taskIsComplete}
               onValueChange={() => {
                 setTaskIsComplete(!taskIsComplete);
-                const updateTask: UpdateTask = {
+                const updateTask: z.infer<typeof UpdateTask> = {
                   isComplete: !taskIsComplete,
                 };
                 updateTaskClient(updateTask);
@@ -139,7 +158,7 @@ export default function TaskRow({ task }: TaskRowProps) {
               isSelected={taskBool}
               onValueChange={() => {
                 setTaskBool(!taskBool);
-                const taskUpdate: UpdateTask = {
+                const taskUpdate: z.infer<typeof UpdateTask> = {
                   taskBool: !taskBool,
                 };
                 updateTaskClient(taskUpdate);

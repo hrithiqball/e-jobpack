@@ -22,6 +22,8 @@ import { Trash2 } from 'lucide-react';
 
 import { createTask } from '@/lib/actions/task';
 import { selectionChoices } from '@/public/utils/task-type-options';
+import { z } from 'zod';
+import { CreateTask } from '@/lib/schemas/task';
 
 interface TaskAddProps {
   checklist: Checklist;
@@ -73,28 +75,21 @@ export default function TaskAdd({ checklist, open, setOpen }: TaskAddProps) {
   }
 
   function addTaskClient() {
-    const taskAdd: Task = {
-      id: `TK-${dayjs().format('YYMMDDHHmmssSSS')}`,
+    const validatedFields = CreateTask.safeParse({
       checklistId: checklist.id,
       taskActivity: taskActivity,
       description: taskDescription,
-      taskType: TaskType[selection],
+      deadline: new Date(),
       listChoice: choices,
-      taskBool: false,
-      taskSelected: [],
-      isComplete: false,
-      remarks: '',
-      issue: '',
-      deadline: null,
-      completedBy: null,
-      haveSubtask: false,
-      taskNumberVal: 0,
-      taskCheck: false,
-      taskOrder: 0,
-    };
+    });
+
+    if (!validatedFields.success) {
+      toast.error(validatedFields.error.issues[0].message);
+      return;
+    }
 
     startTransition(() => {
-      createTask(taskAdd).then(res => {
+      createTask({ ...validatedFields.data }, TaskType[selection]).then(res => {
         if (!isPending) console.log(res);
         toast.success('Task added successfully');
         setOpen(prevOpen => !prevOpen);

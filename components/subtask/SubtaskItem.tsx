@@ -51,7 +51,7 @@ export default function SubtaskItem({ subtask }: { subtask: Subtask }) {
           updateSubtask.issue = subtaskIssue;
           break;
         case InputType.numberVal:
-          updateSubtask.task_number_val = parseInt(taskNumberValue, 10);
+          updateSubtask.taskNumberVal = parseInt(taskNumberValue, 10);
           break;
       }
 
@@ -76,8 +76,8 @@ export default function SubtaskItem({ subtask }: { subtask: Subtask }) {
       changedValue.every((value, index) => value === taskSelected[index])
     ) {
       setTaskSelected(changedValue);
-      const taskUpdate: UpdateSubtask = {
-        task_selected: changedValue,
+      const taskUpdate: z.infer<typeof UpdateSubtask> = {
+        taskSelected: changedValue,
       };
 
       startTransition(() => {
@@ -86,7 +86,7 @@ export default function SubtaskItem({ subtask }: { subtask: Subtask }) {
     }
   }
 
-  function updateSubtaskClient(subtaskUpdate: UpdateSubtask) {
+  function updateSubtaskClient(subtaskUpdate: z.infer<typeof UpdateSubtask>) {
     startTransition(() => {
       updateSubtask(subtask.id, subtaskUpdate);
     });
@@ -112,8 +112,8 @@ export default function SubtaskItem({ subtask }: { subtask: Subtask }) {
               isSelected={subtaskIsComplete}
               onValueChange={() => {
                 setSubtaskIsComplete(!subtaskIsComplete);
-                const updateSubtask: UpdateSubtask = {
-                  is_complete: !subtaskIsComplete,
+                const updateSubtask: z.infer<typeof UpdateSubtask> = {
+                  isComplete: !subtaskIsComplete,
                 };
                 updateSubtaskClient(updateSubtask);
               }}
@@ -127,8 +127,8 @@ export default function SubtaskItem({ subtask }: { subtask: Subtask }) {
               isSelected={taskBool}
               onValueChange={() => {
                 setTaskBool(!taskBool);
-                const taskUpdate: UpdateSubtask = {
-                  task_bool: !taskBool,
+                const taskUpdate: z.infer<typeof UpdateSubtask> = {
+                  taskBool: !taskBool,
                 };
                 updateSubtaskClient(taskUpdate);
               }}

@@ -22,10 +22,13 @@ export const UpdateSubtask = z.object({
   taskActivity: z.string().optional(),
   description: z.string().optional(),
   remarks: z.string().optional(),
+  isComplete: z.boolean().optional(),
   issue: z.string().optional(),
   deadline: z.date().optional(),
   listChoice: z.array(z.string()).optional(),
-  checklistId: z.string().min(1, {
-    message: 'Checklist ID is required',
-  }),
+  completedBy: z.string().optional(),
+  taskOrder: z.number().optional(),
+  taskBool: z.boolean().optional(),
+  taskSelected: z.string().array().optional(),
+  taskNumberVal: z.number().optional(),
 });

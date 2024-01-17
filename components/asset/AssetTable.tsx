@@ -1,4 +1,10 @@
-import React, { Key, ReactNode, useState, useTransition } from 'react';
+import React, {
+  Fragment,
+  Key,
+  ReactNode,
+  useState,
+  useTransition,
+} from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -49,10 +55,12 @@ import {
   ChevronLeft,
   ChevronRight,
   Columns2,
+  FileBox,
   Filter,
   MoreHorizontal,
   PackageMinus,
   Search,
+  Trash,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -150,6 +158,16 @@ export default function AssetTable({
               .replace(/([a-z])([A-Z])/g, '$1 $2')
               .replace(/\b\w/g, c => c.toUpperCase())}
           </Button>
+        );
+      },
+      cell: ({ row }) => {
+        return (
+          <Link
+            href={`/asset/${row.original.id}`}
+            className="hover:text-blue-500 hover:underline"
+          >
+            {row.getValue('name')}
+          </Link>
         );
       },
     },
@@ -510,45 +528,45 @@ export default function AssetTable({
     },
   ];
 
-  // if (user?.role === 'ADMIN' || user?.role === 'SUPERVISOR') {
-  //   columns.push({
-  //     id: 'actions',
-  //     header: () => null,
-  //     cell: ({ row }) => {
-  //       return (
-  //         <Dropdown>
-  //           <DropdownTrigger>
-  //             <Button variant="faded" size="sm" isIconOnly>
-  //               <MoreHorizontal size={18} />
-  //             </Button>
-  //           </DropdownTrigger>
-  //           <DropdownMenu onAction={handleAssetAction(row.original.id)}>
-  //             <DropdownItem
-  //               key="archive-asset"
-  //               variant="faded"
-  //               startContent={<Archive size={18} />}
-  //             >
-  //               Archive Asset
-  //             </DropdownItem>
-  //             <DropdownItem
-  //               key="delete-asset"
-  //               variant="faded"
-  //               color="danger"
-  //               startContent={<PackageMinus size={18} />}
-  //             >
-  //               Delete Asset
-  //             </DropdownItem>
-  //           </DropdownMenu>
-  //         </Dropdown>
-  //       );
-  //     },
-  //     enableSorting: false,
-  //     enableHiding: false,
-  //   });
-  // }
+  if (role === 'ADMIN' || role === 'SUPERVISOR') {
+    columns.push({
+      id: 'actions',
+      header: () => null,
+      cell: ({ row }) => {
+        return (
+          <Dropdown>
+            <DropdownTrigger>
+              <Button variant="faded" size="sm" isIconOnly>
+                <MoreHorizontal size={18} />
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu onAction={handleAssetAction(row.original.id)}>
+              <DropdownItem
+                key="archive-asset"
+                variant="faded"
+                startContent={<Archive size={18} />}
+              >
+                Archive Asset
+              </DropdownItem>
+              <DropdownItem
+                key="delete-asset"
+                variant="faded"
+                color="danger"
+                startContent={<PackageMinus size={18} />}
+              >
+                Delete Asset
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        );
+      },
+      enableSorting: false,
+      enableHiding: false,
+    });
+  }
 
   const table = useReactTable({
-    data: mutatedAssetList.filter(asset => !asset.isArchive),
+    data: mutatedAssetList,
     columns,
     enableRowSelection: true,
     enableMultiRowSelection: true,
@@ -568,14 +586,22 @@ export default function AssetTable({
     },
   });
 
+  function handleMe() {
+    console.log(table.getSelectedRowModel().flatRows.length);
+
+    table.getSelectedRowModel().flatRows.forEach(test => {
+      console.log(test.original.id);
+    });
+  }
+
   function handleRowNavigate(id: string) {
     router.push(`/asset/${id}`);
   }
 
   function handleAssetAction(assetId: string) {
     return (key: Key) => {
-      console.log(key);
       const asset = mutatedAssetList.find(asset => asset.id === assetId);
+
       if (asset === undefined) {
         toast.error('Asset not found');
         return;
@@ -585,8 +611,7 @@ export default function AssetTable({
 
       switch (key) {
         case 'archive-asset':
-          console.log('test');
-          handleArchiveAsset();
+          handleArchiveAsset(asset.id);
           break;
         case 'delete-asset':
           setOpenDeleteModal(true);
@@ -619,33 +644,27 @@ export default function AssetTable({
     });
   }
 
-  function handleCloseDeleteModal() {
-    setOpenDeleteModal(false);
-    setCurrentAsset(undefined);
-  }
-
-  function handleArchiveAsset() {
-    console.log('hello');
-    if (currentAsset === undefined) {
-      toast.error('Asset not found');
-      return;
-    }
-
+  function handleArchiveAsset(assetId: string) {
     if (user?.id === undefined) {
       toast.error('User session expired');
       return;
     }
 
     startTransition(() => {
-      updateAsset(user.id, currentAsset.id, { isArchive: true })
+      updateAsset(user.id, assetId, { isArchive: true })
         .then(res => {
           toast.success(`Asset ${res.name} archived successfully`);
         })
         .catch(err => {
           console.error(err);
-          toast.error(`Failed to archive asset ${currentAsset.name}`);
+          toast.error(`Failed to archive asset ${assetId}`);
         });
     });
+  }
+
+  function handleCloseDeleteModal() {
+    setOpenDeleteModal(false);
+    setCurrentAsset(undefined);
   }
 
   return (
@@ -654,15 +673,27 @@ export default function AssetTable({
         <Input
           placeholder="Search"
           size="sm"
+          startContent={<Search size={18} />}
           value={(table.getColumn(filterBy)?.getFilterValue() as string) ?? ''}
           onChange={event =>
             table.getColumn(filterBy)?.setFilterValue(event.target.value)
           }
-          startContent={<Search size={18} />}
           className="max-w-sm"
         />
         <div className="flex items-center space-x-2">
-          {/* {table.getSelectedRowModel()} */}
+          {table.getIsSomeRowsSelected() && (
+            <Fragment>
+              <Button onClick={handleMe} endContent={<FileBox size={18} />}>
+                Create Maintenance Request
+              </Button>
+              <Button onClick={handleMe} endContent={<Archive size={18} />}>
+                Archive Selected
+              </Button>
+              <Button onClick={handleMe} endContent={<Trash size={18} />}>
+                Delete Selected
+              </Button>
+            </Fragment>
+          )}
           <Dropdown>
             <DropdownTrigger>
               <Button size="md" endContent={<Filter size={18} />}>
@@ -742,7 +773,7 @@ export default function AssetTable({
             {table.getRowModel().rows.map(row => (
               <TableRow
                 key={row.id}
-                onClick={() => handleRowNavigate(row.original.id)}
+                // onClick={() => handleRowNavigate(row.original.id)}
               >
                 {row.getVisibleCells().map(cell => (
                   <TableCell key={cell.id}>

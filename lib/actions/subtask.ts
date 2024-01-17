@@ -3,7 +3,8 @@
 import { Prisma, Subtask } from '@prisma/client';
 
 import { db } from '@/lib/db';
-import { UpdateSubtask } from '@/app/api/subtask/[id]/route';
+import { z } from 'zod';
+import { UpdateSubtask } from '@/lib/schemas/subtask';
 
 export async function fetchSubtaskListByTaskUid(
   taskId?: string,
@@ -34,12 +35,16 @@ export async function fetchSubtaskListByTaskUid(
   }
 }
 
-// TODO: use schema
-export async function updateSubtask(id: string, data: UpdateSubtask) {
+export async function updateSubtask(
+  id: string,
+  values: z.infer<typeof UpdateSubtask>,
+) {
   try {
     return await db.subtask.update({
       where: { id },
-      data,
+      data: {
+        ...values,
+      },
     });
   } catch (error) {
     console.error(error);

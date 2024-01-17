@@ -56,15 +56,12 @@ export default function MaintenanceWidget({
 
   function handleCreateMaintenance() {
     const maintainee = Array.from(newMaintenanceMaintaineeList);
-
-    const newMaintenance = {
+    const validatedFields = CreateMaintenance.safeParse({
       id: newMaintenanceId,
       assetIds: [asset.id],
       deadline: newMaintenanceDeadLine ?? null,
       maintainee,
-    };
-
-    const validatedFields = CreateMaintenance.safeParse(newMaintenance);
+    });
 
     if (!validatedFields.success) {
       toast.error(validatedFields.error.issues[0].message);
@@ -73,10 +70,7 @@ export default function MaintenanceWidget({
 
     startTransition(() => {
       createMaintenance({
-        id: newMaintenanceId,
-        assetIds: [asset.id],
-        deadline: newMaintenanceDeadLine ?? null,
-        maintainee,
+        ...validatedFields.data,
       })
         .then(res => {
           if (!isPending) console.debug(res);

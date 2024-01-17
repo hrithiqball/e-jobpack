@@ -5,11 +5,8 @@ export const CreateTask = z.object({
     message: 'Task Activity is required',
   }),
   description: z.string().optional().nullable(),
-  remarks: z.string().optional().nullable(),
-  issue: z.string().optional().nullable(),
   deadline: z.date().optional().nullable(),
   haveSubtask: z.boolean().optional(),
-  taskBool: z.boolean().optional(),
   listChoice: z.array(z.string()).optional(),
   checklistId: z.string().min(1, {
     message: 'Checklist ID is required',
@@ -21,10 +18,13 @@ export const UpdateTask = z.object({
   description: z.string().optional(),
   remarks: z.string().optional(),
   issue: z.string().optional(),
+  isComplete: z.boolean().optional(),
   deadline: z.date().optional(),
   haveSubtask: z.boolean().optional(),
   listChoice: z.array(z.string()).optional(),
-  checklistId: z.string().min(1, {
-    message: 'Checklist ID is required',
-  }),
+  taskOrder: z.number().optional(),
+  // value
+  taskSelected: z.array(z.string()).optional(),
+  taskBool: z.boolean().optional(),
+  taskNumberVal: z.number().optional(),
 });
