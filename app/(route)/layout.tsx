@@ -1,6 +1,6 @@
 import { PropsWithChildren } from 'react';
 
-import Navigation from '@/components/client/NavBar';
+import Navigation from '@/components/NavBar';
 import CardLayout from '@/components/ui/CardLayout';
 
 export default async function Layout({ children }: PropsWithChildren) {

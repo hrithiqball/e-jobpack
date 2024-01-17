@@ -73,9 +73,9 @@ async function main() {
   await prisma.assetStatus.deleteMany({});
   await prisma.assetStatus.createMany({
     data: [
-      { id: '-1', title: 'Operating' },
-      { id: '-2', title: 'Under Maintenance' },
-      { id: '-3', title: 'Non-operating' },
+      { id: '-1', title: 'Operating', color: '#58b368' },
+      { id: '-2', title: 'Under Maintenance', color: '#dad873' },
+      { id: '-3', title: 'Non-operating', color: '#f87979' },
     ],
   });
 }

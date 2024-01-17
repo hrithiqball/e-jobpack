@@ -1,11 +1,11 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { Maintenance, Prisma } from '@prisma/client';
+import { Asset, Maintenance, Prisma } from '@prisma/client';
 import z from 'zod';
 import dayjs from 'dayjs';
 
-import { db } from '@/lib/prisma/db';
+import { db } from '@/lib/db';
 import {
   CreateMaintenance,
   UpdateMaintenance,
@@ -41,6 +41,85 @@ export async function fetchMaintenanceItem(id: string) {
     return await db.maintenance.findUniqueOrThrow({
       where: { id },
     });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function fetchMutatedMaintenanceItem(id: string) {
+  try {
+    const maintenance = await db.maintenance.findUniqueOrThrow({
+      where: { id },
+    });
+
+    let assetList: Asset[] = [];
+
+    maintenance.assetIds.forEach(async assetId => {
+      const asset = await db.asset.findUnique({
+        where: { id: assetId },
+      });
+      if (asset) {
+        assetList.push(asset);
+      }
+    });
+
+    const checklistList = await db.checklist.findMany({
+      where: {
+        maintenanceId: id,
+      },
+    });
+
+    const mutatedChecklist = Promise.all(
+      checklistList.map(async checklist => {
+        const taskList = await db.task.findMany({
+          where: {
+            checklistId: checklist.id,
+          },
+        });
+
+        const tasksWithSubtasks = await Promise.all(
+          taskList.map(async task => {
+            if (task.haveSubtask) {
+              const subtaskList = await db.subtask.findMany({
+                where: {
+                  taskId: task.id,
+                },
+              });
+
+              return {
+                ...task,
+                subtasks: subtaskList,
+              };
+            } else {
+              return task;
+            }
+          }),
+        );
+
+        return {
+          ...checklist,
+          tasks: tasksWithSubtasks,
+        };
+      }),
+    );
+
+    const assetOptionsList = await db.asset.findMany({
+      where: {
+        NOT: {
+          id: {
+            in: maintenance.assetIds,
+          },
+        },
+      },
+    });
+
+    return {
+      maintenance,
+      assetList,
+      assetOptionsList,
+      checklists: mutatedChecklist,
+    };
   } catch (error) {
     console.error(error);
     throw error;

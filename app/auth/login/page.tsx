@@ -1,4 +1,4 @@
-import SignInCard from '@/components/client/auth/SignInCard';
+import SignInCard from '@/components/auth/SignInCard';
 
 export default async function SignInPage({
   searchParams,

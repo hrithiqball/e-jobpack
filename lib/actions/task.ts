@@ -2,7 +2,7 @@
 
 import { Prisma, Task } from '@prisma/client';
 
-import { db } from '@/lib/prisma/db';
+import { db } from '@/lib/db';
 import { UpdateTask } from '@/app/api/task/[id]/route';
 
 export async function createTask(task: Task): Promise<Task | null> {

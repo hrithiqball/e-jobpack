@@ -1,4 +1,4 @@
-import TestComponent from '@/components/client/test';
+import TestComponent from '@/components/test';
 import React from 'react';
 
 export default function AuthReset() {

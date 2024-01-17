@@ -5,7 +5,7 @@ import { Asset } from '@prisma/client';
 import dayjs from 'dayjs';
 import z from 'zod';
 
-import { db } from '@/lib/prisma/db';
+import { db } from '@/lib/db';
 import { CreateAsset, UpdateAsset } from '@/lib/schemas/asset';
 import { ExtendedUser } from '@/types/next-auth';
 

@@ -2,7 +2,7 @@ import { fetchAssetStatusList } from '@/lib/actions/asset-status';
 import { fetchAssetTypeList } from '@/lib/actions/asset-type';
 import { fetchMutatedAssetList } from '@/lib/actions/asset';
 import { fetchUserList } from '@/lib/actions/user';
-import AssetComponent from '@/components/client/asset/AssetComponent';
+import AssetComponent from '@/components/asset/AssetComponent';
 
 export default async function AssetPage() {
   const userList = await fetchUserList();
