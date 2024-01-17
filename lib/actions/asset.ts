@@ -7,7 +7,6 @@ import z from 'zod';
 
 import { db } from '@/lib/db';
 import { CreateAsset, UpdateAsset } from '@/lib/schemas/asset';
-import { ExtendedUser } from '@/types/next-auth';
 
 export async function createAsset(
   values: z.infer<typeof CreateAsset>,

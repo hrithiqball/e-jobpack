@@ -7,7 +7,8 @@ import { Checkbox, Input, Select, SelectItem, Switch } from '@nextui-org/react';
 import { CornerDownRight, MoreVertical } from 'lucide-react';
 
 import { updateSubtask } from '@/lib/actions/subtask';
-import { UpdateSubtask } from '@/app/api/subtask/[id]/route';
+import { UpdateSubtask } from '@/lib/schemas/subtask';
+import { z } from 'zod';
 
 export enum InputType {
   remarks,
@@ -41,7 +42,7 @@ export default function SubtaskItem({ subtask }: { subtask: Subtask }) {
     return (event: KeyboardEvent<HTMLInputElement>) => {
       if (event.key === 'Enter') return;
 
-      let updateSubtask: UpdateSubtask = {};
+      let updateSubtask: z.infer<typeof UpdateSubtask> = {};
       switch (type) {
         case InputType.remarks:
           updateSubtask.remarks = subtaskRemarks;
