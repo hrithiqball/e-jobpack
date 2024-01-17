@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { AssetStatus, AssetType, User } from '@prisma/client';
 
 import { Button } from '@nextui-org/react';
@@ -10,6 +10,7 @@ import { fetchMutatedAssetList } from '@/lib/actions/asset';
 import Loading from '@/components/client/Loading';
 import AssetTable from '@/components/client/asset/AssetTable';
 import AddAssetModal from '@/components/client/asset/AddAssetModal';
+import { useCurrentRole } from '@/hooks/use-current-role';
 
 interface AssetComponentProps {
   mutatedAssetList: Awaited<ReturnType<typeof fetchMutatedAssetList>>;
@@ -24,6 +25,8 @@ export default function AssetComponent({
   assetStatusList,
   userList,
 }: AssetComponentProps) {
+  const role = useCurrentRole();
+
   const [mounted, setMounted] = useState(false);
   const [openAddAssetModal, setOpenAddAssetModal] = useState(false);
 
@@ -40,20 +43,25 @@ export default function AssetComponent({
   return (
     <div className="flex flex-col flex-1">
       <AssetTable mutatedAssetList={mutatedAssetList}>
-        <Button
-          isIconOnly
-          size="md"
-          onClick={() => setOpenAddAssetModal(!openAddAssetModal)}
-        >
-          <PackagePlus size={18} />
-        </Button>
-        <AddAssetModal
-          isOpen={openAddAssetModal}
-          onClose={closeAddAssetModal}
-          assetStatusList={assetStatusList}
-          assetTypeList={assetTypeList}
-          userList={userList}
-        />
+        {role === 'ADMIN' ||
+          (role === 'SUPERVISOR' && (
+            <Fragment>
+              <Button
+                isIconOnly
+                size="md"
+                onClick={() => setOpenAddAssetModal(!openAddAssetModal)}
+              >
+                <PackagePlus size={18} />
+              </Button>
+              <AddAssetModal
+                isOpen={openAddAssetModal}
+                onClose={closeAddAssetModal}
+                assetStatusList={assetStatusList}
+                assetTypeList={assetTypeList}
+                userList={userList}
+              />
+            </Fragment>
+          ))}
       </AssetTable>
     </div>
   );

@@ -15,4 +15,12 @@ export const CreateAsset = z.object({
   statusId: z.string().nullable().optional(),
 });
 
-export const UpdateAsset = '';
+export const UpdateAsset = z.object({
+  name: z
+    .string()
+    .min(1, {
+      message: 'Asset name cannot be empty',
+    })
+    .optional(),
+  isArchive: z.boolean().optional(),
+});

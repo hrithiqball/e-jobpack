@@ -5,6 +5,7 @@ export const CreateMaintenance = z.object({
     message: 'ID is required',
   }),
   maintainee: z.array(z.string()).optional().nullable(),
+  assetIds: z.array(z.string()),
   deadline: z.date().optional().nullable(),
 });
 

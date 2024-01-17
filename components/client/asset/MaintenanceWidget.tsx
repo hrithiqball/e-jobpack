@@ -1,4 +1,4 @@
-import React, { useState, useTransition, ChangeEvent } from 'react';
+import React, { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { Asset, User } from '@prisma/client';
@@ -31,6 +31,8 @@ import { toast } from 'sonner';
 
 import { createMaintenance } from '@/lib/actions/maintenance';
 import { Calendar } from '@/components/ui/Calendar';
+import { CreateMaintenance } from '@/lib/schemas/maintenance';
+import { useCurrentRole } from '@/hooks/use-current-role';
 
 interface MaintenanceWidgetProps {
   asset: Asset;
@@ -43,40 +45,48 @@ export default function MaintenanceWidget({
 }: MaintenanceWidgetProps) {
   let [isPending, startTransition] = useTransition();
   const router = useRouter();
+  const role = useCurrentRole();
 
   const [newMaintenanceId, setNewMaintenanceId] = useState<string>('');
   const [newMaintenanceDeadLine, setNewMaintenanceDeadLine] = useState<Date>();
   const [newMaintenanceMaintaineeList, setNewMaintenanceMaintaineeList] =
-    useState<string>();
+    useState(new Set([]));
   const [openCreateMaintenanceModal, setOpenCreateMaintenanceModal] =
     useState(false);
 
   function handleCreateMaintenance() {
-    console.log(newMaintenanceMaintaineeList);
+    const maintainee = Array.from(newMaintenanceMaintaineeList);
 
-    // startTransition(() => {
-    //   createMaintenance({
-    //     id: newMaintenanceId,
-    //     maintainee: newMaintenanceMaintaineeList,
-    //     deadline: newMaintenanceDeadLine ?? null,
-    //   })
-    //     .then(res => {
-    //       if (!isPending) console.log(res);
-    //       toast.success('Work order request created successfully');
-    //       router.push('/task');
-    //     })
-    //     .catch(err => {
-    //       console.error(err);
-    //     });
-    // });
-  }
-
-  function handleMaintaineeSelection() {
-    return (event: ChangeEvent<HTMLSelectElement>) => {
-      console.log(event.target.value);
-      setNewMaintenanceMaintaineeList(event.target.value);
+    const newMaintenance = {
+      id: newMaintenanceId,
+      assetIds: [asset.id],
+      deadline: newMaintenanceDeadLine ?? null,
+      maintainee,
     };
-    // setNewMaintenanceMaintaineeList(e.value);
+
+    const validatedFields = CreateMaintenance.safeParse(newMaintenance);
+
+    if (!validatedFields.success) {
+      toast.error(validatedFields.error.issues[0].message);
+      return;
+    }
+
+    startTransition(() => {
+      createMaintenance({
+        id: newMaintenanceId,
+        assetIds: [asset.id],
+        deadline: newMaintenanceDeadLine ?? null,
+        maintainee,
+      })
+        .then(res => {
+          if (!isPending) console.debug(res);
+          toast.success('Work order request created successfully');
+          router.push('/task');
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    });
   }
 
   return (
@@ -138,7 +148,9 @@ export default function MaintenanceWidget({
           color="success"
           variant="faded"
         >
-          Create Maintenance Request
+          {role === 'ADMIN' || role === 'SUPERVISOR'
+            ? 'Create New Maintenance'
+            : 'Create Maintenance Request'}
         </Button>
         <Modal
           isOpen={openCreateMaintenanceModal}
@@ -147,7 +159,9 @@ export default function MaintenanceWidget({
         >
           <ModalContent>
             <ModalHeader className="flex flex-col gap-1">
-              Create Maintenance Request
+              {role === 'ADMIN' || role === 'SUPERVISOR'
+                ? 'Create New Maintenance'
+                : 'Create Maintenance Request'}
             </ModalHeader>
             <ModalBody>
               <Input
@@ -176,14 +190,15 @@ export default function MaintenanceWidget({
                   />
                 </PopoverContent>
               </Popover>
-              {/* TODO: https://stackoverflow.com/questions/77068657/nextui-select-component-onchange-option */}
               <Select
                 selectionMode="multiple"
                 label="Assign To"
                 variant="faded"
                 size="sm"
-                value={newMaintenanceMaintaineeList}
-                onChange={handleMaintaineeSelection}
+                selectedKeys={newMaintenanceMaintaineeList}
+                onSelectionChange={(e: any) =>
+                  setNewMaintenanceMaintaineeList(e)
+                }
               >
                 {userList
                   .filter(u => u.id !== '-99')

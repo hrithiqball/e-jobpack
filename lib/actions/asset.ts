@@ -6,7 +6,8 @@ import dayjs from 'dayjs';
 import z from 'zod';
 
 import { db } from '@/lib/prisma/db';
-import { CreateAsset } from '@/lib/schemas/asset';
+import { CreateAsset, UpdateAsset } from '@/lib/schemas/asset';
+import { ExtendedUser } from '@/types/next-auth';
 
 export async function createAsset(
   values: z.infer<typeof CreateAsset>,
@@ -142,6 +143,53 @@ export async function fetchFilteredAssetList(assetIds: string[]) {
         },
       },
     });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function updateAsset(
+  updatedBy: string,
+  id: string,
+  values: z.infer<typeof UpdateAsset>,
+) {
+  try {
+    const updatedAsset = await db.asset.update({
+      where: {
+        id,
+      },
+      data: {
+        updatedBy,
+        updatedOn: new Date(),
+        ...values,
+      },
+    });
+
+    revalidatePath('/asset');
+    return updatedAsset;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function deleteAsset(actionBy: string, id: string) {
+  try {
+    await db.history.create({
+      data: {
+        actionBy,
+        activity: `Deleted asset ${id}`,
+      },
+    });
+
+    await db.asset.delete({
+      where: {
+        id,
+      },
+    });
+
+    revalidatePath('/asset');
   } catch (error) {
     console.error(error);
     throw error;

@@ -1,6 +1,7 @@
 import React, { useState, useTransition } from 'react';
-import { AssetStatus, AssetType, User } from '@prisma/client';
 import { useRouter } from 'next/navigation';
+
+import { AssetStatus, AssetType, User } from '@prisma/client';
 
 import {
   Button,
@@ -10,20 +11,13 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
   Select,
   SelectItem,
 } from '@nextui-org/react';
-
 import { toast } from 'sonner';
 
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { createAsset } from '@/lib/actions/asset';
-import { CalendarIcon } from 'lucide-react';
-import { DayPicker } from 'react-day-picker';
-import { Calendar } from '@/components/ui/Calendar';
 
 interface AddAssetModalProps {
   isOpen: boolean;

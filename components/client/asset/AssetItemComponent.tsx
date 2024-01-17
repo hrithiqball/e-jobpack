@@ -22,6 +22,7 @@ import Loading from '@/components/client/Loading';
 import AssetDetails from '@/components/client/asset/AssetDetails';
 import AssetMaintenance from '@/components/client/asset/AssetMaintenance';
 import AssetAttachment from '@/components/client/asset/AssetAttachment';
+import { useCurrentRole } from '@/hooks/use-current-role';
 
 interface AssetItemComponentProps {
   asset: Asset;
@@ -36,6 +37,8 @@ export default function AssetItemComponent({
   checklistUse,
   userList,
 }: AssetItemComponentProps) {
+  const role = useCurrentRole();
+
   const [mounted, setMounted] = useState(false);
   const [selectedTab, setSelectedTab] = useState('details');
   const [isDesktop, setDesktop] = useState(window.innerWidth > 650);
@@ -150,20 +153,23 @@ export default function AssetItemComponent({
       </div>
       <div className="flex flex-row justify-between items-center my-4">
         <h2 className="text-xl font-semibold">{asset.name}</h2>
-        <div className="flex flex-row">
-          <div className="flex flex-row">
-            <Tooltip content="Edit Asset">
-              <Button size="sm" isIconOnly className="ml-1" variant="faded">
-                <PencilLine size={18} />
-              </Button>
-            </Tooltip>
-            <Tooltip content="Add sub asset to this asset">
-              <Button size="sm" isIconOnly className="ml-1" variant="faded">
-                <PackagePlus size={18} />
-              </Button>
-            </Tooltip>
-          </div>
-        </div>
+        {role === 'ADMIN' ||
+          (role === 'SUPERVISOR' && (
+            <div className="flex flex-row">
+              <div className="flex flex-row">
+                <Tooltip content="Edit Asset">
+                  <Button size="sm" isIconOnly className="ml-1" variant="faded">
+                    <PencilLine size={18} />
+                  </Button>
+                </Tooltip>
+                <Tooltip content="Add sub asset to this asset">
+                  <Button size="sm" isIconOnly className="ml-1" variant="faded">
+                    <PackagePlus size={18} />
+                  </Button>
+                </Tooltip>
+              </div>
+            </div>
+          ))}
       </div>
       <Divider />
       <div className="flex overflow-hidden flex-1">
