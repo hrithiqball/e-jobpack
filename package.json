@@ -13,12 +13,10 @@
     "start": "next start",
     "lint": "next lint",
     "email": "email dev --dir lib/mail/component",
-    "prisma": "prisma db pull && prisma generate",
-    "prisma-push": "prisma db push",
     "prisma-init-migrate": "prisma migrate dev --name init",
     "prettier": "prettier --write .",
-    "release": "semantic-release",
     "spellcheck": "cspell **",
+    "release": "semantic-release",
     "postinstall": "prisma generate"
   },
   "dependencies": {

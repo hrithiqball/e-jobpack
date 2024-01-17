@@ -11,20 +11,27 @@ import { UpdateSubtask } from '@/lib/schemas/subtask';
 import { z } from 'zod';
 
 export enum InputType {
+  // eslint-disable-next-line no-unused-vars
   remarks,
+  // eslint-disable-next-line no-unused-vars
   issue,
+  // eslint-disable-next-line no-unused-vars
   numberVal,
 }
 
 export default function SubtaskItem({ subtask }: { subtask: Subtask }) {
   let [isPending, startTransition] = useTransition();
+
   const [subtaskIsComplete, setSubtaskIsComplete] = useState(
     subtask.isComplete,
   );
+  // eslint-disable-next-line no-unused-vars
   const [subtaskActivity, setSubtaskActivity] = useState(subtask.taskActivity);
+  // eslint-disable-next-line no-unused-vars
   const [subtaskDescription, setSubtaskDescription] = useState(
     subtask.description,
   );
+  // eslint-disable-next-line no-unused-vars
   const [taskType, setTaskType] = useState(subtask.taskType);
   const [taskSelected, setTaskSelected] = useState<string[]>(
     subtask.taskSelected,
@@ -81,7 +88,9 @@ export default function SubtaskItem({ subtask }: { subtask: Subtask }) {
       };
 
       startTransition(() => {
-        updateSubtask(subtask.id, taskUpdate);
+        updateSubtask(subtask.id, taskUpdate).then(() => {
+          if (!isPending) console.log('updated');
+        });
       });
     }
   }

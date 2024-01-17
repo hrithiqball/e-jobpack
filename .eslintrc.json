@@ -2,6 +2,5 @@
   "extends": ["next", "next/core-web-vitals", "eslint:recommended"],
   "globals": {
     "React": "readonly"
-  },
-  "rules": { "no-unused-vars": "off", "no-unused-expressions": "off" }
+  }
 }

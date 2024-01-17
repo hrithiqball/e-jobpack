@@ -38,8 +38,11 @@ export default function TaskRow({ task }: TaskRowProps) {
   let [isPending, startTransition] = useTransition();
   const user = useCurrentUser();
 
+  // eslint-disable-next-line no-unused-vars
   const [taskActivity, setTaskActivity] = useState(task.taskActivity);
+  // eslint-disable-next-line no-unused-vars
   const [taskDescription, setTaskDescription] = useState(task.description);
+  // eslint-disable-next-line no-unused-vars
   const [taskType, setTaskType] = useState(task.taskType);
   const [taskSelected, setTaskSelected] = useState<string[]>(task.taskSelected);
   const [taskBool, setTaskBool] = useState(task.taskBool ?? false);

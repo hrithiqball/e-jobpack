@@ -250,6 +250,7 @@ export default function MaintenanceComponent({
     }
   }
 
+  // eslint-disable-next-line no-unused-vars
   async function handleDownloadExcel() {
     const workbook = new Workbook();
     const worksheetName = `${maintenance.id}`;

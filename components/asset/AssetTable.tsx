@@ -5,7 +5,6 @@ import React, {
   useState,
   useTransition,
 } from 'react';
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -89,7 +88,6 @@ export default function AssetTable({
   let [isPending, startTransition] = useTransition();
   const user = useCurrentUser();
   const role = useCurrentRole();
-  const router = useRouter();
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -594,10 +592,6 @@ export default function AssetTable({
     });
   }
 
-  function handleRowNavigate(id: string) {
-    router.push(`/asset/${id}`);
-  }
-
   function handleAssetAction(assetId: string) {
     return (key: Key) => {
       const asset = mutatedAssetList.find(asset => asset.id === assetId);
@@ -634,6 +628,7 @@ export default function AssetTable({
     startTransition(() => {
       deleteAsset(user.id, currentAsset.id)
         .then(() => {
+          if (!isPending) console.debug(`Asset ${currentAsset.name} deleted`);
           toast.success(`Asset ${currentAsset.name} deleted successfully`);
           handleCloseDeleteModal();
         })

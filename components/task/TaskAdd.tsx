@@ -1,9 +1,8 @@
 'use client';
 
 import React, { ChangeEvent, Fragment, useState, useTransition } from 'react';
-import { TaskType, Task, Checklist } from '@prisma/client';
+import { TaskType, Checklist } from '@prisma/client';
 import { useRouter } from 'next/navigation';
-import dayjs from 'dayjs';
 
 import {
   Button,
@@ -22,7 +21,6 @@ import { Trash2 } from 'lucide-react';
 
 import { createTask } from '@/lib/actions/task';
 import { selectionChoices } from '@/public/utils/task-type-options';
-import { z } from 'zod';
 import { CreateTask } from '@/lib/schemas/task';
 
 interface TaskAddProps {
