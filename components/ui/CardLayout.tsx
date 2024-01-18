@@ -17,7 +17,7 @@ export default function CardLayout({ children }: PropsWithChildren) {
 
   return (
     <Card
-      className={`flex flex-1 flex-col m-4 p-4 ${
+      className={`flex flex-1 flex-col m-4 ${
         theme !== 'dark' ? 'bg-slate-200' : 'bg-zinc-900'
       }`}
     >

@@ -14,7 +14,7 @@ export default function ChecklistWidget({
 }: ChecklistWidgetProps) {
   return (
     <div className="flex flex-1 p-2">
-      <Card className="flex flex-1 p-4">
+      <Card shadow="none" className="flex flex-1 p-4">
         <div className="flex flex-row items-center">
           <FilePenLine />
           <span className="font-bold ml-4">Checklist</span>

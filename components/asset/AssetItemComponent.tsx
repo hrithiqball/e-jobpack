@@ -6,7 +6,6 @@ import { Asset, ChecklistUse, Maintenance, User } from '@prisma/client';
 import {
   Button,
   Chip,
-  Divider,
   Dropdown,
   DropdownItem,
   DropdownMenu,
@@ -14,17 +13,24 @@ import {
   Link,
   Tab,
   Tabs,
-  Tooltip,
 } from '@nextui-org/react';
-import { ChevronLeft, PackagePlus, PencilLine } from 'lucide-react';
+import {
+  ChevronLeft,
+  MoreHorizontal,
+  PencilLine,
+  Printer,
+  Save,
+} from 'lucide-react';
 
 import Loading from '@/components/Loading';
 import AssetDetails from '@/components/asset/AssetDetails';
 import AssetMaintenance from '@/components/asset/AssetMaintenance';
 import AssetAttachment from '@/components/asset/AssetAttachment';
 import { useCurrentRole } from '@/hooks/use-current-role';
+import { fetchMutatedAssetItem } from '@/lib/actions/asset';
 
 interface AssetItemComponentProps {
+  mutatedAsset: Awaited<ReturnType<typeof fetchMutatedAssetItem>>;
   asset: Asset;
   maintenanceList: Maintenance[];
   checklistUse: ChecklistUse[];
@@ -32,6 +38,7 @@ interface AssetItemComponentProps {
 }
 
 export default function AssetItemComponent({
+  mutatedAsset,
   asset,
   maintenanceList,
   checklistUse,
@@ -40,6 +47,7 @@ export default function AssetItemComponent({
   const role = useCurrentRole();
 
   const [mounted, setMounted] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
   const [selectedTab, setSelectedTab] = useState('details');
   const [isDesktop, setDesktop] = useState(window.innerWidth > 650);
 
@@ -56,18 +64,33 @@ export default function AssetItemComponent({
     setDesktop(window.innerWidth > 650);
   }
 
+  function handleAssetAction(key: Key) {
+    switch (key) {
+      case 'edit-asset':
+        setIsEdit(true);
+        break;
+      case 'print-asset':
+        // TODO: print asset
+        break;
+    }
+  }
+
+  function handleSave() {
+    setIsEdit(false);
+  }
+
   if (!mounted) return <Loading label="Hang on tight" />;
 
   return (
-    <div className="flex flex-col flex-1">
-      <div className="flex flex-row items-center justify-between sm:justify-normal">
+    <div className="flex flex-col flex-1 p-0">
+      <div className="flex flex-row items-center justify-between px-2">
         <Button
-          className="max-w-min"
-          as={Link}
-          href="/asset"
-          startContent={<ChevronLeft size={18} />}
-          variant="faded"
           size="sm"
+          variant="faded"
+          href="/asset"
+          as={Link}
+          startContent={<ChevronLeft size={18} />}
+          className="max-w-min"
         >
           Back
         </Button>
@@ -76,15 +99,15 @@ export default function AssetItemComponent({
             aria-label="Asset Attribute"
             size="sm"
             color="primary"
-            className="ml-4"
             selectedKey={selectedTab}
             onSelectionChange={(key: Key) => setSelectedTab(key as string)}
+            className="ml-4"
           >
             <Tab
               key="details"
               title={
                 <div className="flex items-center space-x-2">
-                  <span>Details</span>
+                  <span>{asset.name}</span>
                 </div>
               }
             />
@@ -133,7 +156,7 @@ export default function AssetItemComponent({
                 selectedKeys={selectedTab}
                 onAction={key => setSelectedTab(key as string)}
               >
-                <DropdownItem key="details">Details</DropdownItem>
+                <DropdownItem key="details">{asset.name}</DropdownItem>
                 <DropdownItem key="maintenance">
                   Maintenance
                   <Chip className="ml-1" size="sm" variant="faded">
@@ -150,8 +173,45 @@ export default function AssetItemComponent({
             </Dropdown>
           </div>
         )}
+        <div className="flex items-center space-x-1">
+          {isEdit && (
+            <Button
+              size="sm"
+              variant="faded"
+              color="success"
+              onClick={handleSave}
+              startContent={<Save size={18} />}
+            >
+              Save
+            </Button>
+          )}
+          <Dropdown>
+            <DropdownTrigger>
+              <Button isIconOnly size="sm" variant="faded">
+                <MoreHorizontal size={18} />
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu
+              onAction={handleAssetAction}
+              disabledKeys={role === 'TECHNICIAN' ? ['edit-asset'] : []}
+            >
+              <DropdownItem
+                key="edit-asset"
+                startContent={<PencilLine size={18} />}
+              >
+                Edit Asset
+              </DropdownItem>
+              <DropdownItem
+                key="print-asset"
+                startContent={<Printer size={18} />}
+              >
+                Print to PDF
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        </div>
       </div>
-      <div className="flex flex-row justify-between items-center my-4">
+      {/* <div className="flex flex-row justify-between items-center my-4">
         <h2 className="text-xl font-semibold">{asset.name}</h2>
         {role === 'ADMIN' ||
           (role === 'SUPERVISOR' && (
@@ -170,12 +230,11 @@ export default function AssetItemComponent({
               </div>
             </div>
           ))}
-      </div>
-      <Divider />
+      </div> */}
       <div className="flex overflow-hidden flex-1">
         {selectedTab === 'details' && (
           <AssetDetails
-            asset={asset}
+            mutatedAsset={mutatedAsset}
             checklistUse={checklistUse}
             userList={userList}
           />

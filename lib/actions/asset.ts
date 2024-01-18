@@ -133,6 +133,68 @@ export async function fetchAssetItem(id: string): Promise<Asset> {
   }
 }
 
+export async function fetchMutatedAssetItem(id: string) {
+  try {
+    const asset = await db.asset.findUniqueOrThrow({
+      where: {
+        id,
+      },
+    });
+
+    let status = null;
+    let type = null;
+    let personInCharge = null;
+
+    if (asset.statusId !== null) {
+      status = await db.assetStatus.findFirstOrThrow({
+        where: {
+          id: asset.statusId,
+        },
+      });
+    }
+
+    if (asset.type !== null) {
+      type = await db.assetType.findFirstOrThrow({
+        where: {
+          id: asset.type,
+        },
+      });
+    }
+
+    if (asset.personInCharge !== null) {
+      personInCharge = await db.user.findFirst({
+        where: {
+          id: asset.personInCharge,
+        },
+      });
+    }
+
+    const createdBy = await db.user.findFirstOrThrow({
+      where: {
+        id: asset.createdBy,
+      },
+    });
+
+    const updatedBy = await db.user.findFirstOrThrow({
+      where: {
+        id: asset.updatedBy,
+      },
+    });
+
+    return {
+      ...asset,
+      status,
+      type,
+      createdBy,
+      updatedBy,
+      personInCharge,
+    };
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 export async function fetchFilteredAssetList(assetIds: string[]) {
   try {
     return await db.asset.findMany({

@@ -1,31 +1,35 @@
 import React from 'react';
 
-import { Asset, ChecklistUse, User } from '@prisma/client';
+import { ChecklistUse, User } from '@prisma/client';
 
+import { fetchMutatedAssetItem } from '@/lib/actions/asset';
 import DetailsWidget from '@/components/asset/DetailsWidget';
 import TeamWidget from '@/components/asset/TeamWidget';
 import ChecklistWidget from '@/components/asset/ChecklistWidget';
 import MaintenanceWidget from '@/components/asset/MaintenanceWidget';
 
 interface AssetDetailsProps {
-  asset: Asset;
+  mutatedAsset: Awaited<ReturnType<typeof fetchMutatedAssetItem>>;
   checklistUse: ChecklistUse[];
   userList: User[];
 }
 
 export default function AssetDetails({
-  asset,
+  mutatedAsset,
   checklistUse,
   userList,
 }: AssetDetailsProps) {
   return (
     <div className="flex flex-1">
-      <DetailsWidget asset={asset} />
+      <DetailsWidget mutatedAsset={mutatedAsset} />
       <div className="flex flex-col w-1/4">
         <div className="flex flex-col flex-1">
-          <TeamWidget />
+          <TeamWidget
+            personInCharge={mutatedAsset.personInCharge}
+            maintainee={mutatedAsset.lastMaintainee}
+          />
           <ChecklistWidget checklistUse={checklistUse} />
-          <MaintenanceWidget asset={asset} userList={userList} />
+          <MaintenanceWidget mutatedAsset={mutatedAsset} userList={userList} />
         </div>
       </div>
     </div>

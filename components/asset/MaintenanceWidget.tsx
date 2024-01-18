@@ -1,7 +1,7 @@
 import React, { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { Asset, User } from '@prisma/client';
+import { User } from '@prisma/client';
 import dayjs from 'dayjs';
 
 import {
@@ -33,20 +33,20 @@ import { createMaintenance } from '@/lib/actions/maintenance';
 import { Calendar } from '@/components/ui/Calendar';
 import { CreateMaintenance } from '@/lib/schemas/maintenance';
 import { useCurrentUser } from '@/hooks/use-current-user';
+import { fetchMutatedAssetItem } from '@/lib/actions/asset';
 
 interface MaintenanceWidgetProps {
-  asset: Asset;
+  mutatedAsset: Awaited<ReturnType<typeof fetchMutatedAssetItem>>;
   userList: User[];
 }
 
 export default function MaintenanceWidget({
-  asset,
+  mutatedAsset,
   userList,
 }: MaintenanceWidgetProps) {
   let [isPending, startTransition] = useTransition();
   const router = useRouter();
   const user = useCurrentUser();
-
   const [newMaintenanceId, setNewMaintenanceId] = useState<string>('');
   const [newMaintenanceDeadLine, setNewMaintenanceDeadLine] = useState<Date>();
   const [newMaintenanceMaintaineeList, setNewMaintenanceMaintaineeList] =
@@ -58,7 +58,7 @@ export default function MaintenanceWidget({
     const maintainee = Array.from(newMaintenanceMaintaineeList);
     const validatedFields = CreateMaintenance.safeParse({
       id: newMaintenanceId,
-      assetIds: [asset.id],
+      assetIds: [mutatedAsset.id],
       deadline: newMaintenanceDeadLine ?? null,
       maintainee,
     });
@@ -116,8 +116,8 @@ export default function MaintenanceWidget({
                   startContent={<Clock size={18} />}
                 >
                   <span className="ml-1">
-                    {asset.nextMaintenance !== null
-                      ? dayjs(asset.nextMaintenance).format('DD/MM/YYYY')
+                    {mutatedAsset.nextMaintenance !== null
+                      ? dayjs(mutatedAsset.nextMaintenance).format('DD/MM/YYYY')
                       : 'No Scheduled Maintenance'}
                   </span>
                 </Chip>
@@ -132,8 +132,8 @@ export default function MaintenanceWidget({
                   startContent={<History size={18} />}
                 >
                   <span className="ml-1">
-                    {asset.lastMaintenance !== null
-                      ? dayjs(asset.lastMaintenance).format('DD/MM/YYYY')
+                    {mutatedAsset.lastMaintenance !== null
+                      ? dayjs(mutatedAsset.lastMaintenance).format('DD/MM/YYYY')
                       : 'No Maintenance Completed'}
                   </span>
                 </Chip>

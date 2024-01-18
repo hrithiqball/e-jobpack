@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { User } from '@prisma/client';
+
 import {
   Avatar,
   AvatarGroup,
@@ -10,15 +12,22 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-  User,
 } from '@nextui-org/react';
 import { UsersRound } from 'lucide-react';
 
-export default function TeamWidget() {
+interface TeamWidgetProps {
+  personInCharge: User | null;
+  maintainee: string[];
+}
+
+export default function TeamWidget({
+  personInCharge,
+  maintainee,
+}: TeamWidgetProps) {
   return (
     <div className="flex flex-1 p-2">
-      <Card className="flex flex-1 p-4">
-        <div className="flex flex-row items-center">
+      <Card shadow="none" className="flex flex-1 p-4">
+        <div className="flex flex-row items-center mb-2">
           <UsersRound />
           <span className="font-bold ml-4">Team</span>
         </div>
@@ -31,26 +40,37 @@ export default function TeamWidget() {
             <TableRow>
               <TableCell className="font-semibold">Person In Charge</TableCell>
               <TableCell className="justify-center">
-                <User
-                  name="Jane Doe"
-                  description="Product Designer"
-                  avatarProps={{
-                    src: 'https://i.pravatar.cc/150?u=a04258114e29026702d',
-                  }}
-                />
+                {personInCharge === null ? (
+                  <span>Not set</span>
+                ) : (
+                  <div className="flex space-x-2">
+                    <Avatar
+                      showFallback
+                      name={personInCharge.name}
+                      src={personInCharge.image ?? ''}
+                    />
+                    <div className="flex flex-col">
+                      <span>{personInCharge.name}</span>
+                      <span className="font-thin">{personInCharge.email}</span>
+                    </div>
+                  </div>
+                )}
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell className="semi-bold">Maintainer</TableCell>
+              <TableCell className="font-semibold">Maintainer</TableCell>
               <TableCell>
-                <AvatarGroup isBordered max={5}>
-                  <Avatar src="https://i.pravatar.cc/150?u=a042581f4e29026024d" />
-                  <Avatar src="https://i.pravatar.cc/150?u=a04258a2462d826712d" />
-                  <Avatar src="https://i.pravatar.cc/150?u=a042581f4e29026704d" />
-                  <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026302d" />
-                  <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026702d" />
-                  <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026708c" />
-                </AvatarGroup>
+                {maintainee.length > 0 && (
+                  <AvatarGroup isBordered max={5}>
+                    {maintainee.map(maintainer => (
+                      <Avatar
+                        key={maintainer}
+                        src={`https://i.pravatar.cc/150?u=${maintainer}`}
+                      />
+                    ))}
+                  </AvatarGroup>
+                )}
+                <span>No one assigned to maintain this asset</span>
               </TableCell>
             </TableRow>
           </TableBody>
