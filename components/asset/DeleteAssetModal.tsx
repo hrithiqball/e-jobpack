@@ -29,12 +29,12 @@ export default function DeleteAssetModal({
   const user = useCurrentUser();
 
   function handleDeleteAsset() {
-    if (user === undefined) {
-      toast.error('Session expired');
-      return;
-    }
-
     startTransition(() => {
+      if (user === undefined || user.id === undefined) {
+        toast.error('Session expired');
+        return;
+      }
+
       deleteAsset(user.id, assetId)
         .then(() => {
           toast.success(`Asset ${assetId} deleted`);
@@ -47,12 +47,12 @@ export default function DeleteAssetModal({
   }
 
   function handleArchiveAsset() {
-    if (user === undefined) {
-      toast.error('Session expired');
-      return;
-    }
-
     startTransition(() => {
+      if (user === undefined || user.id === undefined) {
+        toast.error('Session expired');
+        return;
+      }
+
       updateAsset(user.id, assetId, { isArchive: true })
         .then(() => {
           toast.success(`Asset ${assetId} archived`);

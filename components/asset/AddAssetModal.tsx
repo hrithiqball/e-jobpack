@@ -18,6 +18,7 @@ import { toast } from 'sonner';
 
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { createAsset } from '@/lib/actions/asset';
+import { CreateAsset } from '@/lib/schemas/asset';
 
 interface AddAssetModalProps {
   isOpen: boolean;
@@ -47,13 +48,13 @@ export default function AddAssetModal({
   const [newAssetLocation, setNewAssetLocation] = useState('');
 
   function handleAddAsset() {
-    if (user?.id === undefined) {
-      toast.error('User not found');
-      return;
-    }
-
     startTransition(() => {
-      createAsset({
+      if (user === undefined || user.id === undefined) {
+        toast.error('User not found');
+        return;
+      }
+
+      const validatedFields = CreateAsset.safeParse({
         createdBy: user.id,
         name: newAssetName,
         description: newAssetDescription,
@@ -62,7 +63,16 @@ export default function AddAssetModal({
         personInCharge: newAssetPIC === '' ? null : newAssetPIC,
         tag: newAssetTag,
         statusId: newAssetStatus === '' ? null : newAssetStatus,
-      })
+      });
+
+      if (!validatedFields.success) {
+        toast.error(
+          `Failed to create asset, ${validatedFields.error?.message}`,
+        );
+        return;
+      }
+
+      createAsset({ ...validatedFields.data })
         .then(res => {
           if (isPending) console.info(res);
           toast.success(`Asset ${res.name} created successfully`);
@@ -170,7 +180,8 @@ export default function AddAssetModal({
             Close
           </Button>
           <Button
-            isDisabled={newAssetName === ''}
+            isDisabled={newAssetName === '' || isPending}
+            isLoading={isPending}
             variant="faded"
             color="primary"
             onPress={() => {

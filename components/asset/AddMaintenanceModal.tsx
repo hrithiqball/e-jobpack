@@ -45,27 +45,25 @@ export default function AddMaintenanceModal({
   const [deadline, setDeadline] = useState<Date>();
 
   function handleCreateMaintenance() {
-    if (user === undefined) {
-      toast.error('Session expired');
-      return;
-    }
-
-    const validatedFields = CreateMaintenance.safeParse({
-      id: maintenanceId,
-      maintainee: Array.from(maintainee),
-      assetIds,
-      deadline,
-      isOpen: user.role === 'ADMIN' || user.role === 'SUPERVISOR',
-    });
-
-    if (!validatedFields.success) {
-      toast.error('Invalid input');
-      return;
-    }
-
-    if (!isPending) console.debug(validatedFields.data);
-
     startTransition(() => {
+      if (user === undefined || user.id === undefined) {
+        toast.error('Session expired');
+        return;
+      }
+
+      const validatedFields = CreateMaintenance.safeParse({
+        id: maintenanceId,
+        maintainee: Array.from(maintainee),
+        assetIds,
+        deadline,
+        isOpen: user.role === 'ADMIN' || user.role === 'SUPERVISOR',
+      });
+
+      if (!validatedFields.success) {
+        toast.error('Invalid input');
+        return;
+      }
+
       toast.promise(
         createMaintenance(user.id, { ...validatedFields.data }).then(() => {
           setMaintenanceId('');
@@ -139,6 +137,8 @@ export default function AddMaintenanceModal({
           </Button>
           <Button
             variant="faded"
+            isLoading={isPending}
+            disabled={maintenanceId === '' || isPending}
             size="sm"
             color="primary"
             onClick={handleCreateMaintenance}

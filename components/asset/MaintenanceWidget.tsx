@@ -55,11 +55,6 @@ export default function MaintenanceWidget({
     useState(false);
 
   function handleCreateMaintenance() {
-    if (user === undefined) {
-      toast.error('Session expired');
-      return;
-    }
-
     const maintainee = Array.from(newMaintenanceMaintaineeList);
     const validatedFields = CreateMaintenance.safeParse({
       id: newMaintenanceId,
@@ -74,6 +69,11 @@ export default function MaintenanceWidget({
     }
 
     startTransition(() => {
+      if (user === undefined || user.id === undefined) {
+        toast.error('Session expired');
+        return;
+      }
+
       createMaintenance(user.id, {
         ...validatedFields.data,
       })

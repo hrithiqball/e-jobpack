@@ -67,24 +67,19 @@ export default function ClosedChecklist({
   }
 
   function handleReopenChecklist() {
-    if (
-      user?.id === null ||
-      user?.id === undefined ||
-      currentChecklist === null ||
-      currentChecklist === undefined
-    ) {
-      toast.error('Session expired');
-      return;
-    }
-
-    if (currentChecklist.id === null || currentChecklist.id === undefined) {
+    if (currentChecklist === undefined || currentChecklist.id === undefined) {
       toast.error('Checklist not found');
       return;
     }
 
     startTransition(() => {
+      if (user === undefined || user.id === undefined) {
+        toast.error('Session expired');
+        return;
+      }
+
       toast.promise(
-        updateChecklist(currentChecklist?.id, {
+        updateChecklist(currentChecklist.id, {
           updatedBy: user.id,
           isClose: false,
         }),

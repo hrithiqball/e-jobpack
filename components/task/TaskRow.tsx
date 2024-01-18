@@ -91,12 +91,12 @@ export default function TaskRow({ task }: TaskRowProps) {
         return;
       }
 
-      if (user === undefined) {
-        toast.error('Session expired');
-        return;
-      }
-
       startTransition(() => {
+        if (user === undefined || user.id === undefined) {
+          toast.error('Session expired');
+          return;
+        }
+
         updateTask(task.id, user.id, { ...validatedFields.data }).then(() => {
           if (!isPending) toast.success('Task updated successfully');
         });
@@ -105,12 +105,12 @@ export default function TaskRow({ task }: TaskRowProps) {
   }
 
   function updateTaskClient(taskUpdate: z.infer<typeof UpdateTask>) {
-    if (user === undefined) {
-      toast.error('Session expired');
-      return;
-    }
-
     startTransition(() => {
+      if (user === undefined || user.id === undefined) {
+        toast.error('Session expired');
+        return;
+      }
+
       updateTask(task.id, user.id, taskUpdate).then(() => {
         toast.success('Task updated successfully');
       });

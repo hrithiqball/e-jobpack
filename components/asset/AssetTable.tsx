@@ -610,14 +610,14 @@ export default function AssetTable({
   }
 
   function handleArchiveAsset(assetId: string) {
-    if (user?.id === undefined) {
-      toast.error('User session expired');
-      return;
-    }
-
-    if (!isPending) console.debug('archiving');
-
     startTransition(() => {
+      if (user === undefined || user.id === undefined) {
+        toast.error('User session expired');
+        return;
+      }
+
+      if (!isPending) console.debug('archiving');
+
       toast.promise(updateAsset(user.id, assetId, { isArchive: true }), {
         loading: 'Archiving asset...',
         success: res => {

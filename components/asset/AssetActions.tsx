@@ -44,12 +44,12 @@ export default function AssetActions({ checklist }: AssetActionsProps) {
         break;
 
       case 'close-checklist':
-        if (user?.id === null || user?.id === undefined) {
-          toast.error('Session expired');
-          return;
-        }
-
         startTransition(() => {
+          if (user === undefined || user.id === undefined) {
+            toast.error('Session expired');
+            return;
+          }
+
           toast.promise(
             updateChecklist(checklist.id, {
               updatedBy: user.id,
