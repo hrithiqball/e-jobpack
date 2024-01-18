@@ -14,19 +14,12 @@ import {
   Tab,
   Tabs,
 } from '@nextui-org/react';
-import {
-  ChevronLeft,
-  MoreHorizontal,
-  PencilLine,
-  Printer,
-  Save,
-} from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 
 import Loading from '@/components/Loading';
 import AssetDetails from '@/components/asset/AssetDetails';
 import AssetMaintenance from '@/components/asset/AssetMaintenance';
 import AssetAttachment from '@/components/asset/AssetAttachment';
-import { useCurrentRole } from '@/hooks/use-current-role';
 import { fetchMutatedAssetItem } from '@/lib/actions/asset';
 
 interface AssetItemComponentProps {
@@ -44,10 +37,7 @@ export default function AssetItemComponent({
   checklistUse,
   userList,
 }: AssetItemComponentProps) {
-  const role = useCurrentRole();
-
   const [mounted, setMounted] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
   const [selectedTab, setSelectedTab] = useState('details');
   const [isDesktop, setDesktop] = useState(window.innerWidth > 650);
 
@@ -62,21 +52,6 @@ export default function AssetItemComponent({
 
   function updateMedia() {
     setDesktop(window.innerWidth > 650);
-  }
-
-  function handleAssetAction(key: Key) {
-    switch (key) {
-      case 'edit-asset':
-        setIsEdit(true);
-        break;
-      case 'print-asset':
-        // TODO: print asset
-        break;
-    }
-  }
-
-  function handleSave() {
-    setIsEdit(false);
   }
 
   if (!mounted) return <Loading label="Hang on tight" />;
@@ -173,64 +148,8 @@ export default function AssetItemComponent({
             </Dropdown>
           </div>
         )}
-        <div className="flex items-center space-x-1">
-          {isEdit && (
-            <Button
-              size="sm"
-              variant="faded"
-              color="success"
-              onClick={handleSave}
-              startContent={<Save size={18} />}
-            >
-              Save
-            </Button>
-          )}
-          <Dropdown>
-            <DropdownTrigger>
-              <Button isIconOnly size="sm" variant="faded">
-                <MoreHorizontal size={18} />
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu
-              onAction={handleAssetAction}
-              disabledKeys={role === 'TECHNICIAN' ? ['edit-asset'] : []}
-            >
-              <DropdownItem
-                key="edit-asset"
-                startContent={<PencilLine size={18} />}
-              >
-                Edit Asset
-              </DropdownItem>
-              <DropdownItem
-                key="print-asset"
-                startContent={<Printer size={18} />}
-              >
-                Print to PDF
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
-        </div>
+        <div></div>
       </div>
-      {/* <div className="flex flex-row justify-between items-center my-4">
-        <h2 className="text-xl font-semibold">{asset.name}</h2>
-        {role === 'ADMIN' ||
-          (role === 'SUPERVISOR' && (
-            <div className="flex flex-row">
-              <div className="flex flex-row">
-                <Tooltip content="Edit Asset">
-                  <Button size="sm" isIconOnly className="ml-1" variant="faded">
-                    <PencilLine size={18} />
-                  </Button>
-                </Tooltip>
-                <Tooltip content="Add sub asset to this asset">
-                  <Button size="sm" isIconOnly className="ml-1" variant="faded">
-                    <PackagePlus size={18} />
-                  </Button>
-                </Tooltip>
-              </div>
-            </div>
-          ))}
-      </div> */}
       <div className="flex overflow-hidden flex-1">
         {selectedTab === 'details' && (
           <AssetDetails

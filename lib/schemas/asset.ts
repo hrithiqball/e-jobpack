@@ -22,6 +22,9 @@ export const UpdateAsset = z.object({
       message: 'Asset name cannot be empty',
     })
     .optional(),
+  description: z.string().optional(),
   isArchive: z.boolean().optional(),
   statusId: z.string().optional(),
+  location: z.string().optional(),
+  tag: z.string().optional(),
 });
