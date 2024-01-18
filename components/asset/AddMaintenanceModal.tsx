@@ -72,9 +72,18 @@ export default function AddMaintenanceModal({
           onClose();
         }),
         {
-          loading: 'Creating maintenance...',
-          success: 'Maintenance created',
-          error: 'Failed to create maintenance',
+          loading:
+            user.role === 'TECHNICIAN'
+              ? 'Creating request...'
+              : 'Creating maintenance',
+          success:
+            user.role === 'TECHNICIAN'
+              ? 'Request submitted!'
+              : 'Maintenance created!',
+          error:
+            user.role === 'TECHNICIAN'
+              ? 'Failed to request 😔'
+              : 'Failed to create',
         },
       );
     });

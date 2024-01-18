@@ -51,11 +51,11 @@ export default function AssetComponent({
           (role === 'SUPERVISOR' && (
             <Fragment>
               <Button
-                isIconOnly
                 size="md"
                 onClick={() => setOpenAddAssetModal(!openAddAssetModal)}
+                endContent={<PackagePlus size={18} />}
               >
-                <PackagePlus size={18} />
+                Add Asset
               </Button>
               <AddAssetModal
                 isOpen={openAddAssetModal}

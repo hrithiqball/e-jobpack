@@ -62,8 +62,8 @@ import { fetchMutatedAssetList, updateAsset } from '@/lib/actions/asset';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import emptyIcon from '@/public/image/empty.svg';
 import { useCurrentRole } from '@/hooks/use-current-role';
-import AddMaintenanceModal from './AddMaintenanceModal';
-import DeleteAssetModal from './DeleteAssetModal';
+import AddMaintenanceModal from '@/components/asset/AddMaintenanceModal';
+import DeleteAssetModal from '@/components/asset/DeleteAssetModal';
 
 type MutatedAsset = Awaited<ReturnType<typeof fetchMutatedAssetList>>[0];
 type Type = MutatedAsset['type'];
@@ -518,6 +518,7 @@ export default function AssetTable({
                   showFallback
                   src={user?.image ?? ''}
                   name={user?.name}
+                  className="mr-1"
                 />
               ))}
             {user?.name}
@@ -560,6 +561,7 @@ export default function AssetTable({
                   showFallback
                   src={user?.image ?? ''}
                   name={user?.name}
+                  className="mr-1"
                 />
               ))}
             {user?.name}
@@ -700,37 +702,23 @@ export default function AssetTable({
   return (
     <div className="flex flex-col flex-1 space-y-4">
       <div className="flex items-center justify-between">
-        <Input
-          placeholder="Search"
-          size="sm"
-          startContent={<Search size={18} />}
-          value={(table.getColumn(filterBy)?.getFilterValue() as string) ?? ''}
-          onChange={event =>
-            table.getColumn(filterBy)?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
         <div className="flex items-center space-x-2">
-          {(table.getIsSomeRowsSelected() || table.getIsAllRowsSelected()) && (
-            <Fragment>
-              <Button
-                onClick={handleOpenAddMaintenanceModal}
-                endContent={<FileBox size={18} />}
-              >
-                Create Maintenance Request
-              </Button>
-              <Button onClick={handleMe} endContent={<Archive size={18} />}>
-                Archive Selected
-              </Button>
-              <Button onClick={handleMe} endContent={<Trash size={18} />}>
-                Delete Selected
-              </Button>
-            </Fragment>
-          )}
+          <Input
+            placeholder="Search"
+            size="sm"
+            startContent={<Search size={18} />}
+            value={
+              (table.getColumn(filterBy)?.getFilterValue() as string) ?? ''
+            }
+            onChange={event =>
+              table.getColumn(filterBy)?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm"
+          />
           <Dropdown>
             <DropdownTrigger>
-              <Button size="md" endContent={<Filter size={18} />}>
-                Filter
+              <Button isIconOnly size="md">
+                <Filter size={18} />
               </Button>
             </DropdownTrigger>
             <DropdownMenu
@@ -758,8 +746,8 @@ export default function AssetTable({
           </Dropdown>
           <Dropdown>
             <DropdownTrigger>
-              <Button size="md" endContent={<Columns2 size={18} />}>
-                Columns
+              <Button isIconOnly size="md">
+                <Columns2 size={18} />
               </Button>
             </DropdownTrigger>
             <DropdownMenu disallowEmptySelection closeOnSelect={false}>
@@ -783,6 +771,28 @@ export default function AssetTable({
                 ))}
             </DropdownMenu>
           </Dropdown>
+        </div>
+        <div className="flex items-center space-x-2">
+          {(table.getIsSomeRowsSelected() || table.getIsAllRowsSelected()) && (
+            <Fragment>
+              <Button
+                onClick={handleOpenAddMaintenanceModal}
+                endContent={<FileBox size={18} />}
+              >
+                Create Maintenance Request
+              </Button>
+              <Button onClick={handleMe} endContent={<Archive size={18} />}>
+                Archive
+              </Button>
+              <Button
+                color="danger"
+                onClick={handleMe}
+                endContent={<Trash size={18} />}
+              >
+                Delete
+              </Button>
+            </Fragment>
+          )}
           {children}
         </div>
       </div>
@@ -830,6 +840,11 @@ export default function AssetTable({
           variant={table.getCanPreviousPage() ? 'ghost' : 'faded'}
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
+          className={`${
+            table.getCanPreviousPage()
+              ? 'hover:opacity-75'
+              : 'opacity-50 cursor-not-allowed'
+          } focus:outline-none`}
         >
           <ChevronLeft size={18} />
         </Button>
@@ -847,6 +862,11 @@ export default function AssetTable({
           variant={table.getCanNextPage() ? 'ghost' : 'faded'}
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
+          className={`${
+            table.getCanNextPage()
+              ? 'hover:opacity-75'
+              : 'opacity-50 cursor-not-allowed'
+          } focus:outline-none`}
         >
           <ChevronRight size={18} />
         </Button>

@@ -101,7 +101,12 @@ export default function AddAssetModal({
   }
 
   return (
-    <Modal isOpen={isOpen} hideCloseButton backdrop="blur">
+    <Modal
+      isOpen={isOpen}
+      hideCloseButton
+      backdrop="blur"
+      scrollBehavior="inside"
+    >
       <ModalContent>
         <ModalHeader className="flex flex-col gap-1">Add New Asset</ModalHeader>
         <ModalBody>

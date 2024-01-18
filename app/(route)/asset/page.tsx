@@ -13,7 +13,7 @@ export default async function AssetPage() {
   return (
     <div className="flex flex-1 flex-col">
       <AssetComponent
-        mutatedAssetList={mutatedAssetList}
+        mutatedAssetList={mutatedAssetList.filter(asset => !asset.isArchive)}
         assetTypeList={assetTypeList}
         assetStatusList={assetStatusList}
         userList={userList}
