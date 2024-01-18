@@ -8,7 +8,7 @@ import React, {
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { User } from '@prisma/client';
+import { AssetStatus, User } from '@prisma/client';
 
 import {
   ColumnDef,
@@ -71,12 +71,14 @@ type Status = MutatedAsset['status'];
 
 interface AssetTableProps {
   mutatedAssetList: MutatedAsset[];
+  assetStatusList: AssetStatus[];
   userList: User[];
   children: ReactNode | null;
 }
 
 export default function AssetTable({
   mutatedAssetList,
+  assetStatusList,
   userList,
   children,
 }: AssetTableProps) {
@@ -271,23 +273,68 @@ export default function AssetTable({
       cell: ({ row }) => {
         const status: Status = row.getValue('status');
 
+        function handleStatusChange(key: Key) {
+          startTransition(() => {
+            if (user === undefined || user.id === undefined) {
+              toast.error('User session expired');
+              return;
+            }
+
+            toast.promise(
+              updateAsset(user.id, row.original.id, {
+                statusId: key as string,
+              }),
+              {
+                loading: 'Updating asset status...',
+                success: res => {
+                  return `${res.name} status updated successfully`;
+                },
+                error: 'Failed to update asset status',
+              },
+            );
+          });
+        }
+
         return (
-          <>
-            <Chip
-              size="sm"
-              variant="faded"
-              startContent={
-                <div
-                  style={{ backgroundColor: status?.color ?? 'grey' }}
-                  className="w-1 p-1 rounded-full mx-1"
-                ></div>
-              }
-            >
-              {status?.title === '' || status?.title === undefined
-                ? 'Not Specified'
-                : status.title}
-            </Chip>
-          </>
+          <Dropdown>
+            <DropdownTrigger>
+              <Chip
+                size="sm"
+                variant="faded"
+                startContent={
+                  <div
+                    style={{ backgroundColor: status?.color ?? 'grey' }}
+                    className="w-1 p-1 rounded-full mx-1"
+                  ></div>
+                }
+                className="hover:cursor-pointer"
+              >
+                {status?.title === '' || status?.title === undefined
+                  ? 'Not Specified'
+                  : status.title}
+              </Chip>
+            </DropdownTrigger>
+            <DropdownMenu onAction={handleStatusChange}>
+              {assetStatusList.map(status => (
+                <DropdownItem key={status.id}>
+                  <Chip
+                    variant="faded"
+                    startContent={
+                      <div
+                        style={{ backgroundColor: status.color ?? 'grey' }}
+                        className="w-1 p-1 rounded-full mx-1"
+                      ></div>
+                    }
+                    className="hover:cursor-pointer"
+                  >
+                    {status.title === '' || status.title === undefined
+                      ? 'Not Specified'
+                      : status.title}
+                  </Chip>
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
         );
       },
     },
@@ -428,6 +475,7 @@ export default function AssetTable({
                   showFallback
                   src={pic?.image ?? ''}
                   name={pic?.name}
+                  className="mr-1"
                 />
               ))}
             {pic?.name}

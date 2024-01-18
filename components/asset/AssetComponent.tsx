@@ -42,7 +42,11 @@ export default function AssetComponent({
 
   return (
     <div className="flex flex-col flex-1">
-      <AssetTable mutatedAssetList={mutatedAssetList} userList={userList}>
+      <AssetTable
+        mutatedAssetList={mutatedAssetList}
+        userList={userList}
+        assetStatusList={assetStatusList}
+      >
         {role === 'ADMIN' ||
           (role === 'SUPERVISOR' && (
             <Fragment>

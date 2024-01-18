@@ -23,4 +23,5 @@ export const UpdateAsset = z.object({
     })
     .optional(),
   isArchive: z.boolean().optional(),
+  statusId: z.string().optional(),
 });
