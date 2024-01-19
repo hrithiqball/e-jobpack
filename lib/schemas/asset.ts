@@ -27,4 +27,5 @@ export const UpdateAsset = z.object({
   statusId: z.string().optional(),
   location: z.string().optional(),
   tag: z.string().optional(),
+  type: z.string().optional(),
 });

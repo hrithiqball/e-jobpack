@@ -1,7 +1,13 @@
 'use client';
 
 import React, { Key, useEffect, useState } from 'react';
-import { Asset, ChecklistUse, Maintenance, User } from '@prisma/client';
+import {
+  AssetStatus,
+  AssetType,
+  ChecklistUse,
+  Maintenance,
+  User,
+} from '@prisma/client';
 
 import {
   Button,
@@ -24,7 +30,8 @@ import { fetchMutatedAssetItem } from '@/lib/actions/asset';
 
 interface AssetItemComponentProps {
   mutatedAsset: Awaited<ReturnType<typeof fetchMutatedAssetItem>>;
-  asset: Asset;
+  statusList: AssetStatus[];
+  typeList: AssetType[];
   maintenanceList: Maintenance[];
   checklistUse: ChecklistUse[];
   userList: User[];
@@ -32,7 +39,8 @@ interface AssetItemComponentProps {
 
 export default function AssetItemComponent({
   mutatedAsset,
-  asset,
+  statusList,
+  typeList,
   maintenanceList,
   checklistUse,
   userList,
@@ -82,7 +90,7 @@ export default function AssetItemComponent({
               key="details"
               title={
                 <div className="flex items-center space-x-2">
-                  <span>{asset.name}</span>
+                  <span>{mutatedAsset.name}</span>
                 </div>
               }
             />
@@ -131,7 +139,7 @@ export default function AssetItemComponent({
                 selectedKeys={selectedTab}
                 onAction={key => setSelectedTab(key as string)}
               >
-                <DropdownItem key="details">{asset.name}</DropdownItem>
+                <DropdownItem key="details">{mutatedAsset.name}</DropdownItem>
                 <DropdownItem key="maintenance">
                   Maintenance
                   <Chip className="ml-1" size="sm" variant="faded">
@@ -154,6 +162,8 @@ export default function AssetItemComponent({
         {selectedTab === 'details' && (
           <AssetDetails
             mutatedAsset={mutatedAsset}
+            statusList={statusList}
+            typeList={typeList}
             checklistUse={checklistUse}
             userList={userList}
           />

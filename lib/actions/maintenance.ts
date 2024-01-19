@@ -134,13 +134,13 @@ export async function fetchMaintenanceList(
     const filters: Prisma.MaintenanceWhereInput[] = [];
     const orderBy: Prisma.MaintenanceOrderByWithRelationInput[] = [];
 
-    console.log(assetIds);
-
-    // if (assetIds) {
-    //   filters.push({
-    //     assetIds ,
-    //   });
-    // }
+    if (assetIds) {
+      filters.push({
+        assetIds: {
+          hasSome: assetIds.split(','),
+        },
+      });
+    }
 
     orderBy.push({
       date: 'desc',
