@@ -14,11 +14,11 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: PropsWithChildren) {
   return (
-    <html lang="en" className="light">
+    <html lang="en">
       <body className={inter.className}>
         <Providers>
           <div className="flex flex-col h-screen">
-            <div className="flex-1">
+            <div className="flex flex-1">
               {children}
               <Toaster richColors />
             </div>

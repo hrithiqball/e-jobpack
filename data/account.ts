@@ -1,4 +1,4 @@
-import { db } from '@/lib/prisma/db';
+import { db } from '@/lib/db';
 
 export async function getAccountByUserId(userId: string) {
   try {

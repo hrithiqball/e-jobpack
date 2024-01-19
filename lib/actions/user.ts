@@ -2,21 +2,34 @@
 
 import bcrypt from 'bcryptjs';
 
-import { db } from '@/lib/prisma/db';
+import { db } from '@/lib/db';
 
 export async function createUser(
   name: string,
   email: string,
-  password: string,
+  unhashedPassword: string,
 ) {
   try {
-    const hash = await bcrypt.hash(password, 10);
+    const password = await bcrypt.hash(unhashedPassword, 10);
 
     return await db.user.create({
       data: {
         name,
         email,
-        password: hash,
+        password,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function fetchUserList() {
+  try {
+    return await db.user.findMany({
+      orderBy: {
+        name: 'asc',
       },
     });
   } catch (error) {

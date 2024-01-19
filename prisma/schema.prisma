@@ -26,6 +26,7 @@ model Asset {
   tag                               String?
   id                                String         @id
   statusId                          String?        @map("status_id")
+  isArchive                         Boolean?       @default(false) @map("is_archive")
   user_asset_created_byTouser       User           @relation("asset_created_byTouser", fields: [createdBy], references: [id], onDelete: Cascade)
   user_asset_person_in_chargeTouser User?          @relation("asset_person_in_chargeTouser", fields: [personInCharge], references: [id], onDelete: Cascade)
   asset_status                      AssetStatus?   @relation(fields: [statusId], references: [id], onDelete: Cascade)
@@ -158,47 +159,36 @@ model ChecklistUse {
 }
 
 model History {
-  uid                   String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  created_on            DateTime
-  activity              String
-  action_by             String
-  action_on             DateTime
-  task_uid              String?
-  subtask_uid           String?
-  maintenance_uid       String?
-  asset_uid             String?
-  subtask_use_uid       String?
-  task_use              String?
-  checklist_use         String?
-  subtask_library_uid   String?
-  task_library_uid      String?
-  checklist_library_uid String?
-  asset_tags_library    String?
-  asset_type_uid        String?
-  asset_tags_uid        String?
-  user_uid              String?
-  user                  User     @relation(fields: [action_by], references: [id])
+  activity String
+  actionBy String   @map("action_by")
+  actionOn DateTime @default(now()) @map("action_on")
+  id       String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user     User     @relation(fields: [actionBy], references: [id])
 
   @@map("history")
   @@schema("public")
 }
 
 model Maintenance {
-  date                               DateTime
-  maintainee                         String?
-  attachmentPath                     String?     @map("attachment_path")
-  approvedBy                         String?     @map("approved_by")
-  approvedOn                         DateTime?   @map("approved_on")
-  assetIds                           String[]    @map("asset_ids")
-  startDate                          DateTime?   @default(now()) @map("start_date")
-  deadline                           DateTime?
-  id                                 String      @id @default(cuid())
-  isClose                            Boolean     @default(false) @map("is_close")
-  closedBy                           String?     @map("closed_by")
-  closedOn                           DateTime?   @map("closed_on")
-  checklist                          Checklist[]
-  user_maintenance_approved_byTouser User?       @relation("maintenance_approved_byTouser", fields: [approvedBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  user_maintenance_closed_byTouser   User?       @relation("maintenance_closed_byTouser", fields: [closedBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  date                                DateTime    @default(now())
+  maintainee                          String?
+  attachmentPath                      String?     @map("attachment_path")
+  approvedBy                          String?     @map("approved_by")
+  approvedOn                          DateTime?   @map("approved_on")
+  assetIds                            String[]    @map("asset_ids")
+  startDate                           DateTime?   @default(now()) @map("start_date")
+  deadline                            DateTime?
+  id                                  String      @id @default(cuid())
+  isClose                             Boolean     @default(false) @map("is_close")
+  closedBy                            String?     @map("closed_by")
+  closedOn                            DateTime?   @map("closed_on")
+  isOpen                              Boolean     @default(false) @map("is_open")
+  requestedBy                         String?     @map("requested_by")
+  requestedOn                         DateTime?   @map("requested_on") @default(now())
+  checklist                           Checklist[]
+  user_maintenance_approved_byTouser  User?       @relation("maintenance_approved_byTouser", fields: [approvedBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_maintenance_closed_byTouser    User?       @relation("maintenance_closed_byTouser", fields: [closedBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_maintenance_requested_byTouser User?       @relation("maintenance_requested_byTouser", fields: [requestedBy], references: [id], onDelete: Cascade)
 
   @@map("maintenance")
   @@schema("public")
@@ -370,6 +360,7 @@ model User {
   history                                                History[]
   maintenance_maintenance_approved_byTouser              Maintenance[]      @relation("maintenance_approved_byTouser")
   maintenance_maintenance_closed_byTouser                Maintenance[]      @relation("maintenance_closed_byTouser")
+  maintenance_maintenance_requested_byTouser             Maintenance[]      @relation("maintenance_requested_byTouser")
   subtask_library_subtask_library_created_byTouser       SubtaskLibrary[]   @relation("subtask_library_created_byTouser")
   subtask_library_subtask_library_updated_byTouser       SubtaskLibrary[]   @relation("subtask_library_updated_byTouser")
   task_library_task_library_created_byTouser             TaskLibrary[]      @relation("task_library_created_byTouser")

@@ -1,15 +1,21 @@
 'use server';
 
-import { Prisma, Task } from '@prisma/client';
+import { Prisma, Task, TaskType } from '@prisma/client';
+import dayjs from 'dayjs';
+import z from 'zod';
 
-import { db } from '@/lib/prisma/db';
-import { UpdateTask } from '@/app/api/task/[id]/route';
+import { db } from '@/lib/db';
+import { CreateTask, UpdateTask } from '@/lib/schemas/task';
 
-export async function createTask(task: Task): Promise<Task | null> {
+export async function createTask(
+  value: z.infer<typeof CreateTask>,
+  taskType: TaskType,
+) {
   try {
     const filters: Prisma.TaskWhereInput[] = [
-      { checklistId: task.checklistId },
+      { checklistId: value.checklistId },
     ];
+
     const orderBy: Prisma.TaskOrderByWithRelationInput[] = [
       { taskOrder: 'desc' },
     ];
@@ -21,18 +27,25 @@ export async function createTask(task: Task): Promise<Task | null> {
       },
     });
 
+    let taskOrder;
+
     if (tasks.length === 0) {
-      task.taskOrder = 1;
+      taskOrder = 1;
     } else {
-      task.taskOrder = tasks[0].taskOrder + 1;
+      taskOrder = tasks[0].taskOrder++;
     }
 
     return await db.task.create({
-      data: task,
+      data: {
+        id: `TSK-${dayjs().format('YYMMDDHHmmssSSS')}`,
+        taskOrder,
+        taskType,
+        ...value,
+      },
     });
   } catch (error) {
     console.error(error);
-    return null;
+    throw error;
   }
 }
 
@@ -63,13 +76,17 @@ export async function fetchTaskList(checklistId?: string): Promise<Task[]> {
   }
 }
 
-// TODO: use schema
-export async function updateTask(id: string, data: UpdateTask) {
+export async function updateTask(
+  id: string,
+  updatedBy: string,
+  values: z.infer<typeof UpdateTask>,
+) {
   try {
-    console.log(data);
     return await db.task.update({
       where: { id },
-      data,
+      data: {
+        ...values,
+      },
     });
   } catch (error) {
     console.error(error);

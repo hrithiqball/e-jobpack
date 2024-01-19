@@ -2,7 +2,7 @@
 
 import { AssetType } from '@prisma/client';
 
-import { db } from '@/lib/prisma/db';
+import { db } from '@/lib/db';
 
 export async function fetchAssetTypeList(): Promise<AssetType[]> {
   try {

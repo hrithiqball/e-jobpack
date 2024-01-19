@@ -39,9 +39,5 @@
     "CLUSE",
     "CLLIB"
   ],
-  "words": [
-    "Jobpack",
-    "lucide",
-    "tanstack"
-  ]
+  "words": ["hookform", "Jobpack", "lucide", "tanstack", "unhashed"]
 }

@@ -1,9 +1,9 @@
-import AuthButton from '@/components/client/auth/AuthButton';
+import AuthButton from '@/components/auth/AuthButton';
 import Link from 'next/link';
 
 export default async function Index() {
   return (
-    <div className="flex flex-col items-center justify-center h-full">
+    <div className="flex flex-1 flex-col items-center justify-center">
       <AuthButton />
       <Link href="/sign-up">Sign Up</Link>
     </div>

@@ -5,8 +5,8 @@ import { Asset } from '@prisma/client';
 import dayjs from 'dayjs';
 import z from 'zod';
 
-import { db } from '@/lib/prisma/db';
-import { CreateAsset } from '@/lib/schemas/asset';
+import { db } from '@/lib/db';
+import { CreateAsset, UpdateAsset } from '@/lib/schemas/asset';
 
 export async function createAsset(
   values: z.infer<typeof CreateAsset>,
@@ -19,6 +19,8 @@ export async function createAsset(
     }
 
     if (validatedFields.data.type === '') validatedFields.data.type = null;
+    if (validatedFields.data.personInCharge === '')
+      validatedFields.data.personInCharge = null;
 
     return await db.asset.create({
       data: {
@@ -61,6 +63,7 @@ export async function fetchMutatedAssetList() {
       assetList.map(async asset => {
         let status = null;
         let type = null;
+        let personInCharge = null;
 
         if (asset.statusId !== null) {
           status = await db.assetStatus.findFirst({
@@ -78,16 +81,39 @@ export async function fetchMutatedAssetList() {
           });
         }
 
+        if (asset.personInCharge !== null) {
+          personInCharge = await db.user.findFirst({
+            where: {
+              id: asset.personInCharge,
+            },
+          });
+        }
+
+        const createdBy = await db.user.findFirst({
+          where: {
+            id: asset.createdBy,
+          },
+        });
+
+        const updatedBy = await db.user.findFirst({
+          where: {
+            id: asset.updatedBy,
+          },
+        });
+
         return {
           ...asset,
           status: status,
           type: type,
+          personInCharge: personInCharge,
+          createdBy: createdBy,
+          updatedBy: updatedBy,
         };
       }),
     );
 
     revalidatePath('/asset');
-    return mutatedAssetList;
+    return mutatedAssetList.filter(asset => asset.isArchive === false);
   } catch (error) {
     console.error(error);
     throw error;
@@ -107,6 +133,68 @@ export async function fetchAssetItem(id: string): Promise<Asset> {
   }
 }
 
+export async function fetchMutatedAssetItem(id: string) {
+  try {
+    const asset = await db.asset.findUniqueOrThrow({
+      where: {
+        id,
+      },
+    });
+
+    let status = null;
+    let type = null;
+    let personInCharge = null;
+
+    if (asset.statusId !== null) {
+      status = await db.assetStatus.findFirstOrThrow({
+        where: {
+          id: asset.statusId,
+        },
+      });
+    }
+
+    if (asset.type !== null) {
+      type = await db.assetType.findFirstOrThrow({
+        where: {
+          id: asset.type,
+        },
+      });
+    }
+
+    if (asset.personInCharge !== null) {
+      personInCharge = await db.user.findFirst({
+        where: {
+          id: asset.personInCharge,
+        },
+      });
+    }
+
+    const createdBy = await db.user.findFirstOrThrow({
+      where: {
+        id: asset.createdBy,
+      },
+    });
+
+    const updatedBy = await db.user.findFirstOrThrow({
+      where: {
+        id: asset.updatedBy,
+      },
+    });
+
+    return {
+      ...asset,
+      status,
+      type,
+      createdBy,
+      updatedBy,
+      personInCharge,
+    };
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 export async function fetchFilteredAssetList(assetIds: string[]) {
   try {
     return await db.asset.findMany({
@@ -116,6 +204,53 @@ export async function fetchFilteredAssetList(assetIds: string[]) {
         },
       },
     });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function updateAsset(
+  updatedBy: string,
+  id: string,
+  values: z.infer<typeof UpdateAsset>,
+) {
+  try {
+    const updatedAsset = await db.asset.update({
+      where: {
+        id,
+      },
+      data: {
+        updatedBy,
+        updatedOn: new Date(),
+        ...values,
+      },
+    });
+
+    revalidatePath('/asset');
+    return updatedAsset;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function deleteAsset(actionBy: string, id: string) {
+  try {
+    await db.history.create({
+      data: {
+        actionBy,
+        activity: `Deleted asset ${id}`,
+      },
+    });
+
+    await db.asset.delete({
+      where: {
+        id,
+      },
+    });
+
+    revalidatePath('/asset');
   } catch (error) {
     console.error(error);
     throw error;

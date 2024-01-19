@@ -5,7 +5,7 @@ import z from 'zod';
 
 import { RegisterSchema } from '@/lib/schemas';
 import { getUserByEmail } from '@/data/user';
-import { db } from '@/lib/prisma/db';
+import { db } from '@/lib/db';
 
 export async function register(values: z.infer<typeof RegisterSchema>) {
   const validatedFields = RegisterSchema.safeParse(values);

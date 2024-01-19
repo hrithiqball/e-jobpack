@@ -4,7 +4,7 @@ import { Checklist, Prisma } from '@prisma/client';
 import dayjs from 'dayjs';
 import z from 'zod';
 
-import { db } from '@/lib/prisma/db';
+import { db } from '@/lib/db';
 import { CreateChecklist, UpdateChecklist } from '@/lib/schemas/checklist';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
