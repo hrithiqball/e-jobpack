@@ -8,7 +8,7 @@ export const CreateMaintenance = z.object({
   assetIds: z.array(z.string()),
   deadline: z.date().optional().nullable(),
   isOpen: z.boolean().default(false),
-  startDate: z.date().optional().nullable(),
+  startDate: z.date(),
   approvedBy: z.string(),
 });
 

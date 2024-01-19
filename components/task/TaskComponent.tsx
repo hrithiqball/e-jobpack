@@ -1,9 +1,12 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+
 import { Maintenance } from '@prisma/client';
+import dayjs from 'dayjs';
 
 import {
+  Avatar,
   Button,
   Card,
   CardHeader,
@@ -11,15 +14,19 @@ import {
   Divider,
   Link,
 } from '@nextui-org/react';
-import { Wrench } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { FileCog, Wrench } from 'lucide-react';
 
 import Loading from '@/components/Loading';
+import { useCurrentRole } from '@/hooks/use-current-role';
 
 interface TaskComponentProps {
   maintenanceList: Maintenance[];
 }
 
 export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
+  const role = useCurrentRole();
+
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -36,12 +43,23 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
             <div className="space-x-4 items-center flex justify-center mb-4">
               <span className="text-lg font-semibold">My Tasks</span>
               <Chip size="sm" variant="faded">
-                {maintenanceList.filter(m => !m.isClose).length}
+                {
+                  maintenanceList.filter(
+                    m =>
+                      !m.isClose &&
+                      m.startDate < dayjs().add(1, 'day').toDate(),
+                  ).length
+                }
               </Chip>
             </div>
             <Divider />
             {maintenanceList
-              .filter(m => !m.isClose)
+              .filter(
+                m =>
+                  !m.isClose &&
+                  m.isOpen &&
+                  m.startDate < dayjs().add(1, 'day').toDate(),
+              )
               .map(maintenance => (
                 <Card key={maintenance.id} className="w-full my-4">
                   <CardHeader className="flex gap-3">
@@ -59,6 +77,33 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
                   </CardHeader>
                 </Card>
               ))}
+            {role === 'ADMIN' ||
+              (role === 'SUPERVISOR' &&
+                maintenanceList
+                  .filter(m => !m.isOpen)
+                  .map(maintenance => (
+                    <Card key={maintenance.id} className="w-full my-4">
+                      <CardHeader className="flex gap-3">
+                        <Button color="success" isIconOnly>
+                          <motion.div whileHover={{ scale: 1.2 }}>
+                            <FileCog color="#ffffff" />
+                          </motion.div>
+                        </Button>
+                        <div className="flex flex-1 items-center justify-between">
+                          <Link
+                            href={`/task/${maintenance.id}`}
+                            className="text-lg"
+                          >
+                            {maintenance.id}
+                          </Link>
+                          <Avatar
+                            size="sm"
+                            name={maintenance.requestedBy ?? 'Me'}
+                          />
+                        </div>
+                      </CardHeader>
+                    </Card>
+                  )))}
           </div>
         </Card>
         <Card className="flex-1 p-4">
@@ -80,8 +125,8 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
                     </Button>
                     <div className="flex flex-col">
                       <Link
-                        className="text-lg"
                         href={`/task/${maintenance.id}`}
+                        className="text-lg"
                       >
                         {maintenance.id}
                       </Link>
@@ -114,8 +159,8 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
                     </Button>
                     <div className="flex flex-col">
                       <Link
-                        className="text-lg"
                         href={`/task/${maintenance.id}`}
+                        className="text-lg"
                       >
                         {maintenance.id}
                       </Link>

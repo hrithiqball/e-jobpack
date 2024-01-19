@@ -178,7 +178,7 @@ model Maintenance {
   approvedBy                          String?     @map("approved_by")
   approvedOn                          DateTime?   @map("approved_on")
   assetIds                            String[]    @map("asset_ids")
-  startDate                           DateTime?   @default(now()) @map("start_date")
+  startDate                           DateTime   @default(now()) @map("start_date")
   deadline                            DateTime?
   id                                  String      @id @default(cuid())
   isClose                             Boolean     @default(false) @map("is_close")

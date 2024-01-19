@@ -61,6 +61,7 @@ export default function AddMaintenanceModal({
         maintainee: Array.from(maintainee),
         assetIds,
         deadline,
+        startDate,
         isOpen: user.role === 'ADMIN' || user.role === 'SUPERVISOR',
         approvedBy: Array.from(approvedBy)[0],
       });
