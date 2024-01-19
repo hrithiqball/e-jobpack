@@ -100,7 +100,6 @@ export default function GraphWidget() {
               }}
             />
           </div>
-          {/* <Bar className="" data={chartData} /> */}
         </div>
       </Card>
     </div>

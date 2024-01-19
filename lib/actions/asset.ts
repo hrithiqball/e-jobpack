@@ -237,18 +237,22 @@ export async function updateAsset(
 
 export async function deleteAsset(actionBy: string, id: string) {
   try {
-    await db.history.create({
-      data: {
-        actionBy,
-        activity: `Deleted asset ${id}`,
-      },
-    });
-
-    await db.asset.delete({
-      where: {
-        id,
-      },
-    });
+    await db.asset
+      .delete({
+        where: {
+          id,
+        },
+      })
+      .then(async () => {
+        await db.history.create({
+          data: {
+            actionBy,
+            activity: `Deleted asset ${id}`,
+            historyMeta: 'USER',
+            metaValue: actionBy,
+          },
+        });
+      });
 
     revalidatePath('/asset');
   } catch (error) {

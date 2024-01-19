@@ -69,12 +69,12 @@ export default function MaintenanceWidget({
     }
 
     startTransition(() => {
-      if (user === undefined || user.id === undefined) {
+      if (user === undefined) {
         toast.error('Session expired');
         return;
       }
 
-      createMaintenance(user.id, {
+      createMaintenance(user, {
         ...validatedFields.data,
       })
         .then(res => {

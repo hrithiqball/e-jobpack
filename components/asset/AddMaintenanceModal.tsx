@@ -1,6 +1,7 @@
 import React, { useState, useTransition } from 'react';
 
 import { User } from '@prisma/client';
+import dayjs from 'dayjs';
 
 import {
   Button,
@@ -42,11 +43,15 @@ export default function AddMaintenanceModal({
 
   const [maintenanceId, setMaintenanceId] = useState('');
   const [maintainee, setMaintainee] = useState(new Set([]));
+  const [approvedBy, setApprovedBy] = useState(new Set([]));
   const [deadline, setDeadline] = useState<Date>();
+  const [startDate, setStartDate] = useState<Date | undefined>(
+    dayjs().toDate(),
+  );
 
   function handleCreateMaintenance() {
     startTransition(() => {
-      if (user === undefined || user.id === undefined) {
+      if (user === undefined) {
         toast.error('Session expired');
         return;
       }
@@ -57,15 +62,16 @@ export default function AddMaintenanceModal({
         assetIds,
         deadline,
         isOpen: user.role === 'ADMIN' || user.role === 'SUPERVISOR',
+        approvedBy: Array.from(approvedBy)[0],
       });
 
       if (!validatedFields.success) {
-        toast.error('Invalid input');
+        toast.error(validatedFields.error.issues[0].message);
         return;
       }
 
       toast.promise(
-        createMaintenance(user.id, { ...validatedFields.data }).then(() => {
+        createMaintenance(user, { ...validatedFields.data }).then(() => {
           setMaintenanceId('');
           setMaintainee(new Set([]));
           setDeadline(undefined);
@@ -109,6 +115,23 @@ export default function AddMaintenanceModal({
             onValueChange={setMaintenanceId}
           />
           <Select
+            isRequired
+            label="Person in charge"
+            size="sm"
+            variant="faded"
+            selectionMode="single"
+            selectedKeys={approvedBy}
+            onSelectionChange={(e: any) => setApprovedBy(e)}
+          >
+            {userList
+              .filter(user => user.id !== '-99' && user.role !== 'TECHNICIAN')
+              .map(user => (
+                <SelectItem key={user.id} value={user.id}>
+                  {user.name}
+                </SelectItem>
+              ))}
+          </Select>
+          <Select
             selectionMode="multiple"
             label="Assign To"
             variant="faded"
@@ -126,8 +149,34 @@ export default function AddMaintenanceModal({
           </Select>
           <Popover>
             <PopoverTrigger>
-              <Button variant="faded" startContent={<CalendarIcon size={18} />}>
-                Deadline
+              <Button variant="faded" className="flex justify-between">
+                <span className="flex items-center space-x-2">
+                  <CalendarIcon size={18} />
+                  <span>Start Date</span>
+                </span>
+                <span>
+                  {startDate && dayjs(startDate).format('DD/MM/YYYY')}
+                </span>
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent>
+              <Calendar
+                initialFocus
+                mode="single"
+                selected={startDate}
+                onSelect={setStartDate}
+                fromDate={dayjs().toDate()}
+              />
+            </PopoverContent>
+          </Popover>
+          <Popover>
+            <PopoverTrigger>
+              <Button variant="faded" className="flex justify-between">
+                <span className="flex items-center space-x-2">
+                  <CalendarIcon size={18} />
+                  <span>End Date</span>
+                </span>
+                <span>{deadline && dayjs(deadline).format('DD/MM/YYYY')}</span>
               </Button>
             </PopoverTrigger>
             <PopoverContent>
@@ -136,6 +185,7 @@ export default function AddMaintenanceModal({
                 selected={deadline}
                 onSelect={setDeadline}
                 initialFocus
+                fromDate={startDate || dayjs().toDate()}
               />
             </PopoverContent>
           </Popover>

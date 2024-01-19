@@ -159,11 +159,13 @@ model ChecklistUse {
 }
 
 model History {
-  activity String
-  actionBy String   @map("action_by")
-  actionOn DateTime @default(now()) @map("action_on")
-  id       String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  user     User     @relation(fields: [actionBy], references: [id])
+  activity    String
+  actionBy    String      @map("action_by")
+  actionOn    DateTime    @default(now()) @map("action_on")
+  id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  historyMeta HistoryMeta @map("history_meta")
+  metaValue   String?     @map("meta_value")
+  user        User        @relation(fields: [actionBy], references: [id])
 
   @@map("history")
   @@schema("public")
@@ -184,7 +186,7 @@ model Maintenance {
   closedOn                            DateTime?   @map("closed_on")
   isOpen                              Boolean     @default(false) @map("is_open")
   requestedBy                         String?     @map("requested_by")
-  requestedOn                         DateTime?   @map("requested_on") @default(now())
+  requestedOn                         DateTime?   @default(now()) @map("requested_on")
   checklist                           Checklist[]
   user_maintenance_approved_byTouser  User?       @relation("maintenance_approved_byTouser", fields: [approvedBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
   user_maintenance_closed_byTouser    User?       @relation("maintenance_closed_byTouser", fields: [closedBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -398,6 +400,14 @@ enum TaskType {
   CHECK
   MULTIPLE_SELECT
   SINGLE_SELECT
+
+  @@schema("public")
+}
+
+enum HistoryMeta {
+  ASSET
+  MAINTENANCE
+  USER
 
   @@schema("public")
 }
