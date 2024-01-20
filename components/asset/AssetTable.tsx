@@ -8,7 +8,7 @@ import React, {
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { AssetStatus, User } from '@prisma/client';
+import { Asset, AssetStatus, AssetType, User } from '@prisma/client';
 
 import {
   ColumnDef,
@@ -58,26 +58,22 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { fetchMutatedAssetList, updateAsset } from '@/lib/actions/asset';
+import { fetchAssetList2, updateAsset } from '@/lib/actions/asset';
 import { useCurrentUser } from '@/hooks/use-current-user';
-import emptyIcon from '@/public/image/empty.svg';
 import { useCurrentRole } from '@/hooks/use-current-role';
+import emptyIcon from '@/public/image/empty.svg';
 import AddMaintenanceModal from '@/components/asset/AddMaintenanceModal';
 import DeleteAssetModal from '@/components/asset/DeleteAssetModal';
 
-type MutatedAsset = Awaited<ReturnType<typeof fetchMutatedAssetList>>[0];
-type Type = MutatedAsset['type'];
-type Status = MutatedAsset['status'];
-
 interface AssetTableProps {
-  mutatedAssetList: MutatedAsset[];
+  assetList: Awaited<ReturnType<typeof fetchAssetList2>>;
   assetStatusList: AssetStatus[];
   userList: User[];
   children: ReactNode | null;
 }
 
 export default function AssetTable({
-  mutatedAssetList,
+  assetList,
   assetStatusList,
   userList,
   children,
@@ -85,6 +81,7 @@ export default function AssetTable({
   let [isPending, startTransition] = useTransition();
   const user = useCurrentUser();
   const role = useCurrentRole();
+  // const pic = assetList[0].userAssetCreatedByToUser
 
   const [assetIds, setAssetIds] = useState<string[]>([]);
   const [openAddMaintenanceModal, setOpenAddMaintenanceModal] = useState(false);
@@ -103,7 +100,7 @@ export default function AssetTable({
     updatedBy: false,
   });
 
-  const columns: ColumnDef<MutatedAsset>[] = [
+  const columns: ColumnDef<Asset>[] = [
     {
       id: 'select',
       header: ({ table }) => {
@@ -236,7 +233,7 @@ export default function AssetTable({
         );
       },
       cell: ({ row }) => {
-        const type: Type = row.getValue('type');
+        const type: AssetType = row.getValue('type');
 
         return (
           <span>
@@ -271,7 +268,7 @@ export default function AssetTable({
         );
       },
       cell: ({ row }) => {
-        const status: Status = row.getValue('status');
+        const status: AssetStatus = row.getValue('status');
 
         function handleStatusChange(key: Key) {
           startTransition(() => {
@@ -441,7 +438,7 @@ export default function AssetTable({
       },
     },
     {
-      accessorKey: 'personInCharge',
+      accessorKey: 'userAssetPersonInChargeToUser',
       header: ({ column }) => {
         return (
           <Button
@@ -457,14 +454,12 @@ export default function AssetTable({
             }
             className="mb-2"
           >
-            {column.id
-              .replace(/([a-z])([A-Z])/g, '$1 $2')
-              .replace(/\b\w/g, c => c.toUpperCase())}
+            Person In Charge
           </Button>
         );
       },
       cell: ({ row }) => {
-        const pic: User = row.getValue('personInCharge');
+        const pic: User = row.getValue('userAssetPersonInChargeToUser');
 
         return (
           <div className="flex items-center">
@@ -484,7 +479,7 @@ export default function AssetTable({
       },
     },
     {
-      accessorKey: 'createdBy',
+      accessorKey: 'userAssetCreatedByToUser',
       header: ({ column }) => {
         return (
           <Button
@@ -500,14 +495,12 @@ export default function AssetTable({
             }
             className="mb-2"
           >
-            {column.id
-              .replace(/([a-z])([A-Z])/g, '$1 $2')
-              .replace(/\b\w/g, c => c.toUpperCase())}
+            Created By
           </Button>
         );
       },
       cell: ({ row }) => {
-        const user: User = row.getValue('createdBy');
+        const user: User = row.getValue('userAssetCreatedByToUser');
 
         return (
           <div className="flex items-center">
@@ -527,7 +520,7 @@ export default function AssetTable({
       },
     },
     {
-      accessorKey: 'updatedBy',
+      accessorKey: 'userAssetUpdatedByToUser',
       header: ({ column }) => {
         return (
           <Button
@@ -543,14 +536,12 @@ export default function AssetTable({
             }
             className="mb-2"
           >
-            {column.id
-              .replace(/([a-z])([A-Z])/g, '$1 $2')
-              .replace(/\b\w/g, c => c.toUpperCase())}
+            Updated By
           </Button>
         );
       },
       cell: ({ row }) => {
-        const user: User = row.getValue('updatedBy');
+        const user: User = row.getValue('userAssetUpdatedByToUser');
 
         return (
           <div className="flex items-center">
@@ -609,12 +600,12 @@ export default function AssetTable({
   }
 
   const table = useReactTable({
-    data: mutatedAssetList,
+    data: assetList,
     columns,
     enableRowSelection: true,
     enableMultiRowSelection: true,
-    getCoreRowModel: getCoreRowModel<MutatedAsset>(),
-    getPaginationRowModel: getPaginationRowModel<MutatedAsset>(),
+    getCoreRowModel: getCoreRowModel<Asset>(),
+    getPaginationRowModel: getPaginationRowModel<Asset>(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
@@ -639,7 +630,7 @@ export default function AssetTable({
 
   function handleAssetAction(assetId: string) {
     return (key: Key) => {
-      const asset = mutatedAssetList.find(asset => asset.id === assetId);
+      const asset = assetList.find(asset => asset.id === assetId);
 
       if (asset === undefined) {
         toast.error('Asset not found');

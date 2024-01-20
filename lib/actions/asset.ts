@@ -51,69 +51,40 @@ export async function fetchAssetList() {
   }
 }
 
-export async function fetchMutatedAssetList() {
+export async function fetchAssetList2() {
   try {
     const assetList = await db.asset.findMany({
       orderBy: {
         name: 'asc',
       },
+      include: {
+        assetStatus: true,
+        assetType: true,
+        userAssetPersonInChargeToUser: true,
+        userAssetCreatedByToUser: true,
+        userAssetUpdatedByToUser: true,
+      },
     });
 
-    const mutatedAssetList = await Promise.all(
-      assetList.map(async asset => {
-        let status = null;
-        let type = null;
-        let personInCharge = null;
+    // const mutatedAssetList = await Promise.all(
+    //   assetList.map(async asset => {
+    //     let status = null;
+    //     let type = null;
+    //     let personInCharge = null;
 
-        if (asset.statusId !== null) {
-          status = await db.assetStatus.findFirst({
-            where: {
-              id: asset.statusId,
-            },
-          });
-        }
-
-        if (asset.type !== null) {
-          type = await db.assetType.findFirst({
-            where: {
-              id: asset.type,
-            },
-          });
-        }
-
-        if (asset.personInCharge !== null) {
-          personInCharge = await db.user.findFirst({
-            where: {
-              id: asset.personInCharge,
-            },
-          });
-        }
-
-        const createdBy = await db.user.findFirst({
-          where: {
-            id: asset.createdBy,
-          },
-        });
-
-        const updatedBy = await db.user.findFirst({
-          where: {
-            id: asset.updatedBy,
-          },
-        });
-
-        return {
-          ...asset,
-          status: status,
-          type: type,
-          personInCharge: personInCharge,
-          createdBy: createdBy,
-          updatedBy: updatedBy,
-        };
-      }),
-    );
+    //     return {
+    //       ...asset,
+    //       status: status,
+    //       type: type,
+    //       personInCharge: personInCharge,
+    //       createdBy: createdBy,
+    //       updatedBy: updatedBy,
+    //     };
+    //   }),
+    // );
 
     revalidatePath('/asset');
-    return mutatedAssetList.filter(asset => asset.isArchive === false);
+    return assetList;
   } catch (error) {
     console.error(error);
     throw error;

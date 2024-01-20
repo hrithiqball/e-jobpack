@@ -6,21 +6,21 @@ import { AssetStatus, AssetType, User } from '@prisma/client';
 import { Button } from '@nextui-org/react';
 import { PackagePlus } from 'lucide-react';
 
-import { fetchMutatedAssetList } from '@/lib/actions/asset';
 import Loading from '@/components/Loading';
 import AssetTable from '@/components/asset/AssetTable';
 import AddAssetModal from '@/components/asset/AddAssetModal';
 import { useCurrentRole } from '@/hooks/use-current-role';
+import { fetchAssetList2 } from '@/lib/actions/asset';
 
 interface AssetComponentProps {
-  mutatedAssetList: Awaited<ReturnType<typeof fetchMutatedAssetList>>;
+  assetList: Awaited<ReturnType<typeof fetchAssetList2>>;
   assetTypeList: AssetType[];
   assetStatusList: AssetStatus[];
   userList: User[];
 }
 
 export default function AssetComponent({
-  mutatedAssetList,
+  assetList,
   assetTypeList,
   assetStatusList,
   userList,
@@ -43,7 +43,7 @@ export default function AssetComponent({
   return (
     <div className="flex flex-col flex-1">
       <AssetTable
-        mutatedAssetList={mutatedAssetList}
+        assetList={assetList}
         userList={userList}
         assetStatusList={assetStatusList}
       >
