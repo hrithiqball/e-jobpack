@@ -24,7 +24,7 @@ export default function MaintenanceRequestWidget() {
             <span className="font-bold">Maintenance Request</span>
           </div>
           <div className="flex flex-1">
-            <Table removeWrapper aria-label="Example static collection table">
+            <Table removeWrapper aria-label="Maintenance Request Table">
               <TableHeader>
                 <TableColumn>ASSET</TableColumn>
                 <TableColumn>REASON</TableColumn>
