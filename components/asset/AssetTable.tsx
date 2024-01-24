@@ -791,7 +791,7 @@ export default function AssetTable({
         <Table className="flex-1">
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup.id} noHover>
                 {headerGroup.headers.map(header => (
                   <TableHead key={header.id}>
                     {flexRender(
