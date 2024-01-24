@@ -67,6 +67,18 @@ async function main() {
         createdBy: '-99',
         updatedBy: '-99',
       },
+      {
+        title: 'Vehicle',
+        description: 'Vehicle asset used by all department',
+        createdBy: '-99',
+        updatedBy: '-99',
+      },
+      {
+        title: 'Manage Type',
+        description: 'Add, update or remove type',
+        createdBy: '-99',
+        updatedBy: '-99',
+      },
     ],
   });
 
@@ -76,6 +88,7 @@ async function main() {
       { id: '-1', title: 'Operating', color: '#58b368' },
       { id: '-2', title: 'Under Maintenance', color: '#dad873' },
       { id: '-3', title: 'Non-operating', color: '#f87979' },
+      { id: 'manage-status', title: 'Manage Status', color: '#f87979' },
     ],
   });
 }

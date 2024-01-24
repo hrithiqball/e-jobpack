@@ -66,9 +66,7 @@ export default function AddAssetModal({
       });
 
       if (!validatedFields.success) {
-        toast.error(
-          `Failed to create asset, ${validatedFields.error?.message}`,
-        );
+        toast.error(validatedFields.error.issues[0].message);
         return;
       }
 

@@ -9,9 +9,11 @@ import {
   CreateMaintenance,
   UpdateMaintenance,
 } from '@/lib/schemas/maintenance';
+import { ExtendedUser } from '@/types/next-auth';
+import dayjs from 'dayjs';
 
 export async function createMaintenance(
-  requestedBy: string,
+  user: ExtendedUser,
   values: z.infer<typeof CreateMaintenance>,
 ) {
   try {
@@ -23,14 +25,44 @@ export async function createMaintenance(
 
     const maintainee = validatedFields.data.maintainee?.toString();
 
-    return await db.maintenance.create({
-      data: {
-        ...validatedFields.data,
-        requestedBy,
-        date: new Date(),
-        maintainee,
-      },
-    });
+    const maintenance = await db.maintenance
+      .create({
+        data: {
+          ...validatedFields.data,
+          requestedBy: user.id,
+          date: new Date(),
+          maintainee,
+        },
+      })
+      .then(async res => {
+        res.assetIds.forEach(async assetId => {
+          await db.checklist.create({
+            data: {
+              id: `CL-${dayjs().format('YYMMDDHHmmssSSS')}`,
+              assetId,
+              maintenanceId: res.id,
+              createdBy: user.id,
+              updatedBy: user.id,
+            },
+          });
+        });
+
+        const activity =
+          user.role === 'TECHNICIAN'
+            ? `${user.name} requested a maintenance request`
+            : `${user.name} created a maintenance`;
+
+        await db.history.create({
+          data: {
+            actionBy: user.id,
+            activity,
+            historyMeta: 'MAINTENANCE',
+            metaValue: res.id,
+          },
+        });
+      });
+
+    return maintenance;
   } catch (error) {
     console.error(error);
     throw error;
@@ -134,13 +166,13 @@ export async function fetchMaintenanceList(
     const filters: Prisma.MaintenanceWhereInput[] = [];
     const orderBy: Prisma.MaintenanceOrderByWithRelationInput[] = [];
 
-    console.log(assetIds);
-
-    // if (assetIds) {
-    //   filters.push({
-    //     assetIds ,
-    //   });
-    // }
+    if (assetIds) {
+      filters.push({
+        assetIds: {
+          hasSome: assetIds.split(','),
+        },
+      });
+    }
 
     orderBy.push({
       date: 'desc',

@@ -11,30 +11,30 @@ datasource db {
 }
 
 model Asset {
-  name                              String
-  description                       String?
-  type                              String?
-  createdBy                         String         @map("created_by")
-  createdOn                         DateTime       @default(now()) @map("created_on")
-  updatedBy                         String         @map("updated_by")
-  lastMaintenance                   DateTime?      @map("last_maintenance")
-  lastMaintainee                    String[]       @map("last_maintainee")
-  location                          String?
-  nextMaintenance                   DateTime?      @map("next_maintenance")
-  updatedOn                         DateTime       @default(now()) @map("updated_on")
-  personInCharge                    String?        @map("person_in_charge")
-  tag                               String?
-  id                                String         @id
-  statusId                          String?        @map("status_id")
-  isArchive                         Boolean?       @default(false) @map("is_archive")
-  user_asset_created_byTouser       User           @relation("asset_created_byTouser", fields: [createdBy], references: [id], onDelete: Cascade)
-  user_asset_person_in_chargeTouser User?          @relation("asset_person_in_chargeTouser", fields: [personInCharge], references: [id], onDelete: Cascade)
-  asset_status                      AssetStatus?   @relation(fields: [statusId], references: [id], onDelete: Cascade)
-  asset_type                        AssetType?     @relation(fields: [type], references: [id], onDelete: Cascade)
-  user_asset_updated_byTouser       User           @relation("asset_updated_byTouser", fields: [updatedBy], references: [id], onDelete: Cascade)
-  asset_tags                        AssetTag[]
-  checklist                         Checklist[]
-  checklist_use                     ChecklistUse[]
+  name                          String
+  description                   String?
+  type                          String?
+  createdBy                     String         @map("created_by")
+  createdOn                     DateTime       @default(now()) @map("created_on")
+  updatedBy                     String         @map("updated_by")
+  lastMaintenance               DateTime?      @map("last_maintenance")
+  lastMaintainee                String[]       @map("last_maintainee")
+  location                      String?
+  nextMaintenance               DateTime?      @map("next_maintenance")
+  updatedOn                     DateTime       @default(now()) @map("updated_on")
+  personInCharge                String?        @map("person_in_charge")
+  tag                           String?
+  id                            String         @id
+  statusId                      String?        @map("status_id")
+  isArchive                     Boolean?       @default(false) @map("is_archive")
+  userAssetCreatedByToUser      User           @relation("asset_created_byTouser", fields: [createdBy], references: [id], onDelete: Cascade)
+  userAssetPersonInChargeToUser User?          @relation("asset_person_in_chargeTouser", fields: [personInCharge], references: [id], onDelete: Cascade)
+  assetStatus                   AssetStatus?   @relation(fields: [statusId], references: [id], onDelete: Cascade)
+  assetType                     AssetType?     @relation(fields: [type], references: [id], onDelete: Cascade)
+  userAssetUpdatedByToUser      User           @relation("asset_updated_byTouser", fields: [updatedBy], references: [id], onDelete: Cascade)
+  assetTags                     AssetTag[]
+  checklist                     Checklist[]
+  checklistUse                  ChecklistUse[]
 
   @@map("asset")
   @@schema("public")
@@ -159,11 +159,13 @@ model ChecklistUse {
 }
 
 model History {
-  activity String
-  actionBy String   @map("action_by")
-  actionOn DateTime @default(now()) @map("action_on")
-  id       String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  user     User     @relation(fields: [actionBy], references: [id])
+  activity    String
+  actionBy    String      @map("action_by")
+  actionOn    DateTime    @default(now()) @map("action_on")
+  id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  historyMeta HistoryMeta @map("history_meta")
+  metaValue   String?     @map("meta_value")
+  user        User        @relation(fields: [actionBy], references: [id])
 
   @@map("history")
   @@schema("public")
@@ -176,7 +178,7 @@ model Maintenance {
   approvedBy                          String?     @map("approved_by")
   approvedOn                          DateTime?   @map("approved_on")
   assetIds                            String[]    @map("asset_ids")
-  startDate                           DateTime?   @default(now()) @map("start_date")
+  startDate                           DateTime    @default(now()) @map("start_date")
   deadline                            DateTime?
   id                                  String      @id @default(cuid())
   isClose                             Boolean     @default(false) @map("is_close")
@@ -184,7 +186,7 @@ model Maintenance {
   closedOn                            DateTime?   @map("closed_on")
   isOpen                              Boolean     @default(false) @map("is_open")
   requestedBy                         String?     @map("requested_by")
-  requestedOn                         DateTime?   @map("requested_on") @default(now())
+  requestedOn                         DateTime?   @default(now()) @map("requested_on")
   checklist                           Checklist[]
   user_maintenance_approved_byTouser  User?       @relation("maintenance_approved_byTouser", fields: [approvedBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
   user_maintenance_closed_byTouser    User?       @relation("maintenance_closed_byTouser", fields: [closedBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -398,6 +400,14 @@ enum TaskType {
   CHECK
   MULTIPLE_SELECT
   SINGLE_SELECT
+
+  @@schema("public")
+}
+
+enum HistoryMeta {
+  ASSET
+  MAINTENANCE
+  USER
 
   @@schema("public")
 }
