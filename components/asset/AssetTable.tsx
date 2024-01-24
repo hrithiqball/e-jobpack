@@ -830,14 +830,18 @@ export default function AssetTable({
           {`${table.getSelectedRowModel().flatRows.length} of ${table.getCoreRowModel().flatRows.length} row(s) selected.`}
         </div>
 
-        <div className="flex justify-center space-x-1">
+        <div className="flex justify-center space-x-2">
           <Button
             isIconOnly
             size="sm"
             variant={table.getCanPreviousPage() ? 'ghost' : 'faded'}
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-            className={`bg-white hover:bg-gray-100 text-gray-800 border border-gray-300 ${!table.getCanPreviousPage() ? 'cursor-not-allowed' : ''}`}
+            className={`${
+              table.getCanPreviousPage()
+                ? 'hover:opacity-75'
+                : 'opacity-50 cursor-not-allowed'
+            } focus:outline-none`}
           >
             <ChevronLeft size={18} />
           </Button>
@@ -857,7 +861,11 @@ export default function AssetTable({
             variant={table.getCanNextPage() ? 'ghost' : 'faded'}
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
-            className={`bg-white hover:bg-gray-100 text-gray-800 border border-gray-300 ${!table.getCanNextPage() ? 'cursor-not-allowed' : ''}`}
+            className={`${
+              table.getCanNextPage()
+                ? 'hover:opacity-75'
+                : 'opacity-50 cursor-not-allowed'
+            } focus:outline-none`}
           >
             <ChevronRight size={18} />
           </Button>
