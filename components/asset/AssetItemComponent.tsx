@@ -100,7 +100,14 @@ export default function AssetItemComponent({
                 <div className="flex items-center space-x-2">
                   <span>Maintenance</span>
                   <Chip size="sm" variant="faded">
-                    <span>{maintenanceList.length}</span>
+                    <span>
+                      {
+                        maintenanceList.filter(
+                          maintenance =>
+                            maintenance.isOpen || maintenance.isClose,
+                        ).length
+                      }
+                    </span>
                   </Chip>
                 </div>
               }

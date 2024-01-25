@@ -89,6 +89,7 @@ const config: Config = {
       },
     }),
     require('@tailwindcss/typography'),
+    require('tailwindcss-animate'),
   ],
 };
 export default config;
