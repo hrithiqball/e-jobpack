@@ -791,7 +791,7 @@ export default function AssetTable({
         <Table className="flex-1">
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup.id} noHover>
                 {headerGroup.headers.map(header => (
                   <TableHead key={header.id}>
                     {flexRender(
@@ -824,43 +824,55 @@ export default function AssetTable({
           </div>
         )}
       </div>
-      <div className="flex items-center justify-center space-x-1">
-        <Button
-          isIconOnly
-          size="sm"
-          variant={table.getCanPreviousPage() ? 'ghost' : 'faded'}
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-          className={`${
-            table.getCanPreviousPage()
-              ? 'hover:opacity-75'
-              : 'opacity-50 cursor-not-allowed'
-          } focus:outline-none`}
-        >
-          <ChevronLeft size={18} />
-        </Button>
-        {table.getPageCount() !== 0 && (
-          <Pagination
-            color="primary"
-            onChange={value => table.setPageIndex(value - 1)}
-            total={table.getPageCount()}
-            page={table.getState().pagination.pageIndex + 1}
-          />
-        )}
-        <Button
-          isIconOnly
-          size="sm"
-          variant={table.getCanNextPage() ? 'ghost' : 'faded'}
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-          className={`${
-            table.getCanNextPage()
-              ? 'hover:opacity-75'
-              : 'opacity-50 cursor-not-allowed'
-          } focus:outline-none`}
-        >
-          <ChevronRight size={18} />
-        </Button>
+
+      <div className="flex items-center justify-between">
+        <div className="flex-1 text-sm text-gray-600">
+          {`${table.getSelectedRowModel().flatRows.length} of ${table.getCoreRowModel().flatRows.length} row(s) selected.`}
+        </div>
+
+        <div className="flex justify-center space-x-2">
+          <Button
+            isIconOnly
+            size="sm"
+            variant={table.getCanPreviousPage() ? 'ghost' : 'faded'}
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+            className={`${
+              table.getCanPreviousPage()
+                ? 'hover:opacity-75'
+                : 'opacity-50 cursor-not-allowed'
+            } focus:outline-none`}
+          >
+            <ChevronLeft size={18} />
+          </Button>
+          {table.getPageCount() !== 0 && (
+            <div className="flex items-center justify-center">
+              <Pagination
+                color="primary"
+                onChange={value => table.setPageIndex(value - 1)}
+                total={table.getPageCount()}
+                page={table.getState().pagination.pageIndex + 1}
+              />
+            </div>
+          )}
+          <Button
+            isIconOnly
+            size="sm"
+            variant={table.getCanNextPage() ? 'ghost' : 'faded'}
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+            className={`${
+              table.getCanNextPage()
+                ? 'hover:opacity-75'
+                : 'opacity-50 cursor-not-allowed'
+            } focus:outline-none`}
+          >
+            <ChevronRight size={18} />
+          </Button>
+        </div>
+
+        {/* Empty div for balancing, also with fixed width */}
+        <div className="flex-1"></div>
       </div>
       <DeleteAssetModal
         isOpen={openDeleteModal}

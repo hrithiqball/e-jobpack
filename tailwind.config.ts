@@ -23,6 +23,10 @@ const config: Config = {
         emeraldGreenLight: 'var(--emerald-green-light)',
         deepGray: 'var(--deep-gray)',
       },
+      borderColor: {
+        default: 'var(--black)',
+        dark: 'var(--white)',
+      },
     },
   },
   darkMode: 'class',
