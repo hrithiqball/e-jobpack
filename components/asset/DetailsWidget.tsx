@@ -238,15 +238,6 @@ export default function DetailsWidget({
                         >
                           Cancel
                         </Button>
-                        {/* <Button
-                        size="sm"
-                        variant="faded"
-                        color="success"
-                        startContent={<Save size={18} />}
-                        onClick={handleSubmit(onSubmit)}
-                      >
-                        Save
-                      </Button> */}
                         <Button
                           size="sm"
                           variant="faded"
@@ -260,7 +251,7 @@ export default function DetailsWidget({
                     ) : (
                       <Dropdown>
                         <DropdownTrigger>
-                          <Button isIconOnly size="sm" variant="faded">
+                          <Button isIconOnly size="sm" variant="light">
                             <MoreHorizontal size={18} />
                           </Button>
                         </DropdownTrigger>
@@ -356,7 +347,7 @@ export default function DetailsWidget({
                           <span>
                             {mutatedAsset.tag === '' ||
                             mutatedAsset.tag === null
-                              ? 'No description provided'
+                              ? 'No tag provided'
                               : mutatedAsset.tag}
                           </span>
                         )}

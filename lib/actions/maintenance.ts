@@ -29,7 +29,7 @@ export async function createMaintenance(
       .create({
         data: {
           ...validatedFields.data,
-          requestedBy: user.id,
+          requestedById: user.id,
           date: new Date(),
           maintainee,
         },
@@ -41,8 +41,8 @@ export async function createMaintenance(
               id: `CL-${dayjs().format('YYMMDDHHmmssSSS')}`,
               assetId,
               maintenanceId: res.id,
-              createdBy: user.id,
-              updatedBy: user.id,
+              createdById: user.id,
+              updatedById: user.id,
             },
           });
         });

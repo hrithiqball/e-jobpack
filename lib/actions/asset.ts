@@ -19,13 +19,13 @@ export async function createAsset(
     }
 
     if (validatedFields.data.type === '') validatedFields.data.type = null;
-    if (validatedFields.data.personInCharge === '')
-      validatedFields.data.personInCharge = null;
+    if (validatedFields.data.personInChargeId === '')
+      validatedFields.data.personInChargeId = null;
 
     return await db.asset.create({
       data: {
         id: `AS-${dayjs().format('YYMMDDHHmmssSSS')}`,
-        updatedBy: validatedFields.data.createdBy,
+        updatedById: validatedFields.data.createdById,
         ...validatedFields.data,
       },
     });
@@ -60,28 +60,11 @@ export async function fetchAssetList2() {
       include: {
         assetStatus: true,
         assetType: true,
-        userAssetPersonInChargeToUser: true,
-        userAssetCreatedByToUser: true,
-        userAssetUpdatedByToUser: true,
+        personInCharge: true,
+        createdBy: true,
+        updatedBy: true,
       },
     });
-
-    // const mutatedAssetList = await Promise.all(
-    //   assetList.map(async asset => {
-    //     let status = null;
-    //     let type = null;
-    //     let personInCharge = null;
-
-    //     return {
-    //       ...asset,
-    //       status: status,
-    //       type: type,
-    //       personInCharge: personInCharge,
-    //       createdBy: createdBy,
-    //       updatedBy: updatedBy,
-    //     };
-    //   }),
-    // );
 
     revalidatePath('/asset');
     return assetList;
@@ -132,23 +115,23 @@ export async function fetchMutatedAssetItem(id: string) {
       });
     }
 
-    if (asset.personInCharge !== null) {
+    if (asset.personInChargeId !== null) {
       personInCharge = await db.user.findFirst({
         where: {
-          id: asset.personInCharge,
+          id: asset.personInChargeId,
         },
       });
     }
 
     const createdBy = await db.user.findFirstOrThrow({
       where: {
-        id: asset.createdBy,
+        id: asset.createdById,
       },
     });
 
     const updatedBy = await db.user.findFirstOrThrow({
       where: {
-        id: asset.updatedBy,
+        id: asset.updatedById,
       },
     });
 
@@ -182,7 +165,7 @@ export async function fetchFilteredAssetList(assetIds: string[]) {
 }
 
 export async function updateAsset(
-  updatedBy: string,
+  updatedById: string,
   id: string,
   values: z.infer<typeof UpdateAsset>,
 ) {
@@ -192,7 +175,7 @@ export async function updateAsset(
         id,
       },
       data: {
-        updatedBy,
+        updatedById,
         updatedOn: new Date(),
         ...values,
       },

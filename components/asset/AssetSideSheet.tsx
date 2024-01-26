@@ -3,6 +3,8 @@ import React from 'react';
 import { Maintenance } from '@prisma/client';
 
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/Table';
+import { Button, Link } from '@nextui-org/react';
+import { ExternalLink } from 'lucide-react';
 
 interface AssetSideSheetProps {
   maintenance: Maintenance;
@@ -49,6 +51,17 @@ export default function AssetSideSheet({ maintenance }: AssetSideSheetProps) {
     case 'progress': {
       return (
         <div className="flex flex-col">
+          <div className="flex justify-center">
+            <Button
+              as={Link}
+              href={`/task/${maintenance.id}`}
+              size="sm"
+              variant="light"
+              endContent={<ExternalLink size={18} />}
+            >
+              Open Maintenance Progress
+            </Button>
+          </div>
           <Table>
             <TableBody>
               <TableRow>

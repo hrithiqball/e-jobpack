@@ -26,7 +26,7 @@ export const UpdateSubtask = z.object({
   issue: z.string().optional(),
   deadline: z.date().optional(),
   listChoice: z.array(z.string()).optional(),
-  completedBy: z.string().optional(),
+  completedById: z.string().optional(),
   taskOrder: z.number().optional(),
   taskBool: z.boolean().optional(),
   taskSelected: z.string().array().optional(),

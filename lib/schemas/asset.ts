@@ -7,10 +7,10 @@ export const CreateAsset = z.object({
   description: z.string().optional(),
   type: z.string().nullable().optional(),
   location: z.string().optional(),
-  createdBy: z.string().min(1, {
+  createdById: z.string().min(1, {
     message: 'Missing user ID',
   }),
-  personInCharge: z.string().nullable().optional(),
+  personInChargeId: z.string().nullable().optional(),
   tag: z.string().optional(),
   statusId: z.string().nullable().optional(),
 });

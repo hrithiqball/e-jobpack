@@ -9,15 +9,15 @@ export const CreateMaintenance = z.object({
   deadline: z.date().optional().nullable(),
   isOpen: z.boolean().default(false),
   startDate: z.date(),
-  approvedBy: z.string(),
+  approvedById: z.string(),
 });
 
 export const UpdateMaintenance = z.object({
   assetIds: z.array(z.string()).optional(),
   isClose: z.boolean().optional(),
   closedOn: z.date().optional(),
-  closedBy: z.string().optional(),
-  approvedBy: z.string().optional(),
+  closedById: z.string().optional(),
+  approvedById: z.string().optional(),
   approvedOn: z.date().optional(),
   attachmentPath: z.string().optional(),
   maintainee: z.string().optional(),

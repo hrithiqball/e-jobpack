@@ -24,6 +24,7 @@ import { useCurrentUser } from '@/hooks/use-current-user';
 import { createMaintenance } from '@/lib/actions/maintenance';
 import { CreateMaintenance } from '@/lib/schemas/maintenance';
 import { Calendar } from '@/components/ui/Calendar';
+import { z } from 'zod';
 
 interface AddMaintenanceModalProps {
   isOpen: boolean;
@@ -56,15 +57,17 @@ export default function AddMaintenanceModal({
         return;
       }
 
-      const validatedFields = CreateMaintenance.safeParse({
+      const maintenance: z.infer<typeof CreateMaintenance> = {
         id: maintenanceId,
         maintainee: Array.from(maintainee),
         assetIds,
         deadline,
-        startDate,
+        startDate: startDate || dayjs().toDate(),
         isOpen: user.role === 'ADMIN' || user.role === 'SUPERVISOR',
-        approvedBy: Array.from(approvedBy)[0],
-      });
+        approvedById: Array.from(approvedBy)[0],
+      };
+
+      const validatedFields = CreateMaintenance.safeParse(maintenance);
 
       if (!validatedFields.success) {
         toast.error(validatedFields.error.issues[0].message);

@@ -1,6 +1,8 @@
 'use client';
 
 import React, { Key, useEffect, useState } from 'react';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
+
 import {
   AssetStatus,
   AssetType,
@@ -22,7 +24,7 @@ import {
 } from '@nextui-org/react';
 import { ChevronLeft } from 'lucide-react';
 
-import Loading from '@/components/Loading';
+// import Loading from '@/components/Loading';
 import AssetDetails from '@/components/asset/AssetDetails';
 import AssetMaintenance from '@/components/asset/AssetMaintenance';
 import AssetAttachment from '@/components/asset/AssetAttachment';
@@ -45,9 +47,14 @@ export default function AssetItemComponent({
   checklistUse,
   userList,
 }: AssetItemComponentProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
   const [mounted, setMounted] = useState(false);
-  const [selectedTab, setSelectedTab] = useState('details');
   const [isDesktop, setDesktop] = useState(window.innerWidth > 650);
+
+  const tab = searchParams.get('tab');
 
   useEffect(() => {
     window.addEventListener('resize', updateMedia);
@@ -62,7 +69,12 @@ export default function AssetItemComponent({
     setDesktop(window.innerWidth > 650);
   }
 
-  if (!mounted) return <Loading label="Hang on tight" />;
+  function handleTabChange(key: Key) {
+    router.push(`${pathname}?tab=${key}`);
+  }
+
+  //if (!mounted) return <Loading label="Hang on tight" />;
+  if (!mounted) return null;
 
   return (
     <div className="flex flex-col flex-1 p-0">
@@ -82,8 +94,8 @@ export default function AssetItemComponent({
             aria-label="Asset Attribute"
             size="sm"
             color="primary"
-            selectedKey={selectedTab}
-            onSelectionChange={(key: Key) => setSelectedTab(key as string)}
+            selectedKey={tab}
+            onSelectionChange={handleTabChange}
             className="ml-4"
           >
             <Tab
@@ -129,13 +141,13 @@ export default function AssetItemComponent({
             <Dropdown>
               <DropdownTrigger>
                 <Button size="sm" variant="faded">
-                  {selectedTab.charAt(0).toUpperCase() + selectedTab.slice(1)}
-                  {selectedTab === 'maintenance' && (
+                  {tab!.charAt(0).toUpperCase() + tab!.slice(1)}
+                  {tab === 'maintenance' && (
                     <Chip size="sm" variant="faded">
                       <span>{maintenanceList.length}</span>
                     </Chip>
                   )}
-                  {selectedTab === 'attachment' && (
+                  {tab === 'attachment' && (
                     <Chip size="sm" variant="faded">
                       1
                     </Chip>
@@ -143,8 +155,8 @@ export default function AssetItemComponent({
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
-                selectedKeys={selectedTab}
-                onAction={key => setSelectedTab(key as string)}
+                selectedKeys={tab ?? 'details'}
+                onAction={handleTabChange}
               >
                 <DropdownItem key="details">{mutatedAsset.name}</DropdownItem>
                 <DropdownItem key="maintenance">
@@ -166,7 +178,7 @@ export default function AssetItemComponent({
         <div></div>
       </div>
       <div className="flex overflow-hidden flex-1">
-        {selectedTab === 'details' && (
+        {tab === 'details' && (
           <AssetDetails
             mutatedAsset={mutatedAsset}
             statusList={statusList}
@@ -175,10 +187,10 @@ export default function AssetItemComponent({
             userList={userList}
           />
         )}
-        {selectedTab === 'maintenance' && (
+        {tab === 'maintenance' && (
           <AssetMaintenance maintenanceList={maintenanceList} />
         )}
-        {selectedTab === 'attachment' && <AssetAttachment />}
+        {tab === 'attachment' && <AssetAttachment />}
       </div>
     </div>
   );

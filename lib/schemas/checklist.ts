@@ -4,7 +4,7 @@ export const CreateChecklist = z.object({
   assetId: z.string().min(1, {
     message: 'Missing asset ID',
   }),
-  createdBy: z.string().min(1, {
+  createdById: z.string().min(1, {
     message: 'Missing user ID',
   }),
   maintenanceId: z.string().min(1, {
@@ -14,7 +14,7 @@ export const CreateChecklist = z.object({
 });
 
 export const UpdateChecklist = z.object({
-  updatedBy: z.string().min(1, {
+  updatedById: z.string().min(1, {
     message: 'Missing user ID',
   }),
   description: z.string().optional(),

@@ -23,7 +23,6 @@ export const UpdateTask = z.object({
   haveSubtask: z.boolean().optional(),
   listChoice: z.array(z.string()).optional(),
   taskOrder: z.number().optional(),
-  // value
   taskSelected: z.array(z.string()).optional(),
   taskBool: z.boolean().optional(),
   taskNumberVal: z.number().optional(),

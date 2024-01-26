@@ -55,7 +55,7 @@ export default function AddAssetModal({
       }
 
       const validatedFields = CreateAsset.safeParse({
-        createdBy: user.id,
+        createdById: user.id,
         name: newAssetName,
         description: newAssetDescription,
         type: newAssetType === '' ? null : newAssetType,

@@ -7,15 +7,15 @@ import { Button, Card, Input, Tooltip } from '@nextui-org/react';
 import {
   Badge,
   BadgeCheck,
+  BadgePercent,
   CalendarClock,
-  CircleDot,
   Filter,
   Search,
   X,
 } from 'lucide-react';
 
 import emptyIcon from '@/public/image/empty.svg';
-import { progress, success, warning } from '@/lib/color';
+import { approved, progress, schedule_pending } from '@/lib/color';
 import {
   Sheet,
   SheetContent,
@@ -23,8 +23,8 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '../ui/Sheet';
-import AssetSideSheet from './AssetSideSheet';
+} from '@/components/ui/Sheet';
+import AssetSideSheet from '@/components/asset/AssetSideSheet';
 
 interface AssetMaintenanceProps {
   maintenanceList: Maintenance[];
@@ -104,7 +104,7 @@ export default function AssetMaintenance({
                       maintenance.startDate <= new Date() &&
                       maintenance.approvedOn === null && (
                         <Tooltip content="In progress">
-                          <CircleDot
+                          <BadgePercent
                             size={18}
                             color={progress}
                             className="hover:cursor-help"
@@ -118,6 +118,7 @@ export default function AssetMaintenance({
                         <Tooltip content="Scheduled Maintenance">
                           <CalendarClock
                             size={18}
+                            color={schedule_pending}
                             className="hover:cursor-help"
                           />
                         </Tooltip>
@@ -126,7 +127,7 @@ export default function AssetMaintenance({
                       <Tooltip content="Pending Approval">
                         <Badge
                           size={18}
-                          color={warning}
+                          color={schedule_pending}
                           className="hover:cursor-help"
                         />
                       </Tooltip>
@@ -135,7 +136,7 @@ export default function AssetMaintenance({
                       <Tooltip content="Closed and Approved">
                         <BadgeCheck
                           size={18}
-                          color={success}
+                          color={approved}
                           className="hover:cursor-help"
                         />
                       </Tooltip>

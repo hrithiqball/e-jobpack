@@ -19,7 +19,7 @@ export async function createChecklist(values: z.infer<typeof CreateChecklist>) {
     const newChecklist: Checklist = await db.checklist.create({
       data: {
         id: `CL-${dayjs().format('YYMMDDHHmmssSSS')}`,
-        updatedBy: validatedFields.data.createdBy,
+        updatedById: validatedFields.data.createdById,
         ...validatedFields.data,
       },
     });
@@ -73,7 +73,7 @@ export async function updateChecklist(
       where: { id },
       data: {
         ...validatedFields.data,
-        updatedBy: validatedFields.data.updatedBy,
+        updatedById: validatedFields.data.updatedById,
         updatedOn: new Date(),
       },
     });
