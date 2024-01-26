@@ -80,7 +80,7 @@ export default function ClosedChecklist({
 
       toast.promise(
         updateChecklist(currentChecklist.id, {
-          updatedBy: user.id,
+          updatedById: user.id,
           isClose: false,
         }),
         {
@@ -146,7 +146,7 @@ export default function ClosedChecklist({
         <Modal isOpen={isModalChecklistOpen} backdrop="blur" hideCloseButton>
           <ModalContent>
             <ModalHeader>{currentChecklist?.assetId}</ModalHeader>
-            <ModalBody>Closed By {currentChecklist?.updatedBy}</ModalBody>
+            <ModalBody>Closed By {currentChecklist?.updatedById}</ModalBody>
             <ModalFooter>
               <Button
                 variant="faded"

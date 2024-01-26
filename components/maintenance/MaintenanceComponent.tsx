@@ -171,7 +171,7 @@ export default function MaintenanceComponent({
     startTransition(() => {
       createChecklist({
         assetId: selectedAsset.currentKey,
-        createdBy: user.data!.user.id,
+        createdById: user.data!.user.id,
         maintenanceId: maintenance.id,
         description: newChecklistDescription,
       }).then(() => {
@@ -196,7 +196,7 @@ export default function MaintenanceComponent({
       updateMaintenance(maintenance.id, {
         closedOn: new Date(),
         isClose: true,
-        closedBy: user.data.user.id,
+        closedById: user.data.user.id,
       }).then(res => console.log(res));
     });
   }
@@ -322,7 +322,7 @@ export default function MaintenanceComponent({
         worksheet.mergeCells('A4:B4');
         worksheet.mergeCells('C4:E4');
         worksheet.getCell('A4').value = 'Location';
-        worksheet.getCell('C4').value = maintenance.approvedBy;
+        worksheet.getCell('C4').value = maintenance.approvedById;
 
         // Row 5
         worksheet.mergeCells('A5:B5');

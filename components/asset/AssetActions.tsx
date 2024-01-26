@@ -52,7 +52,7 @@ export default function AssetActions({ checklist }: AssetActionsProps) {
 
           toast.promise(
             updateChecklist(checklist.id, {
-              updatedBy: user.id,
+              updatedById: user.id,
               isClose: true,
             }),
             {
