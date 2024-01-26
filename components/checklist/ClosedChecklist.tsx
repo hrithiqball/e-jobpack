@@ -1,12 +1,10 @@
 'use client';
 
-import React, { useState, useTransition } from 'react';
+import React, { Fragment, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Checklist } from '@prisma/client';
 
 import {
-  Accordion,
-  AccordionItem,
   Button,
   Modal,
   ModalBody,
@@ -14,11 +12,26 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@nextui-org/react';
+import {
+  Accordion,
+  AccordionItem,
+  AccordionContent,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+} from '@/components/ui/drawer';
 import { CheckCircle2, DoorClosed, DoorOpen } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { updateChecklist } from '@/lib/actions/checklist';
 import { useCurrentUser } from '@/hooks/use-current-user';
+import { useMediaQuery } from '@/hooks/use-media-query';
+import { complete } from '@/lib/color';
 
 interface CloseChecklistProps {
   checklistList: Checklist[];
@@ -29,41 +42,42 @@ export default function ClosedChecklist({
 }: CloseChecklistProps) {
   let [isPending, startTransition] = useTransition();
   const user = useCurrentUser();
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const router = useRouter();
 
+  const [isChecklistOpen, setIsChecklistOpen] = useState(false);
+  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const [isModalChecklistOpen, setIsModalChecklistOpen] = useState(false);
-  const [isModalConfirmationOpen, setIsModalConfirmationOpen] = useState(false);
   const [currentChecklist, setCurrentChecklist] = useState<
     Checklist | undefined
   >();
 
   function handleOpenChecklistModal(checklist: Checklist) {
     setCurrentChecklist(checklist);
-    setIsModalChecklistOpen(true);
+    setIsChecklistOpen(true);
   }
 
   function handleCloseChecklistModal() {
     setCurrentChecklist(undefined);
-    setIsModalChecklistOpen(false);
+    setIsChecklistOpen(false);
   }
 
   function handleOpenConfirmationModal(checklist: Checklist) {
     setCurrentChecklist(checklist);
-    setIsModalConfirmationOpen(true);
+    setIsConfirmationOpen(true);
   }
 
   function handleCloseConfirmationModal(choice: boolean) {
     if (choice) {
       handleReopenChecklist();
-      setIsModalConfirmationOpen(false);
+      setIsConfirmationOpen(false);
       if (!isPending) {
         setCurrentChecklist(undefined);
       }
     }
 
     setCurrentChecklist(undefined);
-    setIsModalConfirmationOpen(false);
+    setIsConfirmationOpen(false);
   }
 
   function handleReopenChecklist() {
@@ -99,21 +113,18 @@ export default function ClosedChecklist({
 
   return (
     <Accordion
-      disabledKeys={checklistList.length ? [] : ['closed-checklist']}
-      isCompact
-      variant="shadow"
-      className="drop-shadow-sm"
+      type="single"
+      collapsible
+      className="bg-blue-400 px-4 rounded-md"
     >
-      <AccordionItem
-        key="closed-checklist"
-        title={
-          <span className="flex items-center">
-            <CheckCircle2 size={18} color="#58b368" className="mr-2" /> Closed
-            Asset
-          </span>
-        }
-      >
-        <div className="mb-2">
+      <AccordionItem value="closed-checklist">
+        <AccordionTrigger>
+          <div className="flex items-center space-x-4">
+            <CheckCircle2 size={18} color={complete} />
+            <span>Closed Checklist</span>
+          </div>
+        </AccordionTrigger>
+        <AccordionContent>
           {checklistList.map(checklist => (
             <div
               key={checklist.id}
@@ -142,45 +153,99 @@ export default function ClosedChecklist({
               </Button>
             </div>
           ))}
-        </div>
-        <Modal isOpen={isModalChecklistOpen} backdrop="blur" hideCloseButton>
-          <ModalContent>
-            <ModalHeader>{currentChecklist?.assetId}</ModalHeader>
-            <ModalBody>Closed By {currentChecklist?.updatedById}</ModalBody>
-            <ModalFooter>
-              <Button
-                variant="faded"
-                color="warning"
-                onClick={handleCloseChecklistModal}
+          {isDesktop ? (
+            <Fragment>
+              <Modal isOpen={isChecklistOpen} backdrop="blur" hideCloseButton>
+                <ModalContent>
+                  <ModalHeader>{currentChecklist?.assetId}</ModalHeader>
+                  <ModalBody>
+                    Closed By {currentChecklist?.updatedById}
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button variant="faded" onClick={handleCloseChecklistModal}>
+                      Close
+                    </Button>
+                  </ModalFooter>
+                </ModalContent>
+              </Modal>
+              <Modal
+                isOpen={isConfirmationOpen}
+                backdrop="blur"
+                hideCloseButton
               >
-                Close
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-        <Modal isOpen={isModalConfirmationOpen} backdrop="blur" hideCloseButton>
-          <ModalContent>
-            <ModalHeader>Reopen checklist</ModalHeader>
-            <ModalBody>
-              Are you sure you want to reopen this checklist?
-            </ModalBody>
-            <ModalFooter>
-              <Button
-                variant="faded"
-                onClick={() => handleCloseConfirmationModal(false)}
+                <ModalContent>
+                  <ModalHeader>Reopen checklist</ModalHeader>
+                  <ModalBody>
+                    Are you sure you want to reopen this checklist?
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button
+                      variant="faded"
+                      onClick={() => handleCloseConfirmationModal(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="faded"
+                      color="danger"
+                      onClick={() => handleCloseConfirmationModal(true)}
+                    >
+                      Confirm
+                    </Button>
+                  </ModalFooter>
+                </ModalContent>
+              </Modal>
+            </Fragment>
+          ) : (
+            <Fragment>
+              <Drawer open={isChecklistOpen} onOpenChange={setIsChecklistOpen}>
+                <DrawerContent>
+                  <DrawerHeader className="text-left">
+                    {currentChecklist?.assetId}
+                  </DrawerHeader>
+                  Closed By {currentChecklist?.updatedById}
+                  <DrawerFooter className="pt-2">
+                    <DrawerClose asChild>
+                      <Button onClick={handleCloseChecklistModal}>
+                        Cancel
+                      </Button>
+                    </DrawerClose>
+                  </DrawerFooter>
+                </DrawerContent>
+              </Drawer>
+              <Drawer
+                open={isConfirmationOpen}
+                onOpenChange={setIsConfirmationOpen}
               >
-                Cancel
-              </Button>
-              <Button
-                variant="faded"
-                color="danger"
-                onClick={() => handleCloseConfirmationModal(true)}
-              >
-                Confirm
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+                <DrawerContent>
+                  <DrawerHeader className="text-left">
+                    Reopen checklist
+                  </DrawerHeader>
+                  <div className="px-8 py-4">
+                    Are you sure you want to reopen this checklist?
+                  </div>
+                  <DrawerFooter>
+                    <DrawerClose asChild>
+                      <Button
+                        variant="faded"
+                        onClick={() => handleCloseConfirmationModal(false)}
+                      >
+                        Cancel
+                      </Button>
+                    </DrawerClose>
+                    <Button
+                      variant="faded"
+                      color="danger"
+                      onClick={() => handleCloseConfirmationModal(true)}
+                    >
+                      Confirm
+                    </Button>
+                  </DrawerFooter>
+                </DrawerContent>
+              </Drawer>
+            </Fragment>
+          )}
+        </AccordionContent>
       </AccordionItem>
     </Accordion>
   );

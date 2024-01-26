@@ -23,7 +23,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/Sheet';
+} from '@/components/ui/sheet';
 import AssetSideSheet from '@/components/asset/AssetSideSheet';
 
 interface AssetMaintenanceProps {

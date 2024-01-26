@@ -15,6 +15,12 @@ const config: Config = {
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
+      backgroundColor: {
+        secondary: {
+          default: 'var(--white)',
+          dark: 'var(--black)',
+        },
+      },
       colors: {
         black: 'var(--black)',
         white: 'var(--white)',
@@ -26,6 +32,20 @@ const config: Config = {
       borderColor: {
         // default: 'var(--black)', // this causes too much black for border
         dark: 'var(--white)',
+      },
+      keyframes: {
+        'accordion-down': {
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' },
+        },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' },
+        },
+      },
+      animation: {
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
       },
     },
   },
