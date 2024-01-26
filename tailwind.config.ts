@@ -24,7 +24,7 @@ const config: Config = {
         deepGray: 'var(--deep-gray)',
       },
       borderColor: {
-        default: 'var(--black)',
+        // default: 'var(--black)', // this causes too much black for border
         dark: 'var(--white)',
       },
     },

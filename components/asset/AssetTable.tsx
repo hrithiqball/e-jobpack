@@ -144,7 +144,6 @@ export default function AssetTable({
                 <ArrowUp size={15} />
               )
             }
-            className="mb-2"
           >
             {column.id
               .replace(/([a-z])([A-Z])/g, '$1 $2')
@@ -178,7 +177,6 @@ export default function AssetTable({
                 <ArrowUp size={15} />
               )
             }
-            className="mb-2"
           >
             {column.id
               .replace(/([a-z])([A-Z])/g, '$1 $2')
@@ -202,7 +200,6 @@ export default function AssetTable({
                 <ArrowUp size={15} />
               )
             }
-            className="mb-2"
           >
             Tag
           </Button>
@@ -224,7 +221,6 @@ export default function AssetTable({
                 <ArrowUp size={15} />
               )
             }
-            className="mb-2"
           >
             {column.id
               .replace(/([a-z])([A-Z])/g, '$1 $2')
@@ -259,7 +255,6 @@ export default function AssetTable({
                 <ArrowUp size={15} />
               )
             }
-            className="mb-2"
           >
             {column.id
               .replace(/([a-z])([A-Z])/g, '$1 $2')
@@ -350,7 +345,6 @@ export default function AssetTable({
                 <ArrowUp size={15} />
               )
             }
-            className="mb-2"
           >
             {column.id
               .replace(/([a-z])([A-Z])/g, '$1 $2')
@@ -383,7 +377,6 @@ export default function AssetTable({
                 <ArrowUp size={15} />
               )
             }
-            className="mb-2"
           >
             {column.id
               .replace(/([a-z])([A-Z])/g, '$1 $2')
@@ -416,7 +409,6 @@ export default function AssetTable({
                 <ArrowUp size={15} />
               )
             }
-            className="mb-2"
           >
             {column.id
               .replace(/([a-z])([A-Z])/g, '$1 $2')
@@ -452,7 +444,6 @@ export default function AssetTable({
                 <ArrowUp size={15} />
               )
             }
-            className="mb-2"
           >
             Person In Charge
           </Button>
@@ -493,7 +484,6 @@ export default function AssetTable({
                 <ArrowUp size={15} />
               )
             }
-            className="mb-2"
           >
             Created By
           </Button>
@@ -534,7 +524,6 @@ export default function AssetTable({
                 <ArrowUp size={15} />
               )
             }
-            className="mb-2"
           >
             Updated By
           </Button>
@@ -570,7 +559,7 @@ export default function AssetTable({
         return (
           <Dropdown>
             <DropdownTrigger>
-              <Button variant="faded" size="sm" isIconOnly>
+              <Button variant="light" size="sm" isIconOnly>
                 <MoreHorizontal size={18} />
               </Button>
             </DropdownTrigger>
@@ -788,7 +777,7 @@ export default function AssetTable({
         </div>
       </div>
       <div className="flex flex-1 flex-col">
-        <Table className="flex-1">
+        <Table className="flex-1 rounded">
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id} noHover>

@@ -98,6 +98,7 @@ export default function Navigation() {
         <Button
           isIconOnly
           size="sm"
+          variant="light"
           onClick={() => {
             setTheme(theme === 'dark' ? 'light' : 'dark');
           }}

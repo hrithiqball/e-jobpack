@@ -4,7 +4,15 @@ import Image from 'next/image';
 import { Maintenance } from '@prisma/client';
 
 import { Button, Card, Input, Tooltip } from '@nextui-org/react';
-import { Badge, BadgeCheck, CircleDot, Filter, Search, X } from 'lucide-react';
+import {
+  Badge,
+  BadgeCheck,
+  CalendarClock,
+  CircleDot,
+  Filter,
+  Search,
+  X,
+} from 'lucide-react';
 
 import emptyIcon from '@/public/image/empty.svg';
 import { progress, success, warning } from '@/lib/color';
@@ -16,6 +24,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '../ui/Sheet';
+import AssetSideSheet from './AssetSideSheet';
 
 interface AssetMaintenanceProps {
   maintenanceList: Maintenance[];
@@ -25,10 +34,6 @@ export default function AssetMaintenance({
   maintenanceList,
 }: AssetMaintenanceProps) {
   const [searchId, setSearchId] = useState('');
-
-  // const dummyList = Array.from({ length: 20 }, (_, index) => ({
-  //   id: `item-${index}`,
-  // }));
 
   function handleSearch(e: ChangeEvent<HTMLInputElement>) {
     setSearchId(e.target.value);
@@ -61,7 +66,7 @@ export default function AssetMaintenance({
           }
           className="max-w-screen-sm"
         />
-        <Button isIconOnly variant="faded" size="sm">
+        <Button isIconOnly variant="light" size="sm">
           <Filter size={18} />
         </Button>
       </div>
@@ -96,7 +101,8 @@ export default function AssetMaintenance({
                   >
                     {maintenance.isOpen &&
                       !maintenance.isClose &&
-                      maintenance.approvedBy === null && (
+                      maintenance.startDate <= new Date() &&
+                      maintenance.approvedOn === null && (
                         <Tooltip content="In progress">
                           <CircleDot
                             size={18}
@@ -105,7 +111,18 @@ export default function AssetMaintenance({
                           />
                         </Tooltip>
                       )}
-                    {maintenance.isClose && maintenance.approvedBy === null && (
+                    {maintenance.isOpen &&
+                      !maintenance.isClose &&
+                      maintenance.startDate > new Date() &&
+                      maintenance.approvedOn === null && (
+                        <Tooltip content="Scheduled Maintenance">
+                          <CalendarClock
+                            size={18}
+                            className="hover:cursor-help"
+                          />
+                        </Tooltip>
+                      )}
+                    {maintenance.isClose && maintenance.approvedOn === null && (
                       <Tooltip content="Pending Approval">
                         <Badge
                           size={18}
@@ -114,7 +131,7 @@ export default function AssetMaintenance({
                         />
                       </Tooltip>
                     )}
-                    {maintenance.approvedBy !== null && maintenance.isClose && (
+                    {maintenance.approvedOn !== null && maintenance.isClose && (
                       <Tooltip content="Closed and Approved">
                         <BadgeCheck
                           size={18}
@@ -133,7 +150,7 @@ export default function AssetMaintenance({
                         <SheetHeader>
                           <SheetTitle>{maintenance.id}</SheetTitle>
                           <SheetDescription>
-                            Information of maintenance
+                            <AssetSideSheet maintenance={maintenance} />
                           </SheetDescription>
                         </SheetHeader>
                       </SheetContent>
