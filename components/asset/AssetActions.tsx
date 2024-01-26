@@ -82,7 +82,7 @@ export default function AssetActions({ checklist }: AssetActionsProps) {
     <div>
       <Dropdown>
         <DropdownTrigger>
-          <Button isIconOnly size="sm" variant="faded">
+          <Button isIconOnly size="sm" variant="light">
             <MoreVertical size={18} />
           </Button>
         </DropdownTrigger>

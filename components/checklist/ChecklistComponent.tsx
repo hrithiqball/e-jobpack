@@ -13,11 +13,13 @@ export default async function ChecklistComponent({
 }: ChecklistComponentProps) {
   return (
     <div className="space-y-4">
-      <ClosedChecklist
-        checklistList={checklistList.filter(
-          checklistList => checklistList.isClose,
-        )}
-      />
+      {checklistList.filter(checklist => checklist.isClose).length > 0 && (
+        <ClosedChecklist
+          checklistList={checklistList.filter(
+            checklistList => checklistList.isClose,
+          )}
+        />
+      )}
       {checklistList
         .filter(checklist => !checklist.isClose)
         .map(checklist => (
