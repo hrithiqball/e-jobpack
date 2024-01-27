@@ -28,13 +28,6 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  Select,
-  SelectItem,
   Table,
   TableBody,
   TableCell,
@@ -46,7 +39,6 @@ import {
   AlarmClock,
   Check,
   CheckCircle2,
-  ChevronDown,
   ChevronLeft,
   Contact2,
   FileBox,
@@ -64,10 +56,8 @@ import { toast } from 'sonner';
 import dayjs from 'dayjs';
 
 import { base64Image } from '@/public/client-icon-base64';
-import { labelsMap, descriptionsMap } from '@/public/utils/labels';
 import { Result } from '@/lib/function/result';
 import { convertToRoman } from '@/lib/function/convertToRoman';
-import { createChecklist } from '@/lib/actions/checklist';
 import {
   fetchMutatedMaintenanceItem,
   updateMaintenance,
@@ -76,6 +66,7 @@ import { useCurrentRole } from '@/hooks/use-current-role';
 import { SimplifiedTask } from '@/types/simplified-task';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import MaintenanceRejectConfirmation from '@/components/maintenance/MaintenanceRejectConfirmation';
+import MaintenanceAddChecklistModal from './MaintenanceAddChecklistModal';
 
 interface MaintenanceComponentProps {
   mutatedMaintenance: Awaited<ReturnType<typeof fetchMutatedMaintenanceItem>>;
@@ -100,15 +91,10 @@ export default function MaintenanceComponent({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [openAddChecklist, setOpenAddChecklist] = useState(false);
-  const [newChecklistDescription, setNewChecklistDescription] = useState('');
-  const [selectedAsset, setSelectedAsset] = useState<any>([]);
   const [openRejectConfirmation, setOpenRejectConfirmation] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [selectedSaveOption, setSelectedSaveOption] = useState(
-    new Set(['saveOnly']),
-  );
 
-  const selectedSaveOptionCurrent = Array.from(selectedSaveOption)[0];
+  const selectedSaveOptionCurrent = Array.from(new Set(['saveOnly']))[0];
 
   function handleAction(key: Key) {
     switch (key) {
@@ -139,36 +125,6 @@ export default function MaintenanceComponent({
       default:
         break;
     }
-  }
-
-  function handleAddAsset() {
-    handleCreateChecklist();
-
-    setOpenAddChecklist(false);
-    setSelectedAsset([]);
-    setNewChecklistDescription('');
-    setSelectedSaveOption(new Set(['saveOnly']));
-    setOpenAddChecklist(!openAddChecklist);
-  }
-
-  function handleCreateChecklist() {
-    if (user.data?.user.id === undefined || user.data?.user.id === null) {
-      console.error('not found');
-      return;
-    }
-
-    startTransition(() => {
-      createChecklist({
-        assetId: selectedAsset.currentKey,
-        createdById: user.data!.user.id,
-        maintenanceId: maintenance.id,
-        description: newChecklistDescription,
-      }).then(() => {
-        console.log(isPending);
-        toast.success('Asset added to maintenance');
-        router.refresh();
-      });
-    });
   }
 
   function handleMarkMaintenanceComplete() {
@@ -217,6 +173,10 @@ export default function MaintenanceComponent({
         },
       );
     });
+  }
+
+  function handleCloseAddChecklist() {
+    setOpenAddChecklist(false);
   }
 
   function handleRejectMaintenance() {
@@ -825,94 +785,14 @@ export default function MaintenanceComponent({
           </TableBody>
         </Table>
         <div className="flex flex-row space-x-1">
-          <Modal isOpen={openAddChecklist} hideCloseButton backdrop="blur">
-            <ModalContent>
-              <ModalHeader className="flex flex-col gap-1">
-                Add New Asset
-              </ModalHeader>
-              <ModalBody>
-                <Select
-                  isRequired
-                  items={assetList}
-                  selectedKeys={selectedAsset}
-                  onSelectionChange={(s: any) => setSelectedAsset(s)}
-                  label="Asset"
-                  variant="faded"
-                >
-                  {asset => (
-                    <SelectItem key={asset.id}>{asset.name}</SelectItem>
-                  )}
-                </Select>
-                <Select label="Asset Checklist Library" variant="faded">
-                  {!checklistLibraryList || !checklistLibraryList.length ? (
-                    <SelectItem key="err">No library found</SelectItem>
-                  ) : (
-                    checklistLibraryList.map(library => (
-                      <SelectItem key={library.id} value={library.id}>
-                        <span>{library.title}</span>
-                      </SelectItem>
-                    ))
-                  )}
-                </Select>
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  color="danger"
-                  onClick={() => setOpenAddChecklist(!openAddChecklist)}
-                >
-                  Cancel
-                </Button>
-                <ButtonGroup>
-                  <Button
-                    isDisabled={selectedAsset.length === 0}
-                    onClick={handleAddAsset}
-                  >
-                    {
-                      labelsMap[
-                        selectedSaveOptionCurrent as keyof typeof labelsMap
-                      ]
-                    }
-                  </Button>
-                  <Dropdown placement="bottom-end">
-                    <DropdownTrigger>
-                      <Button isIconOnly>
-                        <ChevronDown />
-                      </Button>
-                    </DropdownTrigger>
-                    <DropdownMenu
-                      disallowEmptySelection
-                      aria-label="Merge options"
-                      selectedKeys={selectedSaveOption}
-                      selectionMode="single"
-                      onSelectionChange={(setString: any) =>
-                        setSelectedSaveOption(setString)
-                      }
-                      className="max-w-[300px]"
-                    >
-                      <DropdownItem
-                        key="saveOnly"
-                        description={descriptionsMap['saveOnly']}
-                      >
-                        {labelsMap['saveOnly']}
-                      </DropdownItem>
-                      <DropdownItem
-                        key="saveAsLibrary"
-                        description={descriptionsMap['saveAsLibrary']}
-                      >
-                        {labelsMap['saveAsLibrary']}
-                      </DropdownItem>
-                      <DropdownItem
-                        key="onlyLibrary"
-                        description={descriptionsMap['onlyLibrary']}
-                      >
-                        {labelsMap['onlyLibrary']}
-                      </DropdownItem>
-                    </DropdownMenu>
-                  </Dropdown>
-                </ButtonGroup>
-              </ModalFooter>
-            </ModalContent>
-          </Modal>
+          <MaintenanceAddChecklistModal
+            maintenance={mutatedMaintenance}
+            open={openAddChecklist}
+            onClose={handleCloseAddChecklist}
+            assetList={assetList}
+            checklistLibraryList={checklistLibraryList}
+            selectedSaveOptionCurrent={selectedSaveOptionCurrent}
+          />
         </div>
       </div>
       <Divider />

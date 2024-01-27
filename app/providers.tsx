@@ -1,11 +1,11 @@
 'use client';
 
 import { PropsWithChildren } from 'react';
+import { ThemeProvider } from 'next-themes';
+import { useRouter } from 'next/navigation';
 
 import { SessionProvider } from 'next-auth/react';
 import { NextUIProvider } from '@nextui-org/react';
-import { ThemeProvider } from 'next-themes';
-import { useRouter } from 'next/navigation';
 
 export function Providers({ children }: PropsWithChildren) {
   const router = useRouter();
