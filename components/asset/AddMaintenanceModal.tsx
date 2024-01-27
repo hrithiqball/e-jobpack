@@ -2,6 +2,7 @@ import React, { useState, useTransition } from 'react';
 
 import { User } from '@prisma/client';
 import dayjs from 'dayjs';
+import { z } from 'zod';
 
 import {
   Button,
@@ -17,14 +18,13 @@ import {
   Select,
   SelectItem,
 } from '@nextui-org/react';
+import { Calendar } from '@/components/ui/calendar';
 import { CalendarIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { createMaintenance } from '@/lib/actions/maintenance';
 import { CreateMaintenance } from '@/lib/schemas/maintenance';
-import { Calendar } from '@/components/ui/calendarr';
-import { z } from 'zod';
 
 interface AddMaintenanceModalProps {
   isOpen: boolean;

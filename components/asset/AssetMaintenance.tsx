@@ -5,6 +5,14 @@ import { Maintenance } from '@prisma/client';
 
 import { Button, Card, Chip, Input, Tooltip } from '@nextui-org/react';
 import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import {
   Badge,
   BadgeCheck,
   BadgeHelp,
@@ -18,14 +26,6 @@ import {
 
 import emptyIcon from '@/public/image/empty.svg';
 import { approved, progress, reject, schedule_pending } from '@/lib/color';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheett';
 import AssetSideSheet from '@/components/asset/AssetSideSheet';
 
 interface AssetMaintenanceProps {
