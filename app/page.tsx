@@ -1,5 +1,6 @@
-import AuthButton from '@/components/auth/AuthButton';
 import Link from 'next/link';
+
+import AuthButton from '@/components/auth/AuthButton';
 
 export default async function Index() {
   return (

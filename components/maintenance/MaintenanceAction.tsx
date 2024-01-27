@@ -39,6 +39,7 @@ export default function MaintenanceAction({
         </Button>
       </DropdownTrigger>
       {isDesktop ? (
+        // TODO: disable add asset if no more asset can be added
         <DropdownMenu
           disabledKeys={
             role === 'ADMIN' || role === 'SUPERVISOR'

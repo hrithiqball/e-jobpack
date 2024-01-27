@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Key, useEffect, useMemo, useState, useTransition } from 'react';
+import React, { Key, useMemo, useState, useTransition } from 'react';
 
 import { Task } from '@prisma/client';
 import { z } from 'zod';
@@ -29,6 +29,7 @@ import { toast } from 'sonner';
 import { deleteTask, updateTask } from '@/lib/actions/task';
 import { UpdateTask } from '@/lib/schemas/task';
 import { useCurrentUser } from '@/hooks/use-current-user';
+import { useMediaQuery } from '@/hooks/use-media-query';
 
 interface TaskRowProps {
   task: Task;
@@ -36,6 +37,7 @@ interface TaskRowProps {
 
 export default function TaskRow({ task }: TaskRowProps) {
   let [isPending, startTransition] = useTransition();
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const user = useCurrentUser();
 
   // eslint-disable-next-line no-unused-vars
@@ -52,18 +54,8 @@ export default function TaskRow({ task }: TaskRowProps) {
   const [taskNumberValue, setTaskNumberValue] = useState<string>(
     task.taskNumberVal?.toString() ?? '',
   );
-  const [isDesktop, setDesktop] = useState(window.innerWidth > 650);
 
   const numericRegex = /^-?\d+(\.\d+)?$/;
-
-  function updateMedia() {
-    setDesktop(window.innerWidth > 650);
-  }
-
-  useEffect(() => {
-    window.addEventListener('resize', updateMedia);
-    return () => window.removeEventListener('resize', updateMedia);
-  }, []);
 
   const validateNumericInput = (value: string) => value.match(numericRegex);
 
@@ -137,7 +129,7 @@ export default function TaskRow({ task }: TaskRowProps) {
         </div>
       </div>
       <div className="flex-1 px-4">
-        {taskType === 'check' && (
+        {taskType === 'CHECK' && (
           <div className="flex justify-center">
             <Checkbox
               aria-label="Task Checkbox"
@@ -152,7 +144,7 @@ export default function TaskRow({ task }: TaskRowProps) {
             />
           </div>
         )}
-        {taskType === 'choice' && (
+        {taskType === 'CHOICE' && (
           <div className="flex justify-center">
             <Switch
               size="sm"
@@ -169,16 +161,13 @@ export default function TaskRow({ task }: TaskRowProps) {
             />
           </div>
         )}
-        {(taskType === 'selectOne' ||
-          taskType === 'selectMultiple' ||
-          taskType === 'MULTIPLE_SELECT' ||
-          taskType === 'SINGLE_SELECT') && (
+        {(taskType === 'MULTIPLE_SELECT' || taskType === 'SINGLE_SELECT') && (
           <Select
             aria-label="Task Select"
             variant="faded"
             selectedKeys={taskSelected}
             selectionMode={
-              taskType === 'selectMultiple' ? 'multiple' : 'single'
+              taskType === 'MULTIPLE_SELECT' ? 'multiple' : 'single'
             }
             onSelectionChange={handleSelectionChange}
             size="sm"
@@ -191,7 +180,7 @@ export default function TaskRow({ task }: TaskRowProps) {
             ))}
           </Select>
         )}
-        {taskType === 'number' && (
+        {taskType === 'NUMBER' && (
           <Input
             aria-label="Task Number"
             variant="faded"

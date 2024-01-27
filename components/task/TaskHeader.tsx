@@ -1,19 +1,13 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+
 import { MoreVertical } from 'lucide-react';
 
+import { useMediaQuery } from '@/hooks/use-media-query';
+
 export default function TaskHeader() {
-  const [isDesktop, setDesktop] = useState(window.innerWidth > 650);
-
-  function updateMedia() {
-    setDesktop(window.innerWidth > 650);
-  }
-
-  useEffect(() => {
-    window.addEventListener('resize', updateMedia);
-    return () => window.removeEventListener('resize', updateMedia);
-  }, []);
+  const isDesktop = useMediaQuery('(min-width: 768px)');
 
   return (
     <div>

@@ -49,7 +49,7 @@ export async function createTask(
   }
 }
 
-export async function fetchTaskList(checklistId?: string): Promise<Task[]> {
+export async function fetchTaskList(checklistId?: string) {
   try {
     const filters: Prisma.TaskWhereInput[] = [];
     const orderBy: Prisma.TaskOrderByWithRelationInput[] = [];
@@ -64,15 +64,20 @@ export async function fetchTaskList(checklistId?: string): Promise<Task[]> {
       });
     }
 
-    return await db.task.findMany({
+    const taskList = await db.task.findMany({
       orderBy,
       where: {
         AND: filters,
       },
+      include: {
+        subtask: true,
+      },
     });
+
+    return taskList;
   } catch (error) {
     console.error(error);
-    return [];
+    throw error;
   }
 }
 

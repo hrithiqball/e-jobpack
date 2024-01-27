@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react';
+
 import { Checklist } from '@prisma/client';
 
 import MaintenanceChecklist from '@/app/_components/MaintenanceChecklist';
@@ -8,7 +9,7 @@ interface ChecklistComponentProps {
   checklistList: Checklist[];
 }
 
-export default async function ChecklistComponent({
+export default function ChecklistComponent({
   checklistList,
 }: ChecklistComponentProps) {
   return (

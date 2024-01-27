@@ -30,10 +30,7 @@ import dayjs from 'dayjs';
 import { base64Image } from '@/public/client-icon-base64';
 import { Result } from '@/lib/function/result';
 import { convertToRoman } from '@/lib/function/convertToRoman';
-import {
-  fetchMutatedMaintenanceItem,
-  updateMaintenance,
-} from '@/lib/actions/maintenance';
+import { updateMaintenance } from '@/lib/actions/maintenance';
 import { SimplifiedTask } from '@/types/simplified-task';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import MaintenanceRejectConfirmation from '@/components/maintenance/MaintenanceRejectConfirmation';
@@ -42,9 +39,11 @@ import MaintenanceTableInfo from '@/components/maintenance/MaintenanceTableInfo'
 import MaintenanceAction from '@/components/maintenance/MaintenanceAction';
 import MaintenanceRequestForm from '@/components/maintenance/MaintenanceRequestForm';
 import { useCurrentUser } from '@/hooks/use-current-user';
+import { MutatedMaintenance } from '@/types/maintenance';
 
 interface MaintenanceComponentProps {
-  mutatedMaintenance: Awaited<ReturnType<typeof fetchMutatedMaintenanceItem>>;
+  mutatedMaintenance: MutatedMaintenance;
+  checklistList: Checklist[];
   maintenance: Maintenance;
   checklistLibraryList: ChecklistLibrary[];
   assetList: Asset[];
@@ -54,6 +53,7 @@ interface MaintenanceComponentProps {
 export default function MaintenanceComponent({
   mutatedMaintenance,
   maintenance,
+  checklistList,
   checklistLibraryList,
   assetList,
   children,
@@ -108,11 +108,22 @@ export default function MaintenanceComponent({
     }
 
     startTransition(() => {
-      updateMaintenance(maintenance.id, {
-        closedOn: new Date(),
-        isClose: true,
-        closedById: user.id,
-      }).then(res => console.log(res));
+      toast.promise(
+        updateMaintenance(maintenance.id, {
+          closedOn: new Date(),
+          isClose: true,
+          closedById: user.id,
+        }),
+        {
+          loading: 'Closing maintenance...',
+          success: res => {
+            router.refresh();
+            console.log(res);
+            return 'Maintenance closed!';
+          },
+          error: 'Failed to close maintenance 😥',
+        },
+      );
     });
   }
 
@@ -143,6 +154,7 @@ export default function MaintenanceComponent({
 
   function handleCloseAddChecklist() {
     setOpenAddChecklist(false);
+    router.refresh();
   }
 
   function handleRejectMaintenance() {
@@ -344,8 +356,8 @@ export default function MaintenanceComponent({
             worksheet.getCell(`O${rowTracker}`).value = task.id;
 
             switch (task.taskType) {
-              case 'selectMultiple':
-              case 'selectOne':
+              case 'MULTIPLE_SELECT':
+              case 'SINGLE_SELECT':
                 worksheet.getCell(`E${rowTracker}`).value = 'Select One';
                 worksheet.getCell(`E${rowTracker}`).dataValidation = {
                   type: 'list',
@@ -357,7 +369,7 @@ export default function MaintenanceComponent({
                 };
                 break;
 
-              case 'number':
+              case 'NUMBER':
                 worksheet.getCell(`E${rowTracker}`).value = 0;
                 worksheet.getCell(`E${rowTracker}`).dataValidation = {
                   type: 'decimal',
@@ -369,7 +381,7 @@ export default function MaintenanceComponent({
                 };
                 break;
 
-              case 'check':
+              case 'CHECK':
                 worksheet.getCell(`E${rowTracker}`).value = 'Incomplete';
                 worksheet.getCell(`E${rowTracker}`).dataValidation = {
                   type: 'list',
@@ -381,7 +393,7 @@ export default function MaintenanceComponent({
                 };
                 break;
 
-              case 'choice':
+              case 'CHOICE':
                 worksheet.getCell(`E${rowTracker}`).value = 'False';
                 worksheet.getCell(`E${rowTracker}`).dataValidation = {
                   type: 'list',
@@ -433,8 +445,8 @@ export default function MaintenanceComponent({
                 worksheet.getCell(`O${rowTracker}`).value = subtask.id;
 
                 switch (subtask.taskType) {
-                  case 'selectMultiple':
-                  case 'selectOne':
+                  case 'MULTIPLE_SELECT':
+                  case 'SINGLE_SELECT':
                     worksheet.getCell(`E${rowTracker}`).value = 'Select One';
                     worksheet.getCell(`E${rowTracker}`).dataValidation = {
                       type: 'list',
@@ -446,7 +458,7 @@ export default function MaintenanceComponent({
                     };
                     break;
 
-                  case 'number':
+                  case 'NUMBER':
                     worksheet.getCell(`E${rowTracker}`).value = 0;
                     worksheet.getCell(`E${rowTracker}`).dataValidation = {
                       type: 'decimal',
@@ -458,7 +470,7 @@ export default function MaintenanceComponent({
                     };
                     break;
 
-                  case 'choice':
+                  case 'CHOICE':
                     worksheet.getCell(`E${rowTracker}`).value = 'False';
                     worksheet.getCell(`E${rowTracker}`).dataValidation = {
                       type: 'list',
@@ -470,7 +482,7 @@ export default function MaintenanceComponent({
                     };
                     break;
 
-                  case 'check':
+                  case 'CHECK':
                     worksheet.getCell(`E${rowTracker}`).value = 'Incomplete';
                     worksheet.getCell(`E${rowTracker}`).dataValidation = {
                       type: 'list',
@@ -606,7 +618,11 @@ export default function MaintenanceComponent({
             maintenance={mutatedMaintenance}
             open={openAddChecklist}
             onClose={handleCloseAddChecklist}
-            assetList={assetList}
+            assetList={assetList.filter(
+              asset =>
+                !asset.isArchive &&
+                !checklistList.some(c => c.assetId === asset.id),
+            )}
             checklistLibraryList={checklistLibraryList}
             selectedSaveOptionCurrent={selectedSaveOptionCurrent}
           />

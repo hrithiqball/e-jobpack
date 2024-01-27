@@ -194,7 +194,7 @@ model Subtask {
   deadline      DateTime?
   completedBy   String?   @map("completed_by")
   taskOrder     Int       @map("task_order") @db.SmallInt
-  taskType      TaskType? @default(choice) @map("task_type")
+  taskType      TaskType? @default(CHECK) @map("task_type")
   listChoice    String[]  @default([]) @map("list_choice")
   taskNumberVal Int?      @map("task_number_val") @db.SmallInt
   taskCheck     Boolean?  @default(false) @map("task_check")
@@ -249,7 +249,7 @@ model Task {
   completedBy   String?   @map("completed_by")
   taskOrder     Int       @map("task_order") @db.SmallInt
   haveSubtask   Boolean   @default(false) @map("have_subtask")
-  taskType      TaskType  @default(check) @map("task_type")
+  taskType      TaskType  @default(CHECK) @map("task_type")
   listChoice    String[]  @default([]) @map("list_choice")
   taskBool      Boolean?  @default(false) @map("task_bool")
   taskSelected  String[]  @default([]) @map("task_selected")
@@ -378,11 +378,6 @@ enum Role {
 }
 
 enum TaskType {
-  choice
-  selectOne
-  check
-  number
-  selectMultiple
   CHOICE
   NUMBER
   CHECK

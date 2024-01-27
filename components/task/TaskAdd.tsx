@@ -35,7 +35,7 @@ export default function TaskAdd({ checklist, open, setOpen }: TaskAddProps) {
   const [taskActivity, setTaskActivity] = useState<string>('');
   const [taskDescription, setTaskDescription] = useState<string>('');
   const [haveSubtask, setHaveSubtask] = useState(false);
-  const [selection, setSelection] = useState<TaskType>(TaskType.check);
+  const [selection, setSelection] = useState<TaskType>(TaskType.CHECK);
   const [listCount, setListCount] = useState<number>(1);
   const [choices, setChoices] = useState(Array(listCount).fill('Choice 1'));
   type SubtaskOptions = {
@@ -98,7 +98,7 @@ export default function TaskAdd({ checklist, open, setOpen }: TaskAddProps) {
 
   function closeModal() {
     setOpen(prevOpen => !prevOpen);
-    setSelection('check');
+    setSelection('CHECK');
     setTaskActivity('');
     setTaskDescription('');
   }
@@ -107,7 +107,7 @@ export default function TaskAdd({ checklist, open, setOpen }: TaskAddProps) {
     const newSubtask: SubtaskOptions = {
       title: '',
       description: '',
-      type: 'check',
+      type: 'CHECK',
     };
 
     setSubtaskList([...subtaskList, newSubtask]);
@@ -208,7 +208,8 @@ export default function TaskAdd({ checklist, open, setOpen }: TaskAddProps) {
               ))}
             </Select>
           )}
-          {(selection === 'selectOne' || selection === 'selectMultiple') && (
+          {(selection === 'SINGLE_SELECT' ||
+            selection === 'MULTIPLE_SELECT') && (
             <Fragment>
               {choices.map((choice, index) => (
                 <div className="flex items-center" key={index}>
@@ -238,8 +239,8 @@ export default function TaskAdd({ checklist, open, setOpen }: TaskAddProps) {
           <Button
             isDisabled={
               taskActivity === '' ||
-              (selection === 'selectOne' && listCount < 2) ||
-              (selection === 'selectMultiple' && listCount < 2)
+              (selection === 'SINGLE_SELECT' && listCount < 2) ||
+              (selection === 'MULTIPLE_SELECT' && listCount < 2)
             }
             color="primary"
             onPress={() => {

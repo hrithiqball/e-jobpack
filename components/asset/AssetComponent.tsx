@@ -9,10 +9,10 @@ import { PackagePlus } from 'lucide-react';
 import AssetTable from '@/components/asset/AssetTable';
 import AddAssetModal from '@/components/asset/AddAssetModal';
 import { useCurrentRole } from '@/hooks/use-current-role';
-import { fetchAssetList2 } from '@/lib/actions/asset';
+import { AssetList } from '@/types/asset';
 
 interface AssetComponentProps {
-  assetList: Awaited<ReturnType<typeof fetchAssetList2>>;
+  assetList: AssetList;
   assetTypeList: AssetType[];
   assetStatusList: AssetStatus[];
   userList: User[];

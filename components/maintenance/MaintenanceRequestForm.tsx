@@ -3,10 +3,10 @@ import React from 'react';
 import { Button, ButtonGroup } from '@nextui-org/react';
 import { Check, X } from 'lucide-react';
 
-import { fetchMutatedMaintenanceItem } from '@/lib/actions/maintenance';
+import { MutatedMaintenance } from '@/types/maintenance';
 
 interface MaintenanceRequestFormProps {
-  maintenance: Awaited<ReturnType<typeof fetchMutatedMaintenanceItem>>;
+  maintenance: MutatedMaintenance;
   isPending: boolean;
   handleApproveMaintenance: () => void;
   handleRejectMaintenance: () => void;

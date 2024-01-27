@@ -5,10 +5,10 @@ import dayjs from 'dayjs';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/Table';
 import { AlarmClock, Contact2 } from 'lucide-react';
 
-import { fetchMutatedMaintenanceItem } from '@/lib/actions/maintenance';
+import { MutatedMaintenance } from '@/types/maintenance';
 
 interface MaintenanceTableInfoProps {
-  maintenance: Awaited<ReturnType<typeof fetchMutatedMaintenanceItem>>;
+  maintenance: MutatedMaintenance;
 }
 
 export default function MaintenanceTableInfo({
@@ -17,7 +17,7 @@ export default function MaintenanceTableInfo({
   return (
     <Table aria-label="Asset info table">
       <TableBody>
-        <TableRow key="deadline" className="bg-gray-50">
+        <TableRow key="deadline" className="bg-gray-50 dark:bg-gray-800">
           <TableCell className="flex items-center space-x-2">
             <AlarmClock size={18} />
             <span className="font-bold">Deadline</span>

@@ -34,13 +34,14 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { fetchMutatedAssetItem, updateAsset } from '@/lib/actions/asset';
+import { updateAsset } from '@/lib/actions/asset';
 import { useCurrentRole } from '@/hooks/use-current-role';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { UpdateAsset } from '@/lib/schemas/asset';
+import { MutatedAsset } from '@/types/asset';
 
 interface DetailsWidgetProps {
-  mutatedAsset: Awaited<ReturnType<typeof fetchMutatedAssetItem>>;
+  mutatedAsset: MutatedAsset;
   statusList: AssetStatus[];
   typeList: AssetType[];
 }

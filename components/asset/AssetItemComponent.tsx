@@ -24,15 +24,14 @@ import {
 } from '@nextui-org/react';
 import { ChevronLeft } from 'lucide-react';
 
-// import Loading from '@/components/Loading';
 import AssetDetails from '@/components/asset/AssetDetails';
 import AssetMaintenance from '@/components/asset/AssetMaintenance';
 import AssetAttachment from '@/components/asset/AssetAttachment';
-import { fetchMutatedAssetItem } from '@/lib/actions/asset';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { MutatedAsset } from '@/types/asset';
 
 interface AssetItemComponentProps {
-  mutatedAsset: Awaited<ReturnType<typeof fetchMutatedAssetItem>>;
+  mutatedAsset: MutatedAsset;
   statusList: AssetStatus[];
   typeList: AssetType[];
   maintenanceList: Maintenance[];

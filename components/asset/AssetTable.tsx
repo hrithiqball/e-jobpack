@@ -58,15 +58,16 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { fetchAssetList2, updateAsset } from '@/lib/actions/asset';
+import { updateAsset } from '@/lib/actions/asset';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { useCurrentRole } from '@/hooks/use-current-role';
 import emptyIcon from '@/public/image/empty.svg';
 import AddMaintenanceModal from '@/components/asset/AddMaintenanceModal';
 import DeleteAssetModal from '@/components/asset/DeleteAssetModal';
+import { AssetList } from '@/types/asset';
 
 interface AssetTableProps {
-  assetList: Awaited<ReturnType<typeof fetchAssetList2>>;
+  assetList: AssetList;
   assetStatusList: AssetStatus[];
   userList: User[];
   children: ReactNode | null;

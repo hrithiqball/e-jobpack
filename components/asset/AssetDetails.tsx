@@ -2,14 +2,14 @@ import React from 'react';
 
 import { AssetStatus, AssetType, ChecklistUse, User } from '@prisma/client';
 
-import { fetchMutatedAssetItem } from '@/lib/actions/asset';
 import DetailsWidget from '@/components/asset/DetailsWidget';
 import TeamWidget from '@/components/asset/TeamWidget';
 import ChecklistWidget from '@/components/asset/ChecklistWidget';
 import MaintenanceWidget from '@/components/asset/MaintenanceWidget';
+import { MutatedAsset } from '@/types/asset';
 
 interface AssetDetailsProps {
-  mutatedAsset: Awaited<ReturnType<typeof fetchMutatedAssetItem>>;
+  mutatedAsset: MutatedAsset;
   statusList: AssetStatus[];
   typeList: AssetType[];
   checklistUse: ChecklistUse[];

@@ -64,7 +64,7 @@ const TableRow = React.forwardRef<
     className={cn(
       'border-b transition-colors border-default',
       !noHover &&
-        'hover:bg-emeraldGreenLight data-[state=selected]:bg-emeraldGreenLight',
+        'hover:bg-lightPrimary data-[state=selected]:bg-emeraldGreenLight',
       !noHover &&
         'dark:border-dark dark:hover:bg-emeraldGreenDark dark:data-[state=selected]:bg-emeraldGreenDark',
       className,

@@ -15,12 +15,13 @@ import {
   TableRow,
 } from '@nextui-org/react';
 import { Clock, Wrench, History } from 'lucide-react';
+
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { fetchMutatedAssetItem } from '@/lib/actions/asset';
-import AddMaintenanceModal from './AddMaintenanceModal';
+import { MutatedAsset } from '@/types/asset';
+import AddMaintenanceModal from '@/components/asset/AddMaintenanceModal';
 
 interface MaintenanceWidgetProps {
-  mutatedAsset: Awaited<ReturnType<typeof fetchMutatedAssetItem>>;
+  mutatedAsset: MutatedAsset;
   userList: User[];
 }
 

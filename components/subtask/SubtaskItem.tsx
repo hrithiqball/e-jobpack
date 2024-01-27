@@ -115,7 +115,7 @@ export default function SubtaskItem({ subtask }: { subtask: Subtask }) {
         </div>
       </div>
       <div className="flex-1 px-4">
-        {taskType === 'check' && (
+        {taskType === 'CHECK' && (
           <div className="flex justify-center">
             <Checkbox
               isSelected={subtaskIsComplete}
@@ -129,7 +129,7 @@ export default function SubtaskItem({ subtask }: { subtask: Subtask }) {
             />
           </div>
         )}
-        {taskType === 'choice' && (
+        {taskType === 'CHOICE' && (
           <div className="flex justify-center">
             <Switch
               className="flex-1"
@@ -144,12 +144,12 @@ export default function SubtaskItem({ subtask }: { subtask: Subtask }) {
             />
           </div>
         )}
-        {(taskType === 'selectOne' || taskType === 'selectMultiple') && (
+        {(taskType === 'SINGLE_SELECT' || taskType === 'MULTIPLE_SELECT') && (
           <Select
             variant="faded"
             selectedKeys={taskSelected}
             selectionMode={
-              taskType === 'selectMultiple' ? 'multiple' : 'single'
+              taskType === 'MULTIPLE_SELECT' ? 'multiple' : 'single'
             }
             onSelectionChange={handleSelectionChange}
             size="sm"
@@ -162,7 +162,7 @@ export default function SubtaskItem({ subtask }: { subtask: Subtask }) {
             ))}
           </Select>
         )}
-        {taskType === 'number' && (
+        {taskType === 'NUMBER' && (
           <Input
             variant="faded"
             value={taskNumberValue}
