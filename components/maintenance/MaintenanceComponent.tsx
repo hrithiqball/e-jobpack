@@ -8,9 +8,9 @@ import React, {
   useRef,
   ChangeEvent,
 } from 'react';
-import Link from 'next/link';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+
 import {
   Asset,
   Checklist,
@@ -20,36 +20,8 @@ import {
   Task,
 } from '@prisma/client';
 
-import {
-  Button,
-  ButtonGroup,
-  Divider,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from '@nextui-org/react';
-import {
-  AlarmClock,
-  Check,
-  CheckCircle2,
-  ChevronLeft,
-  Contact2,
-  FileBox,
-  FileDown,
-  FileUp,
-  FolderSync,
-  MoreVertical,
-  PackagePlus,
-  Table2,
-  X,
-} from 'lucide-react';
+import { Button, ButtonGroup, Divider } from '@nextui-org/react';
+import { ChevronLeft, FileUp, FolderSync } from 'lucide-react';
 import { Border, Cell, Column, Workbook } from 'exceljs';
 import { saveAs } from 'file-saver';
 import { toast } from 'sonner';
@@ -62,11 +34,14 @@ import {
   fetchMutatedMaintenanceItem,
   updateMaintenance,
 } from '@/lib/actions/maintenance';
-import { useCurrentRole } from '@/hooks/use-current-role';
 import { SimplifiedTask } from '@/types/simplified-task';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import MaintenanceRejectConfirmation from '@/components/maintenance/MaintenanceRejectConfirmation';
-import MaintenanceAddChecklistModal from './MaintenanceAddChecklistModal';
+import MaintenanceAddChecklistModal from '@/components/maintenance/MaintenanceAddChecklistModal';
+import MaintenanceTableInfo from '@/components/maintenance/MaintenanceTableInfo';
+import MaintenanceAction from '@/components/maintenance/MaintenanceAction';
+import MaintenanceRequestForm from '@/components/maintenance/MaintenanceRequestForm';
+import { useCurrentUser } from '@/hooks/use-current-user';
 
 interface MaintenanceComponentProps {
   mutatedMaintenance: Awaited<ReturnType<typeof fetchMutatedMaintenanceItem>>;
@@ -84,9 +59,8 @@ export default function MaintenanceComponent({
   children,
 }: MaintenanceComponentProps) {
   let [isPending, startTransition] = useTransition();
-  const user = useSession();
+  const user = useCurrentUser();
   const router = useRouter();
-  const role = useCurrentRole();
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -128,11 +102,7 @@ export default function MaintenanceComponent({
   }
 
   function handleMarkMaintenanceComplete() {
-    if (
-      user.data === null ||
-      user.data?.user.id === undefined ||
-      user.data?.user.id === null
-    ) {
+    if (user === undefined || user.id === null) {
       console.error('session expired');
       return;
     }
@@ -141,17 +111,13 @@ export default function MaintenanceComponent({
       updateMaintenance(maintenance.id, {
         closedOn: new Date(),
         isClose: true,
-        closedById: user.data.user.id,
+        closedById: user.id,
       }).then(res => console.log(res));
     });
   }
 
   function handleApproveMaintenance() {
-    if (
-      user.data === null ||
-      user.data?.user.id === undefined ||
-      user.data?.user.id === null
-    ) {
+    if (user === undefined || user.id === undefined) {
       console.error('session expired');
       return;
     }
@@ -188,12 +154,13 @@ export default function MaintenanceComponent({
     router.refresh();
   }
 
-  function handleUploadExcel(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files;
-
-    if (file !== null) {
-      setSelectedFile(file[0]);
-    }
+  function handleUploadExcel() {
+    return (event: ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files;
+      if (file !== null) {
+        setSelectedFile(file[0]);
+      }
+    };
   }
 
   async function handleSyncExcel() {
@@ -609,9 +576,7 @@ export default function MaintenanceComponent({
                 ref={fileInputRef}
                 className="hidden"
                 accept=".xlsx, .xls"
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  handleUploadExcel(e)
-                }
+                onChange={handleUploadExcel}
               />
               <Button
                 size="sm"
@@ -623,167 +588,19 @@ export default function MaintenanceComponent({
               </Button>
             </ButtonGroup>
           )}
-          <Dropdown>
-            <DropdownTrigger>
-              <Button isIconOnly size="sm" variant="light">
-                <MoreVertical size={18} />
-              </Button>
-            </DropdownTrigger>
-            {isDesktop ? (
-              <DropdownMenu
-                disabledKeys={
-                  role === 'ADMIN' || role === 'SUPERVISOR'
-                    ? []
-                    : ['add-asset', 'edit-maintenance']
-                }
-                onAction={handleAction}
-              >
-                <DropdownItem
-                  key="add-asset"
-                  startContent={<PackagePlus size={18} />}
-                >
-                  Add Asset
-                </DropdownItem>
-                <DropdownItem
-                  key="edit-maintenance"
-                  startContent={<FileBox size={18} />}
-                >
-                  Edit Asset
-                </DropdownItem>
-                <DropdownItem
-                  key="download-excel"
-                  startContent={<FileDown size={18} />}
-                >
-                  {/* TODO: Should not be here if its a request */}
-                  Download Excel
-                </DropdownItem>
-                <DropdownItem
-                  key="download-pdf"
-                  startContent={<Table2 size={18} />}
-                >
-                  Download PDF
-                </DropdownItem>
-                <DropdownItem
-                  key="mark-complete"
-                  className="text-success"
-                  color="success"
-                  startContent={<CheckCircle2 size={18} />}
-                >
-                  Mark as Complete
-                </DropdownItem>
-              </DropdownMenu>
-            ) : (
-              <DropdownMenu
-                disabledKeys={
-                  role === 'ADMIN' || role === 'SUPERVISOR'
-                    ? []
-                    : ['add-asset', 'edit-maintenance']
-                }
-                onAction={handleAction}
-              >
-                <DropdownItem
-                  key="add-asset"
-                  startContent={<PackagePlus size={18} />}
-                >
-                  Add Asset
-                </DropdownItem>
-                <DropdownItem
-                  key="edit-maintenance"
-                  startContent={<FileBox size={18} />}
-                >
-                  Edit Asset
-                </DropdownItem>
-                <DropdownItem
-                  key="download-excel"
-                  startContent={<FileDown size={18} />}
-                >
-                  Download Excel
-                </DropdownItem>
-                <DropdownItem
-                  key="upload-excel"
-                  startContent={<FileUp size={18} />}
-                >
-                  Upload Excel
-                </DropdownItem>
-                <DropdownItem
-                  key="download-pdf"
-                  startContent={<Table2 size={18} />}
-                >
-                  {/* TODO: figure out how to optimize this behavior */}
-                  {/* <MaintenanceForm maintenance={maintenance} /> */}
-                  Download PDF
-                </DropdownItem>
-                <DropdownItem
-                  key="mark-complete"
-                  className="text-success"
-                  color="success"
-                  startContent={<CheckCircle2 size={18} />}
-                >
-                  Mark as Complete
-                </DropdownItem>
-              </DropdownMenu>
-            )}
-          </Dropdown>
+          <MaintenanceAction handleAction={handleAction} />
         </div>
       </div>
       {maintenance.isRequested && (
-        <div className="flex items-center mt-4 px-4 py-2 rounded bg-white dark:bg-zinc-700 justify-between ">
-          <span className="text-medium font-medium">
-            Approve this maintenance request by {maintenance.requestedById}
-          </span>
-          <ButtonGroup>
-            <Button
-              size="sm"
-              variant="faded"
-              color="success"
-              startContent={<Check size={18} />}
-              onClick={handleApproveMaintenance}
-            >
-              Approve
-            </Button>
-            <Button
-              size="sm"
-              variant="faded"
-              color="danger"
-              startContent={<X size={18} />}
-              onClick={handleRejectMaintenance}
-            >
-              Reject
-            </Button>
-          </ButtonGroup>
-        </div>
+        <MaintenanceRequestForm
+          handleApproveMaintenance={handleApproveMaintenance}
+          handleRejectMaintenance={handleRejectMaintenance}
+          isPending={isPending}
+          maintenance={mutatedMaintenance}
+        />
       )}
       <div className="flex flex-col my-4 ">
-        <Table isStriped removeWrapper hideHeader aria-label="Asset info table">
-          <TableHeader>
-            <TableColumn>Key</TableColumn>
-            <TableColumn>Value</TableColumn>
-          </TableHeader>
-          <TableBody>
-            <TableRow key="deadline">
-              <TableCell className="flex items-center space-x-2">
-                <AlarmClock size={18} />
-                <span className="font-bold">Deadline</span>
-              </TableCell>
-              <TableCell>
-                <span>
-                  {maintenance.deadline
-                    ? dayjs(maintenance.deadline).format('DD/MM/YYYY hh:mmA')
-                    : 'Not Specified'}
-                </span>
-              </TableCell>
-            </TableRow>
-            <TableRow key="person-in-charge">
-              <TableCell className="flex items-center space-x-2">
-                <Contact2 size={18} />
-                <span className="font-bold">Person in charge</span>
-              </TableCell>
-              <TableCell>
-                <span>Harith Iqbal</span>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+        <MaintenanceTableInfo maintenance={mutatedMaintenance} />
         <div className="flex flex-row space-x-1">
           <MaintenanceAddChecklistModal
             maintenance={mutatedMaintenance}
