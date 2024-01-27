@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import { Maintenance } from '@prisma/client';
 import dayjs from 'dayjs';
@@ -17,7 +17,6 @@ import {
 import { motion } from 'framer-motion';
 import { FileCog, Wrench } from 'lucide-react';
 
-import Loading from '@/components/Loading';
 import { useCurrentRole } from '@/hooks/use-current-role';
 
 interface TaskComponentProps {
@@ -26,14 +25,6 @@ interface TaskComponentProps {
 
 export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
   const role = useCurrentRole();
-
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return <Loading label="Hang on tight" />;
 
   return (
     <div className="flex flex-col flex-1 rounded-md flex-grow">
@@ -98,7 +89,7 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
                           </Link>
                           <Avatar
                             size="sm"
-                            name={maintenance.requestedBy ?? 'Me'}
+                            name={maintenance.requestedById ?? 'Me'}
                           />
                         </div>
                       </CardHeader>

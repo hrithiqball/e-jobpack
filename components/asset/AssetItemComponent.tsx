@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Key, useEffect, useState } from 'react';
+import React, { Key } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 
 import {
@@ -53,19 +53,11 @@ export default function AssetItemComponent({
   const searchParams = useSearchParams();
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
-  const [mounted, setMounted] = useState(false);
-
   const tab = searchParams.get('tab');
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   function handleTabChange(key: Key) {
     router.push(`${pathname}?tab=${key}`);
   }
-
-  if (!mounted) return null;
 
   return (
     <div className="flex flex-col flex-1 p-0">

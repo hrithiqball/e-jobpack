@@ -25,7 +25,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet';
+} from '@/components/ui/sheett';
 import AssetSideSheet from '@/components/asset/AssetSideSheet';
 
 interface AssetMaintenanceProps {

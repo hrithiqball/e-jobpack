@@ -1,7 +1,6 @@
 'use client';
 
 import React, {
-  useEffect,
   useState,
   useTransition,
   ReactNode,
@@ -76,7 +75,6 @@ import {
 import { useCurrentRole } from '@/hooks/use-current-role';
 import { SimplifiedTask } from '@/types/simplified-task';
 import { useMediaQuery } from '@/hooks/use-media-query';
-import Loading from '@/components/Loading';
 import MaintenanceRejectConfirmation from '@/components/maintenance/MaintenanceRejectConfirmation';
 
 interface MaintenanceComponentProps {
@@ -101,7 +99,6 @@ export default function MaintenanceComponent({
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const [mounted, setMounted] = useState(false);
   const [openAddChecklist, setOpenAddChecklist] = useState(false);
   const [newChecklistDescription, setNewChecklistDescription] = useState('');
   const [selectedAsset, setSelectedAsset] = useState<any>([]);
@@ -112,10 +109,6 @@ export default function MaintenanceComponent({
   );
 
   const selectedSaveOptionCurrent = Array.from(selectedSaveOption)[0];
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   function handleAction(key: Key) {
     switch (key) {
@@ -622,8 +615,6 @@ export default function MaintenanceComponent({
     await saveExcel();
     toast.success('Excel file downloaded🎉');
   }
-
-  if (!mounted) return <Loading label="Hang on tight" />;
 
   return (
     <div className="rounded-md flex-grow">

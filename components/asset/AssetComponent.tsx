@@ -1,12 +1,11 @@
 'use client';
 
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { AssetStatus, AssetType, User } from '@prisma/client';
 
 import { Button } from '@nextui-org/react';
 import { PackagePlus } from 'lucide-react';
 
-import Loading from '@/components/Loading';
 import AssetTable from '@/components/asset/AssetTable';
 import AddAssetModal from '@/components/asset/AddAssetModal';
 import { useCurrentRole } from '@/hooks/use-current-role';
@@ -27,18 +26,11 @@ export default function AssetComponent({
 }: AssetComponentProps) {
   const role = useCurrentRole();
 
-  const [mounted, setMounted] = useState(false);
   const [openAddAssetModal, setOpenAddAssetModal] = useState(false);
 
   function closeAddAssetModal() {
     setOpenAddAssetModal(false);
   }
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return <Loading label="Hang on tight" />;
 
   return (
     <div className="flex flex-col flex-1">

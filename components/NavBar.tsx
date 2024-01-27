@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useTheme } from 'next-themes';
@@ -25,15 +25,16 @@ import { useCurrentRole } from '@/hooks/use-current-role';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { logout } from '@/lib/actions/logout';
 import clientIcon from '@/public/image/client-icon.svg';
+import { useMounted } from '@/hooks/use-mounted';
 
 export default function Navigation() {
   const { theme, setTheme } = useTheme();
   const pathname = usePathname();
   const role = useCurrentRole();
   const user = useCurrentUser();
+  const mounted = useMounted();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
   const navLinks = [
     { href: '/dashboard', label: 'Dashboard' },
@@ -44,10 +45,6 @@ export default function Navigation() {
   function onClick() {
     logout();
   }
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   if (!mounted) return null;
 

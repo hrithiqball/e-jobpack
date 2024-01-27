@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Bar, Doughnut } from 'react-chartjs-2';
 import { defaults } from 'chart.js/auto';
 
@@ -6,6 +6,7 @@ import { useTheme } from 'next-themes';
 import { Card } from '@nextui-org/react';
 
 import { AssetStatus, MaintenanceCompleted } from '@/public/utils/dummy-data';
+import { useMounted } from '@/hooks/use-mounted';
 
 defaults.maintainAspectRatio = false;
 defaults.responsive = true;
@@ -15,12 +16,7 @@ defaults.plugins.title.align = 'start';
 
 export default function GraphWidget() {
   const { theme } = useTheme();
-
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useMounted();
 
   if (!mounted) return null;
 

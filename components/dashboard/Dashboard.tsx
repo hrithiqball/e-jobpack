@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Key, useEffect, useState } from 'react';
+import React, { Key, useState } from 'react';
 
 import { Tab, Tabs } from '@nextui-org/react';
 
@@ -10,13 +10,6 @@ import Report from '@/components/dashboard/Report';
 
 export default function Dashboard() {
   const [activeComponent, setActiveComponent] = useState('overview');
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
 
   return (
     <div className="flex grow flex-col space-y-4 h-full">
