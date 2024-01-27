@@ -58,12 +58,13 @@ export default function AddMaintenanceModal({
       }
 
       const maintenance: z.infer<typeof CreateMaintenance> = {
-        id: maintenanceId,
-        maintainee: Array.from(maintainee),
         assetIds,
         deadline,
+        id: maintenanceId,
+        maintainee: Array.from(maintainee),
         startDate: startDate || dayjs().toDate(),
         isOpen: user.role === 'ADMIN' || user.role === 'SUPERVISOR',
+        isRequested: user.role !== 'ADMIN' && user.role !== 'SUPERVISOR',
         approvedById: Array.from(approvedBy)[0],
       };
 

@@ -66,7 +66,7 @@ export default function AssetSideSheet({ maintenance }: AssetSideSheetProps) {
             <TableBody>
               <TableRow>
                 <TableCell className="font-medium">Person in Charge</TableCell>
-                <TableCell>{maintenance.approvedBy}</TableCell>
+                <TableCell>{maintenance.approvedById}</TableCell>
               </TableRow>
             </TableBody>
           </Table>
@@ -100,6 +100,9 @@ export default function AssetSideSheet({ maintenance }: AssetSideSheetProps) {
     case 'pending': {
       return (
         <div className="flex flex-col">
+          <Button as={Link} href={`/task/${maintenance.id}`}>
+            Open Todo
+          </Button>
           <span className="text-sm text-gray-500">Maintenance Status</span>
           <span className="text-sm text-gray-500">Pending</span>
         </div>

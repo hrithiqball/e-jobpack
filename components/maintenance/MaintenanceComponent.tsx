@@ -45,6 +45,7 @@ import {
 } from '@nextui-org/react';
 import {
   AlarmClock,
+  Check,
   CheckCircle2,
   ChevronDown,
   ChevronLeft,
@@ -56,6 +57,7 @@ import {
   MoreVertical,
   PackagePlus,
   Table2,
+  X,
 } from 'lucide-react';
 import { Border, Cell, Column, Workbook } from 'exceljs';
 import { saveAs } from 'file-saver';
@@ -73,7 +75,9 @@ import {
 } from '@/lib/actions/maintenance';
 import { useCurrentRole } from '@/hooks/use-current-role';
 import { SimplifiedTask } from '@/types/simplified-task';
+import { useMediaQuery } from '@/hooks/use-media-query';
 import Loading from '@/components/Loading';
+import MaintenanceRejectConfirmation from '@/components/maintenance/MaintenanceRejectConfirmation';
 
 interface MaintenanceComponentProps {
   mutatedMaintenance: Awaited<ReturnType<typeof fetchMutatedMaintenanceItem>>;
@@ -94,32 +98,24 @@ export default function MaintenanceComponent({
   const user = useSession();
   const router = useRouter();
   const role = useCurrentRole();
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [mounted, setMounted] = useState(false);
   const [openAddChecklist, setOpenAddChecklist] = useState(false);
   const [newChecklistDescription, setNewChecklistDescription] = useState('');
   const [selectedAsset, setSelectedAsset] = useState<any>([]);
+  const [openRejectConfirmation, setOpenRejectConfirmation] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedSaveOption, setSelectedSaveOption] = useState(
     new Set(['saveOnly']),
   );
-  const [isDesktop, setDesktop] = useState(window.innerWidth > 650);
 
   const selectedSaveOptionCurrent = Array.from(selectedSaveOption)[0];
 
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  useEffect(() => {
-    window.addEventListener('resize', updateMedia);
-    return () => window.removeEventListener('resize', updateMedia);
-  }, []);
-
-  function updateMedia() {
-    setDesktop(window.innerWidth > 650);
-  }
 
   function handleAction(key: Key) {
     switch (key) {
@@ -199,6 +195,44 @@ export default function MaintenanceComponent({
         closedById: user.data.user.id,
       }).then(res => console.log(res));
     });
+  }
+
+  function handleApproveMaintenance() {
+    if (
+      user.data === null ||
+      user.data?.user.id === undefined ||
+      user.data?.user.id === null
+    ) {
+      console.error('session expired');
+      return;
+    }
+
+    startTransition(() => {
+      toast.promise(
+        updateMaintenance(maintenance.id, {
+          isRequested: false,
+          isOpen: true,
+        }),
+        {
+          loading: 'Approving maintenance...',
+          success: res => {
+            router.refresh();
+            console.log(res);
+            return 'Maintenance approved! Technician can now start working on it.';
+          },
+          error: 'Failed to approve maintenance 😥',
+        },
+      );
+    });
+  }
+
+  function handleRejectMaintenance() {
+    setOpenRejectConfirmation(true);
+  }
+
+  function handleCloseRejectConfirmation() {
+    setOpenRejectConfirmation(false);
+    router.refresh();
   }
 
   function handleUploadExcel(event: ChangeEvent<HTMLInputElement>) {
@@ -606,11 +640,11 @@ export default function MaintenanceComponent({
             Back
           </Button>
           <h2 className="text-medium sm:text-xl font-semibold">
-            {maintenance.id} {maintenance.isClose ? 'Closed' : 'Open'}
+            {maintenance.id}
           </h2>
         </div>
         <div className="space-x-2 sm:space-x-4">
-          {isDesktop && (
+          {isDesktop && !maintenance.isRequested && (
             <ButtonGroup>
               <Button
                 size="sm"
@@ -640,7 +674,7 @@ export default function MaintenanceComponent({
           )}
           <Dropdown>
             <DropdownTrigger>
-              <Button isIconOnly size="sm" variant="faded">
+              <Button isIconOnly size="sm" variant="light">
                 <MoreVertical size={18} />
               </Button>
             </DropdownTrigger>
@@ -669,14 +703,13 @@ export default function MaintenanceComponent({
                   key="download-excel"
                   startContent={<FileDown size={18} />}
                 >
+                  {/* TODO: Should not be here if its a request */}
                   Download Excel
                 </DropdownItem>
                 <DropdownItem
                   key="download-pdf"
                   startContent={<Table2 size={18} />}
                 >
-                  {/* TODO: figure out how to optimize this behavior */}
-                  {/* <MaintenanceForm maintenance={maintenance} /> */}
                   Download PDF
                 </DropdownItem>
                 <DropdownItem
@@ -742,6 +775,33 @@ export default function MaintenanceComponent({
           </Dropdown>
         </div>
       </div>
+      {maintenance.isRequested && (
+        <div className="flex items-center mt-4 px-4 py-2 rounded bg-white dark:bg-zinc-700 justify-between ">
+          <span className="text-medium font-medium">
+            Approve this maintenance request by {maintenance.requestedById}
+          </span>
+          <ButtonGroup>
+            <Button
+              size="sm"
+              variant="faded"
+              color="success"
+              startContent={<Check size={18} />}
+              onClick={handleApproveMaintenance}
+            >
+              Approve
+            </Button>
+            <Button
+              size="sm"
+              variant="faded"
+              color="danger"
+              startContent={<X size={18} />}
+              onClick={handleRejectMaintenance}
+            >
+              Reject
+            </Button>
+          </ButtonGroup>
+        </div>
+      )}
       <div className="flex flex-col my-4 ">
         <Table isStriped removeWrapper hideHeader aria-label="Asset info table">
           <TableHeader>
@@ -870,6 +930,11 @@ export default function MaintenanceComponent({
           <div className="flex-shrink-0 w-full p-1 rounded-2xl">{children}</div>
         </div>
       </div>
+      <MaintenanceRejectConfirmation
+        open={openRejectConfirmation}
+        onClose={handleCloseRejectConfirmation}
+        maintenance={maintenance}
+      />
     </div>
   );
 }

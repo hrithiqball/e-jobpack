@@ -201,6 +201,7 @@ export async function updateMaintenance(
     const validatedFields = UpdateMaintenance.safeParse(values);
 
     if (!validatedFields.success) {
+      console.error(validatedFields.error);
       throw new Error(validatedFields.error.message);
     }
 

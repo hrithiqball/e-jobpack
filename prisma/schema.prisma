@@ -171,8 +171,8 @@ model Maintenance {
   requestedById  String?     @map("requested_by_id")
   requestedOn    DateTime?   @default(now()) @map("requested_on")
   isRequested    Boolean     @default(false) @map("is_requested")
-  isAccepted     Boolean     @default(false) @map("is_accepted")
   isRejected     Boolean     @default(false) @map("is_rejected")
+  rejectedOn     DateTime?   @map("rejected_on")
   rejectedById   String?     @map("rejected_by_id")
   rejectReason   String?     @map("reject_reason")
   checklist      Checklist[]

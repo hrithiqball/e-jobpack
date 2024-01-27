@@ -154,7 +154,7 @@ export default function AssetTable({
       cell: ({ row }) => {
         return (
           <Link
-            href={`/asset/${row.original.id}?tabs=details`}
+            href={`/asset/${row.original.id}?tab=details`}
             className="hover:text-blue-500 hover:underline"
           >
             {row.getValue('name')}

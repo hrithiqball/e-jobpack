@@ -29,6 +29,7 @@ import AssetDetails from '@/components/asset/AssetDetails';
 import AssetMaintenance from '@/components/asset/AssetMaintenance';
 import AssetAttachment from '@/components/asset/AssetAttachment';
 import { fetchMutatedAssetItem } from '@/lib/actions/asset';
+import { useMediaQuery } from '@/hooks/use-media-query';
 
 interface AssetItemComponentProps {
   mutatedAsset: Awaited<ReturnType<typeof fetchMutatedAssetItem>>;
@@ -50,30 +51,20 @@ export default function AssetItemComponent({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const isDesktop = useMediaQuery('(min-width: 768px)');
 
   const [mounted, setMounted] = useState(false);
-  const [isDesktop, setDesktop] = useState(window.innerWidth > 650);
 
   const tab = searchParams.get('tab');
-
-  useEffect(() => {
-    window.addEventListener('resize', updateMedia);
-    return () => window.removeEventListener('resize', updateMedia);
-  }, []);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  function updateMedia() {
-    setDesktop(window.innerWidth > 650);
-  }
-
   function handleTabChange(key: Key) {
     router.push(`${pathname}?tab=${key}`);
   }
 
-  //if (!mounted) return <Loading label="Hang on tight" />;
   if (!mounted) return null;
 
   return (
@@ -115,8 +106,7 @@ export default function AssetItemComponent({
                     <span>
                       {
                         maintenanceList.filter(
-                          maintenance =>
-                            maintenance.isOpen || maintenance.isClose,
+                          maintenance => !maintenance.isRejected,
                         ).length
                       }
                     </span>
@@ -144,7 +134,13 @@ export default function AssetItemComponent({
                   {tab!.charAt(0).toUpperCase() + tab!.slice(1)}
                   {tab === 'maintenance' && (
                     <Chip size="sm" variant="faded">
-                      <span>{maintenanceList.length}</span>
+                      <span>
+                        {
+                          maintenanceList.filter(
+                            maintenance => !maintenance.isRejected,
+                          ).length
+                        }
+                      </span>
                     </Chip>
                   )}
                   {tab === 'attachment' && (
@@ -162,7 +158,13 @@ export default function AssetItemComponent({
                 <DropdownItem key="maintenance">
                   Maintenance
                   <Chip className="ml-1" size="sm" variant="faded">
-                    <span>{maintenanceList.length}</span>
+                    <span>
+                      {
+                        maintenanceList.filter(
+                          maintenance => !maintenance.isRejected,
+                        ).length
+                      }
+                    </span>
                   </Chip>
                 </DropdownItem>
                 <DropdownItem key="attachment">

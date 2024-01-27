@@ -19,7 +19,7 @@ export default function ChecklistItemComponent({
   children,
 }: ChecklistItemComponentProps) {
   return (
-    <Card shadow="sm" className="flex-1 space-y-4 p-4">
+    <Card shadow="none" className="flex-1 space-y-4 p-4">
       <div className="flex justify-between items-center">
         <span className="font-bold text-lg">{asset.name}</span>
         <AssetActions checklist={checklist} />
