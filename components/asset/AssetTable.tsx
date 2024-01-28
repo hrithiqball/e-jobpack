@@ -82,7 +82,6 @@ export default function AssetTable({
   let [isPending, startTransition] = useTransition();
   const user = useCurrentUser();
   const role = useCurrentRole();
-  // const pic = assetList[0].userAssetCreatedByToUser
 
   const [assetIds, setAssetIds] = useState<string[]>([]);
   const [openAddMaintenanceModal, setOpenAddMaintenanceModal] = useState(false);
@@ -101,30 +100,34 @@ export default function AssetTable({
     updatedBy: false,
   });
 
-  const columns: ColumnDef<Asset>[] = [
+  const columns: ColumnDef<AssetList[0]>[] = [
     {
       id: 'select',
       header: ({ table }) => {
         return (
-          <Checkbox
-            isSelected={
-              table.getIsAllPageRowsSelected() ||
-              table.getIsSomePageRowsSelected()
-            }
-            isIndeterminate={table.getIsSomePageRowsSelected()}
-            onValueChange={value =>
-              table.toggleAllPageRowsSelected(Boolean(value))
-            }
-          />
+          <div className="text-center">
+            <Checkbox
+              isSelected={
+                table.getIsAllPageRowsSelected() ||
+                table.getIsSomePageRowsSelected()
+              }
+              isIndeterminate={table.getIsSomePageRowsSelected()}
+              onValueChange={value =>
+                table.toggleAllPageRowsSelected(Boolean(value))
+              }
+            />
+          </div>
         );
       },
       cell: ({ row }) => {
         return (
-          <Checkbox
-            isSelected={row.getIsSelected()}
-            isIndeterminate={row.getIsSomeSelected()}
-            onValueChange={value => row.toggleSelected(Boolean(value))}
-          />
+          <div className="text-center">
+            <Checkbox
+              isSelected={row.getIsSelected()}
+              isIndeterminate={row.getIsSomeSelected()}
+              onValueChange={value => row.toggleSelected(Boolean(value))}
+            />
+          </div>
         );
       },
       enableSorting: false,
@@ -136,8 +139,9 @@ export default function AssetTable({
         return (
           <Button
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            variant="flat"
+            variant="faded"
             size="sm"
+            color="primary"
             endContent={
               column.getIsSorted() === 'desc' ? (
                 <ArrowDown size={15} />
@@ -169,8 +173,9 @@ export default function AssetTable({
         return (
           <Button
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            variant="flat"
+            variant="faded"
             size="sm"
+            color="primary"
             endContent={
               column.getIsSorted() === 'desc' ? (
                 <ArrowDown size={15} />
@@ -192,8 +197,9 @@ export default function AssetTable({
         return (
           <Button
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            variant="flat"
+            variant="faded"
             size="sm"
+            color="primary"
             endContent={
               column.getIsSorted() === 'desc' ? (
                 <ArrowDown size={15} />
@@ -208,13 +214,14 @@ export default function AssetTable({
       },
     },
     {
-      accessorKey: 'type',
+      accessorKey: 'assetType',
       header: ({ column }) => {
         return (
           <Button
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            variant="flat"
+            variant="faded"
             size="sm"
+            color="primary"
             endContent={
               column.getIsSorted() === 'desc' ? (
                 <ArrowDown size={15} />
@@ -230,7 +237,7 @@ export default function AssetTable({
         );
       },
       cell: ({ row }) => {
-        const type: AssetType = row.getValue('type');
+        const type: AssetType = row.getValue('assetType');
 
         return (
           <span>
@@ -242,13 +249,14 @@ export default function AssetTable({
       },
     },
     {
-      accessorKey: 'status',
+      accessorKey: 'assetStatus',
       header: ({ column }) => {
         return (
           <Button
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            variant="flat"
+            variant="faded"
             size="sm"
+            color="primary"
             endContent={
               column.getIsSorted() === 'desc' ? (
                 <ArrowDown size={15} />
@@ -264,7 +272,7 @@ export default function AssetTable({
         );
       },
       cell: ({ row }) => {
-        const status: AssetStatus = row.getValue('status');
+        const status: AssetStatus = row.getValue('assetStatus');
 
         function handleStatusChange(key: Key) {
           startTransition(() => {
@@ -294,6 +302,7 @@ export default function AssetTable({
               <Chip
                 size="sm"
                 variant="faded"
+                onClick={() => console.log(status)}
                 startContent={
                   <div
                     style={{ backgroundColor: status?.color ?? 'grey' }}
@@ -337,8 +346,9 @@ export default function AssetTable({
         return (
           <Button
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            variant="flat"
+            variant="faded"
             size="sm"
+            color="primary"
             endContent={
               column.getIsSorted() === 'desc' ? (
                 <ArrowDown size={15} />
@@ -369,8 +379,9 @@ export default function AssetTable({
         return (
           <Button
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            variant="flat"
+            variant="faded"
             size="sm"
+            color="primary"
             endContent={
               column.getIsSorted() === 'desc' ? (
                 <ArrowDown size={15} />
@@ -401,8 +412,9 @@ export default function AssetTable({
         return (
           <Button
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            variant="flat"
+            variant="faded"
             size="sm"
+            color="primary"
             endContent={
               column.getIsSorted() === 'desc' ? (
                 <ArrowDown size={15} />
@@ -431,13 +443,14 @@ export default function AssetTable({
       },
     },
     {
-      accessorKey: 'userAssetPersonInChargeToUser',
+      accessorKey: 'personInCharge',
       header: ({ column }) => {
         return (
           <Button
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            variant="flat"
+            variant="faded"
             size="sm"
+            color="primary"
             endContent={
               column.getIsSorted() === 'desc' ? (
                 <ArrowDown size={15} />
@@ -451,7 +464,7 @@ export default function AssetTable({
         );
       },
       cell: ({ row }) => {
-        const pic: User = row.getValue('userAssetPersonInChargeToUser');
+        const pic: User = row.getValue('personInCharge');
 
         return (
           <div className="flex items-center">
@@ -471,13 +484,14 @@ export default function AssetTable({
       },
     },
     {
-      accessorKey: 'userAssetCreatedByToUser',
+      accessorKey: 'createdBy',
       header: ({ column }) => {
         return (
           <Button
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            variant="flat"
+            variant="faded"
             size="sm"
+            color="primary"
             endContent={
               column.getIsSorted() === 'desc' ? (
                 <ArrowDown size={15} />
@@ -491,7 +505,7 @@ export default function AssetTable({
         );
       },
       cell: ({ row }) => {
-        const user: User = row.getValue('userAssetCreatedByToUser');
+        const user: User = row.getValue('createdBy');
 
         return (
           <div className="flex items-center">
@@ -511,13 +525,14 @@ export default function AssetTable({
       },
     },
     {
-      accessorKey: 'userAssetUpdatedByToUser',
+      accessorKey: 'updatedBy',
       header: ({ column }) => {
         return (
           <Button
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            variant="flat"
+            variant="faded"
             size="sm"
+            color="primary"
             endContent={
               column.getIsSorted() === 'desc' ? (
                 <ArrowDown size={15} />
@@ -531,7 +546,7 @@ export default function AssetTable({
         );
       },
       cell: ({ row }) => {
-        const user: User = row.getValue('userAssetUpdatedByToUser');
+        const user: User = row.getValue('updatedBy');
 
         return (
           <div className="flex items-center">
@@ -556,32 +571,39 @@ export default function AssetTable({
     columns.push({
       id: 'actions',
       header: () => null,
+      meta: { align: 'right' },
       cell: ({ row }) => {
         return (
-          <Dropdown>
-            <DropdownTrigger>
-              <Button variant="light" size="sm" isIconOnly>
-                <MoreHorizontal size={18} />
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu onAction={handleAssetAction(row.original.id)}>
-              <DropdownItem
-                key="archive-asset"
-                variant="faded"
-                startContent={<Archive size={18} />}
+          <div className="text-right">
+            <Dropdown>
+              <DropdownTrigger>
+                <Button variant="light" size="sm" isIconOnly>
+                  <MoreHorizontal size={18} />
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                color="primary"
+                variant="light"
+                onAction={handleAssetAction(row.original.id)}
               >
-                Archive Asset
-              </DropdownItem>
-              <DropdownItem
-                key="delete-asset"
-                variant="faded"
-                color="danger"
-                startContent={<PackageMinus size={18} />}
-              >
-                Delete Asset
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
+                <DropdownItem
+                  key="archive-asset"
+                  variant="faded"
+                  startContent={<Archive size={18} />}
+                >
+                  Archive Asset
+                </DropdownItem>
+                <DropdownItem
+                  key="delete-asset"
+                  variant="faded"
+                  color="danger"
+                  startContent={<PackageMinus size={18} />}
+                >
+                  Delete Asset
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          </div>
         );
       },
       enableSorting: false,
@@ -647,7 +669,7 @@ export default function AssetTable({
         return;
       }
 
-      if (!isPending) console.debug('archiving');
+      if (!isPending) console.log('archiving');
 
       toast.promise(updateAsset(user.id, assetId, { isArchive: true }), {
         loading: 'Archiving asset...',
@@ -778,7 +800,7 @@ export default function AssetTable({
         </div>
       </div>
       <div className="flex flex-1 flex-col">
-        <Table className="flex-1 rounded">
+        <Table>
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id} noHover>
