@@ -1,6 +1,5 @@
 import AssetItemComponent from '@/components/asset/AssetItemComponent';
 import { fetchMaintenanceList } from '@/lib/actions/maintenance';
-import { fetchChecklistUseList } from '@/lib/actions/checklist-use';
 import { fetchMutatedAssetItem } from '@/lib/actions/asset';
 import { fetchUserList } from '@/lib/actions/user';
 import { fetchAssetStatusList } from '@/lib/actions/asset-status';
@@ -15,7 +14,6 @@ export default async function AssetItemPage({ params }: AssetItemPageProps) {
   const statusList = await fetchAssetStatusList();
   const typeList = await fetchAssetTypeList();
   const maintenanceList = await fetchMaintenanceList(params.id);
-  const checklistUse = await fetchChecklistUseList(params.id);
   const userList = await fetchUserList();
 
   return (
@@ -25,7 +23,6 @@ export default async function AssetItemPage({ params }: AssetItemPageProps) {
         statusList={statusList}
         typeList={typeList}
         maintenanceList={maintenanceList}
-        checklistUse={checklistUse}
         userList={userList}
       />
     </div>

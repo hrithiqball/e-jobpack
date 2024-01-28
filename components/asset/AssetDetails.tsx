@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { AssetStatus, AssetType, ChecklistUse, User } from '@prisma/client';
+import { AssetStatus, AssetType, User } from '@prisma/client';
 
 import DetailsWidget from '@/components/asset/DetailsWidget';
 import TeamWidget from '@/components/asset/TeamWidget';
@@ -12,7 +12,6 @@ interface AssetDetailsProps {
   mutatedAsset: MutatedAsset;
   statusList: AssetStatus[];
   typeList: AssetType[];
-  checklistUse: ChecklistUse[];
   userList: User[];
 }
 
@@ -20,7 +19,6 @@ export default function AssetDetails({
   mutatedAsset,
   statusList,
   typeList,
-  checklistUse,
   userList,
 }: AssetDetailsProps) {
   return (
@@ -36,7 +34,7 @@ export default function AssetDetails({
             personInCharge={mutatedAsset.personInCharge}
             maintainee={mutatedAsset.lastMaintainee}
           />
-          <ChecklistWidget checklistUse={checklistUse} />
+          <ChecklistWidget />
           <MaintenanceWidget mutatedAsset={mutatedAsset} userList={userList} />
         </div>
       </div>

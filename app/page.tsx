@@ -6,7 +6,7 @@ export default async function Index() {
   return (
     <div className="flex flex-1 flex-col items-center justify-center">
       <AuthButton />
-      <Link href="/sign-up">Sign Up</Link>
+      <Link href="/auth/register">Sign Up</Link>
     </div>
   );
 }

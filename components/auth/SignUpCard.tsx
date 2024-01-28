@@ -19,6 +19,7 @@ import { createUser } from '@/lib/actions/user';
 export default function SignUpCard() {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -32,14 +33,10 @@ export default function SignUpCard() {
 
     try {
       startTransition(() => {
-        isPending = true;
         createUser(name, email, password)
           .then(res => {
-            if (isPending) console.log(res);
-            isPending = false;
-
             router.replace('/auth/login');
-            toast.success('User created successfully');
+            toast.success(`User ${res.name} created successfully`);
           })
           .catch(err => {
             console.error(err);
@@ -123,7 +120,12 @@ export default function SignUpCard() {
           className="mt-4 mb-4"
         />
         <Divider />
-        <Button variant="faded" className="w-full mt-4" onClick={signUpClient}>
+        <Button
+          isDisabled={isPending}
+          variant="faded"
+          className="w-full mt-4"
+          onClick={signUpClient}
+        >
           Sign Up
         </Button>
         <Link

@@ -3,13 +3,7 @@
 import React, { Key } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 
-import {
-  AssetStatus,
-  AssetType,
-  ChecklistUse,
-  Maintenance,
-  User,
-} from '@prisma/client';
+import { AssetStatus, AssetType, Maintenance, User } from '@prisma/client';
 
 import {
   Button,
@@ -35,7 +29,6 @@ interface AssetItemComponentProps {
   statusList: AssetStatus[];
   typeList: AssetType[];
   maintenanceList: Maintenance[];
-  checklistUse: ChecklistUse[];
   userList: User[];
 }
 
@@ -44,7 +37,6 @@ export default function AssetItemComponent({
   statusList,
   typeList,
   maintenanceList,
-  checklistUse,
   userList,
 }: AssetItemComponentProps) {
   const router = useRouter();
@@ -176,7 +168,6 @@ export default function AssetItemComponent({
             mutatedAsset={mutatedAsset}
             statusList={statusList}
             typeList={typeList}
-            checklistUse={checklistUse}
             userList={userList}
           />
         )}
