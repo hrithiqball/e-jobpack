@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import React, { KeyboardEvent, useMemo, useState, useTransition } from 'react';
@@ -20,7 +22,7 @@ export enum InputType {
 }
 
 export default function SubtaskItem({ subtask }: { subtask: Subtask }) {
-  let [isPending, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
 
   const [subtaskIsComplete, setSubtaskIsComplete] = useState(
     subtask.isComplete,
@@ -49,7 +51,7 @@ export default function SubtaskItem({ subtask }: { subtask: Subtask }) {
     return (event: KeyboardEvent<HTMLInputElement>) => {
       if (event.key === 'Enter') return;
 
-      let updateSubtask: z.infer<typeof UpdateSubtask> = {};
+      const updateSubtask: z.infer<typeof UpdateSubtask> = {};
       switch (type) {
         case InputType.remarks:
           updateSubtask.remarks = subtaskRemarks;

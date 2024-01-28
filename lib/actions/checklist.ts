@@ -51,6 +51,22 @@ export async function fetchChecklistList(maintenanceId?: string) {
       where: {
         AND: filters,
       },
+      include: {
+        maintenance: true,
+        updatedBy: true,
+        createdBy: true,
+        asset: true,
+        task: {
+          include: {
+            subtask: {
+              include: {
+                task: true,
+              },
+            },
+            checklist: true,
+          },
+        },
+      },
     });
   } catch (error) {
     console.error(error);

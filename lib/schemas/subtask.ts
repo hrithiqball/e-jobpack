@@ -1,3 +1,4 @@
+import { TaskType } from '@prisma/client';
 import z from 'zod';
 
 export const CreateSubtask = z.object({
@@ -32,3 +33,12 @@ export const UpdateSubtask = z.object({
   taskSelected: z.string().array().optional(),
   taskNumberVal: z.number().optional(),
 });
+
+export const CreateSubtaskLibrarySchema = z.object({
+  taskActivity: z.string().min(1, { message: 'Task Activity is required' }),
+  description: z.string().optional().nullable(),
+  listChoice: z.array(z.string()).optional(),
+  taskType: z.nativeEnum(TaskType),
+});
+
+export type CreateSubtaskLibrary = z.infer<typeof CreateSubtaskLibrarySchema>;

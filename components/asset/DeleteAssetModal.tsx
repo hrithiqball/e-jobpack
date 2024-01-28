@@ -25,7 +25,7 @@ export default function DeleteAssetModal({
   onClose,
   assetId,
 }: DeleteAssetModalProps) {
-  let [isPending, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
   const user = useCurrentUser();
 
   function handleDeleteAsset() {

@@ -1,5 +1,5 @@
-import React, { Key, useState, useTransition } from 'react';
-import { Checklist } from '@prisma/client';
+import { Key, useState, useTransition } from 'react';
+
 import {
   Button,
   Dropdown,
@@ -10,6 +10,7 @@ import {
 import {
   FileBox,
   FilePlus2,
+  FileSymlink,
   ImagePlus,
   MoreVertical,
   PackageCheck,
@@ -17,26 +18,30 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import TaskAdd from '@/components/task/TaskAdd';
+import { MutatedMaintenance } from '@/types/maintenance';
 import { updateChecklist } from '@/lib/actions/checklist';
 import { useCurrentRole } from '@/hooks/use-current-role';
 import { useCurrentUser } from '@/hooks/use-current-user';
+import TaskAdd from '@/components/task/TaskAdd';
+import ChecklistExportModal from '@/components/checklist/ChecklistExportModal';
 
 interface AssetActionsProps {
-  checklist: Checklist;
+  checklist: MutatedMaintenance['checklist'][0];
 }
 
-export default function AssetActions({ checklist }: AssetActionsProps) {
-  let [isPending, startTransition] = useTransition();
+export default function ChecklistActions({ checklist }: AssetActionsProps) {
+  const [isPending, startTransition] = useTransition();
   const role = useCurrentRole();
   const user = useCurrentUser();
 
-  const [open, setOpen] = useState(false);
+  const [isTaskAddOpenModal, setIsTaskAddOpenModal] = useState(false);
+  const [isChecklistExportModalOpen, setIsChecklistExportModalOpen] =
+    useState(false);
 
   function handleAction(key: Key) {
     switch (key) {
       case 'add-task':
-        setOpen(true);
+        setIsTaskAddOpenModal(true);
         break;
 
       //TODO: implement this
@@ -73,9 +78,18 @@ export default function AssetActions({ checklist }: AssetActionsProps) {
       case 'import-checklist':
         break;
 
-      default:
+      case 'export-checklist':
+        setIsChecklistExportModalOpen(true);
         break;
     }
+  }
+
+  function handleCloseTaskAddModal() {
+    setIsTaskAddOpenModal(false);
+  }
+
+  function handleCloseChecklistExportModal() {
+    setIsChecklistExportModalOpen(false);
   }
 
   return (
@@ -88,10 +102,16 @@ export default function AssetActions({ checklist }: AssetActionsProps) {
         </DropdownTrigger>
         <DropdownMenu
           aria-label="Actions"
+          color="primary"
           disabledKeys={
             role === 'ADMIN' || role === 'SUPERVISOR'
               ? []
-              : ['import-checklist', 'delete-asset', 'close-checklist']
+              : [
+                  'import-checklist',
+                  'export-checklist',
+                  'delete-asset',
+                  'close-checklist',
+                ]
           }
           onAction={handleAction}
         >
@@ -117,6 +137,13 @@ export default function AssetActions({ checklist }: AssetActionsProps) {
             Import checklist
           </DropdownItem>
           <DropdownItem
+            key="export-checklist"
+            variant="faded"
+            startContent={<FileSymlink size={18} />}
+          >
+            Export Checklist
+          </DropdownItem>
+          <DropdownItem
             key="close-checklist"
             variant="faded"
             startContent={<PackageCheck size={18} />}
@@ -134,7 +161,16 @@ export default function AssetActions({ checklist }: AssetActionsProps) {
           </DropdownItem>
         </DropdownMenu>
       </Dropdown>
-      <TaskAdd setOpen={setOpen} open={open} checklist={checklist} />
+      <TaskAdd
+        open={isTaskAddOpenModal}
+        onClose={handleCloseTaskAddModal}
+        checklist={checklist}
+      />
+      <ChecklistExportModal
+        open={isChecklistExportModalOpen}
+        onClose={handleCloseChecklistExportModal}
+        checklist={checklist}
+      />
     </div>
   );
 }

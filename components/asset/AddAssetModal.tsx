@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -35,7 +36,7 @@ export default function AddAssetModal({
   assetStatusList,
   assetTypeList,
 }: AddAssetModalProps) {
-  let [isPending, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const user = useCurrentUser();
 

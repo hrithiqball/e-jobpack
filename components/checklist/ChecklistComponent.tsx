@@ -1,12 +1,9 @@
-import React, { Fragment } from 'react';
-
-import { Checklist } from '@prisma/client';
-
 import MaintenanceChecklist from '@/app/_components/MaintenanceChecklist';
 import ClosedChecklist from '@/components/checklist/ClosedChecklist';
+import { MutatedMaintenance } from '@/types/maintenance';
 
 interface ChecklistComponentProps {
-  checklistList: Checklist[];
+  checklistList: MutatedMaintenance['checklist'];
 }
 
 export default function ChecklistComponent({
@@ -24,9 +21,7 @@ export default function ChecklistComponent({
       {checklistList
         .filter(checklist => !checklist.isClose)
         .map(checklist => (
-          <Fragment key={checklist.id}>
-            <MaintenanceChecklist checklist={checklist} />
-          </Fragment>
+          <MaintenanceChecklist key={checklist.id} checklist={checklist} />
         ))}
     </div>
   );

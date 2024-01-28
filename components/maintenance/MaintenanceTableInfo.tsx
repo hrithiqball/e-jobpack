@@ -24,10 +24,8 @@ export default function MaintenanceTableInfo({
           </TableCell>
           <TableCell>
             <span>
-              {maintenance.maintenance.deadline
-                ? dayjs(maintenance.maintenance.deadline).format(
-                    'DD/MM/YYYY hh:mmA',
-                  )
+              {maintenance.deadline
+                ? dayjs(maintenance.deadline).format('DD/MM/YYYY hh:mmA')
                 : 'Not Specified'}
             </span>
           </TableCell>

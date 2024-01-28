@@ -32,15 +32,16 @@ import { updateChecklist } from '@/lib/actions/checklist';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { complete } from '@/lib/color';
+import { MutatedMaintenance } from '@/types/maintenance';
 
 interface CloseChecklistProps {
-  checklistList: Checklist[];
+  checklistList: MutatedMaintenance['checklist'];
 }
 
 export default function ClosedChecklist({
   checklistList,
 }: CloseChecklistProps) {
-  let [isPending, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
   const user = useCurrentUser();
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const router = useRouter();

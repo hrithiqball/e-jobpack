@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import React, {
@@ -58,7 +60,7 @@ export default function MaintenanceComponent({
   assetList,
   children,
 }: MaintenanceComponentProps) {
-  let [isPending, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
   const user = useCurrentUser();
   const router = useRouter();
   const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -186,7 +188,7 @@ export default function MaintenanceComponent({
         //const worksheet = workbook.getWorksheet(1);
         const worksheet = workbook.worksheets[0];
 
-        let simplifiedTask: SimplifiedTask[] = [];
+        const simplifiedTask: SimplifiedTask[] = [];
 
         for (let index = 9; index <= worksheet.rowCount; index++) {
           const row = worksheet.getRow(index);

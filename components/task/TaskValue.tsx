@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useTransition } from 'react';
 
 import { z } from 'zod';
@@ -15,7 +16,7 @@ interface TaskValueProps {
 }
 
 export default function TaskValue({ task }: TaskValueProps) {
-  let [isPending, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
   const user = useCurrentUser();
 
   const [taskIsComplete, setTaskIsComplete] = useState(task.isComplete);
@@ -79,7 +80,7 @@ export default function TaskValue({ task }: TaskValueProps) {
     case 'CHECK':
       return (
         <Checkbox
-          disabled={isPending}
+          isDisabled={isPending}
           aria-label="Task Checkbox"
           isSelected={taskIsComplete}
           onValueChange={() => {

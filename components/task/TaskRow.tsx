@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import React, { Key, useMemo, useState, useTransition } from 'react';
@@ -36,7 +38,7 @@ interface TaskRowProps {
 }
 
 export default function TaskRow({ task }: TaskRowProps) {
-  let [isPending, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const user = useCurrentUser();
 

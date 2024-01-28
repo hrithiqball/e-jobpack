@@ -22,3 +22,14 @@ export const UpdateChecklist = z.object({
   icon: z.string().optional(),
   isClose: z.boolean().optional(),
 });
+
+export const CreateChecklistLibrarySchema = z.object({
+  title: z.string().min(1, { message: 'Missing title' }),
+  description: z.string().optional(),
+});
+
+export type CreateChecklistS = z.infer<typeof CreateChecklist>;
+export type UpdateChecklistS = z.infer<typeof UpdateChecklist>;
+export type CreateChecklistLibrary = z.infer<
+  typeof CreateChecklistLibrarySchema
+>;

@@ -5,7 +5,7 @@ import React, { useTransition } from 'react';
 import { toast } from 'sonner';
 
 export default function TestComponent() {
-  let [isPending, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
 
   function handleClick() {
     startTransition(() => {

@@ -30,7 +30,9 @@ export default async function TaskItemPage({ params }: TaskItemPageProps) {
         assetList={assetList}
         checklistList={checklistList}
       >
-        <MaintenanceChecklistList checklistList={checklistList} />
+        <MaintenanceChecklistList
+          checklistList={mutatedMaintenance.checklist}
+        />
       </MaintenanceComponent>
     </div>
   );

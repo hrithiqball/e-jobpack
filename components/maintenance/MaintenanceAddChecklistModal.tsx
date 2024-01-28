@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useTransition } from 'react';
 
 import { Asset, ChecklistLibrary } from '@prisma/client';
@@ -42,7 +43,7 @@ export default function MaintenanceAddChecklistModal({
   checklistLibraryList,
   selectedSaveOptionCurrent,
 }: MaintenanceAddChecklistModalProps) {
-  let [isPending, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
   const user = useCurrentUser();
 
   const [selectedAsset, setSelectedAsset] = useState<any>([]);
@@ -61,7 +62,7 @@ export default function MaintenanceAddChecklistModal({
         createChecklist({
           assetId: selectedAsset.currentKey,
           createdById: user.id,
-          maintenanceId: maintenance.maintenance.id,
+          maintenanceId: maintenance.id,
           description,
         }),
         {
@@ -108,7 +109,7 @@ export default function MaintenanceAddChecklistModal({
           </Select>
         </ModalBody>
         <ModalFooter>
-          <Button color="danger" disabled={isPending} onClick={onClose}>
+          <Button color="danger" isDisabled={isPending} onClick={onClose}>
             Cancel
           </Button>
           <ButtonGroup>
@@ -120,7 +121,7 @@ export default function MaintenanceAddChecklistModal({
             </Button>
             <Dropdown placement="bottom-end">
               <DropdownTrigger>
-                <Button isIconOnly disabled={isPending}>
+                <Button isIconOnly isDisabled={isPending}>
                   <ChevronDown size={18} />
                 </Button>
               </DropdownTrigger>

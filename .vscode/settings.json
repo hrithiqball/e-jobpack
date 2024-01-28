@@ -1,15 +1,15 @@
 {
-  "material-icon-theme.activeIconPack": "react_redux",
+  "material-icon-theme.activeIconPack": "react",
   "material-icon-theme.files.associations": {
     "prisma/prisma.ts": "prisma",
     "cspell.json": "todo"
   },
   "material-icon-theme.folders.associations": {
-    "utils/actions": "connection",
-    "lib/redux": "redux-actions",
     "asset": "",
-    "callback": "error",
     "(route)": "routes",
-    "actions": "tasks"
-  }
+    "actions": "next",
+    "_components": "react-components",
+    "components/ui": "packages"
+  },
+  "typescript.tsdk": "node_modules\\typescript\\lib"
 }

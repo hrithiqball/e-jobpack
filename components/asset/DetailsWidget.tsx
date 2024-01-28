@@ -51,7 +51,7 @@ export default function DetailsWidget({
   statusList,
   typeList,
 }: DetailsWidgetProps) {
-  let [isPending, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
   const user = useCurrentUser();
   const role = useCurrentRole();
   // const { control, handleSubmit } = useForm<z.infer<typeof UpdateAsset>>();

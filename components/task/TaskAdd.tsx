@@ -1,7 +1,7 @@
-'use client';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { ChangeEvent, Fragment, useState, useTransition } from 'react';
-import { TaskType, Checklist } from '@prisma/client';
+import { TaskType } from '@prisma/client';
 import { useRouter } from 'next/navigation';
 
 import {
@@ -22,28 +22,31 @@ import { Trash2 } from 'lucide-react';
 import { createTask } from '@/lib/actions/task';
 import { selectionChoices } from '@/public/utils/task-type-options';
 import { CreateTask } from '@/lib/schemas/task';
+import { MutatedMaintenance } from '@/types/maintenance';
+
+type SubtaskOptions = {
+  title: string;
+  description: string;
+  type: TaskType;
+  listOptions?: string[];
+};
 
 interface TaskAddProps {
-  checklist: Checklist;
+  checklist: MutatedMaintenance['checklist'][0];
   open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  onClose: () => void;
 }
 
-export default function TaskAdd({ checklist, open, setOpen }: TaskAddProps) {
-  let [isPending, startTransition] = useTransition();
+export default function TaskAdd({ checklist, open, onClose }: TaskAddProps) {
+  const [isPending, startTransition] = useTransition();
   const router = useRouter();
+
   const [taskActivity, setTaskActivity] = useState<string>('');
   const [taskDescription, setTaskDescription] = useState<string>('');
   const [haveSubtask, setHaveSubtask] = useState(false);
   const [selection, setSelection] = useState<TaskType>(TaskType.CHECK);
   const [listCount, setListCount] = useState<number>(1);
   const [choices, setChoices] = useState(Array(listCount).fill('Choice 1'));
-  type SubtaskOptions = {
-    title: string;
-    description: string;
-    type: TaskType;
-    listOptions?: string[];
-  };
   const [subtaskList, setSubtaskList] = useState<SubtaskOptions[]>([]);
 
   function handleSelectionChange(val: any) {
@@ -90,14 +93,14 @@ export default function TaskAdd({ checklist, open, setOpen }: TaskAddProps) {
       createTask({ ...validatedFields.data }, TaskType[selection]).then(res => {
         if (!isPending) console.log(res);
         toast.success('Task added successfully');
-        setOpen(prevOpen => !prevOpen);
+        onClose();
         router.refresh();
       });
     });
   }
 
-  function closeModal() {
-    setOpen(prevOpen => !prevOpen);
+  function handleClose() {
+    onClose();
     setSelection('CHECK');
     setTaskActivity('');
     setTaskDescription('');
@@ -233,7 +236,7 @@ export default function TaskAdd({ checklist, open, setOpen }: TaskAddProps) {
           )}
         </ModalBody>
         <ModalFooter>
-          <Button color="danger" variant="faded" onPress={closeModal}>
+          <Button color="danger" variant="faded" onPress={handleClose}>
             Close
           </Button>
           <Button

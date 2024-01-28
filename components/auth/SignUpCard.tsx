@@ -17,7 +17,7 @@ import { toast } from 'sonner';
 import { createUser } from '@/lib/actions/user';
 
 export default function SignUpCard() {
-  let [isPending, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');

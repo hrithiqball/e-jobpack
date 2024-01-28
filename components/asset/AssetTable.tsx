@@ -79,7 +79,7 @@ export default function AssetTable({
   userList,
   children,
 }: AssetTableProps) {
-  let [isPending, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
   const user = useCurrentUser();
   const role = useCurrentRole();
 
@@ -692,7 +692,7 @@ export default function AssetTable({
       return;
     }
 
-    let assetIds: string[] = [];
+    const assetIds: string[] = [];
 
     table.getSelectedRowModel().flatRows.forEach(row => {
       assetIds.push(row.original.id);
@@ -848,7 +848,7 @@ export default function AssetTable({
             size="sm"
             variant={table.getCanPreviousPage() ? 'ghost' : 'faded'}
             onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+            isDisabled={!table.getCanPreviousPage()}
             className={`${
               table.getCanPreviousPage()
                 ? 'hover:opacity-75'
@@ -872,7 +872,7 @@ export default function AssetTable({
             size="sm"
             variant={table.getCanNextPage() ? 'ghost' : 'faded'}
             onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
+            isDisabled={!table.getCanNextPage()}
             className={`${
               table.getCanNextPage()
                 ? 'hover:opacity-75'

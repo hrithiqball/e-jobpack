@@ -21,8 +21,8 @@ export default function MaintenanceRequestForm({
   return (
     <div className="flex items-center mt-4 px-4 py-2 rounded bg-white dark:bg-zinc-700 justify-between ">
       <span className="text-medium font-medium">
-        Approve this maintenance request by{' '}
-        {maintenance.maintenance.requestedById}
+        Approve this maintenance request by
+        {maintenance.requestedBy?.name}
       </span>
       <ButtonGroup>
         <Button
@@ -31,7 +31,7 @@ export default function MaintenanceRequestForm({
           color="success"
           startContent={<Check size={18} />}
           onClick={handleApproveMaintenance}
-          disabled={isPending}
+          isDisabled={isPending}
         >
           Approve
         </Button>
@@ -41,7 +41,7 @@ export default function MaintenanceRequestForm({
           color="danger"
           startContent={<X size={18} />}
           onClick={handleRejectMaintenance}
-          disabled={isPending}
+          isDisabled={isPending}
         >
           Reject
         </Button>

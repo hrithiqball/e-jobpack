@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { Asset, Maintenance, Prisma } from '@prisma/client';
+import { Maintenance, Prisma } from '@prisma/client';
 import z from 'zod';
 
 import { db } from '@/lib/db';
@@ -84,74 +84,40 @@ export async function fetchMutatedMaintenanceItem(id: string) {
   try {
     const maintenance = await db.maintenance.findUniqueOrThrow({
       where: { id },
-    });
-
-    let assetList: Asset[] = [];
-
-    maintenance.assetIds.forEach(async assetId => {
-      const asset = await db.asset.findUnique({
-        where: { id: assetId },
-      });
-      if (asset) {
-        assetList.push(asset);
-      }
-    });
-
-    const checklistList = await db.checklist.findMany({
-      where: {
-        maintenanceId: id,
+      include: {
+        checklist: {
+          include: {
+            asset: true,
+            createdBy: true,
+            updatedBy: true,
+            task: {
+              orderBy: { taskOrder: 'asc' },
+              include: {
+                subtask: {
+                  orderBy: { taskOrder: 'asc' },
+                },
+              },
+            },
+          },
+        },
+        approvedBy: true,
+        closedBy: true,
+        rejectedBy: true,
+        requestedBy: true,
       },
     });
 
-    const mutatedChecklist = Promise.all(
-      checklistList.map(async checklist => {
-        const taskList = await db.task.findMany({
-          where: {
-            checklistId: checklist.id,
-          },
-        });
-
-        const tasksWithSubtasks = await Promise.all(
-          taskList.map(async task => {
-            if (task.haveSubtask) {
-              const subtaskList = await db.subtask.findMany({
-                where: {
-                  taskId: task.id,
-                },
-              });
-
-              return {
-                ...task,
-                subtasks: subtaskList,
-              };
-            } else {
-              return task;
-            }
-          }),
-        );
-
-        return {
-          ...checklist,
-          tasks: tasksWithSubtasks,
-        };
-      }),
-    );
-
     const assetOptionsList = await db.asset.findMany({
       where: {
-        NOT: {
-          id: {
-            in: maintenance.assetIds,
-          },
+        id: {
+          notIn: maintenance.checklist.map(checklist => checklist.assetId),
         },
       },
     });
 
     return {
-      maintenance,
-      assetList,
+      ...maintenance,
       assetOptionsList,
-      checklists: mutatedChecklist,
     };
   } catch (error) {
     console.error(error);

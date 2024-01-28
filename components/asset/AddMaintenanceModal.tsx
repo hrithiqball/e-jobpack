@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useTransition } from 'react';
 
 import { User } from '@prisma/client';
@@ -39,7 +40,7 @@ export default function AddMaintenanceModal({
   assetIds,
   userList,
 }: AddMaintenanceModalProps) {
-  let [isPending, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
   const user = useCurrentUser();
 
   const [maintenanceId, setMaintenanceId] = useState('');
@@ -202,7 +203,7 @@ export default function AddMaintenanceModal({
           <Button
             variant="faded"
             isLoading={isPending}
-            disabled={maintenanceId === '' || isPending}
+            isDisabled={maintenanceId === '' || isPending}
             size="sm"
             color="primary"
             onClick={handleCreateMaintenance}
