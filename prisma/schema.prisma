@@ -11,29 +11,30 @@ datasource db {
 }
 
 model Asset {
-  name             String
-  description      String?
-  type             String?
-  createdById      String       @map("created_by_id")
-  createdOn        DateTime     @default(now()) @map("created_on")
-  updatedById      String       @map("updated_by_id")
-  lastMaintenance  DateTime?    @map("last_maintenance")
-  lastMaintainee   String[]     @map("last_maintainee")
-  location         String?
-  nextMaintenance  DateTime?    @map("next_maintenance")
-  updatedOn        DateTime     @default(now()) @map("updated_on")
-  personInChargeId String?      @map("person_in_charge_id")
-  tag              String?
-  id               String       @id
-  statusId         String?      @map("status_id")
-  isArchive        Boolean?     @default(false) @map("is_archive")
-  createdBy        User         @relation("asset_created_byTouser", fields: [createdById], references: [id], onDelete: Cascade)
-  personInCharge   User?        @relation("asset_person_in_chargeTouser", fields: [personInChargeId], references: [id], onDelete: Cascade)
-  assetStatus      AssetStatus? @relation(fields: [statusId], references: [id], onDelete: Cascade)
-  assetType        AssetType?   @relation(fields: [type], references: [id], onDelete: Cascade)
-  updatedBy        User         @relation("asset_updated_byTouser", fields: [updatedById], references: [id], onDelete: Cascade)
-  assetTags        AssetTag[]
-  checklist        Checklist[]
+  name              String
+  description       String?
+  type              String?
+  createdById       String             @map("created_by_id")
+  createdOn         DateTime           @default(now()) @map("created_on")
+  updatedById       String             @map("updated_by_id")
+  lastMaintenance   DateTime?          @map("last_maintenance")
+  lastMaintainee    String[]           @map("last_maintainee")
+  location          String?
+  nextMaintenance   DateTime?          @map("next_maintenance")
+  updatedOn         DateTime           @default(now()) @map("updated_on")
+  personInChargeId  String?            @map("person_in_charge_id")
+  tag               String?
+  id                String             @id
+  statusId          String?            @map("status_id")
+  isArchive         Boolean?           @default(false) @map("is_archive")
+  createdBy         User               @relation("asset_created_byTouser", fields: [createdById], references: [id], onDelete: Cascade)
+  personInCharge    User?              @relation("asset_person_in_chargeTouser", fields: [personInChargeId], references: [id], onDelete: Cascade)
+  assetStatus       AssetStatus?       @relation(fields: [statusId], references: [id], onDelete: Cascade)
+  assetType         AssetType?         @relation(fields: [type], references: [id], onDelete: Cascade)
+  updatedBy         User               @relation("asset_updated_byTouser", fields: [updatedById], references: [id], onDelete: Cascade)
+  assetTags         AssetTag[]
+  checklist         Checklist[]
+  checklist_library ChecklistLibrary[]
 
   @@map("asset")
   @@schema("public")
@@ -101,18 +102,20 @@ model Checklist {
 }
 
 model ChecklistLibrary {
-  createdOn   DateTime      @default(now()) @map("created_on")
-  createdById String        @map("created_by_id")
-  updatedOn   DateTime      @default(now()) @map("updated_on")
-  updatedById String        @map("updated_by_id")
-  title       String
-  description String?
-  color       String?
-  icon        String?
-  id          String        @id @default(cuid())
-  createdBy   User          @relation("checklist_library_created_byTouser", fields: [createdById], references: [id], onDelete: Cascade)
-  updatedBy   User          @relation("checklist_library_updated_byTouser", fields: [updatedById], references: [id], onDelete: Cascade)
-  taskLibrary TaskLibrary[]
+  createdOn            DateTime            @default(now()) @map("created_on")
+  createdById          String              @map("created_by_id")
+  updatedOn            DateTime            @default(now()) @map("updated_on")
+  updatedById          String              @map("updated_by_id")
+  title                String
+  description          String?
+  id                   String              @id @default(cuid())
+  maintenanceLibraryId String?             @map("maintenance_library_id")
+  assetId              String?             @map("asset_id")
+  asset                Asset?              @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  createdBy            User                @relation("checklist_library_created_byTouser", fields: [createdById], references: [id], onDelete: Cascade)
+  maintenance_library  MaintenanceLibrary? @relation(fields: [maintenanceLibraryId], references: [id], onDelete: Cascade)
+  updatedBy            User                @relation("checklist_library_updated_byTouser", fields: [updatedById], references: [id], onDelete: Cascade)
+  taskLibrary          TaskLibrary[]
 
   @@map("checklist_library")
   @@schema("public")
@@ -153,12 +156,28 @@ model Maintenance {
   isRequested    Boolean     @default(false) @map("is_requested")
   rejectedOn     DateTime?   @map("rejected_on")
   checklist      Checklist[]
-  approvedBy     User        @relation("maintenance_approved_byTouser", fields: [approvedById], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  closedBy       User?       @relation("maintenance_closed_byTouser", fields: [closedById], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  rejectedBy     User?       @relation("maintenance_reject_byTouser", fields: [rejectedById], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  approvedBy     User        @relation("maintenance_approved_byTouser", fields: [approvedById], references: [id], onDelete: Cascade)
+  closedBy       User?       @relation("maintenance_closed_byTouser", fields: [closedById], references: [id], onDelete: Cascade)
+  rejectedBy     User?       @relation("maintenance_reject_byTouser", fields: [rejectedById], references: [id], onDelete: Cascade)
   requestedBy    User?       @relation("maintenance_requested_byTouser", fields: [requestedById], references: [id], onDelete: Cascade)
 
   @@map("maintenance")
+  @@schema("public")
+}
+
+model MaintenanceLibrary {
+  id               String             @id @default(cuid())
+  title            String
+  description      String?
+  createdById      String             @map("created_by_id")
+  createdOn        DateTime           @default(now()) @map("created_on")
+  updatedById      String             @map("updated_by_id")
+  updatedOn        DateTime           @default(now()) @map("updated_on")
+  checklistLibrary ChecklistLibrary[]
+  createdBy        User               @relation("maintenance_library_created_by_idTouser", fields: [createdById], references: [id], onDelete: Cascade)
+  updatedBy        User               @relation("maintenance_library_updated_by_idTouser", fields: [updatedById], references: [id], onDelete: Cascade)
+
+  @@map("maintenance_library")
   @@schema("public")
 }
 
@@ -188,16 +207,16 @@ model Subtask {
 model SubtaskLibrary {
   taskActivity  String       @map("task_activity")
   description   String?
-  taskType      TaskType     @default(CHECK) @map("task_type")
-  listChoice    String[]     @default([]) @map("list_choice")
   createdOn     DateTime     @default(now()) @map("created_on")
   createdById   String       @map("created_by_id")
   updatedOn     DateTime     @default(now()) @map("updated_on")
   updatedById   String       @map("updated_by_id")
   id            String       @id @default(cuid())
   taskLibraryId String?      @map("task_library_id")
+  listChoice    String[]     @default([]) @map("list_choice")
+  taskType      TaskType     @default(CHECK) @map("task_type")
   createdBy     User         @relation("subtask_library_created_byTouser", fields: [createdById], references: [id], onDelete: Cascade)
-  taskLibrary   TaskLibrary? @relation(fields: [taskLibraryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  taskLibrary   TaskLibrary? @relation(fields: [taskLibraryId], references: [id], onDelete: Cascade)
   updatedBy     User         @relation("subtask_library_updated_byTouser", fields: [updatedById], references: [id], onDelete: Cascade)
 
   @@map("subtask_library")
@@ -230,18 +249,18 @@ model Task {
 }
 
 model TaskLibrary {
-  taskActivity       String            @map("task_activity")
-  description        String?
-  taskType           TaskType          @default(CHECK) @map("task_type")
   createdOn          DateTime          @default(now()) @map("created_on")
-  listChoice         String[]          @default([]) @map("list_choice")
   createdById        String            @map("created_by_id")
   updatedById        String            @map("updated_by_id")
   updatedOn          DateTime          @default(now()) @map("updated_on")
+  taskActivity       String            @map("task_activity")
+  description        String?
   id                 String            @id @default(cuid())
   checklistLibraryId String?
+  listChoice         String[]          @default([]) @map("list_choice")
+  taskType           TaskType          @default(CHECK) @map("task_type")
   subtaskLibrary     SubtaskLibrary[]
-  checklistLibrary   ChecklistLibrary? @relation(fields: [checklistLibraryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  checklistLibrary   ChecklistLibrary? @relation(fields: [checklistLibraryId], references: [id], onDelete: Cascade)
   createdBy          User              @relation("task_library_created_byTouser", fields: [createdById], references: [id], onDelete: Cascade)
   updatedBy          User              @relation("task_library_updated_byTouser", fields: [updatedById], references: [id], onDelete: Cascade)
 
@@ -274,36 +293,38 @@ model VerificationRequest {
 }
 
 model User {
-  id                                                   String             @id @default(cuid())
-  name                                                 String
-  createdAt                                            DateTime           @default(now()) @map("created_at")
-  updatedAt                                            DateTime           @default(now()) @map("updated_at")
-  department                                           Department?        @default(MANAGEMENT)
-  role                                                 Role?              @default(ADMIN)
-  email                                                String             @unique
-  password                                             String
-  emailVerified                                        DateTime?          @map("email_verified")
-  image                                                String?
-  phone                                                String?
-  account                                              Account[]
-  asset_asset_created_byTouser                         Asset[]            @relation("asset_created_byTouser")
-  asset_asset_person_in_chargeTouser                   Asset[]            @relation("asset_person_in_chargeTouser")
-  asset_asset_updated_byTouser                         Asset[]            @relation("asset_updated_byTouser")
-  asset_type_asset_type_created_byTouser               AssetType[]        @relation("asset_type_created_byTouser")
-  asset_type_asset_type_updated_byTouser               AssetType[]        @relation("asset_type_updated_byTouser")
-  checklist_checklist_created_byTouser                 Checklist[]        @relation("checklist_created_byTouser")
-  checklist_checklist_updated_byTouser                 Checklist[]        @relation("checklist_updated_byTouser")
-  checklist_library_checklist_library_created_byTouser ChecklistLibrary[] @relation("checklist_library_created_byTouser")
-  checklist_library_checklist_library_updated_byTouser ChecklistLibrary[] @relation("checklist_library_updated_byTouser")
-  history                                              History[]
-  maintenance_maintenance_approved_byTouser            Maintenance[]      @relation("maintenance_approved_byTouser")
-  maintenance_maintenance_closed_byTouser              Maintenance[]      @relation("maintenance_closed_byTouser")
-  maintenance_maintenance_reject_byTouser              Maintenance[]      @relation("maintenance_reject_byTouser")
-  maintenance_maintenance_requested_byTouser           Maintenance[]      @relation("maintenance_requested_byTouser")
-  subtask_library_subtask_library_created_byTouser     SubtaskLibrary[]   @relation("subtask_library_created_byTouser")
-  subtask_library_subtask_library_updated_byTouser     SubtaskLibrary[]   @relation("subtask_library_updated_byTouser")
-  task_library_task_library_created_byTouser           TaskLibrary[]      @relation("task_library_created_byTouser")
-  task_library_task_library_updated_byTouser           TaskLibrary[]      @relation("task_library_updated_byTouser")
+  id                                                          String               @id @default(cuid())
+  name                                                        String
+  createdAt                                                   DateTime             @default(now()) @map("created_at")
+  updatedAt                                                   DateTime             @default(now()) @map("updated_at")
+  department                                                  Department?          @default(MANAGEMENT)
+  role                                                        Role?                @default(ADMIN)
+  email                                                       String               @unique
+  password                                                    String
+  emailVerified                                               DateTime?            @map("email_verified")
+  image                                                       String?
+  phone                                                       String?
+  account                                                     Account[]
+  asset_asset_created_byTouser                                Asset[]              @relation("asset_created_byTouser")
+  asset_asset_person_in_chargeTouser                          Asset[]              @relation("asset_person_in_chargeTouser")
+  asset_asset_updated_byTouser                                Asset[]              @relation("asset_updated_byTouser")
+  asset_type_asset_type_created_byTouser                      AssetType[]          @relation("asset_type_created_byTouser")
+  asset_type_asset_type_updated_byTouser                      AssetType[]          @relation("asset_type_updated_byTouser")
+  checklist_checklist_created_byTouser                        Checklist[]          @relation("checklist_created_byTouser")
+  checklist_checklist_updated_byTouser                        Checklist[]          @relation("checklist_updated_byTouser")
+  checklist_library_checklist_library_created_byTouser        ChecklistLibrary[]   @relation("checklist_library_created_byTouser")
+  checklist_library_checklist_library_updated_byTouser        ChecklistLibrary[]   @relation("checklist_library_updated_byTouser")
+  history                                                     History[]
+  maintenance_maintenance_approved_byTouser                   Maintenance[]        @relation("maintenance_approved_byTouser")
+  maintenance_maintenance_closed_byTouser                     Maintenance[]        @relation("maintenance_closed_byTouser")
+  maintenance_maintenance_reject_byTouser                     Maintenance[]        @relation("maintenance_reject_byTouser")
+  maintenance_maintenance_requested_byTouser                  Maintenance[]        @relation("maintenance_requested_byTouser")
+  maintenance_library_maintenance_library_created_by_idTouser MaintenanceLibrary[] @relation("maintenance_library_created_by_idTouser")
+  maintenance_library_maintenance_library_updated_by_idTouser MaintenanceLibrary[] @relation("maintenance_library_updated_by_idTouser")
+  subtask_library_subtask_library_created_byTouser            SubtaskLibrary[]     @relation("subtask_library_created_byTouser")
+  subtask_library_subtask_library_updated_byTouser            SubtaskLibrary[]     @relation("subtask_library_updated_byTouser")
+  task_library_task_library_created_byTouser                  TaskLibrary[]        @relation("task_library_created_byTouser")
+  task_library_task_library_updated_byTouser                  TaskLibrary[]        @relation("task_library_updated_byTouser")
 
   @@map("user")
   @@schema("public")

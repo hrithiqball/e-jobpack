@@ -42,6 +42,7 @@ import MaintenanceAction from '@/components/maintenance/MaintenanceAction';
 import MaintenanceRequestForm from '@/components/maintenance/MaintenanceRequestForm';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { MutatedMaintenance } from '@/types/maintenance';
+import MaintenanceExport from './MaintenanceExport';
 
 interface MaintenanceComponentProps {
   mutatedMaintenance: MutatedMaintenance;
@@ -68,6 +69,7 @@ export default function MaintenanceComponent({
 
   const [openAddChecklist, setOpenAddChecklist] = useState(false);
   const [openRejectConfirmation, setOpenRejectConfirmation] = useState(false);
+  const [openExportMaintenance, setOpenExportMaintenance] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const selectedSaveOptionCurrent = Array.from(new Set(['saveOnly']))[0];
@@ -98,9 +100,15 @@ export default function MaintenanceComponent({
         handleMarkMaintenanceComplete();
         break;
 
-      default:
+      case 'export-maintenance':
+        setOpenExportMaintenance(!openExportMaintenance);
         break;
     }
+  }
+
+  function handleCloseExportMaintenance() {
+    setOpenExportMaintenance(false);
+    router.refresh();
   }
 
   function handleMarkMaintenanceComplete() {
@@ -640,6 +648,11 @@ export default function MaintenanceComponent({
         open={openRejectConfirmation}
         onClose={handleCloseRejectConfirmation}
         maintenance={maintenance}
+      />
+      <MaintenanceExport
+        open={openExportMaintenance}
+        onClose={handleCloseExportMaintenance}
+        maintenance={mutatedMaintenance}
       />
     </div>
   );

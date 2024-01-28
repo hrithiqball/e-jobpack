@@ -18,6 +18,7 @@ export async function fetchChecklistLibraryList() {
 
 export async function createChecklistLibrary(
   userId: string,
+  assetId: string,
   checklist: CreateChecklistLibrary,
   taskList: CreateTaskLibrary[],
   subtaskList: CreateSubtaskLibrary[],
@@ -30,6 +31,7 @@ export async function createChecklistLibrary(
         description: checklist.description,
         createdById: userId,
         updatedById: userId,
+        assetId,
       },
     });
 

@@ -65,7 +65,7 @@ export default function ChecklistExportModal({
           return;
         }
 
-        const checklist: CreateChecklistLibrary = {
+        const newChecklist: CreateChecklistLibrary = {
           title: checklistLibraryTitle,
           description: checklistLibraryDescription,
         };
@@ -107,7 +107,7 @@ export default function ChecklistExportModal({
           });
 
         const validatedChecklist =
-          CreateChecklistLibrarySchema.safeParse(checklist);
+          CreateChecklistLibrarySchema.safeParse(newChecklist);
 
         if (!validatedChecklist.success) {
           toast.error(validatedChecklist.error.message);
@@ -135,6 +135,7 @@ export default function ChecklistExportModal({
         toast.promise(
           createChecklistLibrary(
             user.id,
+            checklist.asset.id,
             validatedChecklist.data,
             taskList,
             subtaskList,

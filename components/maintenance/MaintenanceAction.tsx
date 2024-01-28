@@ -15,6 +15,7 @@ import {
   Table2,
   CheckCircle2,
   FileUp,
+  FileSymlink,
 } from 'lucide-react';
 
 import { useMediaQuery } from '@/hooks/use-media-query';
@@ -41,6 +42,8 @@ export default function MaintenanceAction({
       {isDesktop ? (
         // TODO: disable add asset if no more asset can be added
         <DropdownMenu
+          color="primary"
+          variant="faded"
           disabledKeys={
             role === 'ADMIN' || role === 'SUPERVISOR'
               ? []
@@ -61,6 +64,12 @@ export default function MaintenanceAction({
             Edit Asset
           </DropdownItem>
           <DropdownItem
+            key="export-maintenance"
+            startContent={<FileSymlink size={18} />}
+          >
+            Export Maintenance
+          </DropdownItem>
+          <DropdownItem
             key="download-excel"
             startContent={<FileDown size={18} />}
           >
@@ -72,7 +81,6 @@ export default function MaintenanceAction({
           </DropdownItem>
           <DropdownItem
             key="mark-complete"
-            className="text-success"
             color="success"
             startContent={<CheckCircle2 size={18} />}
           >
