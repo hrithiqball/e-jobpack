@@ -85,7 +85,7 @@ export default function TaskAdd({ checklist, open, onClose }: TaskAddProps) {
     });
 
     if (!validatedFields.success) {
-      toast.error(validatedFields.error.issues[0].message);
+      toast.error(validatedFields.error?.issues[0]?.message);
       return;
     }
 
@@ -120,7 +120,7 @@ export default function TaskAdd({ checklist, open, onClose }: TaskAddProps) {
     return (event: ChangeEvent<HTMLInputElement>) => {
       const updatedSubtaskList = [...subtaskList];
 
-      updatedSubtaskList[index].title = event.target.value;
+      updatedSubtaskList[index]!.title = event.target.value;
       setSubtaskList(updatedSubtaskList);
     };
   }
@@ -129,7 +129,7 @@ export default function TaskAdd({ checklist, open, onClose }: TaskAddProps) {
     return (event: ChangeEvent<HTMLInputElement>) => {
       const updatedSubtaskList = [...subtaskList];
 
-      updatedSubtaskList[index].description = event.target.value;
+      updatedSubtaskList[index]!.description = event.target.value;
       setSubtaskList(updatedSubtaskList);
     };
   }

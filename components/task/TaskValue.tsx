@@ -54,7 +54,7 @@ export default function TaskValue({ task }: TaskValueProps) {
       });
 
       if (!validatedFields.success) {
-        toast.error(validatedFields.error.issues[0].message);
+        toast.error(validatedFields.error?.issues[0]?.message);
         return;
       }
 

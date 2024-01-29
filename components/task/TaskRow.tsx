@@ -81,7 +81,7 @@ export default function TaskRow({ task }: TaskRowProps) {
       });
 
       if (!validatedFields.success) {
-        toast.error(validatedFields.error.issues[0].message);
+        toast.error(validatedFields.error?.issues[0]?.message);
         return;
       }
 

@@ -67,7 +67,13 @@ export default function AddAssetModal({
       });
 
       if (!validatedFields.success) {
-        toast.error(validatedFields.error.issues[0].message);
+        if (
+          validatedFields.error &&
+          validatedFields.error.issues &&
+          validatedFields.error.issues[0]
+        ) {
+          toast.error(validatedFields.error?.issues[0]?.message);
+        }
         return;
       }
 

@@ -17,17 +17,17 @@ export function convertToRoman(number: number): string {
 
     if (digit !== 0) {
       if (digit === 9) {
-        result += romanNumerals[i][3];
+        result += romanNumerals[i]![3];
       } else if (digit >= 5) {
         result +=
-          romanNumerals[i][2] +
+          romanNumerals[i]![2] +
           Array(digit - 5)
-            .fill(romanNumerals[i][0])
+            .fill(romanNumerals[i]![0])
             .join('');
       } else if (digit === 4) {
-        result += romanNumerals[i][1];
+        result += romanNumerals[i]![1];
       } else {
-        result += Array(digit).fill(romanNumerals[i][0]).join('');
+        result += Array(digit).fill(romanNumerals[i]![0]).join('');
       }
     }
   }

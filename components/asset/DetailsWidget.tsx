@@ -102,7 +102,7 @@ export default function DetailsWidget({
     const validatedFields = UpdateAsset.safeParse(formData);
 
     if (!validatedFields.success) {
-      toast.error(validatedFields.error.issues[0].message);
+      toast.error(validatedFields.error?.issues[0]?.message);
       return;
     }
 

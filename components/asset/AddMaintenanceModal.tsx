@@ -66,13 +66,13 @@ export default function AddMaintenanceModal({
         startDate: startDate || dayjs().toDate(),
         isOpen: user.role === 'ADMIN' || user.role === 'SUPERVISOR',
         isRequested: user.role !== 'ADMIN' && user.role !== 'SUPERVISOR',
-        approvedById: Array.from(approvedBy)[0],
+        approvedById: Array.from(approvedBy)[0] || '',
       };
 
       const validatedFields = CreateMaintenance.safeParse(maintenance);
 
       if (!validatedFields.success) {
-        toast.error(validatedFields.error.issues[0].message);
+        toast.error(validatedFields.error?.issues[0]?.message);
         return;
       }
 

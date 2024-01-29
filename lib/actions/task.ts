@@ -27,12 +27,12 @@ export async function createTask(
       },
     });
 
-    let taskOrder;
+    let taskOrder: number;
 
     if (tasks.length === 0) {
       taskOrder = 1;
     } else {
-      taskOrder = tasks[0].taskOrder++;
+      taskOrder = tasks[0]?.taskOrder ?? 1;
     }
 
     return await db.task.create({
