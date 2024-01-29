@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
 import NextAuth, { type DefaultSession } from 'next-auth';
 import { Role } from '@prisma/client';
@@ -11,10 +12,6 @@ declare module 'next-auth' {
     user: ExtendedUser;
   }
 
-  /**
-   * The shape of the user object returned in the OAuth providers' `profile` callback,
-   * or the second parameter of the `session` callback, when using a database.
-   */
   interface User {
     id: string;
     email: string;

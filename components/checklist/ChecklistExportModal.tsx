@@ -77,6 +77,7 @@ export default function ChecklistExportModal({
           .filter(task => task.isSelected)
           .forEach(task => {
             const taskLibrary = {
+              id: task.id,
               taskActivity: task.taskActivity,
               description: task.description,
               taskType: task.taskType,
@@ -92,6 +93,7 @@ export default function ChecklistExportModal({
             );
             const subtaskLibraries: CreateSubtaskLibrary[] =
               filteredSubtasks.map(subtask => ({
+                taskId: subtask.taskId,
                 taskActivity: subtask.taskActivity,
                 description: subtask.description,
                 taskType: subtask.taskType,

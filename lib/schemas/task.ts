@@ -34,6 +34,7 @@ export const CreateTaskLibrarySchema = z.object({
   description: z.string().optional().nullable(),
   listChoice: z.array(z.string()).optional(),
   taskType: z.nativeEnum(TaskType),
+  id: z.string().min(1, { message: 'Task ID is required' }),
 });
 
 export type CreateTaskLibrary = z.infer<typeof CreateTaskLibrarySchema>;

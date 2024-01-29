@@ -39,6 +39,7 @@ export const CreateSubtaskLibrarySchema = z.object({
   description: z.string().optional().nullable(),
   listChoice: z.array(z.string()).optional(),
   taskType: z.nativeEnum(TaskType),
+  taskId: z.string().min(1, { message: 'Task ID is required' }),
 });
 
 export type CreateSubtaskLibrary = z.infer<typeof CreateSubtaskLibrarySchema>;

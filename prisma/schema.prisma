@@ -34,7 +34,7 @@ model Asset {
   updatedBy         User               @relation("asset_updated_byTouser", fields: [updatedById], references: [id], onDelete: Cascade)
   assetTags         AssetTag[]
   checklist         Checklist[]
-  checklist_library ChecklistLibrary[]
+  checklistLibrary ChecklistLibrary[]
 
   @@map("asset")
   @@schema("public")

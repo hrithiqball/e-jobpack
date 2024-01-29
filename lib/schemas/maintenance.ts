@@ -1,3 +1,4 @@
+import { TaskType } from '@prisma/client';
 import z from 'zod';
 
 export const CreateMaintenance = z.object({
@@ -31,3 +32,24 @@ export const UpdateMaintenance = z.object({
   deadline: z.date().optional(),
   startDate: z.date().optional(),
 });
+
+export const CreateMaintenanceLibrarySchema = z.object({
+  title: z.string().min(1, { message: 'Missing title' }),
+  description: z.string().optional(),
+  checklist: z.array(z.string()),
+});
+
+export type Checklist = {
+  id: string;
+  title: string;
+  description: string;
+  assetId: string;
+  taskList: Task[];
+};
+
+export type Task = {
+  taskActivity: string;
+  taskType: TaskType;
+  description: string | undefined;
+  listChoice: string[] | undefined;
+};
