@@ -53,3 +53,41 @@ export async function createMaintenanceLibrary(
     throw error;
   }
 }
+
+export async function fetchMaintenanceLibraryList() {
+  try {
+    return await db.maintenanceLibrary.findMany({
+      orderBy: {
+        title: 'asc',
+      },
+      include: {
+        createdBy: true,
+        updatedBy: true,
+        checklistLibrary: {
+          include: {
+            createdBy: true,
+            updatedBy: true,
+            asset: true,
+            taskLibrary: {
+              orderBy: { taskActivity: 'asc' },
+              include: {
+                createdBy: true,
+                updatedBy: true,
+                subtaskLibrary: {
+                  orderBy: { taskActivity: 'asc' },
+                  include: {
+                    createdBy: true,
+                    updatedBy: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}

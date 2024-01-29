@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { Maintenance, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import z from 'zod';
 
 import { db } from '@/lib/db';
@@ -125,9 +125,7 @@ export async function fetchMutatedMaintenanceItem(id: string) {
   }
 }
 
-export async function fetchMaintenanceList(
-  assetIds?: string,
-): Promise<Maintenance[]> {
+export async function fetchMaintenanceList(assetIds?: string) {
   try {
     const filters: Prisma.MaintenanceWhereInput[] = [];
     const orderBy: Prisma.MaintenanceOrderByWithRelationInput[] = [];
@@ -153,6 +151,40 @@ export async function fetchMaintenanceList(
 
     revalidatePath('/task');
     return maintenanceList;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function fetchMaintenanceList2() {
+  try {
+    return await db.maintenance.findMany({
+      orderBy: {
+        date: 'desc',
+      },
+      include: {
+        approvedBy: true,
+        closedBy: true,
+        rejectedBy: true,
+        requestedBy: true,
+        checklist: {
+          include: {
+            asset: true,
+            createdBy: true,
+            updatedBy: true,
+            task: {
+              orderBy: { taskOrder: 'asc' },
+              include: {
+                subtask: {
+                  orderBy: { taskOrder: 'asc' },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
   } catch (error) {
     console.error(error);
     throw error;
