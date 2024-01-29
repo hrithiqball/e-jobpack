@@ -1,13 +1,14 @@
 'use client';
 
+import { Key } from 'react';
+
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 
 import { Tab, Tabs } from '@nextui-org/react';
 
 import { MaintenanceList, MaintenanceLibraryList } from '@/types/maintenance';
-import { Key } from 'react';
-import MaintenanceAllTab from './MaintenanceAllTab';
-import MaintenanceLibraryTab from './MaintenanceLibraryTab';
+import MaintenanceAllTab from '@/app/(route)/maintenance/MaintenanceAllTab';
+import MaintenanceLibraryTab from '@/app/(route)/maintenance/MaintenanceLibraryTab';
 
 interface MaintenanceLibraryComponentProps {
   maintenanceList: MaintenanceList;
@@ -25,7 +26,9 @@ export default function MaintenanceLibraryComponent({
   const tab = searchParams.get('tab') ?? 'all';
 
   function handleTabChange(key: Key) {
-    router.push(`${pathname}?tab=${key}`);
+    router.push(
+      `${pathname}?tab=${key}${key === 'library' ? '&create=false' : ''}`,
+    );
   }
 
   return (
@@ -37,10 +40,10 @@ export default function MaintenanceLibraryComponent({
         selectedKey={tab}
         onSelectionChange={handleTabChange}
       >
-        <Tab key="all" title="Maintenance">
+        <Tab key="all" title="Maintenance" className="flex flex-col flex-1">
           <MaintenanceAllTab maintenanceList={maintenanceList} />
         </Tab>
-        <Tab key="library" title="Library">
+        <Tab key="library" title="Library" className="flex flex-col flex-1">
           <MaintenanceLibraryTab
             maintenanceLibraryList={maintenanceLibraryList}
           />

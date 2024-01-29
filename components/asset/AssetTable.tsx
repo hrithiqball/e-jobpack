@@ -64,7 +64,7 @@ import { useCurrentRole } from '@/hooks/use-current-role';
 import emptyIcon from '@/public/image/empty.svg';
 import AddMaintenanceModal from '@/components/asset/AddMaintenanceModal';
 import DeleteAssetModal from '@/components/asset/DeleteAssetModal';
-import { AssetList } from '@/types/asset';
+import { AssetList, AssetItem } from '@/types/asset';
 
 interface AssetTableProps {
   assetList: AssetList;
@@ -100,7 +100,7 @@ export default function AssetTable({
     updatedBy: false,
   });
 
-  const columns: ColumnDef<AssetList[0]>[] = [
+  const columns: ColumnDef<AssetItem>[] = [
     {
       id: 'select',
       header: ({ table }) => {
