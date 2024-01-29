@@ -1,5 +1,23 @@
 import z from 'zod';
 
+import { TaskSchema } from '@/lib/schemas/task';
+
+export const ChecklistSchema = z.object({
+  createdById: z.string().min(1, { message: 'User Id is required' }),
+  updatedById: z.string().min(1, { message: 'User Id is required' }),
+  id: z.string().min(1, {
+    message: 'ID is required',
+  }),
+  title: z.string().min(1, {
+    message: 'Title is required',
+  }),
+  description: z.string().optional().nullable(),
+  assetId: z.string().min(1, {
+    message: 'Asset ID is required',
+  }),
+  taskLibrary: z.array(TaskSchema),
+});
+
 export const CreateChecklist = z.object({
   assetId: z.string().min(1, {
     message: 'Missing asset ID',

@@ -1,5 +1,8 @@
 import { useState, useTransition } from 'react';
 
+import z from 'zod';
+import { v4 as uuidv4 } from 'uuid';
+
 import {
   Button,
   Checkbox,
@@ -12,6 +15,11 @@ import {
 } from '@nextui-org/react';
 
 import { MutatedMaintenance } from '@/types/maintenance';
+import { CreateMaintenanceLibrary } from '@/lib/schemas/maintenance';
+import { ChecklistSchema } from '@/lib/schemas/checklist';
+import { toast } from 'sonner';
+import { useCurrentUser } from '@/hooks/use-current-user';
+import { createMaintenanceLibrary } from '@/lib/actions/maintenance-library';
 
 interface MaintenanceExportProps {
   maintenance: MutatedMaintenance;
@@ -25,6 +33,7 @@ export default function MaintenanceExport({
   onClose,
 }: MaintenanceExportProps) {
   const [isPending, startTransition] = useTransition();
+  const user = useCurrentUser();
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -42,25 +51,90 @@ export default function MaintenanceExport({
     })),
   );
 
-  // TODO: major chore needed to be done here to create checklist schema
   function handleSave() {
     startTransition(() => {
-      console.log('Selected checklists:', selectedChecklists);
+      if (user === undefined || user.id === undefined) {
+        toast.error('User session is expired');
+        return;
+      }
 
-      const checklistLibraries = [];
+      const checklistLibraries: z.infer<typeof ChecklistSchema>[] = [];
 
       selectedChecklists
         .filter(checklist => checklist.isSelected)
         .forEach(checklist => {
+          const checklistId = uuidv4();
+
           const checklistLibrary = {
+            id: checklistId,
             title: checklist.asset.name,
             description: checklist.asset.description,
+            assetId: checklist.asset.id,
+            createdById: user.id,
+            updatedById: user.id,
+            taskLibrary: checklist.task.map(task => {
+              const taskId = uuidv4();
+
+              return {
+                id: taskId,
+                checklistLibraryId: checklistId,
+                taskActivity: task.taskActivity,
+                description: task.description,
+                taskType: task.taskType,
+                createdById: user.id,
+                updatedById: user.id,
+                listChoice:
+                  task.taskType === 'MULTIPLE_SELECT' ||
+                  task.taskType === 'SINGLE_SELECT'
+                    ? task.listChoice
+                    : [],
+                subtaskLibrary: task.subtask.map(subtask => {
+                  return {
+                    taskLibraryId: taskId,
+                    id: uuidv4(),
+                    taskActivity: subtask.taskActivity,
+                    description: subtask.description,
+                    taskType: subtask.taskType,
+                    createdById: user.id,
+                    updatedById: user.id,
+                    listChoice:
+                      subtask.taskType === 'MULTIPLE_SELECT' ||
+                      subtask.taskType === 'SINGLE_SELECT'
+                        ? subtask.listChoice
+                        : [],
+                  };
+                }),
+              };
+            }),
           };
 
-          checklistLibraries.push(checklistLibrary);
+          const validatedChecklist =
+            ChecklistSchema.safeParse(checklistLibrary);
+
+          if (!validatedChecklist.success) {
+            console.log(validatedChecklist.error);
+            return;
+          }
+
+          checklistLibraries.push(validatedChecklist.data);
         });
 
-      onClose();
+      const newMaintenanceLibrary: CreateMaintenanceLibrary = {
+        title,
+        description,
+        createdById: user.id,
+        updatedById: user.id,
+        checklistLibrary: checklistLibraries,
+      };
+
+      toast.promise(createMaintenanceLibrary(newMaintenanceLibrary), {
+        loading: 'Creating maintenance library...',
+        success: res => {
+          onClose();
+          return `Maintenance ${res.title} library successfully created!`;
+        },
+        error: 'Failed to create maintenance library 😢',
+      });
     });
   }
 

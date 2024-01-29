@@ -92,18 +92,6 @@ export async function createChecklistLibrary(
       data: modifiedTaskList,
     });
 
-    await db.taskLibrary.createMany({
-      data: modifiedSubtaskList.map(subtask => ({
-        id: uuidv4(),
-        taskActivity: subtask.taskActivity,
-        taskType: subtask.taskType,
-        description: subtask.description,
-        listChoice: subtask.listChoice,
-        createdById: userId,
-        updatedById: userId,
-      })),
-    });
-
     await db.subtaskLibrary.createMany({
       data: modifiedSubtaskList,
     });

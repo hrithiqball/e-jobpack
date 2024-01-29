@@ -1,5 +1,6 @@
-import { TaskType } from '@prisma/client';
 import z from 'zod';
+
+import { ChecklistSchema } from '@/lib/schemas/checklist';
 
 export const CreateMaintenance = z.object({
   id: z.string().min(1, {
@@ -36,20 +37,11 @@ export const UpdateMaintenance = z.object({
 export const CreateMaintenanceLibrarySchema = z.object({
   title: z.string().min(1, { message: 'Missing title' }),
   description: z.string().optional(),
-  checklist: z.array(z.string()),
+  createdById: z.string().min(1, { message: 'User Id is required' }),
+  updatedById: z.string().min(1, { message: 'User Id is required' }),
+  checklistLibrary: z.array(ChecklistSchema),
 });
 
-export type Checklist = {
-  id: string;
-  title: string;
-  description: string;
-  assetId: string;
-  taskList: Task[];
-};
-
-export type Task = {
-  taskActivity: string;
-  taskType: TaskType;
-  description: string | undefined;
-  listChoice: string[] | undefined;
-};
+export type CreateMaintenanceLibrary = z.infer<
+  typeof CreateMaintenanceLibrarySchema
+>;

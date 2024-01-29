@@ -113,7 +113,7 @@ model ChecklistLibrary {
   assetId              String?             @map("asset_id")
   asset                Asset?              @relation(fields: [assetId], references: [id], onDelete: Cascade)
   createdBy            User                @relation("checklist_library_created_byTouser", fields: [createdById], references: [id], onDelete: Cascade)
-  maintenance_library  MaintenanceLibrary? @relation(fields: [maintenanceLibraryId], references: [id], onDelete: Cascade)
+  maintenanceLibrary  MaintenanceLibrary? @relation(fields: [maintenanceLibraryId], references: [id], onDelete: Cascade)
   updatedBy            User                @relation("checklist_library_updated_byTouser", fields: [updatedById], references: [id], onDelete: Cascade)
   taskLibrary          TaskLibrary[]
 
@@ -256,7 +256,7 @@ model TaskLibrary {
   taskActivity       String            @map("task_activity")
   description        String?
   id                 String            @id @default(cuid())
-  checklistLibraryId String?
+  checklistLibraryId String?           @map("checklist_library_id")
   listChoice         String[]          @default([]) @map("list_choice")
   taskType           TaskType          @default(CHECK) @map("task_type")
   subtaskLibrary     SubtaskLibrary[]
