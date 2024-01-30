@@ -23,7 +23,7 @@ import {
   MaintenanceLibraryItem,
 } from '@/types/maintenance';
 import emptyIcon from '@/public/image/empty.svg';
-import MaintenanceLibraryInfo from '@/app/(route)/maintenance/MaintenanceLibraryInfo';
+import MaintenanceLibraryInfo from '@/components/maintenance/MaintenanceLibraryInfo';
 
 interface MaintenanceLibraryTableProps {
   maintenanceLibraryList: MaintenanceLibraryList;
@@ -57,13 +57,18 @@ export default function MaintenanceLibraryTable({
     router.push(`${pathname}?tab=library&create=true`);
   }
 
-  function handleCloseMaintenanceLibraryInfo() {
-    setOpenMaintenanceLibraryInfo(false);
-  }
-
   function handleOpenRowInfo(maintenanceLibrary: MaintenanceLibraryItem) {
     setCurrentMaintenanceLibrary(maintenanceLibrary);
     setOpenMaintenanceLibraryInfo(true);
+  }
+
+  function handleEditLibraryRoute(libraryId: string) {
+    router.push(`${pathname}?tab=library&isEdit=true&libraryId=${libraryId}`);
+    setOpenMaintenanceLibraryInfo(false);
+  }
+
+  function handleCloseMaintenanceLibraryInfo() {
+    setOpenMaintenanceLibraryInfo(false);
   }
 
   return maintenanceLibraryList.length > 0 ? (
@@ -101,9 +106,10 @@ export default function MaintenanceLibraryTable({
       </Table>
       {currentMaintenanceLibrary && (
         <MaintenanceLibraryInfo
+          maintenanceLibrary={currentMaintenanceLibrary}
           open={openMaintenanceLibraryInfo}
           onClose={handleCloseMaintenanceLibraryInfo}
-          maintenanceLibrary={currentMaintenanceLibrary}
+          handleEdit={handleEditLibraryRoute}
         />
       )}
     </Fragment>
