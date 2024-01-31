@@ -123,7 +123,10 @@ export default function MaintenanceLibraryTab({
         })}
       >
         {isCreate ? (
-          <MaintenanceLibraryCreate />
+          <MaintenanceLibraryCreate
+            maintenanceLibraryList={maintenanceLibraryList}
+            taskLibraryList={taskLibraryList}
+          />
         ) : (
           <MaintenanceLibraryTable
             maintenanceLibraryList={maintenanceLibraryList}
