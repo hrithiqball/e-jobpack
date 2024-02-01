@@ -1,4 +1,4 @@
-import React, { useTransition } from 'react';
+import { useTransition } from 'react';
 
 import {
   Button,
@@ -14,11 +14,11 @@ import { toast } from 'sonner';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { deleteAsset, updateAsset } from '@/lib/actions/asset';
 
-interface DeleteAssetModalProps {
+type DeleteAssetModalProps = {
   isOpen: boolean;
   onClose: () => void;
   assetId: string;
-}
+};
 
 export default function DeleteAssetModal({
   isOpen,

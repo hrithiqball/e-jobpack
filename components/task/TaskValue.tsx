@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useTransition } from 'react';
+import { useState, useTransition } from 'react';
 
 import { z } from 'zod';
 
@@ -11,9 +11,9 @@ import { useCurrentUser } from '@/hooks/use-current-user';
 import { toast } from 'sonner';
 import { TaskItem } from '@/types/task';
 
-interface TaskValueProps {
+type TaskValueProps = {
   task: TaskItem;
-}
+};
 
 export default function TaskValue({ task }: TaskValueProps) {
   const [isPending, startTransition] = useTransition();

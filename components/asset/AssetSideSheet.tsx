@@ -1,14 +1,12 @@
-import React from 'react';
-
 import { Maintenance } from '@prisma/client';
 
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/Table';
 import { Button, Link } from '@nextui-org/react';
 import { ExternalLink } from 'lucide-react';
 
-interface AssetSideSheetProps {
+type AssetSideSheetProps = {
   maintenance: Maintenance;
-}
+};
 
 type MaintenanceState =
   | 'progress'

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Fragment, useState, useTransition } from 'react';
+import { Fragment, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Checklist } from '@prisma/client';
 
@@ -34,9 +34,9 @@ import { useMediaQuery } from '@/hooks/use-media-query';
 import { complete } from '@/lib/color';
 import { MutatedMaintenance } from '@/types/maintenance';
 
-interface CloseChecklistProps {
+type CloseChecklistProps = {
   checklistList: MutatedMaintenance['checklist'];
-}
+};
 
 export default function ClosedChecklist({
   checklistList,

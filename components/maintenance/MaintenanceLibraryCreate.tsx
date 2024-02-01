@@ -1,3 +1,5 @@
+import { useRouter } from 'next/navigation';
+import { useMemo, useState } from 'react';
 import {
   MaintenanceLibraryItem,
   MaintenanceLibraryList,
@@ -13,13 +15,11 @@ import {
 } from '@dnd-kit/core';
 import { SortableContext, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
 
-interface MaintenanceLibraryCreateProps {
+type MaintenanceLibraryCreateProps = {
   maintenanceLibraryList: MaintenanceLibraryList;
   taskLibraryList: TaskLibraryList;
-}
+};
 // FATAL MAJOR SHIT
 export default function MaintenanceLibraryCreate({
   maintenanceLibraryList,
@@ -28,6 +28,7 @@ export default function MaintenanceLibraryCreate({
   const router = useRouter();
   const sensors = useSensors(useSensor(PointerSensor));
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [activeTask, setActiveTask] = useState<TaskLibraryItem | null>(null);
 
   function onDragEnd(event: DragEndEvent) {

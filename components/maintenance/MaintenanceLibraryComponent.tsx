@@ -11,11 +11,11 @@ import MaintenanceAllTab from '@/components/maintenance/MaintenanceAllTab';
 import MaintenanceLibraryTab from '@/components/maintenance/MaintenanceLibraryTab';
 import { TaskLibraryList } from '@/types/task';
 
-interface MaintenanceLibraryComponentProps {
+type MaintenanceLibraryComponentProps = {
   maintenanceList: MaintenanceList;
   maintenanceLibraryList: MaintenanceLibraryList;
   taskLibraryList: TaskLibraryList;
-}
+};
 
 export default function MaintenanceLibraryComponent({
   maintenanceList,

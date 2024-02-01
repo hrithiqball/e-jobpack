@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Key } from 'react';
+import { Key } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 
 import { AssetStatus, AssetType, Maintenance, User } from '@prisma/client';
@@ -24,13 +24,13 @@ import AssetAttachment from '@/components/asset/AssetAttachment';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { MutatedAsset } from '@/types/asset';
 
-interface AssetItemComponentProps {
+type AssetItemComponentProps = {
   mutatedAsset: MutatedAsset;
   statusList: AssetStatus[];
   typeList: AssetType[];
   maintenanceList: Maintenance[];
   userList: User[];
-}
+};
 
 export default function AssetItemComponent({
   mutatedAsset,

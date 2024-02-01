@@ -25,11 +25,11 @@ import {
 } from '@/lib/schemas/subtask';
 import { createChecklistLibrary } from '@/lib/actions/checklist-library';
 
-interface ChecklistExportModalProps {
+type ChecklistExportModalProps = {
   open: boolean;
   onClose: () => void;
   checklist: MutatedMaintenance['checklist'][0];
-}
+};
 
 export default function ChecklistExportModal({
   open,

@@ -14,10 +14,10 @@ import MaintenanceLibraryCreate from '@/components/maintenance/MaintenanceLibrar
 import MaintenanceLibraryEdit from '@/components/maintenance/MaintenanceLibraryEdit';
 import { TaskLibraryList } from '@/types/task';
 
-interface MaintenanceLibraryTabProps {
+type MaintenanceLibraryTabProps = {
   maintenanceLibraryList: MaintenanceLibraryList;
   taskLibraryList: TaskLibraryList;
-}
+};
 
 export default function MaintenanceLibraryTab({
   maintenanceLibraryList,

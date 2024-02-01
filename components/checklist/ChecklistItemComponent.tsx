@@ -1,16 +1,16 @@
 'use client';
 
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 import { Card } from '@nextui-org/react';
 
 import ChecklistActions from '@/components/checklist/ChecklistAction';
 import { MutatedMaintenance } from '@/types/maintenance';
 
-interface ChecklistItemComponentProps {
+type ChecklistItemComponentProps = {
   checklist: MutatedMaintenance['checklist'][0];
   children: ReactNode;
-}
+};
 
 export default function ChecklistItemComponent({
   checklist,

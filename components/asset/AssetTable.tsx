@@ -1,10 +1,4 @@
-import React, {
-  Fragment,
-  Key,
-  ReactNode,
-  useState,
-  useTransition,
-} from 'react';
+import { Fragment, Key, ReactNode, useState, useTransition } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -66,12 +60,12 @@ import AddMaintenanceModal from '@/components/asset/AddMaintenanceModal';
 import DeleteAssetModal from '@/components/asset/DeleteAssetModal';
 import { AssetList, AssetItem } from '@/types/asset';
 
-interface AssetTableProps {
+type AssetTableProps = {
   assetList: AssetList;
   assetStatusList: AssetStatus[];
   userList: User[];
   children: ReactNode | null;
-}
+};
 
 export default function AssetTable({
   assetList,

@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
-import React, { Key, useMemo, useState, useTransition } from 'react';
+import { Key, useMemo, useState, useTransition } from 'react';
 
 import { Task } from '@prisma/client';
 import { z } from 'zod';
@@ -33,9 +33,9 @@ import { UpdateTask } from '@/lib/schemas/task';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { useMediaQuery } from '@/hooks/use-media-query';
 
-interface TaskRowProps {
+type TaskRowProps = {
   task: Task;
-}
+};
 
 export default function TaskRow({ task }: TaskRowProps) {
   const [isPending, startTransition] = useTransition();

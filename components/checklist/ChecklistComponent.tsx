@@ -2,9 +2,9 @@ import MaintenanceChecklist from '@/app/(route)/task/[id]/MaintenanceChecklist';
 import ClosedChecklist from '@/components/checklist/ClosedChecklist';
 import { MutatedMaintenance } from '@/types/maintenance';
 
-interface ChecklistComponentProps {
+type ChecklistComponentProps = {
   checklistList: MutatedMaintenance['checklist'];
-}
+};
 
 export default function ChecklistComponent({
   checklistList,

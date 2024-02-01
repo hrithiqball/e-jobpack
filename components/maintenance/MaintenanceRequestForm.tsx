@@ -1,16 +1,14 @@
-import React from 'react';
-
 import { Button, ButtonGroup } from '@nextui-org/react';
 import { Check, X } from 'lucide-react';
 
 import { MutatedMaintenance } from '@/types/maintenance';
 
-interface MaintenanceRequestFormProps {
+type MaintenanceRequestFormProps = {
   maintenance: MutatedMaintenance;
   isPending: boolean;
   handleApproveMaintenance: () => void;
   handleRejectMaintenance: () => void;
-}
+};
 
 export default function MaintenanceRequestForm({
   maintenance,

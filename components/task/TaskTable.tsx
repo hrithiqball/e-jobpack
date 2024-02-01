@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 'use client';
 
-import React, { Fragment, Key, useEffect, useRef, useState } from 'react';
+import { Fragment, Key, useEffect, useRef, useState } from 'react';
 
 import {
   Table,
@@ -28,9 +28,9 @@ import {
   PopoverTrigger,
 } from '@nextui-org/react';
 
-interface TaskTableProps {
+type TaskTableProps = {
   taskList: TaskList;
-}
+};
 
 export default function TaskTable({ taskList }: TaskTableProps) {
   const typeIssueTimeoutRef = useRef<NodeJS.Timeout | null>(null);

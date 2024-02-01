@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Fragment, useState } from 'react';
+import { Fragment, useState } from 'react';
 import { AssetStatus, AssetType, User } from '@prisma/client';
 
 import { Button } from '@nextui-org/react';
@@ -11,12 +11,12 @@ import AddAssetModal from '@/components/asset/AddAssetModal';
 import { useCurrentRole } from '@/hooks/use-current-role';
 import { AssetList } from '@/types/asset';
 
-interface AssetComponentProps {
+type AssetComponentProps = {
   assetList: AssetList;
   assetTypeList: AssetType[];
   assetStatusList: AssetStatus[];
   userList: User[];
-}
+};
 
 export default function AssetComponent({
   assetList,

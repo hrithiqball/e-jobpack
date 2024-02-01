@@ -11,13 +11,12 @@ import { MaintenanceLibraryItem } from '@/types/maintenance';
 import { Button } from '@nextui-org/react';
 import { Edit } from 'lucide-react';
 
-interface MaintenanceLibraryInfoProps {
+type MaintenanceLibraryInfoProps = {
   maintenanceLibrary: MaintenanceLibraryItem;
   open: boolean;
   onClose: () => void;
-  // eslint-disable-next-line no-unused-vars
   handleEdit: (libraryId: string) => void;
-}
+};
 
 export default function MaintenanceLibraryInfo({
   open,

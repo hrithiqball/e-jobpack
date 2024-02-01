@@ -6,9 +6,9 @@ import { FilePlus, Filter, Search } from 'lucide-react';
 import { MaintenanceList } from '@/types/maintenance';
 import { useMediaQuery } from '@/hooks/use-media-query';
 
-interface MaintenanceAllTabProps {
+type MaintenanceAllTabProps = {
   maintenanceList: MaintenanceList;
-}
+};
 
 export default function MaintenanceAllTab({
   maintenanceList,

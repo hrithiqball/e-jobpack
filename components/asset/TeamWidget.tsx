@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { User } from '@prisma/client';
 
 import {
@@ -15,10 +13,10 @@ import {
 } from '@nextui-org/react';
 import { UsersRound } from 'lucide-react';
 
-interface TeamWidgetProps {
+type TeamWidgetProps = {
   personInCharge: User | null;
   maintainee: string[];
-}
+};
 
 export default function TeamWidget({
   personInCharge,

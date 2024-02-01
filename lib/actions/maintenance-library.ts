@@ -24,6 +24,7 @@ export async function createMaintenanceLibrary(
           createdById: checklist.createdById,
           updatedById: checklist.updatedById,
           maintenanceLibraryId: newMaintenanceLibrary.id,
+          assetId: checklist.assetId,
         },
       });
 

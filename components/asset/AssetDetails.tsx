@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { AssetStatus, AssetType, User } from '@prisma/client';
 
 import DetailsWidget from '@/components/asset/DetailsWidget';
@@ -8,12 +6,12 @@ import ChecklistWidget from '@/components/asset/ChecklistWidget';
 import MaintenanceWidget from '@/components/asset/MaintenanceWidget';
 import { MutatedAsset } from '@/types/asset';
 
-interface AssetDetailsProps {
+type AssetDetailsProps = {
   mutatedAsset: MutatedAsset;
   statusList: AssetStatus[];
   typeList: AssetType[];
   userList: User[];
-}
+};
 
 export default function AssetDetails({
   mutatedAsset,

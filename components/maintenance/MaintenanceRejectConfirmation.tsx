@@ -24,11 +24,11 @@ import { useMediaQuery } from '@/hooks/use-media-query';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { updateMaintenance } from '@/lib/actions/maintenance';
 
-interface MaintenanceRejectConfirmationProps {
+type MaintenanceRejectConfirmationProps = {
   open: boolean;
   onClose: () => void;
   maintenance: Maintenance;
-}
+};
 
 export default function MaintenanceRejectConfirmation({
   open,

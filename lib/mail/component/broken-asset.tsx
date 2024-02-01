@@ -9,9 +9,9 @@ import {
 } from '@react-email/components';
 import * as React from 'react';
 
-interface WelcomeEmailProps {
+type WelcomeEmailProps = {
   name: string;
-}
+};
 
 export const WelcomeEmail = ({ name }: WelcomeEmailProps) => (
   <Html>

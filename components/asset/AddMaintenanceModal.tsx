@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useTransition } from 'react';
+import { useState, useTransition } from 'react';
 
 import { User } from '@prisma/client';
 import dayjs from 'dayjs';
@@ -27,12 +27,12 @@ import { useCurrentUser } from '@/hooks/use-current-user';
 import { createMaintenance } from '@/lib/actions/maintenance';
 import { CreateMaintenance } from '@/lib/schemas/maintenance';
 
-interface AddMaintenanceModalProps {
+type AddMaintenanceModalProps = {
   isOpen: boolean;
   onClose: () => void;
   assetIds: string[] | [];
   userList: User[];
-}
+};
 
 export default function AddMaintenanceModal({
   isOpen,

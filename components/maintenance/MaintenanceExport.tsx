@@ -21,11 +21,11 @@ import { toast } from 'sonner';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { createMaintenanceLibrary } from '@/lib/actions/maintenance-library';
 
-interface MaintenanceExportProps {
+type MaintenanceExportProps = {
   maintenance: MutatedMaintenance;
   open: boolean;
   onClose: () => void;
-}
+};
 
 export default function MaintenanceExport({
   maintenance,
@@ -64,6 +64,7 @@ export default function MaintenanceExport({
         .filter(checklist => checklist.isSelected)
         .forEach(checklist => {
           const checklistId = uuidv4();
+          console.log(checklist.asset.id);
 
           const checklistLibrary = {
             id: checklistId,

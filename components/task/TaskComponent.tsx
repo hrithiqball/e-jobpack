@@ -1,7 +1,5 @@
 'use client';
 
-import React from 'react';
-
 import { Maintenance } from '@prisma/client';
 import dayjs from 'dayjs';
 
@@ -19,9 +17,9 @@ import { FileCog, Wrench } from 'lucide-react';
 
 import { useCurrentRole } from '@/hooks/use-current-role';
 
-interface TaskComponentProps {
+type TaskComponentProps = {
   maintenanceList: Maintenance[];
-}
+};
 
 export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
   const role = useCurrentRole();

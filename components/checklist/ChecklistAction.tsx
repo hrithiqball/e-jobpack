@@ -25,9 +25,9 @@ import { useCurrentUser } from '@/hooks/use-current-user';
 import TaskAdd from '@/components/task/TaskAdd';
 import ChecklistExportModal from '@/components/checklist/ChecklistExportModal';
 
-interface AssetActionsProps {
+type AssetActionsProps = {
   checklist: MutatedMaintenance['checklist'][0];
-}
+};
 
 export default function ChecklistActions({ checklist }: AssetActionsProps) {
   const [isPending, startTransition] = useTransition();

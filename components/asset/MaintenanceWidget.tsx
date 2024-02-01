@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { User } from '@prisma/client';
 import dayjs from 'dayjs';
@@ -20,10 +20,10 @@ import { useCurrentUser } from '@/hooks/use-current-user';
 import { MutatedAsset } from '@/types/asset';
 import AddMaintenanceModal from '@/components/asset/AddMaintenanceModal';
 
-interface MaintenanceWidgetProps {
+type MaintenanceWidgetProps = {
   mutatedAsset: MutatedAsset;
   userList: User[];
-}
+};
 
 export default function MaintenanceWidget({
   mutatedAsset,

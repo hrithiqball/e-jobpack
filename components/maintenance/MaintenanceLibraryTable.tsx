@@ -1,6 +1,6 @@
 import { Fragment, useState } from 'react';
-import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
+import Image from 'next/image';
 
 import {
   ColumnDef,
@@ -25,9 +25,9 @@ import {
 import emptyIcon from '@/public/image/empty.svg';
 import MaintenanceLibraryInfo from '@/components/maintenance/MaintenanceLibraryInfo';
 
-interface MaintenanceLibraryTableProps {
+type MaintenanceLibraryTableProps = {
   maintenanceLibraryList: MaintenanceLibraryList;
-}
+};
 
 export default function MaintenanceLibraryTable({
   maintenanceLibraryList,

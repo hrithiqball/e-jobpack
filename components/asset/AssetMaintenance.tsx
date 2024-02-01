@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import Image from 'next/image';
 
 import { Maintenance } from '@prisma/client';
@@ -28,9 +28,9 @@ import emptyIcon from '@/public/image/empty.svg';
 import { approved, progress, reject, schedule_pending } from '@/lib/color';
 import AssetSideSheet from '@/components/asset/AssetSideSheet';
 
-interface AssetMaintenanceProps {
+type AssetMaintenanceProps = {
   maintenanceList: Maintenance[];
-}
+};
 
 export default function AssetMaintenance({
   maintenanceList,

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useTransition } from 'react';
+import { useState, useTransition } from 'react';
 
 import { Asset, ChecklistLibrary } from '@prisma/client';
 
@@ -26,14 +26,14 @@ import { createChecklist } from '@/lib/actions/checklist';
 import { descriptionsMap, labelsMap } from '@/public/utils/labels';
 import { MutatedMaintenance } from '@/types/maintenance';
 
-interface MaintenanceAddChecklistModalProps {
+type MaintenanceAddChecklistModalProps = {
   open: boolean;
   onClose: () => void;
   maintenance: MutatedMaintenance;
   assetList: Asset[];
   checklistLibraryList: ChecklistLibrary[];
   selectedSaveOptionCurrent: string;
-}
+};
 
 export default function MaintenanceAddChecklistModal({
   open,

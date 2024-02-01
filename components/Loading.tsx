@@ -2,9 +2,9 @@ import React from 'react';
 
 import { Spinner } from '@nextui-org/react';
 
-interface LoadingProps {
+type LoadingProps = {
   label: string;
-}
+};
 
 export default function Loading({ label }: LoadingProps) {
   return (

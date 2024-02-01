@@ -1,4 +1,4 @@
-import React, { Key, useState, useTransition } from 'react';
+import { Key, useState, useTransition } from 'react';
 import Image from 'next/image';
 
 import { AssetStatus, AssetType } from '@prisma/client';
@@ -40,11 +40,11 @@ import { useCurrentUser } from '@/hooks/use-current-user';
 import { UpdateAsset } from '@/lib/schemas/asset';
 import { MutatedAsset } from '@/types/asset';
 
-interface DetailsWidgetProps {
+type DetailsWidgetProps = {
   mutatedAsset: MutatedAsset;
   statusList: AssetStatus[];
   typeList: AssetType[];
-}
+};
 
 export default function DetailsWidget({
   mutatedAsset,

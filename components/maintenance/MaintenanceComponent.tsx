@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import React, {
+import {
   useState,
   useTransition,
   ReactNode,
@@ -44,13 +43,13 @@ import { useCurrentUser } from '@/hooks/use-current-user';
 import { MutatedMaintenance } from '@/types/maintenance';
 import MaintenanceExport from './MaintenanceExport';
 
-interface MaintenanceComponentProps {
+type MaintenanceComponentProps = {
   mutatedMaintenance: MutatedMaintenance;
   checklistList: Checklist[];
   checklistLibraryList: ChecklistLibrary[];
   assetList: Asset[];
   children: ReactNode;
-}
+};
 
 export default function MaintenanceComponent({
   mutatedMaintenance,
@@ -230,7 +229,7 @@ export default function MaintenanceComponent({
     }
   }
 
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
   async function handleDownloadExcel() {
     // const workbook = new Workbook();
     // const worksheetName = `${maintenance.id}`;

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { ChangeEvent, Fragment, useState, useTransition } from 'react';
+import { ChangeEvent, Fragment, useState, useTransition } from 'react';
 import { TaskType } from '@prisma/client';
 import { useRouter } from 'next/navigation';
 
@@ -31,11 +31,11 @@ type SubtaskOptions = {
   listOptions?: string[];
 };
 
-interface TaskAddProps {
+type TaskAddProps = {
   checklist: MutatedMaintenance['checklist'][0];
   open: boolean;
   onClose: () => void;
-}
+};
 
 export default function TaskAdd({ checklist, open, onClose }: TaskAddProps) {
   const [isPending, startTransition] = useTransition();

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import dayjs from 'dayjs';
 
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/Table';
@@ -7,9 +5,9 @@ import { AlarmClock, Contact2 } from 'lucide-react';
 
 import { MutatedMaintenance } from '@/types/maintenance';
 
-interface MaintenanceTableInfoProps {
+type MaintenanceTableInfoProps = {
   maintenance: MutatedMaintenance;
-}
+};
 
 export default function MaintenanceTableInfo({
   maintenance,

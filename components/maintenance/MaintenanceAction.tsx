@@ -1,4 +1,4 @@
-import React, { Key } from 'react';
+import { Key } from 'react';
 
 import {
   Dropdown,
@@ -21,10 +21,9 @@ import {
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useCurrentRole } from '@/hooks/use-current-role';
 
-interface MaintenanceActionProps {
-  // eslint-disable-next-line no-unused-vars
+type MaintenanceActionProps = {
   handleAction: (key: Key) => void;
-}
+};
 
 export default function MaintenanceAction({
   handleAction,
