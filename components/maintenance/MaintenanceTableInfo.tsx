@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-import { Table, TableBody, TableCell, TableRow } from '@/components/ui/Table';
+import { Table, TableBody, TableCell, TableRow } from '@/components/ui/tableT';
 import { AlarmClock, Contact2 } from 'lucide-react';
 
 import { MutatedMaintenance } from '@/types/maintenance';

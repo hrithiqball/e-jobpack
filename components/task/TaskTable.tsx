@@ -10,7 +10,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/Table';
+} from '@/components/ui/tableT';
 import { Check, MoreVertical, X } from 'lucide-react';
 
 import { TaskList, TaskItem } from '@/types/task';

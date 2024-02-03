@@ -1,6 +1,6 @@
 import { Maintenance } from '@prisma/client';
 
-import { Table, TableBody, TableCell, TableRow } from '@/components/ui/Table';
+import { Table, TableBody, TableCell, TableRow } from '@/components/ui/tableT';
 import { Button, Link } from '@nextui-org/react';
 import { ExternalLink } from 'lucide-react';
 

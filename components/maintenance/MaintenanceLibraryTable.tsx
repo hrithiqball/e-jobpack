@@ -15,7 +15,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/Table';
+} from '@/components/ui/tableT';
 import { Button } from '@nextui-org/react';
 
 import {
