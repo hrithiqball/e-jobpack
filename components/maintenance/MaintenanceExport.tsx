@@ -64,7 +64,6 @@ export default function MaintenanceExport({
         .filter(checklist => checklist.isSelected)
         .forEach(checklist => {
           const checklistId = uuidv4();
-          console.log(checklist.asset.id);
 
           const checklistLibrary = {
             id: checklistId,
@@ -119,6 +118,8 @@ export default function MaintenanceExport({
 
           checklistLibraries.push(validatedChecklist.data);
         });
+
+      console.log(checklistLibraries[0]?.taskLibrary);
 
       const newMaintenanceLibrary: CreateMaintenanceLibrary = {
         title,

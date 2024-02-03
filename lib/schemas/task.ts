@@ -48,10 +48,19 @@ export const UpdateTask = z.object({
 
 export const CreateTaskLibrarySchema = z.object({
   taskActivity: z.string().min(1, { message: 'Task Activity is required' }),
+  checklistLibraryId: z.string().optional().nullable(),
   description: z.string().optional().nullable(),
   listChoice: z.array(z.string()).optional(),
   taskType: z.nativeEnum(TaskType),
   id: z.string().min(1, { message: 'Task ID is required' }),
 });
 
+export const UpdateTaskLibrarySchema = z.object({
+  taskActivity: z.string().min(1, { message: 'Task Activity is required' }),
+  description: z.string().optional().nullable(),
+  taskType: z.nativeEnum(TaskType),
+  listChoice: z.array(z.string()).optional(),
+});
+
 export type CreateTaskLibrary = z.infer<typeof CreateTaskLibrarySchema>;
+export type UpdateTaskLibrary = z.infer<typeof UpdateTaskLibrarySchema>;

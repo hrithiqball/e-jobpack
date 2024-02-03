@@ -1,5 +1,5 @@
 import { fetchTaskList } from '@/lib/actions/task';
-import { fetchTaskLibraryList } from '@/app/(route)/maintenance/_actions/task-library';
+import { fetchTaskLibraryList } from '@/lib/actions/task-library';
 
 export type TaskList = Awaited<ReturnType<typeof fetchTaskList>>;
 export type TaskItem = Awaited<ReturnType<typeof fetchTaskList>>[0];

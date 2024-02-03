@@ -1,7 +1,7 @@
 import { fetchMaintenanceList2 } from '@/lib/actions/maintenance';
 import { fetchMaintenanceLibraryList } from '@/lib/actions/maintenance-library';
 import MaintenanceLibraryComponent from '@/components/maintenance/MaintenanceLibraryComponent';
-import { fetchTaskLibraryList } from '@/app/(route)/maintenance/_actions/task-library';
+import { fetchTaskLibraryList } from '@/lib/actions/task-library';
 
 export default async function MaintenancePage() {
   const maintenanceLibraryList = await fetchMaintenanceLibraryList();
