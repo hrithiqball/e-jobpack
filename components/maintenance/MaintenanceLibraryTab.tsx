@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 
-import { Button, ButtonGroup, Input } from '@nextui-org/react';
-import { Check, LibraryBig, Search, X } from 'lucide-react';
+import { Button, Input, Link } from '@nextui-org/react';
+import { ChevronLeft, LibraryBig, Search } from 'lucide-react';
 
 import {
   MaintenanceLibraryList,
@@ -48,45 +48,29 @@ export default function MaintenanceLibraryTab({
     router.push(`${pathName}?tab=library&create=${!isCreate}`);
   }
 
-  function handleExitEditRoute() {
-    router.push(`${pathName}?tab=library&isCreate=false`);
-  }
-
-  function handleSaveChanges() {
-    router.push(`${pathName}?tab=library&isCreate=false`);
-  }
-
   return isEdit && currentMaintenanceLibrary ? (
     <div className="flex flex-1 flex-col space-y-4">
-      <div className="flex items-center justify-between">
-        <span className="text-lg font-medium">
+      <div className="flex items-center space-x-4">
+        <Button
+          as={Link}
+          size="sm"
+          variant="faded"
+          color="primary"
+          href={`${pathName}?tab=library&isCreate=false`}
+          startContent={<ChevronLeft size={18} />}
+        >
+          Back
+        </Button>
+        <span className="text-xl font-bold">
           {currentMaintenanceLibrary.title}
         </span>
-        <ButtonGroup>
-          <Button
-            variant="faded"
-            size="sm"
-            color="danger"
-            onClick={handleExitEditRoute}
-            startContent={<X size={18} />}
-          >
-            Discard Changes
-          </Button>
-          <Button
-            variant="faded"
-            size="sm"
-            color="primary"
-            onClick={handleSaveChanges}
-            startContent={<Check size={18} />}
-          >
-            Save Changes
-          </Button>
-        </ButtonGroup>
       </div>
       <div className="flex flex-1 flex-col">
         <MaintenanceLibraryEdit
           maintenanceLibrary={currentMaintenanceLibrary}
-          taskLibraryList={taskLibraryList}
+          taskLibraryList={taskLibraryList.filter(
+            task => !task.checklistLibraryId,
+          )}
         />
       </div>
     </div>
@@ -98,6 +82,7 @@ export default function MaintenanceLibraryTab({
             <Input
               size="sm"
               variant="faded"
+              color="primary"
               placeholder="Search"
               value={searchInput}
               onValueChange={setSearchInput}

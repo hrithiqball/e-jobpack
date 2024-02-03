@@ -69,7 +69,7 @@ export default function SignUpCard() {
 
   return (
     <div className="flex items-center justify-center h-full">
-      <Card title="Sign Up" className="w-90 p-4 shadow-md">
+      <Card shadow="none" title="Sign Up" className="w-90 p-4">
         <CardHeader className="flex gap-3">
           <Image
             alt="E Jobpack System"

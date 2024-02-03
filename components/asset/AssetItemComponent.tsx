@@ -44,7 +44,7 @@ export default function AssetItemComponent({
   const searchParams = useSearchParams();
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
-  const tab = searchParams.get('tab');
+  const tab = searchParams.get('tab') ?? 'details';
 
   function handleTabChange(key: Key) {
     router.push(`${pathname}?tab=${key}`);

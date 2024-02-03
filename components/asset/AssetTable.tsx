@@ -99,7 +99,7 @@ export default function AssetTable({
       id: 'select',
       header: ({ table }) => {
         return (
-          <div className="text-center">
+          <div>
             <Checkbox
               isSelected={
                 table.getIsAllPageRowsSelected() ||
@@ -115,7 +115,7 @@ export default function AssetTable({
       },
       cell: ({ row }) => {
         return (
-          <div className="text-center">
+          <div>
             <Checkbox
               isSelected={row.getIsSelected()}
               isIndeterminate={row.getIsSomeSelected()}

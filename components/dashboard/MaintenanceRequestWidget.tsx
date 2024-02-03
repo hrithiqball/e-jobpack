@@ -17,7 +17,7 @@ import { Calendar, ClipboardCheck, ExternalLink } from 'lucide-react';
 export default function MaintenanceRequestWidget() {
   return (
     <div className="flex grow flex-col">
-      <Card className="flex flex-1 p-4">
+      <Card shadow="none" className="flex flex-1 p-4">
         <div className="flex flex-1 flex-col space-y-4">
           <div className="flex items-center space-x-2">
             <ClipboardCheck />

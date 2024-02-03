@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, Key, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
 
@@ -16,7 +16,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Button } from '@nextui-org/react';
+import {
+  Button,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from '@nextui-org/react';
 
 import {
   MaintenanceLibraryList,
@@ -24,6 +30,8 @@ import {
 } from '@/types/maintenance';
 import emptyIcon from '@/public/image/empty.svg';
 import MaintenanceLibraryInfo from '@/components/maintenance/MaintenanceLibraryInfo';
+import { Copy, MoreHorizontal, Trash } from 'lucide-react';
+import { toast } from 'sonner';
 
 type MaintenanceLibraryTableProps = {
   maintenanceLibraryList: MaintenanceLibraryList;
@@ -44,6 +52,40 @@ export default function MaintenanceLibraryTable({
   const columns: ColumnDef<MaintenanceLibraryItem>[] = [
     { accessorKey: 'title', header: 'Title' },
     { accessorKey: 'description', header: 'Description' },
+    {
+      id: 'actions',
+      header: () => null,
+      meta: { align: 'right' },
+      cell: ({ row }) => {
+        return (
+          <div className="text-right">
+            <Dropdown>
+              <DropdownTrigger>
+                <Button isIconOnly variant="light" size="sm">
+                  <MoreHorizontal size={18} />
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                variant="faded"
+                color="primary"
+                onAction={handleMaintenanceLibraryAction(row.original.id)}
+              >
+                <DropdownItem key="duplicate" startContent={<Copy size={18} />}>
+                  Duplicate
+                </DropdownItem>
+                <DropdownItem
+                  key="delete"
+                  color="danger"
+                  startContent={<Trash size={18} />}
+                >
+                  Delete
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          </div>
+        );
+      },
+    },
   ];
 
   const table = useReactTable({
@@ -69,6 +111,25 @@ export default function MaintenanceLibraryTable({
 
   function handleCloseMaintenanceLibraryInfo() {
     setOpenMaintenanceLibraryInfo(false);
+  }
+
+  function handleMaintenanceLibraryAction(maintenanceLibraryId: string) {
+    return (key: Key) => {
+      const maintenanceLibraryItem = maintenanceLibraryList.find(
+        mtn => mtn.id === maintenanceLibraryId,
+      );
+
+      if (!maintenanceLibraryItem) {
+        toast.error('Maintenance library not found');
+        return;
+      }
+
+      switch (key) {
+        case 'delete':
+          toast.error('Delete action not implemented');
+          break;
+      }
+    };
   }
 
   return maintenanceLibraryList.length > 0 ? (

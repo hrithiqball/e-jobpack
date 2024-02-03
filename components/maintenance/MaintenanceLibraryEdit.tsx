@@ -1,43 +1,25 @@
-import { ChangeEvent, Fragment, useState, useTransition } from 'react';
-import Link from 'next/link';
+import { Fragment, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 import { v4 as uuidv4 } from 'uuid';
 
-import {
-  Button,
-  Card,
-  Input,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  Select,
-  SelectItem,
-} from '@nextui-org/react';
-import { motion, useDragControls } from 'framer-motion';
-import {
-  Trash,
-  Edit,
-  ExternalLink,
-  GripVertical,
-  Check,
-  X,
-} from 'lucide-react';
+import { Button, Card } from '@nextui-org/react';
+import { motion } from 'framer-motion';
+import { ExternalLink, FilePlus2, ListPlus } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { MaintenanceLibraryItem } from '@/types/maintenance';
 import { TaskLibraryItem, TaskLibraryList } from '@/types/task';
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { cn } from '@/lib/utils';
 import {
   createTaskLibrary,
   deleteTaskLibrary,
-  updateTaskLibrary,
 } from '@/lib/actions/task-library';
-import { CreateTaskLibrary, UpdateTaskLibrary } from '@/lib/schemas/task';
-import { TaskTypeEnum } from '@/types/enum';
-import { convertToTaskTypeEnum } from '@/lib/function/convertToEnum';
-import { TaskType } from '@prisma/client';
+import { CreateTaskLibrary } from '@/lib/schemas/task';
+import DropArea from '@/components/maintenance/MaintenanceLibraryDropArea';
+import TaskLibraryItemCard from '@/components/maintenance/TaskLibraryItemCard';
+import ChecklistTaskLibraryItem from '@/components/maintenance/ChecklistTaskLibraryItem';
 
 type MaintenanceLibraryEditProps = {
   maintenanceLibrary: MaintenanceLibraryItem;
@@ -49,7 +31,6 @@ export default function MaintenanceLibraryEdit({
 }: MaintenanceLibraryEditProps) {
   const [transitioning, startTransition] = useTransition();
   const router = useRouter();
-  const controls = useDragControls();
   const user = useCurrentUser();
 
   const [currentTaskLibrary, setCurrentTaskLibrary] =
@@ -116,7 +97,18 @@ export default function MaintenanceLibraryEdit({
 
   return (
     <motion.div className="flex flex-1 space-x-4">
-      <Card shadow="none" className="lg:w-3/4 p-4">
+      <Card shadow="none" className="lg:w-3/4 p-4 space-y-4">
+        <div className="flex items-center justify-between ">
+          <span className="font-bold text-lg">Checklist</span>
+          <Button
+            size="sm"
+            variant="faded"
+            color="primary"
+            startContent={<FilePlus2 size={18} />}
+          >
+            Add Checklist
+          </Button>
+        </div>
         <div className="flex flex-1 flex-col space-y-4">
           {maintenanceLibrary.checklistLibrary.map(checklist => (
             <motion.div
@@ -140,10 +132,10 @@ export default function MaintenanceLibraryEdit({
                 )}
               </div>
               {checklist.taskLibrary.length > 0 ? (
-                <div className="flex flex-col space-y-2">
+                <div className="flex flex-col">
                   {checklist.taskLibrary.map(task => (
                     <Fragment key={task.id}>
-                      <Task
+                      <ChecklistTaskLibraryItem
                         key={task.id}
                         task={task}
                         handleDelete={() => handleDeleteTaskLibrary(task)}
@@ -153,273 +145,38 @@ export default function MaintenanceLibraryEdit({
                   ))}
                 </div>
               ) : (
-                <div className="flex justify-center items-center">
-                  No tasks / Droppable zone
-                </div>
+                <DropArea onDrop={() => handleDrop(checklist)} />
               )}
             </motion.div>
           ))}
         </div>
       </Card>
       <Card shadow="none" className="lg:w-1/4 p-4">
-        <div className="flex flex-col space-y-1">
-          {taskLibraryList.map(taskLib => (
-            <motion.div
-              draggable
-              key={taskLib.id}
-              dragControls={controls}
-              onDragStart={() => handleDragFramer(taskLib)}
-              onDragEnd={() => setCurrentTaskLibrary(null)}
-              className={cn(
-                'active:shadow-lg flex justify-center cursor-grab active:cursor-grabbing items-center border border-solid border-gray-400 rounded-md h-10 active:animate-pulse',
-                {
-                  'bg-red-300': transitioning,
-                },
-              )}
+        <div className="flex flex-col space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="text-medium font-bold">Task Library</span>
+            <Button
+              size="sm"
+              variant="faded"
+              color="primary"
+              startContent={<ListPlus size={18} />}
             >
-              {taskLib.taskActivity}
-            </motion.div>
-          ))}
+              Add New
+            </Button>
+          </div>
+          <div className="flex flex-col space-y-1">
+            {taskLibraryList.map(taskLib => (
+              <TaskLibraryItemCard
+                key={taskLib.id}
+                taskLib={taskLib}
+                transitioning={transitioning}
+                handleDragFramer={handleDragFramer}
+                setCurrentTaskLibrary={setCurrentTaskLibrary}
+              />
+            ))}
+          </div>
         </div>
       </Card>
     </motion.div>
-  );
-}
-
-// TODO: Move to separate file
-type TaskProps = {
-  task: TaskLibraryItem;
-  handleDelete: () => void;
-};
-
-function Task({ task, handleDelete }: TaskProps) {
-  const [transitioning, startTransition] = useTransition();
-  const user = useCurrentUser();
-  const router = useRouter();
-
-  const taskTypeEnum = convertToTaskTypeEnum(task.taskType);
-
-  const [isHovered, setIsHovered] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
-  const [taskType, setTaskType] = useState(taskTypeEnum.label);
-  const [tempTaskTypeValue, setTempTaskTypeValue] = useState(task.taskType);
-  const [tempTaskActivity, setTempTaskActivity] = useState(task.taskActivity);
-  const [tempTaskDescription, setTempTaskDescription] = useState(
-    task.description ?? '',
-  );
-  const [tempListChoice, setTempListChoice] = useState(task.listChoice);
-
-  function handleSave() {
-    startTransition(() => {
-      if (user === undefined || user.id === undefined) {
-        toast.error('Session expired!');
-        return;
-      }
-
-      const updatedTaskLibrary: UpdateTaskLibrary = {
-        taskActivity: tempTaskActivity,
-        description: tempTaskDescription === '' ? null : tempTaskDescription,
-        taskType: tempTaskTypeValue,
-        listChoice: tempListChoice,
-      };
-      toast.promise(updateTaskLibrary(user.id, task.id, updatedTaskLibrary), {
-        loading: 'Saving task...',
-        success: () => {
-          router.refresh();
-          return `Task ${tempTaskActivity} saved`;
-        },
-        error: 'Failed to save task 🥲',
-      });
-    });
-
-    toast.success('Task saved!');
-    setIsEdit(false);
-  }
-
-  function handleCancel() {
-    toast.error('Task edit cancelled');
-    setIsEdit(true);
-  }
-
-  function handleTaskTypeChange(e: ChangeEvent<HTMLSelectElement>) {
-    const taskType = TaskTypeEnum.find(
-      tt => tt.label === e.target.value,
-    )!.value;
-
-    setTempTaskTypeValue(taskType);
-    setTaskType(e.target.value);
-
-    if (tempListChoice.length > 0) return;
-
-    setTempListChoice(['First Choice', 'Second Choice']);
-
-    toast.success(tempListChoice.length);
-  }
-
-  function handleAddChoice() {
-    setTempListChoice([...tempListChoice, 'First Choice']);
-  }
-
-  return (
-    <div
-      key={task.id}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div className="flex items-center justify-between space-x-4">
-        <div className="flex flex-1 items-center space-x-4">
-          <div className="flex items-center flex-1">
-            {isEdit ? (
-              <div className="flex items-center flex-1 space-x-4">
-                <Input
-                  isRequired
-                  size="sm"
-                  variant="faded"
-                  color="primary"
-                  label="Task activity"
-                  errorMessage={
-                    tempTaskActivity === '' && 'Task activity is required'
-                  }
-                  isInvalid={tempTaskActivity === ''}
-                  value={tempTaskActivity}
-                  onValueChange={setTempTaskActivity}
-                  className="flex-1"
-                />
-                <Input
-                  size="sm"
-                  variant="faded"
-                  color="primary"
-                  label="Description"
-                  value={tempTaskDescription}
-                  onValueChange={setTempTaskDescription}
-                  className="flex-1"
-                />
-                <div className="flex items-center flex-1 space-x-2">
-                  <Select
-                    variant="faded"
-                    size="sm"
-                    color="primary"
-                    isDisabled={transitioning}
-                    selectedKeys={[taskType]}
-                    onChange={handleTaskTypeChange}
-                    className="flex-1"
-                  >
-                    {TaskTypeEnum.map(taskType => (
-                      <SelectItem
-                        color="primary"
-                        variant="faded"
-                        key={taskType.label}
-                        value={taskType.value}
-                      >
-                        {taskType.label}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                  {(tempTaskTypeValue === TaskType.MULTIPLE_SELECT ||
-                    tempTaskTypeValue === TaskType.SINGLE_SELECT) && (
-                    <Popover placement="bottom">
-                      <PopoverTrigger>
-                        <Button radius="sm" variant="faded" color="primary">
-                          List Choice
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent>
-                        <div className="flex flex-col space-y-2">
-                          <Button
-                            size="sm"
-                            variant="faded"
-                            color="primary"
-                            onClick={handleAddChoice}
-                          >
-                            Add choice
-                          </Button>
-                          {tempListChoice.map((lc, index) => (
-                            <div
-                              key={index}
-                              className="flex items-center space-x-2"
-                            >
-                              <Input
-                                size="sm"
-                                variant="faded"
-                                color="primary"
-                                value={tempListChoice[index]}
-                                onValueChange={lc => {
-                                  const newTempListChoice = [...tempListChoice];
-                                  newTempListChoice[index] = lc;
-                                  setTempListChoice(newTempListChoice);
-                                }}
-                              />
-                              <span
-                                className="text-red-300 cursor-pointer"
-                                onClick={() => {
-                                  setTempListChoice(
-                                    tempListChoice.filter(
-                                      (_, i) => i !== index,
-                                    ),
-                                  );
-                                }}
-                              >
-                                <Trash size={18} />
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      </PopoverContent>
-                    </Popover>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <div className="flex items-center space-x-4">
-                <GripVertical color="#6b7280" className="cursor-grab" />
-                <div className="flex flex-col">
-                  <span>{task.taskActivity}</span>
-                  <span className="text-xs text-gray-500">
-                    {task.description === ''
-                      ? 'No description'
-                      : task.description}
-                  </span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Check size={18} />
-                  <span>{taskType}</span>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-        {isHovered && !isEdit && (
-          <div className="flex items-center space-x-2">
-            <div className="hover:text-yellow-300 hover:cursor-pointer">
-              <Edit size={18} onClick={() => setIsEdit(true)} />
-            </div>
-            <div className="hover:text-red-300 hover:cursor-pointer">
-              <Trash size={18} onClick={handleDelete} />
-            </div>
-          </div>
-        )}
-        {isEdit && (
-          <div className="flex items-center space-x-2">
-            <div className="hover:text-green-300 hover:cursor-pointer">
-              <Check size={18} onClick={handleSave} />
-            </div>
-            <div className="hover:text-red-300 hover:cursor-pointer">
-              <X size={18} onClick={handleCancel} />
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function DropArea({ onDrop }: { onDrop: () => void }) {
-  return (
-    <div
-      onDrop={onDrop}
-      className="flex justify-center items-center border border-solid border-gray-400 rounded-md h-10"
-    >
-      Drop here
-    </div>
   );
 }

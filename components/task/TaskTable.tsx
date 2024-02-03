@@ -1,7 +1,15 @@
-/* eslint-disable no-undef */
 'use client';
 
-import { Fragment, Key, useEffect, useRef, useState } from 'react';
+import {
+  Fragment,
+  Key,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
+
+import { v4 as uuidv4 } from 'uuid';
 
 import {
   Table,
@@ -11,10 +19,18 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Check, MoreVertical, X } from 'lucide-react';
+import {
+  Check,
+  Edit,
+  Library,
+  ListTree,
+  MoreVertical,
+  Trash,
+  X,
+} from 'lucide-react';
+import { toast } from 'sonner';
 
 import { TaskList, TaskItem } from '@/types/task';
-import TaskValue from './TaskValue';
 import {
   Button,
   ButtonGroup,
@@ -27,12 +43,21 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@nextui-org/react';
+import { useCurrentUser } from '@/hooks/use-current-user';
+import { createTaskLibrary } from '@/lib/actions/task-library';
+import { CreateTaskLibrary } from '@/lib/schemas/task';
+import TaskValue from './TaskValue';
+import { useRouter } from 'next/navigation';
 
 type TaskTableProps = {
   taskList: TaskList;
 };
 
 export default function TaskTable({ taskList }: TaskTableProps) {
+  const [transitioning, startTransition] = useTransition();
+  const user = useCurrentUser();
+  const router = useRouter();
+
   const typeIssueTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const typeRemarkTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -86,8 +111,39 @@ export default function TaskTable({ taskList }: TaskTableProps) {
 
         case 'add-subtask':
           break;
+
+        case 'export-task':
+          handleExportTask(task);
+          break;
       }
     };
+  }
+
+  function handleExportTask(task: TaskItem) {
+    startTransition(() => {
+      if (user === undefined || user.id === undefined) {
+        toast.error('User session expired');
+        return;
+      }
+
+      const newTaskLibrary: CreateTaskLibrary = {
+        id: uuidv4(),
+        taskActivity: task.taskActivity,
+        description: task.description,
+        taskType: task.taskType,
+        listChoice: task.listChoice,
+        checklistLibraryId: null,
+      };
+
+      toast.promise(createTaskLibrary(user.id, newTaskLibrary), {
+        loading: 'Exporting task...',
+        success: () => {
+          router.refresh();
+          return 'Task exported successfully';
+        },
+        error: 'Failed to export task',
+      });
+    });
   }
 
   function handleIssueChange(id: string, value: string) {
@@ -275,14 +331,46 @@ export default function TaskTable({ taskList }: TaskTableProps) {
                       </Button>
                     </DropdownTrigger>
                     <DropdownMenu
-                      variant="flat"
+                      variant="faded"
                       aria-label="Task action"
                       color="primary"
+                      disabledKeys={
+                        transitioning
+                          ? [
+                              'edit-task',
+                              'add-subtask',
+                              'export-task',
+                              'remove-task',
+                            ]
+                          : []
+                      }
                       onAction={handleAction(task)}
                     >
-                      <DropdownItem key="edit-task">Edit</DropdownItem>
-                      <DropdownItem key="add-subtask">Add subtask</DropdownItem>
-                      <DropdownItem key="remove-task">Remove</DropdownItem>
+                      <DropdownItem
+                        key="edit-task"
+                        startContent={<Edit size={18} />}
+                      >
+                        Edit
+                      </DropdownItem>
+                      <DropdownItem
+                        key="add-subtask"
+                        startContent={<ListTree size={18} />}
+                      >
+                        Add subtask
+                      </DropdownItem>
+                      <DropdownItem
+                        key="export-task"
+                        startContent={<Library size={18} />}
+                      >
+                        Save as library
+                      </DropdownItem>
+                      <DropdownItem
+                        key="remove-task"
+                        color="danger"
+                        startContent={<Trash size={18} />}
+                      >
+                        Remove
+                      </DropdownItem>
                     </DropdownMenu>
                   </Dropdown>
                 )}

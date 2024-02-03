@@ -27,7 +27,7 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
   return (
     <div className="flex flex-col flex-1 rounded-md flex-grow">
       <div className="flex flex-1 flex-col space-y-4 h-full w-full sm:flex-row sm:space-y-0 sm:space-x-4">
-        <Card className="flex-1 p-4 w-100">
+        <Card shadow="none" className="flex-1 p-4 w-100">
           <div>
             <div className="space-x-4 items-center flex justify-center mb-4">
               <span className="text-lg font-semibold">My Tasks</span>
@@ -50,7 +50,11 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
                   m.startDate < dayjs().add(1, 'day').toDate(),
               )
               .map(maintenance => (
-                <Card key={maintenance.id} className="w-full my-4">
+                <Card
+                  shadow="none"
+                  key={maintenance.id}
+                  className="w-full my-4"
+                >
                   <CardHeader className="flex gap-3">
                     <Button color="danger" isIconOnly>
                       <Wrench />
@@ -71,7 +75,11 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
                 maintenanceList
                   .filter(m => !m.isOpen)
                   .map(maintenance => (
-                    <Card key={maintenance.id} className="w-full my-4">
+                    <Card
+                      shadow="none"
+                      key={maintenance.id}
+                      className="w-full my-4"
+                    >
                       <CardHeader className="flex gap-3">
                         <Button color="success" isIconOnly>
                           <motion.div whileHover={{ scale: 1.2 }}>
@@ -95,7 +103,7 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
                   )))}
           </div>
         </Card>
-        <Card className="flex-1 p-4">
+        <Card shadow="none" className="flex-1 p-4">
           <div>
             <div className="space-x-4 items-center flex justify-center mb-4">
               <span className="text-lg font-semibold">Completed Tasks</span>
@@ -125,7 +133,7 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
               ))}
           </div>
         </Card>
-        <Card className="flex-1 p-4">
+        <Card shadow="none" className="flex-1 p-4">
           <div>
             <div className="space-x-4 items-center flex justify-center mb-4">
               <span className="text-lg font-semibold">Upcoming Tasks</span>
@@ -141,7 +149,11 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
             {maintenanceList
               .filter(m => m.startDate !== null && m.startDate > new Date())
               .map(maintenance => (
-                <Card key={maintenance.id} className="w-full my-4">
+                <Card
+                  key={maintenance.id}
+                  shadow="none"
+                  className="w-full my-4"
+                >
                   <CardHeader className="flex gap-3">
                     <Button color="danger" isIconOnly>
                       <Wrench />

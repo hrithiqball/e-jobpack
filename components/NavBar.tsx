@@ -118,7 +118,11 @@ export default function Navigation() {
             </Button>
           </DropdownTrigger>
           {role === 'ADMIN' ? (
-            <DropdownMenu aria-label="Profile Actions" variant="faded">
+            <DropdownMenu
+              aria-label="Profile Actions"
+              variant="faded"
+              color="primary"
+            >
               <DropdownItem key="name">{user?.name}</DropdownItem>
               <DropdownItem key="email">{user?.email}</DropdownItem>
               <DropdownItem key="account">My Account</DropdownItem>
@@ -130,7 +134,11 @@ export default function Navigation() {
               </DropdownItem>
             </DropdownMenu>
           ) : (
-            <DropdownMenu aria-label="Profile Actions" variant="faded">
+            <DropdownMenu
+              aria-label="Profile Actions"
+              variant="faded"
+              color="primary"
+            >
               <DropdownItem
                 key="account"
                 startContent={<CircleUserRound size={18} />}

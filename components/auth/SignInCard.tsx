@@ -52,7 +52,7 @@ export default function SignInCard() {
 
   return (
     <div className="flex items-center justify-center h-full">
-      <Card title="Login" className="w-90 p-4 shadow-md">
+      <Card shadow="none" title="Login" className="w-90 p-4">
         <CardHeader className="flex gap-3">
           <Image
             alt="E Jobpack System"

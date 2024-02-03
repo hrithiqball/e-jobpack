@@ -16,7 +16,7 @@ import { Activity, ExternalLink } from 'lucide-react';
 export default function RecentActivity() {
   return (
     <div className="flex grow flex-col">
-      <Card className="flex flex-1 p-4 space-y-4">
+      <Card shadow="none" className="flex flex-1 p-4 space-y-4">
         <div className="flex flex-col space-y-4">
           <div className="flex items-center space-x-2">
             <Activity />
