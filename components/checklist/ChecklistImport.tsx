@@ -129,7 +129,7 @@ export default function ChecklistImport({
               <div className="flex flex-1 flex-col">
                 <div className="flex items-center space-x-1">
                   <Link
-                    href={`/maintenance?tab=checklist&checklistLibId=${checklistLib.id}`}
+                    href={`/maintenance?tab=checklist&details=true&checklistLibId=${checklistLib.id}`}
                     className="hover:underline hover:text-blue-500"
                   >
                     <ExternalLink size={18} />

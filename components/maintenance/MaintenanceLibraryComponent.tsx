@@ -7,6 +7,7 @@ import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { Tab, Tabs } from '@nextui-org/react';
 
 import { MaintenanceList, MaintenanceLibraryList } from '@/types/maintenance';
+import { ChecklistLibraryList } from '@/types/checklist';
 import { TaskLibraryList } from '@/types/task';
 import MaintenanceAllTab from '@/components/maintenance/MaintenanceAllTab';
 import MaintenanceLibraryTab from '@/components/maintenance/MaintenanceLibraryTab';
@@ -16,12 +17,14 @@ type MaintenanceLibraryComponentProps = {
   maintenanceList: MaintenanceList;
   maintenanceLibraryList: MaintenanceLibraryList;
   taskLibraryList: TaskLibraryList;
+  checklistLibrary: ChecklistLibraryList;
 };
 
 export default function MaintenanceLibraryComponent({
   maintenanceList,
   maintenanceLibraryList,
   taskLibraryList,
+  checklistLibrary,
 }: MaintenanceLibraryComponentProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -47,14 +50,22 @@ export default function MaintenanceLibraryComponent({
         <Tab key="all" title="Maintenance" className="flex flex-col flex-1">
           <MaintenanceAllTab maintenanceList={maintenanceList} />
         </Tab>
-        <Tab key="checklist" title="Checklist" className="flex flex-col flex-1">
-          <MaintenanceChecklistTab />
-        </Tab>
-        <Tab key="library" title="Library" className="flex flex-col flex-1">
+        <Tab
+          key="library"
+          title="Maintenance Library"
+          className="flex flex-col flex-1"
+        >
           <MaintenanceLibraryTab
             maintenanceLibraryList={maintenanceLibraryList}
             taskLibraryList={taskLibraryList}
           />
+        </Tab>
+        <Tab
+          key="checklist"
+          title="Checklist Library"
+          className="flex flex-col flex-1"
+        >
+          <MaintenanceChecklistTab checklistLibraryList={checklistLibrary} />
         </Tab>
       </Tabs>
     </div>

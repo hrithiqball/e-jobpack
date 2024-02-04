@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { Button, Input } from '@nextui-org/react';
-import { FilePlus, Filter, Search } from 'lucide-react';
+import { FilePlus2, Filter, Search } from 'lucide-react';
 
 import { MaintenanceItem, MaintenanceList } from '@/types/maintenance';
 import { useMediaQuery } from '@/hooks/use-media-query';
@@ -53,6 +53,7 @@ export default function MaintenanceAllTab({
           <Input
             size="sm"
             variant="faded"
+            color="primary"
             placeholder="Search"
             value={searchInput}
             onValueChange={setSearchInput}
@@ -67,13 +68,10 @@ export default function MaintenanceAllTab({
           <Button
             isIconOnly={!isDesktop}
             variant="faded"
-            startContent={isDesktop ? <FilePlus size={18} /> : null}
+            color="primary"
+            startContent={isDesktop ? <FilePlus2 size={18} /> : null}
           >
-            {isDesktop ? (
-              `Create Maintenance ${maintenanceList.length}`
-            ) : (
-              <FilePlus size={18} />
-            )}
+            {isDesktop ? 'Create' : <FilePlus2 size={18} />}
           </Button>
         </div>
       </div>

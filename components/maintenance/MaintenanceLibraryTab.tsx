@@ -27,8 +27,8 @@ export default function MaintenanceLibraryTab({
   const searchParams = useSearchParams();
   const pathName = usePathname();
 
-  const isCreate = searchParams.get('create') === 'true';
-  const isEdit = searchParams.get('isEdit') === 'true';
+  const isCreate = searchParams.get('create') === 'true' || false;
+  const isEdit = searchParams.get('isEdit') === 'true' || false;
   const libraryId = searchParams.get('libraryId');
 
   const [currentMaintenanceLibrary, setCurrentMaintenanceLibrary] =
@@ -97,7 +97,7 @@ export default function MaintenanceLibraryTab({
               onClick={handleCreateLibraryRoute}
               startContent={<LibraryBig size={18} />}
             >
-              Create Library
+              Create
             </Button>
           </div>
         </div>

@@ -30,7 +30,7 @@ import {
 } from '@/types/maintenance';
 import emptyIcon from '@/public/image/empty.svg';
 import MaintenanceLibraryInfo from '@/components/maintenance/MaintenanceLibraryInfo';
-import { Copy, MoreHorizontal, Trash } from 'lucide-react';
+import { Copy, FilePen, MoreHorizontal, Trash } from 'lucide-react';
 import { toast } from 'sonner';
 
 type MaintenanceLibraryTableProps = {
@@ -57,6 +57,31 @@ export default function MaintenanceLibraryTable({
       header: () => null,
       meta: { align: 'right' },
       cell: ({ row }) => {
+        function handleMaintenanceLibraryAction(key: Key) {
+          const maintenanceLibraryItem = maintenanceLibraryList.find(
+            mtn => mtn.id === row.original.id,
+          );
+
+          if (!maintenanceLibraryItem) {
+            toast.error('Maintenance library not found');
+            return;
+          }
+
+          switch (key) {
+            case 'duplicate':
+              toast.info('Duplicate action coming soon');
+              break;
+            case 'edit':
+              router.push(
+                `${pathname}?tab=library&isEdit=true&libraryId=${maintenanceLibraryItem.id}`,
+              );
+              break;
+            case 'delete':
+              toast.error('Delete action not implemented');
+              break;
+          }
+        }
+
         return (
           <div className="text-right">
             <Dropdown>
@@ -68,8 +93,11 @@ export default function MaintenanceLibraryTable({
               <DropdownMenu
                 variant="faded"
                 color="primary"
-                onAction={handleMaintenanceLibraryAction(row.original.id)}
+                onAction={handleMaintenanceLibraryAction}
               >
+                <DropdownItem key="edit" startContent={<FilePen size={18} />}>
+                  Edit
+                </DropdownItem>
                 <DropdownItem key="duplicate" startContent={<Copy size={18} />}>
                   Duplicate
                 </DropdownItem>
@@ -111,25 +139,6 @@ export default function MaintenanceLibraryTable({
 
   function handleCloseMaintenanceLibraryInfo() {
     setOpenMaintenanceLibraryInfo(false);
-  }
-
-  function handleMaintenanceLibraryAction(maintenanceLibraryId: string) {
-    return (key: Key) => {
-      const maintenanceLibraryItem = maintenanceLibraryList.find(
-        mtn => mtn.id === maintenanceLibraryId,
-      );
-
-      if (!maintenanceLibraryItem) {
-        toast.error('Maintenance library not found');
-        return;
-      }
-
-      switch (key) {
-        case 'delete':
-          toast.error('Delete action not implemented');
-          break;
-      }
-    };
   }
 
   return maintenanceLibraryList.length > 0 ? (

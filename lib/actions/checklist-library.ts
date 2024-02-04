@@ -46,6 +46,7 @@ export async function fetchChecklistLibraryList(assetId?: string) {
         AND: filters,
       },
       include: {
+        asset: true,
         createdBy: true,
         updatedBy: true,
         taskLibrary: {
@@ -127,6 +128,27 @@ export async function createChecklistLibrary(
     });
 
     return newChecklistLibrary;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function deleteChecklistLibrary(userId: string, id: string) {
+  try {
+    const checklistLibrary = await db.checklistLibrary.delete({
+      where: { id },
+    });
+
+    await db.history.create({
+      data: {
+        actionBy: userId,
+        activity: `Delete ${checklistLibrary.title} from checklist library`,
+        historyMeta: 'MAINTENANCE',
+      },
+    });
+
+    return checklistLibrary;
   } catch (error) {
     console.error(error);
     throw error;
