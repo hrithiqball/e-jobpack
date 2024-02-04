@@ -38,7 +38,7 @@ type TaskAddProps = {
 };
 
 export default function TaskAdd({ checklist, open, onClose }: TaskAddProps) {
-  const [isPending, startTransition] = useTransition();
+  const [transitioning, startTransition] = useTransition();
   const router = useRouter();
 
   const [taskActivity, setTaskActivity] = useState<string>('');
@@ -91,7 +91,7 @@ export default function TaskAdd({ checklist, open, onClose }: TaskAddProps) {
 
     startTransition(() => {
       createTask({ ...validatedFields.data }, TaskType[selection]).then(res => {
-        if (!isPending) console.log(res);
+        if (!transitioning) console.log(res);
         toast.success('Task added successfully');
         onClose();
         router.refresh();

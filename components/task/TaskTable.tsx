@@ -8,6 +8,7 @@ import {
   useState,
   useTransition,
 } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -46,8 +47,8 @@ import {
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { createTaskLibrary } from '@/lib/actions/task-library';
 import { CreateTaskLibrary } from '@/lib/schemas/task';
-import TaskValue from './TaskValue';
-import { useRouter } from 'next/navigation';
+import TaskValue from '@/components/task/TaskValue';
+import { deleteTask } from '@/lib/actions/task';
 
 type TaskTableProps = {
   taskList: TaskList;
@@ -107,6 +108,7 @@ export default function TaskTable({ taskList }: TaskTableProps) {
           break;
 
         case 'remove-task':
+          handleRemoveTask(task.id);
           break;
 
         case 'add-subtask':
@@ -117,6 +119,24 @@ export default function TaskTable({ taskList }: TaskTableProps) {
           break;
       }
     };
+  }
+
+  function handleRemoveTask(taskId: string) {
+    startTransition(() => {
+      if (user === undefined || user.id === undefined) {
+        toast.error('User session expired');
+        return;
+      }
+
+      toast.promise(deleteTask(user.id, taskId), {
+        loading: 'Removing task...',
+        success: () => {
+          router.refresh();
+          return 'Task removed successfully';
+        },
+        error: 'Failed to remove task 🥲',
+      });
+    });
   }
 
   function handleExportTask(task: TaskItem) {
@@ -369,7 +389,7 @@ export default function TaskTable({ taskList }: TaskTableProps) {
                         color="danger"
                         startContent={<Trash size={18} />}
                       >
-                        Remove
+                        Remove Task
                       </DropdownItem>
                     </DropdownMenu>
                   </Dropdown>

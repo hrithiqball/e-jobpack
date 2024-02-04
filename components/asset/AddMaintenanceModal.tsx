@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { User } from '@prisma/client';
 import dayjs from 'dayjs';
@@ -40,8 +41,9 @@ export default function AddMaintenanceModal({
   assetIds,
   userList,
 }: AddMaintenanceModalProps) {
-  const [isPending, startTransition] = useTransition();
+  const [transitioning, startTransition] = useTransition();
   const user = useCurrentUser();
+  const router = useRouter();
 
   const [maintenanceId, setMaintenanceId] = useState('');
   const [maintainee, setMaintainee] = useState(new Set([]));
@@ -88,10 +90,12 @@ export default function AddMaintenanceModal({
             user.role === 'TECHNICIAN'
               ? 'Creating request...'
               : 'Creating maintenance',
-          success:
-            user.role === 'TECHNICIAN'
+          success: () => {
+            router.refresh();
+            return user.role === 'TECHNICIAN'
               ? 'Request submitted!'
-              : 'Maintenance created!',
+              : 'Maintenance created!';
+          },
           error:
             user.role === 'TECHNICIAN'
               ? 'Failed to request 😔'
@@ -202,8 +206,8 @@ export default function AddMaintenanceModal({
           </Button>
           <Button
             variant="faded"
-            isLoading={isPending}
-            isDisabled={maintenanceId === '' || isPending}
+            isLoading={transitioning}
+            isDisabled={maintenanceId === '' || transitioning}
             size="sm"
             color="primary"
             onClick={handleCreateMaintenance}

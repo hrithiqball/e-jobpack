@@ -44,7 +44,6 @@ export default function ChecklistActions({ checklist }: AssetActionsProps) {
         setIsTaskAddOpenModal(true);
         break;
 
-      //TODO: implement this
       case 'delete-asset':
         break;
 
@@ -74,7 +73,6 @@ export default function ChecklistActions({ checklist }: AssetActionsProps) {
         });
         break;
 
-      //TODO: implement this
       case 'import-checklist':
         break;
 
@@ -153,9 +151,8 @@ export default function ChecklistActions({ checklist }: AssetActionsProps) {
           <DropdownItem
             key="delete-asset"
             variant="faded"
-            className="text-danger"
-            startContent={<PackageMinus size={18} />}
             color="danger"
+            startContent={<PackageMinus size={18} />}
           >
             Remove Asset
           </DropdownItem>

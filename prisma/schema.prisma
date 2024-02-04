@@ -11,29 +11,29 @@ datasource db {
 }
 
 model Asset {
-  name              String
-  description       String?
-  type              String?
-  createdById       String             @map("created_by_id")
-  createdOn         DateTime           @default(now()) @map("created_on")
-  updatedById       String             @map("updated_by_id")
-  lastMaintenance   DateTime?          @map("last_maintenance")
-  lastMaintainee    String[]           @map("last_maintainee")
-  location          String?
-  nextMaintenance   DateTime?          @map("next_maintenance")
-  updatedOn         DateTime           @default(now()) @map("updated_on")
-  personInChargeId  String?            @map("person_in_charge_id")
-  tag               String?
-  id                String             @id
-  statusId          String?            @map("status_id")
-  isArchive         Boolean?           @default(false) @map("is_archive")
-  createdBy         User               @relation("asset_created_byTouser", fields: [createdById], references: [id], onDelete: Cascade)
-  personInCharge    User?              @relation("asset_person_in_chargeTouser", fields: [personInChargeId], references: [id], onDelete: Cascade)
-  assetStatus       AssetStatus?       @relation(fields: [statusId], references: [id], onDelete: Cascade)
-  assetType         AssetType?         @relation(fields: [type], references: [id], onDelete: Cascade)
-  updatedBy         User               @relation("asset_updated_byTouser", fields: [updatedById], references: [id], onDelete: Cascade)
-  assetTags         AssetTag[]
-  checklist         Checklist[]
+  name             String
+  description      String?
+  type             String?
+  createdById      String             @map("created_by_id")
+  createdOn        DateTime           @default(now()) @map("created_on")
+  updatedById      String             @map("updated_by_id")
+  lastMaintenance  DateTime?          @map("last_maintenance")
+  lastMaintainee   String[]           @map("last_maintainee")
+  location         String?
+  nextMaintenance  DateTime?          @map("next_maintenance")
+  updatedOn        DateTime           @default(now()) @map("updated_on")
+  personInChargeId String?            @map("person_in_charge_id")
+  tag              String?
+  id               String             @id
+  statusId         String?            @map("status_id")
+  isArchive        Boolean?           @default(false) @map("is_archive")
+  createdBy        User               @relation("asset_created_byTouser", fields: [createdById], references: [id], onDelete: Cascade)
+  personInCharge   User?              @relation("asset_person_in_chargeTouser", fields: [personInChargeId], references: [id], onDelete: Cascade)
+  assetStatus      AssetStatus?       @relation(fields: [statusId], references: [id], onDelete: Cascade)
+  assetType        AssetType?         @relation(fields: [type], references: [id], onDelete: Cascade)
+  updatedBy        User               @relation("asset_updated_byTouser", fields: [updatedById], references: [id], onDelete: Cascade)
+  assetTags        AssetTag[]
+  checklist        Checklist[]
   checklistLibrary ChecklistLibrary[]
 
   @@map("asset")
@@ -113,7 +113,7 @@ model ChecklistLibrary {
   assetId              String?             @map("asset_id")
   asset                Asset?              @relation(fields: [assetId], references: [id], onDelete: Cascade)
   createdBy            User                @relation("checklist_library_created_byTouser", fields: [createdById], references: [id], onDelete: Cascade)
-  maintenanceLibrary  MaintenanceLibrary? @relation(fields: [maintenanceLibraryId], references: [id], onDelete: Cascade)
+  maintenanceLibrary   MaintenanceLibrary? @relation(fields: [maintenanceLibraryId], references: [id], onDelete: Cascade)
   updatedBy            User                @relation("checklist_library_updated_byTouser", fields: [updatedById], references: [id], onDelete: Cascade)
   taskLibrary          TaskLibrary[]
 
@@ -207,6 +207,7 @@ model Subtask {
 model SubtaskLibrary {
   taskActivity  String       @map("task_activity")
   description   String?
+  taskOrder     Int          @map("task_order") @db.SmallInt
   createdOn     DateTime     @default(now()) @map("created_on")
   createdById   String       @map("created_by_id")
   updatedOn     DateTime     @default(now()) @map("updated_on")
@@ -255,6 +256,7 @@ model TaskLibrary {
   updatedOn          DateTime          @default(now()) @map("updated_on")
   taskActivity       String            @map("task_activity")
   description        String?
+  taskOrder          Int               @map("task_order") @db.SmallInt
   id                 String            @id @default(cuid())
   checklistLibraryId String?           @map("checklist_library_id")
   listChoice         String[]          @default([]) @map("list_choice")

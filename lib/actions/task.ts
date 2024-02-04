@@ -32,7 +32,7 @@ export async function createTask(
     if (tasks.length === 0) {
       taskOrder = 1;
     } else {
-      taskOrder = tasks[0]?.taskOrder ?? 1;
+      taskOrder = tasks.length + 1;
     }
 
     return await db.task.create({
@@ -99,11 +99,43 @@ export async function updateTask(
   }
 }
 
-export async function deleteTask(id: string) {
+export async function deleteTask(actionBy: string, id: string) {
   try {
-    return db.task.delete({
+    const target = await db.task.delete({
       where: { id },
     });
+
+    await db.history.create({
+      data: {
+        actionBy,
+        activity: `Remove task from checklist ${target.checklistId}`,
+        historyMeta: 'MAINTENANCE',
+        metaValue: target.id,
+      },
+    });
+
+    const tasksToReorder = await db.task.findMany({
+      where: {
+        checklistId: target.checklistId,
+        taskOrder: {
+          gt: target.taskOrder,
+        },
+      },
+      orderBy: {
+        taskOrder: 'asc',
+      },
+    });
+
+    for (const task of tasksToReorder) {
+      await db.task.update({
+        where: { id: task.id },
+        data: {
+          taskOrder: task.taskOrder - 1,
+        },
+      });
+    }
+
+    return target;
   } catch (error) {
     console.error(error);
     throw error;
