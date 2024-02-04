@@ -7,7 +7,7 @@ export default function ChecklistWidget() {
       <Card shadow="none" className="flex flex-1 p-4">
         <div className="flex flex-row items-center">
           <FilePenLine />
-          <span className="font-bold ml-4">Checklist</span>
+          <span className="ml-4 font-bold">Checklist</span>
         </div>
       </Card>
     </div>

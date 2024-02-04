@@ -47,7 +47,7 @@ export default function AssetMaintenance({
   }
 
   return (
-    <div className="flex flex-col flex-1 h-full space-y-4 pt-4 ">
+    <div className="flex h-full flex-1 flex-col space-y-4 pt-4 ">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <Input
@@ -94,13 +94,13 @@ export default function AssetMaintenance({
         maintenanceList.filter(
           maintenance => maintenance.isOpen || maintenance.isClose,
         ).length === 0 ? (
-          <div className="flex flex-col flex-1 justify-center items-center">
+          <div className="flex flex-1 flex-col items-center justify-center">
             <Image priority src={emptyIcon} alt="Empty list" width={70} />
             <span>No maintenance recorded</span>
           </div>
         ) : (
-          <div className="flex flex-col flex-1 overflow-hidden">
-            <div className="flex flex-1 flex-col overflow-y-auto space-y-2 rounded">
+          <div className="flex flex-1 flex-col overflow-hidden">
+            <div className="flex flex-1 flex-col space-y-2 overflow-y-auto rounded">
               {maintenanceList.filter(
                 maintenance =>
                   maintenance.id
@@ -120,7 +120,7 @@ export default function AssetMaintenance({
                     <Card
                       key={maintenance.id}
                       shadow="none"
-                      className="flex flex-row items-center px-4 py-2 space-x-4"
+                      className="flex flex-row items-center space-x-4 px-4 py-2"
                     >
                       {maintenance.isRequested && (
                         <Tooltip content="Requested">
@@ -177,7 +177,7 @@ export default function AssetMaintenance({
                         )}
                       <Sheet>
                         <SheetTrigger>
-                          <span className="text-lg hover:underline hover:text-blue-500">
+                          <span className="text-lg hover:text-blue-500 hover:underline">
                             {maintenance.id}
                           </span>
                         </SheetTrigger>
@@ -193,7 +193,7 @@ export default function AssetMaintenance({
                     </Card>
                   ))
               ) : (
-                <div className="flex flex-1 justify-center items-center">
+                <div className="flex flex-1 items-center justify-center">
                   <div className="flex flex-col items-center justify-center space-y-4">
                     <Image
                       priority
@@ -210,13 +210,13 @@ export default function AssetMaintenance({
         )
       ) : maintenanceList.filter(maintenance => maintenance.isRejected)
           .length === 0 ? (
-        <div className="flex flex-col flex-1 justify-center items-center">
+        <div className="flex flex-1 flex-col items-center justify-center">
           <Image priority src={emptyIcon} alt="Empty list" width={70} />
           <span>No maintenance recorded</span>
         </div>
       ) : (
-        <div className="flex flex-col flex-1 overflow-hidden">
-          <div className="flex flex-1 flex-col overflow-y-auto space-y-2 rounded">
+        <div className="flex flex-1 flex-col overflow-hidden">
+          <div className="flex flex-1 flex-col space-y-2 overflow-y-auto rounded">
             {maintenanceList.filter(
               maintenance =>
                 maintenance.id.toLowerCase().includes(searchId.toLowerCase()) &&
@@ -234,7 +234,7 @@ export default function AssetMaintenance({
                   <Card
                     key={maintenance.id}
                     shadow="none"
-                    className="flex flex-row items-center px-4 py-2 space-x-4"
+                    className="flex flex-row items-center space-x-4 px-4 py-2"
                   >
                     <Tooltip content="Rejected">
                       <BadgeX
@@ -245,7 +245,7 @@ export default function AssetMaintenance({
                     </Tooltip>
                     <Sheet>
                       <SheetTrigger>
-                        <span className="text-lg hover:underline hover:text-blue-500">
+                        <span className="text-lg hover:text-blue-500 hover:underline">
                           {maintenance.id}
                         </span>
                       </SheetTrigger>
@@ -261,7 +261,7 @@ export default function AssetMaintenance({
                   </Card>
                 ))
             ) : (
-              <div className="flex flex-1 justify-center items-center">
+              <div className="flex flex-1 items-center justify-center">
                 <div className="flex flex-col items-center justify-center space-y-4">
                   <Image priority src={emptyIcon} alt="Empty list" width={70} />
                   <span className="ml-2">No maintenance found</span>

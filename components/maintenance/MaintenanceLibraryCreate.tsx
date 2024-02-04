@@ -130,7 +130,7 @@ function ColumnContainer({
       <div
         ref={setNodeRef}
         style={style}
-        className=" bg-columnBackgroundColor opacity-40 border-2 border-pink-500 w-[350px] h-[500px] max-h-[500px] rounded-md flex flex-col "
+        className=" bg-columnBackgroundColor flex h-[500px] max-h-[500px] w-[350px] flex-col rounded-md border-2 border-pink-500 opacity-40 "
       ></div>
     );
   }
@@ -177,7 +177,7 @@ function TaskContainer({ task }: { task: TaskLibraryItem }) {
       <div
         ref={setNodeRef}
         style={style}
-        className="opacity-30 bg-mainBackgroundColor p-2.5 h-[100px] min-h-[100px] items-center flex text-left rounded-xl border-2 border-rose-500  cursor-grab relative"
+        className="bg-mainBackgroundColor relative flex h-[100px] min-h-[100px] cursor-grab items-center rounded-xl border-2 border-rose-500 p-2.5  text-left opacity-30"
       />
     );
   }

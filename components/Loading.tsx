@@ -8,7 +8,7 @@ type LoadingProps = {
 
 export default function Loading({ label }: LoadingProps) {
   return (
-    <div className="flex items-center justify-center h-screen">
+    <div className="flex h-screen items-center justify-center">
       <Spinner label={label} color="primary" />
     </div>
   );

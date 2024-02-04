@@ -61,7 +61,7 @@ export default function MaintenanceChecklistTab({
 
   return (
     <Wrapper>
-      <div className="flex items-center justify-between">
+      <div className="flex  items-center justify-between">
         <div className="flex-item-center">
           <Input
             size="sm"

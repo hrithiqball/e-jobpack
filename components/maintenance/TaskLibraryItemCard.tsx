@@ -89,7 +89,7 @@ export default function TaskLibraryItemCard({
       onDragStart={() => handleDragFramer(taskLib)}
       onDragEnd={() => setCurrentTaskLibrary(null)}
       className={cn(
-        'flex justify-between cursor-grab px-2 py-1 items-center border border-solid border-gray-400 rounded-md active:animate-pulse active:cursor-grabbing active:border-teal-700',
+        'flex cursor-grab items-center justify-between rounded-md border border-solid border-gray-400 px-2 py-1 active:animate-pulse active:cursor-grabbing active:border-teal-700',
         {
           'cursor-not-allowed': transitioning,
         },

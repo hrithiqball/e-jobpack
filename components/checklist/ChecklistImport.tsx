@@ -104,7 +104,7 @@ export default function ChecklistImport({
             <span className="text-xl font-bold">
               Import Checklist From Library
             </span>
-            <div className="flex flex-row space-x-4 px-4 py-2 rounded-md items-center text-small bg-red-100 text-red-700">
+            <div className="flex flex-row items-center space-x-4 rounded-md bg-red-100 px-4 py-2 text-small text-red-700">
               <AlertCircle size={50} />
               <span>
                 Importing library of an ongoing maintenance will override the
@@ -119,7 +119,7 @@ export default function ChecklistImport({
               key={checklistLib.id}
               onClick={() => handleSelectChecklistLibrary(checklistLib)}
               className={cn(
-                'flex px-4 py-2 rounded-md border border-solid border-zinc-400 w-full hover:cursor-pointer',
+                'flex w-full rounded-md border border-solid border-zinc-400 px-4 py-2 hover:cursor-pointer',
                 {
                   'border-teal-500 bg-teal-100':
                     selectedChecklistLibrary?.id === checklistLib.id,
@@ -130,11 +130,11 @@ export default function ChecklistImport({
                 <div className="flex items-center space-x-1">
                   <Link
                     href={`/maintenance?tab=checklist&details=true&checklistLibId=${checklistLib.id}`}
-                    className="hover:underline hover:text-blue-500"
+                    className="hover:text-blue-500 hover:underline"
                   >
                     <ExternalLink size={18} />
                   </Link>
-                  <span className="font-bold text-medium">
+                  <span className="text-medium font-bold">
                     {checklistLib.title}
                   </span>
                 </div>
@@ -151,7 +151,7 @@ export default function ChecklistImport({
                     </div>
                   ))
                 ) : (
-                  <div className="flex justify-center items-center space-x-2">
+                  <div className="flex items-center justify-center space-x-2">
                     <CopyX size={18} /> <span>No task recorded</span>
                   </div>
                 )}
@@ -184,10 +184,10 @@ export default function ChecklistImport({
     <Drawer open={open} onOpenChange={handleClose}>
       <DrawerContent>
         <DrawerHeader> Import Checklist From Library </DrawerHeader>
-        <div className="flex flex-col flex-1">
+        <div className="flex flex-1 flex-col">
           {checklistLibraryList.map(checklistLib => (
             <div key={checklistLib.id} className="flex flex-col">
-              <span className="font-bold text-lg">{checklistLib.title}</span>
+              <span className="text-lg font-bold">{checklistLib.title}</span>
               Mobile not implemented
             </div>
           ))}

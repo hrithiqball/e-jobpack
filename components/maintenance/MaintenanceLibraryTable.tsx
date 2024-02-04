@@ -184,10 +184,10 @@ export default function MaintenanceLibraryTable({
       )}
     </Fragment>
   ) : (
-    <div className="flex flex-1 flex-col justify-center items-center">
-      <div className="flex flex-col justify-center items-center space-y-4">
+    <div className="flex flex-1 flex-col items-center justify-center">
+      <div className="flex flex-col items-center justify-center space-y-4">
         <Image priority src={emptyIcon} alt="Empty list" width={70} />
-        <span className="font-medium text-md">
+        <span className="text-md font-medium">
           No library yet. Time to create one?
         </span>
         <Button

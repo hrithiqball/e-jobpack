@@ -300,7 +300,7 @@ export default function AssetTable({
                 startContent={
                   <div
                     style={{ backgroundColor: status?.color ?? 'grey' }}
-                    className="w-1 p-1 rounded-full mx-1"
+                    className="mx-1 w-1 rounded-full p-1"
                   ></div>
                 }
                 className="hover:cursor-pointer"
@@ -318,7 +318,7 @@ export default function AssetTable({
                     startContent={
                       <div
                         style={{ backgroundColor: status.color ?? 'grey' }}
-                        className="w-1 p-1 rounded-full mx-1"
+                        className="mx-1 w-1 rounded-full p-1"
                       ></div>
                     }
                     className="hover:cursor-pointer"
@@ -697,7 +697,7 @@ export default function AssetTable({
   }
 
   return (
-    <div className="flex flex-col flex-1 space-y-4">
+    <div className="flex flex-1 flex-col space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <Input
@@ -846,7 +846,7 @@ export default function AssetTable({
             className={`${
               table.getCanPreviousPage()
                 ? 'hover:opacity-75'
-                : 'opacity-50 cursor-not-allowed'
+                : 'cursor-not-allowed opacity-50'
             } focus:outline-none`}
           >
             <ChevronLeft size={18} />
@@ -870,7 +870,7 @@ export default function AssetTable({
             className={`${
               table.getCanNextPage()
                 ? 'hover:opacity-75'
-                : 'opacity-50 cursor-not-allowed'
+                : 'cursor-not-allowed opacity-50'
             } focus:outline-none`}
           >
             <ChevronRight size={18} />

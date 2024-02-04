@@ -51,7 +51,7 @@ export default function SignInCard() {
   }
 
   return (
-    <div className="flex items-center justify-center h-full">
+    <div className="flex h-full items-center justify-center">
       <Card shadow="none" title="Login" className="w-90 p-4">
         <CardHeader className="flex gap-3">
           <Image
@@ -70,7 +70,7 @@ export default function SignInCard() {
           name="email"
           size="sm"
           placeholder="Email"
-          className="mt-4 mb-4"
+          className="mb-4 mt-4"
         />
         <Input
           value={password}
@@ -82,12 +82,12 @@ export default function SignInCard() {
           className="mb-4"
         />
         <Divider />
-        <Button variant="faded" className="w-full mt-4" onClick={signInClient}>
+        <Button variant="faded" className="mt-4 w-full" onClick={signInClient}>
           Login
         </Button>
         <Link
           href="/auth/register"
-          className="text-blue-500 hover:underline mt-4 align-middle self-center text-center"
+          className="mt-4 self-center text-center align-middle text-blue-500 hover:underline"
         >
           Sign Up
         </Link>

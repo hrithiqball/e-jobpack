@@ -97,9 +97,9 @@ export default function MaintenanceLibraryEdit({
 
   return (
     <motion.div className="flex flex-1 space-x-4">
-      <Card shadow="none" className="lg:w-3/4 p-4 space-y-4">
+      <Card shadow="none" className="space-y-4 p-4 lg:w-3/4">
         <div className="flex items-center justify-between ">
-          <span className="font-bold text-lg">Checklist</span>
+          <span className="text-lg font-bold">Checklist</span>
           <Button
             size="sm"
             variant="faded"
@@ -114,19 +114,19 @@ export default function MaintenanceLibraryEdit({
             <motion.div
               key={checklist.id}
               onDragOver={e => handleDragOver(e)}
-              className="flex flex-col space-y-4 border border-solid border-gray-400 p-2 rounded-md"
+              className="flex flex-col space-y-4 rounded-md border border-solid border-gray-400 p-2"
             >
               <div className="flex">
                 {checklist.asset ? (
                   <Link
                     href={`/asset/${checklist.asset.id}?tab=details`}
-                    className="font-medium flex items-center text-medium hover:underline hover:text-blue-500 space-x-4"
+                    className="flex items-center space-x-4 text-medium font-medium hover:text-blue-500 hover:underline"
                   >
                     <ExternalLink size={18} />
                     <span>Asset {checklist.asset.name}</span>
                   </Link>
                 ) : (
-                  <span className="font-medium text-medium">
+                  <span className="text-medium font-medium">
                     {checklist.title}
                   </span>
                 )}
@@ -151,7 +151,7 @@ export default function MaintenanceLibraryEdit({
           ))}
         </div>
       </Card>
-      <Card shadow="none" className="lg:w-1/4 p-4">
+      <Card shadow="none" className="p-4 lg:w-1/4">
         <div className="flex flex-col space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-medium font-bold">Task Library</span>

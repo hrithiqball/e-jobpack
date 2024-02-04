@@ -202,7 +202,7 @@ export default function DetailsWidget({
     <div className="flex w-3/4 p-2">
       <form action={handleUpdateAsset} className="flex flex-1">
         <Card shadow="none" className="flex flex-1 p-4">
-          <div className="flex flex-1 min-w-min">
+          <div className="flex min-w-min flex-1">
             <div className="flex flex-1 flex-row">
               <Image
                 alt={mutatedAsset.name}
@@ -211,10 +211,10 @@ export default function DetailsWidget({
                 }
                 width={500}
                 height={800}
-                className="object-cover rounded-md"
+                className="rounded-md object-cover"
               />
               <div className="flex flex-1 flex-col">
-                <div className="flex items-center justify-between ml-8">
+                <div className="ml-8 flex items-center justify-between">
                   {isEdit ? (
                     <Input
                       value={formData.name}
@@ -223,7 +223,7 @@ export default function DetailsWidget({
                       }
                     />
                   ) : (
-                    <span className="font-bold text-3xl">
+                    <span className="text-3xl font-bold">
                       {mutatedAsset.name}
                     </span>
                   )}
@@ -394,7 +394,7 @@ export default function DetailsWidget({
                                     backgroundColor:
                                       mutatedAsset.status?.color ?? 'grey',
                                   }}
-                                  className="w-1 p-1 rounded-full mx-1"
+                                  className="mx-1 w-1 rounded-full p-1"
                                 ></div>
                               }
                               className="hover:cursor-pointer"
@@ -416,7 +416,7 @@ export default function DetailsWidget({
                                       style={{
                                         backgroundColor: status.color ?? 'grey',
                                       }}
-                                      className="w-1 p-1 rounded-full mx-1"
+                                      className="mx-1 w-1 rounded-full p-1"
                                     ></div>
                                   }
                                   className="hover:cursor-pointer"

@@ -51,7 +51,7 @@ export default function AssetItemComponent({
   }
 
   return (
-    <div className="flex flex-col flex-1 p-0">
+    <div className="flex flex-1 flex-col p-0">
       <div className="flex flex-row items-center justify-between px-2">
         <Button
           size="sm"
@@ -162,7 +162,7 @@ export default function AssetItemComponent({
         )}
         <div></div>
       </div>
-      <div className="flex overflow-hidden flex-1">
+      <div className="flex flex-1 overflow-hidden">
         {tab === 'details' && (
           <AssetDetails
             mutatedAsset={mutatedAsset}

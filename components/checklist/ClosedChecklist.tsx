@@ -116,7 +116,7 @@ export default function ClosedChecklist({
     <Accordion
       type="single"
       collapsible
-      className="bg-blue-400 px-4 rounded-md"
+      className="rounded-md bg-blue-400 px-4"
     >
       <AccordionItem value="closed-checklist">
         <AccordionTrigger>

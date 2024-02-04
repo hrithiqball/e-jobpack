@@ -25,9 +25,9 @@ export default function TeamWidget({
   return (
     <div className="flex flex-1 p-2">
       <Card shadow="none" className="flex flex-1 p-4">
-        <div className="flex flex-row items-center mb-2">
+        <div className="mb-2 flex flex-row items-center">
           <UsersRound />
-          <span className="font-bold ml-4">Team</span>
+          <span className="ml-4 font-bold">Team</span>
         </div>
         <Table aria-label="Team" color="primary" hideHeader removeWrapper>
           <TableHeader>

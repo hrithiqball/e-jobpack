@@ -25,11 +25,11 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
   const role = useCurrentRole();
 
   return (
-    <div className="flex flex-col flex-1 rounded-md flex-grow">
-      <div className="flex flex-1 flex-col space-y-4 h-full w-full sm:flex-row sm:space-y-0 sm:space-x-4">
-        <Card shadow="none" className="flex-1 p-4 w-100">
+    <div className="flex flex-1 flex-grow flex-col rounded-md">
+      <div className="flex h-full w-full flex-1 flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
+        <Card shadow="none" className="w-100 flex-1 p-4">
           <div>
-            <div className="space-x-4 items-center flex justify-center mb-4">
+            <div className="mb-4 flex items-center justify-center space-x-4">
               <span className="text-lg font-semibold">My Tasks</span>
               <Chip size="sm" variant="faded">
                 {
@@ -53,7 +53,7 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
                 <Card
                   shadow="none"
                   key={maintenance.id}
-                  className="w-full my-4"
+                  className="my-4 w-full"
                 >
                   <CardHeader className="flex gap-3">
                     <Button color="danger" isIconOnly>
@@ -78,7 +78,7 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
                     <Card
                       shadow="none"
                       key={maintenance.id}
-                      className="w-full my-4"
+                      className="my-4 w-full"
                     >
                       <CardHeader className="flex gap-3">
                         <Button color="success" isIconOnly>
@@ -105,7 +105,7 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
         </Card>
         <Card shadow="none" className="flex-1 p-4">
           <div>
-            <div className="space-x-4 items-center flex justify-center mb-4">
+            <div className="mb-4 flex items-center justify-center space-x-4">
               <span className="text-lg font-semibold">Completed Tasks</span>
               <Chip size="sm" variant="faded">
                 {maintenanceList.filter(m => m.isClose).length}
@@ -115,7 +115,7 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
             {maintenanceList
               .filter(m => m.isClose)
               .map(maintenance => (
-                <Card key={maintenance.id} className="w-full my-4">
+                <Card key={maintenance.id} className="my-4 w-full">
                   <CardHeader className="flex gap-3">
                     <Button color="danger" isIconOnly>
                       <Wrench />
@@ -135,7 +135,7 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
         </Card>
         <Card shadow="none" className="flex-1 p-4">
           <div>
-            <div className="space-x-4 items-center flex justify-center mb-4">
+            <div className="mb-4 flex items-center justify-center space-x-4">
               <span className="text-lg font-semibold">Upcoming Tasks</span>
               <Chip size="sm" variant="faded">
                 {
@@ -152,7 +152,7 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
                 <Card
                   key={maintenance.id}
                   shadow="none"
-                  className="w-full my-4"
+                  className="my-4 w-full"
                 >
                   <CardHeader className="flex gap-3">
                     <Button color="danger" isIconOnly>

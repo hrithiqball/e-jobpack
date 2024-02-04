@@ -260,14 +260,14 @@ export default function TaskTable({ taskList }: TaskTableProps) {
                     </PopoverTrigger>
                     <PopoverContent className="w-[240px]">
                       {titleProps => (
-                        <div className="px-1 py-2 w-full">
+                        <div className="w-full px-1 py-2">
                           <p
                             className="text-small font-bold text-foreground"
                             {...titleProps}
                           >
                             Value Type
                           </p>
-                          <div className="mt-2 flex flex-col gap-2 w-full">
+                          <div className="mt-2 flex w-full flex-col gap-2">
                             <Input
                               defaultValue="100%"
                               label="Width"
@@ -410,7 +410,7 @@ export default function TaskTable({ taskList }: TaskTableProps) {
       </TableBody>
     </Table>
   ) : (
-    <div className="flex justify-center items-center">
+    <div className="flex items-center justify-center">
       <span className="text-gray-400">No task found</span>
     </div>
   );

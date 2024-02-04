@@ -68,7 +68,7 @@ export default function SignUpCard() {
   }
 
   return (
-    <div className="flex items-center justify-center h-full">
+    <div className="flex h-full items-center justify-center">
       <Card shadow="none" title="Sign Up" className="w-90 p-4">
         <CardHeader className="flex gap-3">
           <Image
@@ -86,14 +86,14 @@ export default function SignUpCard() {
           onChange={handleName}
           name="name"
           placeholder="Name"
-          className="mt-4 mb-4"
+          className="mb-4 mt-4"
         />
         <Input
           value={phone}
           onChange={handlePhone}
           name="phone"
           placeholder="Phone"
-          className="mt-4 mb-4"
+          className="mb-4 mt-4"
         />
         <Input
           type="email"
@@ -101,7 +101,7 @@ export default function SignUpCard() {
           onChange={handleEmail}
           name="email"
           placeholder="Email"
-          className="mt-4 mb-4"
+          className="mb-4 mt-4"
         />
         <Input
           type="password"
@@ -109,7 +109,7 @@ export default function SignUpCard() {
           onChange={handlePassword}
           name="password"
           placeholder="Password"
-          className="mt-4 mb-4"
+          className="mb-4 mt-4"
         />
         <Input
           type="password"
@@ -117,20 +117,20 @@ export default function SignUpCard() {
           onChange={handleConfirmPassword}
           name="confirmPassword"
           placeholder="Confirm Password"
-          className="mt-4 mb-4"
+          className="mb-4 mt-4"
         />
         <Divider />
         <Button
           isDisabled={isPending}
           variant="faded"
-          className="w-full mt-4"
+          className="mt-4 w-full"
           onClick={signUpClient}
         >
           Sign Up
         </Button>
         <Link
           href="/auth/login"
-          className="text-blue-500 hover:underline mt-4 align-middle self-center text-center"
+          className="mt-4 self-center text-center align-middle text-blue-500 hover:underline"
         >
           Sign In
         </Link>

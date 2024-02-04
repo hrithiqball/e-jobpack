@@ -56,7 +56,7 @@ export default function Navigation() {
       disableAnimation={true}
       onMenuOpenChange={setIsMenuOpen}
       maxWidth="full"
-      className="flex relative w-full items-center justify-between"
+      className="relative flex w-full items-center justify-between"
     >
       <NavbarContent justify="start">
         <NavbarMenuToggle
@@ -69,13 +69,13 @@ export default function Navigation() {
               priority
               src={clientIcon}
               alt="Petronas Logo"
-              className="w-6 mr-3"
+              className="mr-3 w-6"
             />
             {isDesktop && <p className="font-bold text-inherit">e-Jobpack</p>}
           </Link>
         </NavbarBrand>
       </NavbarContent>
-      <NavbarContent justify="center" className="hidden sm:flex gap-4">
+      <NavbarContent justify="center" className="hidden gap-4 sm:flex">
         {navLinks.map(link => {
           const isCurrentPage =
             pathname === link.href || pathname.startsWith(link.href);

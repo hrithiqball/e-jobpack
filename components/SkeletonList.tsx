@@ -3,11 +3,11 @@ import { Skeleton } from '@nextui-org/react';
 
 export default function SkeletonList() {
   return (
-    <div className="max-w-[300px] w-full flex items-center gap-3 mb-4">
+    <div className="mb-4 flex w-full max-w-[300px] items-center gap-3">
       <div>
-        <Skeleton className="flex rounded-full w-12 h-12" />
+        <Skeleton className="flex h-12 w-12 rounded-full" />
       </div>
-      <div className="w-full flex flex-col gap-2">
+      <div className="flex w-full flex-col gap-2">
         <Skeleton className="h-3 w-3/5 rounded-lg" />
         <Skeleton className="h-3 w-4/5 rounded-lg" />
       </div>

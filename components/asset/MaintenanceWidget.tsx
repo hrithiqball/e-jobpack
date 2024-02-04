@@ -38,7 +38,7 @@ export default function MaintenanceWidget({
       <Card shadow="none" className="flex flex-1 p-4">
         <div className="flex flex-row items-center">
           <Wrench />
-          <span className="font-bold ml-4">Maintenance</span>
+          <span className="ml-4 font-bold">Maintenance</span>
         </div>
         <Table
           aria-label="Maintenance"

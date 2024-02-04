@@ -156,9 +156,9 @@ export default function ChecklistTaskLibraryItem({
     >
       <div className="flex items-center justify-between space-x-4">
         <div className="flex flex-1 items-center space-x-4">
-          <div className="flex items-center flex-1">
+          <div className="flex flex-1 items-center">
             {isEdit ? (
-              <div className="flex items-center flex-1 space-x-4">
+              <div className="flex flex-1 items-center space-x-4">
                 <Input
                   isRequired
                   size="sm"
@@ -182,7 +182,7 @@ export default function ChecklistTaskLibraryItem({
                   onValueChange={setTempTaskDescription}
                   className="flex-1"
                 />
-                <div className="flex items-center flex-1 space-x-2">
+                <div className="flex flex-1 items-center space-x-2">
                   <Select
                     variant="faded"
                     size="sm"
@@ -238,7 +238,7 @@ export default function ChecklistTaskLibraryItem({
                                 }}
                               />
                               <span
-                                className="text-red-300 cursor-pointer"
+                                className="cursor-pointer text-red-300"
                                 onClick={() => {
                                   setTempListChoice(
                                     tempListChoice.filter(
@@ -277,20 +277,20 @@ export default function ChecklistTaskLibraryItem({
         </div>
         {isHovered && !isEdit && (
           <div className="flex items-center space-x-2">
-            <div className="hover:text-yellow-300 hover:cursor-pointer">
+            <div className="hover:cursor-pointer hover:text-yellow-300">
               <Edit size={18} onClick={() => setIsEdit(true)} />
             </div>
-            <div className="hover:text-red-300 hover:cursor-pointer">
+            <div className="hover:cursor-pointer hover:text-red-300">
               <Trash size={18} onClick={handleDelete} />
             </div>
           </div>
         )}
         {isEdit && (
           <div className="flex items-center space-x-2">
-            <div className="hover:text-green-300 hover:cursor-pointer">
+            <div className="hover:cursor-pointer hover:text-green-300">
               <Check size={18} onClick={handleSave} />
             </div>
-            <div className="hover:text-red-300 hover:cursor-pointer">
+            <div className="hover:cursor-pointer hover:text-red-300">
               <X size={18} onClick={handleCancel} />
             </div>
           </div>

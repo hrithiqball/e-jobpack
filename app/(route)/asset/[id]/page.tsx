@@ -17,7 +17,7 @@ export default async function AssetItemPage({ params }: AssetItemPageProps) {
   const userList = await fetchUserList();
 
   return (
-    <div className="flex flex-col flex-1">
+    <div className="flex flex-1 flex-col">
       <AssetItemComponent
         mutatedAsset={mutatedAsset}
         statusList={statusList}

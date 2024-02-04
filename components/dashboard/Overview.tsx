@@ -7,8 +7,8 @@ import MaintenanceRequestWidget from '@/components/dashboard/MaintenanceRequestW
 export default function Overview() {
   return (
     //   TODO: Excess card info makes the page scrollable to the right, still can't find a fix
-    <div className="flex flex-col md:flex-row grow h-full max-w-full overflow-x-hidden">
-      <div className="flex flex-col w-full md:w-4/5">
+    <div className="flex h-full max-w-full grow flex-col overflow-x-hidden md:flex-row">
+      <div className="flex w-full flex-col md:w-4/5">
         <div className="flex flex-1 p-2">
           <GraphWidget />
         </div>
@@ -16,7 +16,7 @@ export default function Overview() {
           <MaintenanceRequestWidget />
         </div>
       </div>
-      <div className="flex w-full md:w-1/5 p-2">
+      <div className="flex w-full p-2 md:w-1/5">
         <RecentActivity />
       </div>
     </div>

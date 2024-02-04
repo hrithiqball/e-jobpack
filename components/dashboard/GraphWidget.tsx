@@ -24,7 +24,7 @@ export default function GraphWidget() {
     <div className="flex grow flex-col">
       <Card shadow="none" className="flex flex-1 p-4">
         <div className="flex flex-1">
-          <div className="w-1/2 h-80">
+          <div className="h-80 w-1/2">
             <Bar
               data={{
                 labels: MaintenanceCompleted.map(data => data.label),
@@ -58,7 +58,7 @@ export default function GraphWidget() {
               }}
             />
           </div>
-          <div className="w-1/2 h-80">
+          <div className="h-80 w-1/2">
             <Doughnut
               data={{
                 labels: AssetStatus.map(data => data.label),

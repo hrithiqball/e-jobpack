@@ -30,18 +30,18 @@ export default function Dashboard() {
         selectedKey={tab}
         onSelectionChange={handleTabChange}
       >
-        <Tab key="overview" title="Overview" className="flex flex-col flex-1">
-          <div className="flex flex-col flex-1">
+        <Tab key="overview" title="Overview" className="flex flex-1 flex-col">
+          <div className="flex flex-1 flex-col">
             <Overview />
           </div>
         </Tab>
-        <Tab key="report" title="Report" className="flex flex-col flex-1">
-          <div className="flex flex-col flex-1">
+        <Tab key="report" title="Report" className="flex flex-1 flex-col">
+          <div className="flex flex-1 flex-col">
             <Report />
           </div>
         </Tab>
-        <Tab key="calendar" title="Calendar" className="flex flex-col flex-1">
-          <div className="flex flex-col flex-1">
+        <Tab key="calendar" title="Calendar" className="flex flex-1 flex-col">
+          <div className="flex flex-1 flex-col">
             <Calendar />
           </div>
         </Tab>

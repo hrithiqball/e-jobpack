@@ -33,7 +33,7 @@ export default function AssetComponent({
   }
 
   return (
-    <div className="flex flex-col flex-1">
+    <div className="flex flex-1 flex-col">
       <AssetTable
         assetList={assetList}
         userList={userList}

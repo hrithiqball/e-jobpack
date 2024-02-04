@@ -29,7 +29,7 @@ export default function DropArea({ onDrop }: DropAreaProps) {
       onDragEnter={showArea}
       onDragLeave={hideArea}
       className={cn(
-        'h-4 bg-gray-300 rounded-xl border border-dashed border-gray-500 transition-all duration-300 ease-in-out',
+        'h-4 rounded-xl border border-dashed border-gray-500 bg-gray-300 transition-all duration-300 ease-in-out',
         {
           'py-8': isVisible,
           'opacity-0': !isVisible,

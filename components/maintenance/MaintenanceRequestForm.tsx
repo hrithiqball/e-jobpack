@@ -17,7 +17,7 @@ export default function MaintenanceRequestForm({
   handleRejectMaintenance,
 }: MaintenanceRequestFormProps) {
   return (
-    <div className="flex items-center mt-4 px-4 py-2 rounded bg-white dark:bg-zinc-700 justify-between ">
+    <div className="mt-4 flex items-center justify-between rounded bg-white px-4 py-2 dark:bg-zinc-700 ">
       <span className="text-medium font-medium">
         Approve this maintenance request by
         {maintenance.requestedBy?.name}

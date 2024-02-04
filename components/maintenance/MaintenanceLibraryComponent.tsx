@@ -47,13 +47,13 @@ export default function MaintenanceLibraryComponent({
         selectedKey={tab}
         onSelectionChange={handleTabChange}
       >
-        <Tab key="all" title="Maintenance" className="flex flex-col flex-1">
+        <Tab key="all" title="Maintenance" className="flex flex-1 flex-col">
           <MaintenanceAllTab maintenanceList={maintenanceList} />
         </Tab>
         <Tab
           key="library"
           title="Maintenance Library"
-          className="flex flex-col flex-1"
+          className="flex flex-1 flex-col"
         >
           <MaintenanceLibraryTab
             maintenanceLibraryList={maintenanceLibraryList}
@@ -63,7 +63,7 @@ export default function MaintenanceLibraryComponent({
         <Tab
           key="checklist"
           title="Checklist Library"
-          className="flex flex-col flex-1"
+          className="flex flex-1 flex-col"
         >
           <MaintenanceChecklistTab checklistLibraryList={checklistLibrary} />
         </Tab>

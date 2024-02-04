@@ -16,7 +16,7 @@ import { Activity, ExternalLink } from 'lucide-react';
 export default function RecentActivity() {
   return (
     <div className="flex grow flex-col">
-      <Card shadow="none" className="flex flex-1 p-4 space-y-4">
+      <Card shadow="none" className="flex flex-1 space-y-4 p-4">
         <div className="flex flex-col space-y-4">
           <div className="flex items-center space-x-2">
             <Activity />
@@ -44,7 +44,7 @@ export default function RecentActivity() {
                   <TableCell>
                     <span>Closed maintenance</span>
                     <Link
-                      className="flex items-center space-x-2 hover:text-blue-500 hover: underline"
+                      className="hover: flex items-center space-x-2 underline hover:text-blue-500"
                       href="/task"
                     >
                       <span>WO-34857647893754</span>
@@ -59,7 +59,7 @@ export default function RecentActivity() {
                   <TableCell>
                     <span>Approved maintenance request</span>
                     <Link
-                      className="flex items-center space-x-2 hover:text-blue-500 hover: underline"
+                      className="hover: flex items-center space-x-2 underline hover:text-blue-500"
                       href="/task"
                     >
                       <span>WO-2385426354267</span>

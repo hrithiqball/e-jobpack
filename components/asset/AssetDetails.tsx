@@ -26,8 +26,8 @@ export default function AssetDetails({
         statusList={statusList}
         typeList={typeList}
       />
-      <div className="flex flex-col w-1/4">
-        <div className="flex flex-col flex-1">
+      <div className="flex w-1/4 flex-col">
+        <div className="flex flex-1 flex-col">
           <TeamWidget
             personInCharge={mutatedAsset.personInCharge}
             maintainee={mutatedAsset.lastMaintainee}

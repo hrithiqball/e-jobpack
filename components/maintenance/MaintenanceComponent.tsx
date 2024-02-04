@@ -526,7 +526,7 @@ export default function MaintenanceComponent({
   }
 
   return (
-    <div className="rounded-md flex-grow">
+    <div className="flex-grow rounded-md">
       <div className="flex flex-row items-center justify-between">
         <div className="flex items-center space-x-4">
           <Button
@@ -539,7 +539,7 @@ export default function MaintenanceComponent({
           >
             Back
           </Button>
-          <h2 className="text-medium sm:text-xl font-semibold">
+          <h2 className="text-medium font-semibold sm:text-xl">
             {mutatedMaintenance.id}
           </h2>
         </div>
@@ -581,7 +581,7 @@ export default function MaintenanceComponent({
           maintenance={mutatedMaintenance}
         />
       )}
-      <div className="flex flex-col my-4 ">
+      <div className="my-4 flex flex-col ">
         <MaintenanceTableInfo maintenance={mutatedMaintenance} />
         <div className="flex flex-row space-x-1">
           <MaintenanceAddChecklistModal
@@ -599,9 +599,9 @@ export default function MaintenanceComponent({
         </div>
       </div>
       <Divider />
-      <div className="rounded-md mt-4">
-        <div className="flex flex-col h-full overflow-y-auto">
-          <div className="flex-shrink-0 w-full p-1 rounded-2xl">{children}</div>
+      <div className="mt-4 rounded-md">
+        <div className="flex h-full flex-col overflow-y-auto">
+          <div className="w-full flex-shrink-0 rounded-2xl p-1">{children}</div>
         </div>
       </div>
       <MaintenanceRejectConfirmation

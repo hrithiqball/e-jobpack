@@ -37,7 +37,7 @@ export default function MaintenanceLibraryInfo({
       <SheetContent className="space-y-4">
         <SheetHeader>
           <div className="flex justify-between">
-            <span className="font-bold text-xl text-teal-800">
+            <span className="text-xl font-bold text-teal-800">
               {maintenanceLibrary.title}
             </span>
             <Button
@@ -56,14 +56,14 @@ export default function MaintenanceLibraryInfo({
             <div
               key={checklist.id}
               className={cn(
-                'flex flex-col p-4 rounded-md border border-solid border-zinc-400',
+                'flex flex-col rounded-md border border-solid border-zinc-400 p-4',
                 {
                   'space-y-4': checklist.taskLibrary.length > 0,
                 },
               )}
             >
               {checklist.assetId ? (
-                <div className="flex items-center hover:text-blue-500 hover:underline hover:cursor-pointer space-x-2">
+                <div className="flex items-center space-x-2 hover:cursor-pointer hover:text-blue-500 hover:underline">
                   <ExternalLink size={18} />
                   <Link
                     href={`/asset/${checklist.assetId}`}
