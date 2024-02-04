@@ -80,6 +80,7 @@ export default function MaintenanceExport({
                 checklistLibraryId: checklistId,
                 taskActivity: task.taskActivity,
                 description: task.description,
+                taskOrder: task.taskOrder,
                 taskType: task.taskType,
                 createdById: user.id,
                 updatedById: user.id,
@@ -94,6 +95,7 @@ export default function MaintenanceExport({
                     id: uuidv4(),
                     taskActivity: subtask.taskActivity,
                     description: subtask.description,
+                    taskOrder: subtask.taskOrder,
                     taskType: subtask.taskType,
                     createdById: user.id,
                     updatedById: user.id,
@@ -118,8 +120,6 @@ export default function MaintenanceExport({
 
           checklistLibraries.push(validatedChecklist.data);
         });
-
-      console.log(checklistLibraries[0]?.taskLibrary);
 
       const newMaintenanceLibrary: CreateMaintenanceLibrary = {
         title,

@@ -2,25 +2,19 @@
 
 import { Checklist, Prisma } from '@prisma/client';
 import dayjs from 'dayjs';
-import z from 'zod';
+import { v4 as uuidv4 } from 'uuid';
 
 import { db } from '@/lib/db';
 import { CreateChecklist, UpdateChecklist } from '@/lib/schemas/checklist';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
-export async function createChecklist(values: z.infer<typeof CreateChecklist>) {
+export async function createChecklist(checklist: CreateChecklist) {
   try {
-    const validatedFields = CreateChecklist.safeParse(values);
-
-    if (!validatedFields.success) {
-      throw new Error(validatedFields.error.message);
-    }
-
     const newChecklist: Checklist = await db.checklist.create({
       data: {
         id: `CL-${dayjs().format('YYMMDDHHmmssSSS')}`,
-        updatedById: validatedFields.data.createdById,
-        ...validatedFields.data,
+        updatedById: checklist.createdById,
+        ...checklist,
       },
     });
 
@@ -76,23 +70,67 @@ export async function fetchChecklistList(maintenanceId?: string) {
 
 export async function updateChecklist(
   id: string,
-  values: z.infer<typeof UpdateChecklist>,
+  updatedChecklist: UpdateChecklist,
+  checklistLibraryId?: string,
 ) {
   try {
-    const validatedFields = UpdateChecklist.safeParse(values);
+    if (checklistLibraryId) {
+      const checklistLibrary = await db.checklistLibrary.findUniqueOrThrow({
+        where: {
+          id: checklistLibraryId,
+        },
+        include: {
+          taskLibrary: {
+            include: {
+              subtaskLibrary: true,
+            },
+          },
+        },
+      });
 
-    if (!validatedFields.success) {
-      throw new Error(validatedFields.error.message);
+      const newChecklist = await db.checklist.update({
+        where: { id },
+        data: {
+          updatedById: updatedChecklist.updatedById,
+          updatedOn: new Date(),
+          task: {
+            deleteMany: {},
+          },
+        },
+      });
+
+      console.log(checklistLibrary.taskLibrary.length);
+
+      checklistLibrary.taskLibrary.forEach(async task => {
+        await db.task.create({
+          data: {
+            id: uuidv4(),
+            taskOrder: task.taskOrder,
+            taskActivity: task.taskActivity,
+            description: task.description,
+            listChoice: task.listChoice,
+            taskType: task.taskType,
+            checklistId: newChecklist.id,
+            subtask: {
+              createMany: {
+                data: task.subtaskLibrary,
+              },
+            },
+          },
+        });
+      });
+
+      return newChecklist;
+    } else {
+      return await db.checklist.update({
+        where: { id },
+        data: {
+          ...updatedChecklist,
+          updatedById: updatedChecklist.updatedById,
+          updatedOn: new Date(),
+        },
+      });
     }
-
-    return await db.checklist.update({
-      where: { id },
-      data: {
-        ...validatedFields.data,
-        updatedById: validatedFields.data.updatedById,
-        updatedOn: new Date(),
-      },
-    });
   } catch (error) {
     if (error instanceof PrismaClientKnownRequestError) {
       console.error(error);

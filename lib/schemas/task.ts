@@ -16,6 +16,7 @@ export const TaskSchema = z.object({
   description: z.string().optional(),
   listChoice: z.array(z.string()).optional(),
   subtaskLibrary: z.array(SubtaskSchema),
+  taskOrder: z.number(),
 });
 
 export const CreateTask = z.object({
@@ -52,6 +53,7 @@ export const CreateTaskLibrarySchema = z.object({
   description: z.string().optional().nullable(),
   listChoice: z.array(z.string()).optional(),
   taskType: z.nativeEnum(TaskType),
+  taskOrder: z.number().optional(),
   id: z.string().min(1, { message: 'Task ID is required' }),
 });
 
@@ -60,7 +62,9 @@ export const UpdateTaskLibrarySchema = z.object({
   description: z.string().optional().nullable(),
   taskType: z.nativeEnum(TaskType),
   listChoice: z.array(z.string()).optional(),
+  taskOrder: z.number().optional(),
 });
 
+export type TaskSchemaType = z.infer<typeof TaskSchema>;
 export type CreateTaskLibrary = z.infer<typeof CreateTaskLibrarySchema>;
 export type UpdateTaskLibrary = z.infer<typeof UpdateTaskLibrarySchema>;

@@ -1,4 +1,5 @@
 import { Key, useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 
 import {
   Button,
@@ -19,22 +20,31 @@ import {
 import { toast } from 'sonner';
 
 import { MutatedMaintenance } from '@/types/maintenance';
-import { updateChecklist } from '@/lib/actions/checklist';
+import { ChecklistLibraryList } from '@/types/checklist';
 import { useCurrentRole } from '@/hooks/use-current-role';
 import { useCurrentUser } from '@/hooks/use-current-user';
+import { updateChecklist } from '@/lib/actions/checklist';
+
 import TaskAdd from '@/components/task/TaskAdd';
 import ChecklistExportModal from '@/components/checklist/ChecklistExportModal';
+import ChecklistImport from '@/components/checklist/ChecklistImport';
 
 type AssetActionsProps = {
   checklist: MutatedMaintenance['checklist'][0];
+  checklistLibraryList: ChecklistLibraryList;
 };
 
-export default function ChecklistActions({ checklist }: AssetActionsProps) {
-  const [isPending, startTransition] = useTransition();
+export default function ChecklistActions({
+  checklist,
+  checklistLibraryList,
+}: AssetActionsProps) {
+  const [transitioning, startTransition] = useTransition();
+  const router = useRouter();
   const role = useCurrentRole();
   const user = useCurrentUser();
 
   const [isTaskAddOpenModal, setIsTaskAddOpenModal] = useState(false);
+  const [isChecklistImportOpen, setIsChecklistImportOpen] = useState(false);
   const [isChecklistExportModalOpen, setIsChecklistExportModalOpen] =
     useState(false);
 
@@ -67,13 +77,14 @@ export default function ChecklistActions({ checklist }: AssetActionsProps) {
               error: 'Failed to close checklist 😥',
             },
           );
-          if (!isPending) {
+          if (!transitioning) {
             console.log('success');
           }
         });
         break;
 
       case 'import-checklist':
+        setIsChecklistImportOpen(true);
         break;
 
       case 'export-checklist':
@@ -88,6 +99,15 @@ export default function ChecklistActions({ checklist }: AssetActionsProps) {
 
   function handleCloseChecklistExportModal() {
     setIsChecklistExportModalOpen(false);
+  }
+
+  function handleCloseChecklistImport() {
+    setIsChecklistImportOpen(false);
+  }
+
+  function handleChecklistUpdate() {
+    setIsChecklistImportOpen(false);
+    router.refresh();
   }
 
   return (
@@ -167,6 +187,13 @@ export default function ChecklistActions({ checklist }: AssetActionsProps) {
         open={isChecklistExportModalOpen}
         onClose={handleCloseChecklistExportModal}
         checklist={checklist}
+      />
+      <ChecklistImport
+        open={isChecklistImportOpen}
+        onClose={handleCloseChecklistImport}
+        onUpdate={handleChecklistUpdate}
+        checklistId={checklist.id}
+        checklistLibraryList={checklistLibraryList}
       />
     </div>
   );

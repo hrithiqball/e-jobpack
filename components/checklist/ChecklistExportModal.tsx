@@ -49,6 +49,7 @@ export default function ChecklistExportModal({
       description: task.description,
       taskType: task.taskType,
       listChoice: task.listChoice,
+      taskOrder: task.taskOrder,
       isSelected: true,
       subtask: task.subtask.map(subtask => ({
         ...subtask,
@@ -76,33 +77,38 @@ export default function ChecklistExportModal({
         selectedTasks
           .filter(task => task.isSelected)
           .forEach(task => {
-            const taskLibrary = {
+            const taskLibrary: CreateTaskLibrary = {
               id: task.id,
               taskActivity: task.taskActivity,
               description: task.description,
               taskType: task.taskType,
+              taskOrder: task.taskOrder,
               listChoice:
                 task.taskType === 'MULTIPLE_SELECT' ||
                 task.taskType === 'SINGLE_SELECT'
                   ? task.listChoice
                   : [],
-            } satisfies CreateTaskLibrary;
+            };
 
             const filteredSubtasks = task.subtask.filter(
               subtask => subtask.isSelected,
             );
             const subtaskLibraries: CreateSubtaskLibrary[] =
-              filteredSubtasks.map(subtask => ({
-                taskId: subtask.taskId,
-                taskActivity: subtask.taskActivity,
-                description: subtask.description,
-                taskType: subtask.taskType,
-                listChoice:
-                  subtask.taskType === 'MULTIPLE_SELECT' ||
-                  subtask.taskType === 'SINGLE_SELECT'
-                    ? subtask.listChoice
-                    : [],
-              }));
+              filteredSubtasks.map(
+                subtask =>
+                  ({
+                    taskId: subtask.taskId,
+                    taskActivity: subtask.taskActivity,
+                    description: subtask.description,
+                    taskType: subtask.taskType,
+                    taskOrder: subtask.taskOrder,
+                    listChoice:
+                      subtask.taskType === 'MULTIPLE_SELECT' ||
+                      subtask.taskType === 'SINGLE_SELECT'
+                        ? subtask.listChoice
+                        : [],
+                  }) satisfies CreateSubtaskLibrary,
+              );
 
             subtaskList.push(...subtaskLibraries);
             taskList.push(taskLibrary);

@@ -18,7 +18,7 @@ export const ChecklistSchema = z.object({
   taskLibrary: z.array(TaskSchema),
 });
 
-export const CreateChecklist = z.object({
+export const CreateChecklistSchema = z.object({
   assetId: z.string().min(1, {
     message: 'Missing asset ID',
   }),
@@ -31,7 +31,7 @@ export const CreateChecklist = z.object({
   description: z.string().optional(),
 });
 
-export const UpdateChecklist = z.object({
+export const UpdateChecklistSchema = z.object({
   updatedById: z.string().min(1, {
     message: 'Missing user ID',
   }),
@@ -46,8 +46,8 @@ export const CreateChecklistLibrarySchema = z.object({
   description: z.string().optional(),
 });
 
-export type CreateChecklistS = z.infer<typeof CreateChecklist>;
-export type UpdateChecklistS = z.infer<typeof UpdateChecklist>;
+export type CreateChecklist = z.infer<typeof CreateChecklistSchema>;
+export type UpdateChecklist = z.infer<typeof UpdateChecklistSchema>;
 export type CreateChecklistLibrary = z.infer<
   typeof CreateChecklistLibrarySchema
 >;

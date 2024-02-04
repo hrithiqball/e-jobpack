@@ -7,7 +7,7 @@ import { db } from '@/lib/db';
 import { CreateSubtaskLibrary } from '@/lib/schemas/subtask';
 import { CreateTaskLibrary } from '@/lib/schemas/task';
 import { CreateChecklistLibrary } from '@/lib/schemas/checklist';
-import { TaskType } from '@prisma/client';
+import { Prisma, TaskType } from '@prisma/client';
 
 type TaskLibrary = {
   checklistLibraryId: string;
@@ -18,6 +18,7 @@ type TaskLibrary = {
   id: string;
   createdById: string;
   updatedById: string;
+  taskOrder: number;
 };
 
 type SubtaskLibrary = {
@@ -29,11 +30,38 @@ type SubtaskLibrary = {
   id: string;
   createdById: string;
   updatedById: string;
+  taskOrder: number;
 };
 
-export async function fetchChecklistLibraryList() {
+export async function fetchChecklistLibraryList(assetId?: string) {
   try {
-    return await db.checklistLibrary.findMany();
+    const filters: Prisma.ChecklistLibraryWhereInput[] = [];
+
+    if (assetId) {
+      filters.push({ assetId });
+    }
+
+    return await db.checklistLibrary.findMany({
+      where: {
+        AND: filters,
+      },
+      include: {
+        createdBy: true,
+        updatedBy: true,
+        taskLibrary: {
+          orderBy: {
+            taskOrder: 'asc',
+          },
+          include: {
+            subtaskLibrary: {
+              orderBy: {
+                taskOrder: 'asc',
+              },
+            },
+          },
+        },
+      },
+    });
   } catch (error) {
     console.error(error);
     throw error;
@@ -69,6 +97,7 @@ export async function createChecklistLibrary(
         id: uuidv4(),
         createdById: userId,
         updatedById: userId,
+        taskOrder: task.taskOrder ?? 1,
       } satisfies TaskLibrary;
 
       const subtasks = subtaskList
@@ -81,6 +110,7 @@ export async function createChecklistLibrary(
               taskId: newTask.id,
               createdById: userId,
               updatedById: userId,
+              taskOrder: subtask.taskOrder ?? 1,
             }) satisfies SubtaskLibrary,
         );
 

@@ -9,7 +9,12 @@ export async function createTaskLibrary(
 ) {
   try {
     return await db.taskLibrary.create({
-      data: { ...createTaskLibrary, createdById: userId, updatedById: userId },
+      data: {
+        ...createTaskLibrary,
+        createdById: userId,
+        updatedById: userId,
+        taskOrder: 1,
+      },
     });
   } catch (error) {
     console.error(error);

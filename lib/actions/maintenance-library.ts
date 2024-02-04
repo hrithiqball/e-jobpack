@@ -29,8 +29,9 @@ export async function createMaintenanceLibrary(
       });
 
       checklist.taskLibrary.forEach(async task => {
-        const newTask = await db.taskLibrary.create({
+        await db.taskLibrary.create({
           data: {
+            taskOrder: task.taskOrder,
             taskActivity: task.taskActivity,
             description: task.description,
             listChoice: task.listChoice,
@@ -45,8 +46,6 @@ export async function createMaintenanceLibrary(
             },
           },
         });
-
-        console.log(newTask);
       });
     });
 

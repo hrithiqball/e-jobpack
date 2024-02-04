@@ -7,9 +7,10 @@ import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { Tab, Tabs } from '@nextui-org/react';
 
 import { MaintenanceList, MaintenanceLibraryList } from '@/types/maintenance';
+import { TaskLibraryList } from '@/types/task';
 import MaintenanceAllTab from '@/components/maintenance/MaintenanceAllTab';
 import MaintenanceLibraryTab from '@/components/maintenance/MaintenanceLibraryTab';
-import { TaskLibraryList } from '@/types/task';
+import MaintenanceChecklistTab from '@/components/maintenance/MaintenanceChecklistTab';
 
 type MaintenanceLibraryComponentProps = {
   maintenanceList: MaintenanceList;
@@ -45,6 +46,9 @@ export default function MaintenanceLibraryComponent({
       >
         <Tab key="all" title="Maintenance" className="flex flex-col flex-1">
           <MaintenanceAllTab maintenanceList={maintenanceList} />
+        </Tab>
+        <Tab key="checklist" title="Checklist" className="flex flex-col flex-1">
+          <MaintenanceChecklistTab />
         </Tab>
         <Tab key="library" title="Library" className="flex flex-col flex-1">
           <MaintenanceLibraryTab
