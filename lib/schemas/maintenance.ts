@@ -2,15 +2,17 @@ import z from 'zod';
 
 import { ChecklistSchema } from '@/lib/schemas/checklist';
 
-export const CreateMaintenance = z.object({
+export const CreateMaintenanceSchema = z.object({
   id: z.string().min(1, {
-    message: 'ID is required',
+    message: 'Maintenance ID is required',
   }),
   maintainee: z.array(z.string()).optional().nullable(),
-  assetIds: z.array(z.string()),
+  assetIds: z.array(z.string()).default([]),
+  startDate: z.date({ required_error: 'Start date is required' }),
   deadline: z.date().optional().nullable(),
-  startDate: z.date(),
-  approvedById: z.string(),
+  approvedById: z.string({
+    required_error: 'Person in charge is required for approval',
+  }),
   isOpen: z.boolean().default(false),
   isRequested: z.boolean().default(false),
 });
@@ -42,6 +44,7 @@ export const CreateMaintenanceLibrarySchema = z.object({
   checklistLibrary: z.array(ChecklistSchema),
 });
 
+export type CreateMaintenance = z.infer<typeof CreateMaintenanceSchema>;
 export type CreateMaintenanceLibrary = z.infer<
   typeof CreateMaintenanceLibrarySchema
 >;

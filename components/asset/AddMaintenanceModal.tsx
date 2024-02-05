@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 
 import { User } from '@prisma/client';
 import dayjs from 'dayjs';
-import { z } from 'zod';
 
 import {
   Button,
@@ -60,7 +59,7 @@ export default function AddMaintenanceModal({
         return;
       }
 
-      const maintenance: z.infer<typeof CreateMaintenance> = {
+      const newMaintenance: CreateMaintenance = {
         assetIds,
         deadline,
         id: maintenanceId,
@@ -71,15 +70,8 @@ export default function AddMaintenanceModal({
         approvedById: Array.from(approvedBy)[0] || '',
       };
 
-      const validatedFields = CreateMaintenance.safeParse(maintenance);
-
-      if (!validatedFields.success) {
-        toast.error(validatedFields.error?.issues[0]?.message);
-        return;
-      }
-
       toast.promise(
-        createMaintenance(user, { ...validatedFields.data }).then(() => {
+        createMaintenance(user, { ...newMaintenance }).then(() => {
           setMaintenanceId('');
           setMaintainee(new Set([]));
           setDeadline(undefined);

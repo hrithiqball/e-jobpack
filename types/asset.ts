@@ -1,7 +1,7 @@
-import { fetchAssetList2, fetchMutatedAssetItem } from '@/lib/actions/asset';
+import { fetchAssetList, fetchMutatedAssetItem } from '@/lib/actions/asset';
 
-export type AssetList = Awaited<ReturnType<typeof fetchAssetList2>>;
-export type AssetItem = typeof fetchAssetList2 extends () => Promise<infer T>
+export type AssetList = Awaited<ReturnType<typeof fetchAssetList>>;
+export type AssetItem = typeof fetchAssetList extends () => Promise<infer T>
   ? T extends Array<infer U>
     ? U
     : never

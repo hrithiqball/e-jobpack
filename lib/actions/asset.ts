@@ -41,22 +41,6 @@ export async function fetchAssetList() {
       orderBy: {
         name: 'asc',
       },
-    });
-
-    revalidatePath('/asset');
-    return assetList;
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-}
-
-export async function fetchAssetList2() {
-  try {
-    const assetList = await db.asset.findMany({
-      orderBy: {
-        name: 'asc',
-      },
       include: {
         assetStatus: true,
         assetType: true,

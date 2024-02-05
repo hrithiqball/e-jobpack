@@ -14,21 +14,15 @@ import dayjs from 'dayjs';
 
 export async function createMaintenance(
   user: ExtendedUser,
-  values: z.infer<typeof CreateMaintenance>,
+  newMaintenance: CreateMaintenance,
 ) {
   try {
-    const validatedFields = CreateMaintenance.safeParse(values);
-
-    if (!validatedFields.success) {
-      throw new Error(validatedFields.error.message);
-    }
-
-    const maintainee = validatedFields.data.maintainee?.toString();
+    const maintainee = newMaintenance.maintainee?.toString() || null;
 
     const maintenance = await db.maintenance
       .create({
         data: {
-          ...validatedFields.data,
+          ...newMaintenance,
           requestedById: user.id,
           date: new Date(),
           maintainee,

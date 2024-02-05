@@ -47,6 +47,7 @@
     "tanstack",
     "unhashed",
     "uuidv",
-    "vaul"
+    "vaul",
+    "zustand"
   ]
 }

@@ -19,6 +19,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import MaintenanceCreate from './MaintenanceCreate';
 
 type MaintenanceAllTabProps = {
   maintenanceList: MaintenanceList;
@@ -30,11 +31,13 @@ export default function MaintenanceAllTab({
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
   const [searchInput, setSearchInput] = useState('');
+  const [openCreateMaintenance, setOpenCreateMaintenance] = useState(false);
 
   const columns: ColumnDef<MaintenanceItem>[] = [
     { accessorKey: 'id', header: 'ID' },
     { accessorKey: 'isOpen', header: 'Description' },
   ];
+
   const table = useReactTable({
     data: maintenanceList,
     columns,
@@ -44,6 +47,14 @@ export default function MaintenanceAllTab({
 
   function handleOpenRowInfo(maintenance: MaintenanceItem) {
     console.log('Open Maintenance Info', maintenance);
+  }
+
+  function handleCreateMaintenance() {
+    setOpenCreateMaintenance(true);
+  }
+
+  function handleCloseCreateMaintenance() {
+    setOpenCreateMaintenance(false);
   }
 
   return (
@@ -70,6 +81,7 @@ export default function MaintenanceAllTab({
             variant="faded"
             color="primary"
             startContent={isDesktop ? <FilePlus2 size={18} /> : null}
+            onClick={handleCreateMaintenance}
           >
             {isDesktop ? 'Create' : <FilePlus2 size={18} />}
           </Button>
@@ -106,6 +118,10 @@ export default function MaintenanceAllTab({
           ))}
         </TableBody>
       </Table>
+      <MaintenanceCreate
+        open={openCreateMaintenance}
+        onClose={handleCloseCreateMaintenance}
+      />
     </div>
   );
 }

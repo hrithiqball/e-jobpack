@@ -1,23 +1,30 @@
 'use client';
 
 import { Key } from 'react';
-
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
+
+import { User } from '@prisma/client';
 
 import { Tab, Tabs } from '@nextui-org/react';
 
+import { useUserStore } from '@/hooks/use-user.store';
 import { MaintenanceList, MaintenanceLibraryList } from '@/types/maintenance';
 import { ChecklistLibraryList } from '@/types/checklist';
 import { TaskLibraryList } from '@/types/task';
+
 import MaintenanceAllTab from '@/components/maintenance/MaintenanceAllTab';
 import MaintenanceLibraryTab from '@/components/maintenance/MaintenanceLibraryTab';
 import MaintenanceChecklistTab from '@/components/maintenance/MaintenanceChecklistTab';
+import { AssetList } from '@/types/asset';
+import { useAssetStore } from '@/hooks/use-asset.store';
 
 type MaintenanceLibraryComponentProps = {
   maintenanceList: MaintenanceList;
   maintenanceLibraryList: MaintenanceLibraryList;
   taskLibraryList: TaskLibraryList;
   checklistLibrary: ChecklistLibraryList;
+  userList: User[];
+  assetList: AssetList;
 };
 
 export default function MaintenanceLibraryComponent({
@@ -25,7 +32,11 @@ export default function MaintenanceLibraryComponent({
   maintenanceLibraryList,
   taskLibraryList,
   checklistLibrary,
+  userList,
+  assetList,
 }: MaintenanceLibraryComponentProps) {
+  useUserStore.setState({ userList });
+  useAssetStore.setState({ assetList });
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
