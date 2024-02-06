@@ -1,4 +1,4 @@
-import SignUpCard from '@/app/auth/register/SignUpCard';
+import SignUpCard from '@/app/(route)/auth/register/SignUpCard';
 
 export default function SignUpPage() {
   return (

@@ -49,7 +49,7 @@ export default function MaintenanceAllTab({
   const [openCreateMaintenance, setOpenCreateMaintenance] = useState(false);
   const [openRecreateMaintenance, setOpenRecreateMaintenance] = useState(false);
   const [selectedMaintenance, setSelectedMaintenance] =
-    useState<MaintenanceList>([]);
+    useState<MaintenanceItem>();
 
   const columns: ColumnDef<MaintenanceItem>[] = [
     { accessorKey: 'id', header: 'ID' },
@@ -67,7 +67,7 @@ export default function MaintenanceAllTab({
         }
 
         function handleRecreate() {
-          setSelectedMaintenance([row.original]);
+          setSelectedMaintenance(row.original);
           setOpenRecreateMaintenance(true);
         }
 
@@ -186,11 +186,13 @@ export default function MaintenanceAllTab({
         open={openCreateMaintenance}
         onClose={handleCloseCreateMaintenance}
       />
-      <MaintenanceRecreate
-        open={openRecreateMaintenance}
-        onClose={handleCloseRecreateMaintenance}
-        maintenanceList={selectedMaintenance}
-      />
+      {selectedMaintenance && (
+        <MaintenanceRecreate
+          open={openRecreateMaintenance}
+          onClose={handleCloseRecreateMaintenance}
+          maintenance={selectedMaintenance}
+        />
+      )}
     </div>
   );
 }
