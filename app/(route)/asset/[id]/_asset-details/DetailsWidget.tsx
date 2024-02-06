@@ -3,7 +3,6 @@ import Image from 'next/image';
 
 import { AssetStatus, AssetType } from '@prisma/client';
 import dayjs from 'dayjs';
-// import { useForm, Controller } from 'react-hook-form';
 import z from 'zod';
 
 import {

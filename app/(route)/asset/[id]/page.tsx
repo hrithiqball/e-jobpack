@@ -1,9 +1,10 @@
-import AssetItemComponent from '@/components/asset/AssetItemComponent';
 import { fetchMaintenanceList } from '@/lib/actions/maintenance';
 import { fetchMutatedAssetItem } from '@/lib/actions/asset';
 import { fetchUserList } from '@/lib/actions/user';
 import { fetchAssetStatusList } from '@/lib/actions/asset-status';
 import { fetchAssetTypeList } from '@/lib/actions/asset-type';
+
+import AssetItemComponent from '@/app/(route)/asset/[id]/_asset-attachment/AssetItemComponent';
 
 interface AssetItemPageProps {
   params: { id: string };

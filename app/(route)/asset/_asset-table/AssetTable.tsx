@@ -57,7 +57,7 @@ import { useCurrentUser } from '@/hooks/use-current-user';
 import { useCurrentRole } from '@/hooks/use-current-role';
 import emptyIcon from '@/public/image/empty.svg';
 import AddMaintenanceModal from '@/components/asset/AddMaintenanceModal';
-import DeleteAssetModal from '@/components/asset/DeleteAssetModal';
+import DeleteAssetModal from '@/app/(route)/asset/_asset-table/DeleteAssetModal';
 import { AssetList, AssetItem } from '@/types/asset';
 
 type AssetTableProps = {

@@ -1,4 +1,4 @@
-import MaintenanceChecklist from '@/app/(route)/task/[id]/MaintenanceChecklist';
+import MaintenanceChecklist from '@/components/maintenance/MaintenanceChecklist';
 import ClosedChecklist from '@/components/checklist/ClosedChecklist';
 import { MutatedMaintenance } from '@/types/maintenance';
 

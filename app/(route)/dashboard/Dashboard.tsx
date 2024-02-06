@@ -1,13 +1,13 @@
 'use client';
 
 import { Key } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { Tab, Tabs } from '@nextui-org/react';
 
-import Overview from '@/components/dashboard/Overview';
-import Calendar from '@/components/dashboard/Calendar';
-import Report from '@/components/dashboard/Report';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import Overview from '@/app/(route)/dashboard/_overview/Overview';
+import Calendar from '@/app/(route)/dashboard/Calendar';
+import Report from '@/app/(route)/dashboard/Report';
 
 export default function Dashboard() {
   const searchParams = useSearchParams();

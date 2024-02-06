@@ -18,11 +18,12 @@ import {
 } from '@nextui-org/react';
 import { ChevronLeft } from 'lucide-react';
 
-import AssetDetails from '@/components/asset/AssetDetails';
-import AssetMaintenance from '@/components/asset/AssetMaintenance';
-import AssetAttachment from '@/components/asset/AssetAttachment';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { MutatedAsset } from '@/types/asset';
+
+import AssetDetails from '@/app/(route)/asset/[id]/_asset-details/AssetDetails';
+import AssetMaintenance from '@/app/(route)/asset/[id]/_asset-maintenance/AssetMaintenance';
+import AssetAttachment from '@/app/(route)/asset/[id]/_asset-attachment/AssetAttachment';
 
 type AssetItemComponentProps = {
   mutatedAsset: MutatedAsset;

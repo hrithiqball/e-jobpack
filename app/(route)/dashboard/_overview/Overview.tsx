@@ -1,8 +1,8 @@
 import React from 'react';
 
-import RecentActivity from '@/components/dashboard/RecentActivity';
-import GraphWidget from '@/components/dashboard/GraphWidget';
-import MaintenanceRequestWidget from '@/components/dashboard/MaintenanceRequestWidget';
+import RecentActivity from '@/app/(route)/dashboard/_overview/RecentActivity';
+import GraphWidget from '@/app/(route)/dashboard/_overview/GraphWidget';
+import MaintenanceRequestWidget from '@/app/(route)/dashboard/_overview/MaintenanceRequestWidget';
 
 export default function Overview() {
   return (
