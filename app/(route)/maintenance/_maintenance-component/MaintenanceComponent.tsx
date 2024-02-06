@@ -2,21 +2,20 @@
 
 import { Key } from 'react';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
-
 import { User } from '@prisma/client';
 
 import { Tab, Tabs } from '@nextui-org/react';
 
+import { useAssetStore } from '@/hooks/use-asset.store';
 import { useUserStore } from '@/hooks/use-user.store';
 import { MaintenanceList, MaintenanceLibraryList } from '@/types/maintenance';
 import { ChecklistLibraryList } from '@/types/checklist';
 import { TaskLibraryList } from '@/types/task';
-
-import MaintenanceAllTab from '@/components/maintenance/MaintenanceAllTab';
-import MaintenanceLibraryTab from '@/components/maintenance/MaintenanceLibraryTab';
-import MaintenanceChecklistTab from '@/components/maintenance/MaintenanceChecklistTab';
 import { AssetList } from '@/types/asset';
-import { useAssetStore } from '@/hooks/use-asset.store';
+
+import MaintenanceTab from '@/app/(route)/maintenance/_maintenance-component/_maintenance-tab/MaintenanceTab';
+import MaintenanceLibraryTab from '@/app/(route)/maintenance/_maintenance-component/_maintenance-library/MaintenanceLibraryTab';
+import MaintenanceChecklistTab from '@/app/(route)/maintenance/_maintenance-component/_maintenance-checklist/MaintenanceChecklistTab';
 
 type MaintenanceLibraryComponentProps = {
   maintenanceList: MaintenanceList;
@@ -27,7 +26,7 @@ type MaintenanceLibraryComponentProps = {
   assetList: AssetList;
 };
 
-export default function MaintenanceLibraryComponent({
+export default function MaintenanceComponent({
   maintenanceList,
   maintenanceLibraryList,
   taskLibraryList,
@@ -59,7 +58,7 @@ export default function MaintenanceLibraryComponent({
         onSelectionChange={handleTabChange}
       >
         <Tab key="all" title="Maintenance" className="flex flex-1 flex-col">
-          <MaintenanceAllTab maintenanceList={maintenanceList} />
+          <MaintenanceTab maintenanceList={maintenanceList} />
         </Tab>
         <Tab
           key="library"

@@ -2,8 +2,9 @@ import { fetchAssetList } from '@/lib/actions/asset';
 import { fetchChecklistList } from '@/lib/actions/checklist';
 import { fetchChecklistLibraryList } from '@/lib/actions/checklist-library';
 import { fetchMutatedMaintenanceItem } from '@/lib/actions/maintenance';
-import MaintenanceChecklistList from '@/components/checklist/ChecklistComponent';
-import MaintenanceComponent from '@/components/maintenance/MaintenanceComponent';
+
+import ChecklistComponent from '@/app/(route)/task/[id]/ChecklistComponent';
+import MaintenanceComponent from '@/app/(route)/task/[id]/_maintenance-component/MaintenanceComponent';
 
 interface TaskItemPageProps {
   params: { id: string };
@@ -23,9 +24,7 @@ export default async function TaskItemPage({ params }: TaskItemPageProps) {
         assetList={assetList}
         checklistList={checklistList}
       >
-        <MaintenanceChecklistList
-          checklistList={mutatedMaintenance.checklist}
-        />
+        <ChecklistComponent checklistList={mutatedMaintenance.checklist} />
       </MaintenanceComponent>
     </div>
   );

@@ -3,16 +3,17 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 
 import { Button, Input, Link } from '@nextui-org/react';
 import { ChevronLeft, LibraryBig, Search } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 import {
   MaintenanceLibraryList,
   MaintenanceLibraryItem,
 } from '@/types/maintenance';
-import { cn } from '@/lib/utils';
-import MaintenanceLibraryTable from '@/components/maintenance/MaintenanceLibraryTable';
-import MaintenanceLibraryCreate from '@/components/maintenance/MaintenanceLibraryCreate';
-import MaintenanceLibraryEdit from '@/components/maintenance/MaintenanceLibraryEdit';
 import { TaskLibraryList } from '@/types/task';
+
+import MaintenanceLibraryTable from '@/app/(route)/maintenance/_maintenance-component/_maintenance-library/_maintenance-library-table/MaintenanceLibraryTable';
+import MaintenanceLibraryCreate from '@/app/(route)/maintenance/_maintenance-component/_maintenance-library/MaintenanceLibraryCreate';
+import MaintenanceLibraryEdit from '@/app/(route)/maintenance/_maintenance-component/_maintenance-library/_maintenance-library-edit/MaintenanceLibraryEdit';
 
 type MaintenanceLibraryTabProps = {
   maintenanceLibraryList: MaintenanceLibraryList;

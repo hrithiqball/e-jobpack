@@ -2,10 +2,10 @@ import { fetchMaintenanceList2 } from '@/lib/actions/maintenance';
 import { fetchMaintenanceLibraryList } from '@/lib/actions/maintenance-library';
 import { fetchTaskLibraryList } from '@/lib/actions/task-library';
 import { fetchChecklistLibraryList } from '@/lib/actions/checklist-library';
-
-import MaintenanceLibraryComponent from '@/components/maintenance/MaintenanceLibraryComponent';
 import { fetchUserList } from '@/lib/actions/user';
 import { fetchAssetList } from '@/lib/actions/asset';
+
+import MaintenanceComponent from '@/app/(route)/maintenance/_maintenance-component/MaintenanceComponent';
 
 export default async function MaintenancePage() {
   const maintenanceLibraryList = await fetchMaintenanceLibraryList();
@@ -17,7 +17,7 @@ export default async function MaintenancePage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <MaintenanceLibraryComponent
+      <MaintenanceComponent
         maintenanceList={maintenanceList}
         maintenanceLibraryList={maintenanceLibraryList}
         taskLibraryList={taskLibraryList}

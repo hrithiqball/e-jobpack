@@ -19,7 +19,8 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import MaintenanceCreate from './MaintenanceCreate';
+
+import MaintenanceCreate from './_maintenance-create/MaintenanceCreate';
 
 type MaintenanceAllTabProps = {
   maintenanceList: MaintenanceList;

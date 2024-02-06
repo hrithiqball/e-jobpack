@@ -1,25 +1,25 @@
 import { Fragment, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-
 import { v4 as uuidv4 } from 'uuid';
 
 import { Button, Card } from '@nextui-org/react';
-import { motion } from 'framer-motion';
 import { ExternalLink, FilePlus2, ListPlus } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 
-import { MaintenanceLibraryItem } from '@/types/maintenance';
-import { TaskLibraryItem, TaskLibraryList } from '@/types/task';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import {
   createTaskLibrary,
   deleteTaskLibrary,
 } from '@/lib/actions/task-library';
+import { MaintenanceLibraryItem } from '@/types/maintenance';
+import { TaskLibraryItem, TaskLibraryList } from '@/types/task';
 import { CreateTaskLibrary } from '@/lib/schemas/task';
-import DropArea from '@/components/maintenance/MaintenanceLibraryDropArea';
-import TaskLibraryItemCard from '@/components/maintenance/TaskLibraryItemCard';
-import ChecklistTaskLibraryItem from '@/components/maintenance/ChecklistTaskLibraryItem';
+
+import DropArea from '@/app/(route)/maintenance/_maintenance-component/_maintenance-library/_maintenance-library-edit/DropArea';
+import TaskLibraryItemCard from '@/app/(route)/maintenance/_maintenance-component/_maintenance-library/_maintenance-library-edit/TaskLibraryItemCard';
+import ChecklistTaskLibraryItem from '@/app/(route)/maintenance/_maintenance-component/_maintenance-library/_maintenance-library-edit/ChecklistTaskLibraryItem';
 
 type MaintenanceLibraryEditProps = {
   maintenanceLibrary: MaintenanceLibraryItem;

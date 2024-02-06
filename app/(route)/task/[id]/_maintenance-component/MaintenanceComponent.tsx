@@ -34,14 +34,15 @@ import { toast } from 'sonner';
 import { updateMaintenance } from '@/lib/actions/maintenance';
 import { SimplifiedTask } from '@/types/simplified-task';
 import { useMediaQuery } from '@/hooks/use-media-query';
-import MaintenanceRejectConfirmation from '@/components/maintenance/MaintenanceRejectConfirmation';
-import MaintenanceAddChecklistModal from '@/components/maintenance/MaintenanceAddChecklistModal';
-import MaintenanceTableInfo from '@/components/maintenance/MaintenanceTableInfo';
-import MaintenanceAction from '@/components/maintenance/MaintenanceAction';
-import MaintenanceRequestForm from '@/components/maintenance/MaintenanceRequestForm';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { MutatedMaintenance } from '@/types/maintenance';
-import MaintenanceExport from './MaintenanceExport';
+
+import MaintenanceRejectConfirmation from '@/app/(route)/task/[id]/_maintenance-component/MaintenanceRejectConfirmation';
+import MaintenanceAddChecklistModal from '@/app/(route)/task/[id]/_maintenance-component/MaintenanceAddChecklistModal';
+import MaintenanceTableInfo from '@/app/(route)/task/[id]/_maintenance-component/MaintenanceTableInfo';
+import MaintenanceAction from '@/app/(route)/task/[id]/_maintenance-component/MaintenanceAction';
+import MaintenanceRequestForm from '@/app/(route)/task/[id]/_maintenance-component/MaintenanceRequestForm';
+import MaintenanceExport from '@/app/(route)/task/[id]/_maintenance-component/MaintenanceExport';
 
 type MaintenanceComponentProps = {
   mutatedMaintenance: MutatedMaintenance;

@@ -6,8 +6,8 @@ import { LibraryBig, Search } from 'lucide-react';
 
 import { ChecklistLibraryItem, ChecklistLibraryList } from '@/types/checklist';
 
-import ChecklistLibraryTable from '@/components/maintenance/ChecklistLibraryTable';
-import ChecklistLibraryCreate from '@/components/maintenance/ChecklistLibraryCreate';
+import ChecklistLibraryTable from '@/app/(route)/maintenance/_maintenance-component/_maintenance-checklist/ChecklistLibraryTable';
+import ChecklistLibraryCreate from '@/app/(route)/maintenance/_maintenance-component/_maintenance-checklist/ChecklistLibraryCreate';
 import Wrapper from '@/components/helper/Wrapper';
 
 type MaintenanceChecklistTabProps = {

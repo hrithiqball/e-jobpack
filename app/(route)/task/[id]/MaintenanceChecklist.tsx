@@ -1,9 +1,10 @@
 import dynamic from 'next/dynamic';
 
-import TaskMaintenanceChecklist from '@/components/checklist/ChecklistItemComponent';
 import { fetchTaskList } from '@/lib/actions/task';
 import { MutatedMaintenance } from '@/types/maintenance';
 import { fetchChecklistLibraryList } from '@/lib/actions/checklist-library';
+
+import TaskMaintenanceChecklist from '@/components/checklist/ChecklistItemComponent';
 
 const TaskTable = dynamic(() => import('@/components/task/TaskTable'), {
   ssr: false,

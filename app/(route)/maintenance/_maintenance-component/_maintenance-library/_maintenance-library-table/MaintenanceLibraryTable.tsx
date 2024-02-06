@@ -23,15 +23,16 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from '@nextui-org/react';
+import { Copy, FilePen, MoreHorizontal, Trash } from 'lucide-react';
+import { toast } from 'sonner';
 
 import {
   MaintenanceLibraryList,
   MaintenanceLibraryItem,
 } from '@/types/maintenance';
 import emptyIcon from '@/public/image/empty.svg';
-import MaintenanceLibraryInfo from '@/components/maintenance/MaintenanceLibraryInfo';
-import { Copy, FilePen, MoreHorizontal, Trash } from 'lucide-react';
-import { toast } from 'sonner';
+
+import MaintenanceLibraryInfo from '@/app/(route)/maintenance/_maintenance-component/_maintenance-library/_maintenance-library-table/MaintenanceLibraryInfo';
 
 type MaintenanceLibraryTableProps = {
   maintenanceLibraryList: MaintenanceLibraryList;
