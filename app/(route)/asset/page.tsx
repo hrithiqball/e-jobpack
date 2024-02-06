@@ -3,7 +3,7 @@ import { fetchAssetTypeList } from '@/lib/actions/asset-type';
 import { fetchAssetList } from '@/lib/actions/asset';
 import { fetchUserList } from '@/lib/actions/user';
 
-import AssetComponent from './AssetComponent';
+import AssetTable from './_asset-table';
 
 export default async function AssetPage() {
   const userList = await fetchUserList();
@@ -13,7 +13,7 @@ export default async function AssetPage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <AssetComponent
+      <AssetTable
         assetList={assetList.filter(asset => !asset.isArchive)}
         assetTypeList={assetTypeList}
         assetStatusList={assetStatusList}

@@ -26,7 +26,7 @@ import {
 import { approved, progress, reject, schedule_pending } from '@/lib/color';
 import emptyIcon from '@/public/image/empty.svg';
 
-import AssetSideSheet from '@/app/(route)/asset/[id]/_asset-maintenance/AssetSideSheet';
+import AssetSideSheet from './AssetSideSheet';
 
 type AssetMaintenanceProps = {
   maintenanceList: Maintenance[];

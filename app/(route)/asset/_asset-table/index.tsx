@@ -1,4 +1,6 @@
-import { Fragment, Key, ReactNode, useState, useTransition } from 'react';
+'use client';
+
+import { Fragment, Key, useState, useTransition } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Asset, AssetStatus, AssetType, User } from '@prisma/client';
@@ -46,6 +48,7 @@ import {
   Filter,
   MoreHorizontal,
   PackageMinus,
+  PackagePlus,
   Search,
   Trash,
 } from 'lucide-react';
@@ -57,21 +60,22 @@ import { AssetList, AssetItem } from '@/types/asset';
 import { updateAsset } from '@/lib/actions/asset';
 import emptyIcon from '@/public/image/empty.svg';
 
-import DeleteAssetModal from '@/app/(route)/asset/_asset-table/DeleteAssetModal';
-import AddMaintenanceModal from '@/components/asset/AddMaintenanceModal';
+import DeleteAssetModal from './DeleteAssetModal';
+import AddAssetModal from './AddAssetModal';
+import AddMaintenanceModal from '@/components/asset/AddMaintenance';
 
 type AssetTableProps = {
   assetList: AssetList;
   assetStatusList: AssetStatus[];
   userList: User[];
-  children: ReactNode | null;
+  assetTypeList: AssetType[];
 };
 
 export default function AssetTable({
   assetList,
   assetStatusList,
   userList,
-  children,
+  assetTypeList,
 }: AssetTableProps) {
   const [isPending, startTransition] = useTransition();
   const user = useCurrentUser();
@@ -85,6 +89,7 @@ export default function AssetTable({
   const [filterBy, setFilterBy] = useState('name');
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [currentAssetId, setCurrentAssetId] = useState('');
+  const [openAddAssetModal, setOpenAddAssetModal] = useState(false);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
     location: false,
     description: false,
@@ -790,7 +795,25 @@ export default function AssetTable({
               </Button>
             </Fragment>
           )}
-          {children}
+          {role === 'ADMIN' ||
+            (role === 'SUPERVISOR' && (
+              <Fragment>
+                <Button
+                  size="md"
+                  onClick={() => setOpenAddAssetModal(!openAddAssetModal)}
+                  endContent={<PackagePlus size={18} />}
+                >
+                  Add Asset
+                </Button>
+                <AddAssetModal
+                  isOpen={openAddAssetModal}
+                  onClose={() => setOpenAddAssetModal(false)}
+                  assetStatusList={assetStatusList}
+                  assetTypeList={assetTypeList}
+                  userList={userList}
+                />
+              </Fragment>
+            ))}
         </div>
       </div>
       <div className="flex flex-1 flex-col">

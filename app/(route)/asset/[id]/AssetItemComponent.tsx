@@ -21,9 +21,9 @@ import { ChevronLeft } from 'lucide-react';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { MutatedAsset } from '@/types/asset';
 
-import AssetDetails from '@/app/(route)/asset/[id]/_asset-details/AssetDetails';
-import AssetMaintenance from '@/app/(route)/asset/[id]/_asset-maintenance/AssetMaintenance';
-import AssetAttachment from '@/app/(route)/asset/[id]/_asset-attachment/AssetAttachment';
+import AssetDetails from './_asset-details';
+import AssetMaintenance from './_asset-maintenance';
+import AssetAttachment from './_asset-attachment';
 
 type AssetItemComponentProps = {
   mutatedAsset: MutatedAsset;

@@ -4,7 +4,7 @@ import { fetchUserList } from '@/lib/actions/user';
 import { fetchAssetStatusList } from '@/lib/actions/asset-status';
 import { fetchAssetTypeList } from '@/lib/actions/asset-type';
 
-import AssetItemComponent from '@/app/(route)/asset/[id]/AssetItemComponent';
+import AssetItemComponent from './AssetItemComponent';
 
 interface AssetItemPageProps {
   params: { id: string };

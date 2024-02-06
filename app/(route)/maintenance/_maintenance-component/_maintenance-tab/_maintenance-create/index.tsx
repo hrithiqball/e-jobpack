@@ -49,8 +49,8 @@ import {
   CreateMaintenanceSchema,
 } from '@/lib/schemas/maintenance';
 
-import AssetChoiceCell from '@/app/(route)/maintenance/_maintenance-component/_maintenance-tab/_maintenance-create/MaintenanceCreateAssetCell';
-import ChecklistChoiceCell from '@/app/(route)/maintenance/_maintenance-component/_maintenance-tab/_maintenance-create/MaintenanceCreateChecklistCell';
+import AssetChoiceCell from './MaintenanceCreateAssetCell';
+import ChecklistChoiceCell from './MaintenanceCreateChecklistCell';
 
 type MaintenanceCreateProps = {
   open: boolean;

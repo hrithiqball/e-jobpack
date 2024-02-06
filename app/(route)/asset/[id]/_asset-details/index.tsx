@@ -2,10 +2,10 @@ import { AssetStatus, AssetType, User } from '@prisma/client';
 
 import { MutatedAsset } from '@/types/asset';
 
-import DetailsWidget from '@/app/(route)/asset/[id]/_asset-details/DetailsWidget';
-import TeamWidget from '@/app/(route)/asset/[id]/_asset-details/TeamWidget';
-import ChecklistWidget from '@/app/(route)/asset/[id]/_asset-details/ChecklistWidget';
-import MaintenanceWidget from '@/app/(route)/asset/[id]/_asset-details/MaintenanceWidget';
+import DetailsWidget from './DetailsWidget';
+import TeamWidget from './TeamWidget';
+import ChecklistWidget from './ChecklistWidget';
+import MaintenanceWidget from './MaintenanceWidget';
 
 type AssetDetailsProps = {
   mutatedAsset: MutatedAsset;

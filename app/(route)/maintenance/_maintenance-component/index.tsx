@@ -13,9 +13,9 @@ import { ChecklistLibraryList } from '@/types/checklist';
 import { TaskLibraryList } from '@/types/task';
 import { AssetList } from '@/types/asset';
 
-import MaintenanceTab from '@/app/(route)/maintenance/_maintenance-component/_maintenance-tab';
-import MaintenanceLibraryTab from '@/app/(route)/maintenance/_maintenance-component/_maintenance-library-tab';
-import MaintenanceChecklistTab from '@/app/(route)/maintenance/_maintenance-component/_maintenance-checklist-tab';
+import MaintenanceTab from './_maintenance-tab';
+import MaintenanceLibraryTab from './_maintenance-library-tab';
+import MaintenanceChecklistTab from './_maintenance-checklist-tab';
 
 type MaintenanceLibraryComponentProps = {
   maintenanceList: MaintenanceList;

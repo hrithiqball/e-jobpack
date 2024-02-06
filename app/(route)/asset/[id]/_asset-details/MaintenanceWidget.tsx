@@ -19,7 +19,7 @@ import { Clock, Wrench, History } from 'lucide-react';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { MutatedAsset } from '@/types/asset';
 
-import AddMaintenanceModal from '@/components/asset/AddMaintenanceModal';
+import AddMaintenanceModal from '@/components/asset/AddMaintenance';
 
 type MaintenanceWidgetProps = {
   mutatedAsset: MutatedAsset;
