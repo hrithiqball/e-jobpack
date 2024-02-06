@@ -1,7 +1,20 @@
-import { useState } from 'react';
+import { Key, useState } from 'react';
 
-import { Button, Input } from '@nextui-org/react';
-import { FilePlus2, Filter, Search } from 'lucide-react';
+import {
+  Button,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+  Input,
+} from '@nextui-org/react';
+import {
+  FilePlus2,
+  Filter,
+  MoreHorizontal,
+  RotateCw,
+  Search,
+} from 'lucide-react';
 
 import { MaintenanceItem, MaintenanceList } from '@/types/maintenance';
 import { useMediaQuery } from '@/hooks/use-media-query';
@@ -21,6 +34,7 @@ import {
 } from '@tanstack/react-table';
 
 import MaintenanceCreate from './_maintenance-create';
+import MaintenanceRecreate from './MaintenanceRecreate';
 
 type MaintenanceAllTabProps = {
   maintenanceList: MaintenanceList;
@@ -33,10 +47,55 @@ export default function MaintenanceAllTab({
 
   const [searchInput, setSearchInput] = useState('');
   const [openCreateMaintenance, setOpenCreateMaintenance] = useState(false);
+  const [openRecreateMaintenance, setOpenRecreateMaintenance] = useState(false);
+  const [selectedMaintenance, setSelectedMaintenance] =
+    useState<MaintenanceList>([]);
 
   const columns: ColumnDef<MaintenanceItem>[] = [
     { accessorKey: 'id', header: 'ID' },
     { accessorKey: 'isOpen', header: 'Description' },
+    {
+      id: 'actions',
+      header: () => null,
+      cell: ({ row }) => {
+        function handleAction(key: Key) {
+          switch (key) {
+            case 'recreate':
+              handleRecreate();
+              break;
+          }
+        }
+
+        function handleRecreate() {
+          setSelectedMaintenance([row.original]);
+          setOpenRecreateMaintenance(true);
+        }
+
+        return (
+          <div className="text-right">
+            <Dropdown>
+              <DropdownTrigger>
+                <Button isIconOnly variant="light" size="sm">
+                  <MoreHorizontal size={18} />
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                variant="faded"
+                color="primary"
+                onAction={handleAction}
+              >
+                <DropdownItem
+                  key="recreate"
+                  startContent={<RotateCw size={18} />}
+                >
+                  Recreate
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          </div>
+        );
+      },
+    },
   ];
 
   const table = useReactTable({
@@ -56,6 +115,10 @@ export default function MaintenanceAllTab({
 
   function handleCloseCreateMaintenance() {
     setOpenCreateMaintenance(false);
+  }
+
+  function handleCloseRecreateMaintenance() {
+    setOpenRecreateMaintenance(false);
   }
 
   return (
@@ -122,6 +185,11 @@ export default function MaintenanceAllTab({
       <MaintenanceCreate
         open={openCreateMaintenance}
         onClose={handleCloseCreateMaintenance}
+      />
+      <MaintenanceRecreate
+        open={openRecreateMaintenance}
+        onClose={handleCloseRecreateMaintenance}
+        maintenanceList={selectedMaintenance}
       />
     </div>
   );
