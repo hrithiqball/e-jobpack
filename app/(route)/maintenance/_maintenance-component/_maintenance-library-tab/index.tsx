@@ -11,9 +11,9 @@ import {
 } from '@/types/maintenance';
 import { TaskLibraryList } from '@/types/task';
 
-import MaintenanceLibraryCreate from '@/app/(route)/maintenance/_maintenance-component/_maintenance-library-tab/MaintenanceLibraryCreate';
-import MaintenanceLibraryTable from '@/app/(route)/maintenance/_maintenance-component/_maintenance-library-tab/_maintenance-library-table/MaintenanceLibraryTable';
-import MaintenanceLibraryEdit from '@/app/(route)/maintenance/_maintenance-component/_maintenance-library-tab/_maintenance-library-edit/MaintenanceLibraryEdit';
+import MaintenanceLibraryCreate from './_maintenance-library-create';
+import MaintenanceLibraryTable from './_maintenance-library-table';
+import MaintenanceLibraryEdit from './_maintenance-library-edit';
 
 type MaintenanceLibraryTabProps = {
   maintenanceLibraryList: MaintenanceLibraryList;

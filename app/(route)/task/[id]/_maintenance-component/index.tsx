@@ -37,12 +37,12 @@ import { useMediaQuery } from '@/hooks/use-media-query';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { MutatedMaintenance } from '@/types/maintenance';
 
-import MaintenanceRejectConfirmation from '@/app/(route)/task/[id]/_maintenance-component/MaintenanceRejectConfirmation';
-import MaintenanceAddChecklistModal from '@/app/(route)/task/[id]/_maintenance-component/MaintenanceAddChecklistModal';
-import MaintenanceTableInfo from '@/app/(route)/task/[id]/_maintenance-component/MaintenanceTableInfo';
-import MaintenanceAction from '@/app/(route)/task/[id]/_maintenance-component/MaintenanceAction';
-import MaintenanceRequestForm from '@/app/(route)/task/[id]/_maintenance-component/MaintenanceRequestForm';
-import MaintenanceExport from '@/app/(route)/task/[id]/_maintenance-component/MaintenanceExport';
+import MaintenanceRejectConfirmation from './MaintenanceRejectConfirmation';
+import MaintenanceAddChecklistModal from './MaintenanceAddChecklistModal';
+import MaintenanceTableInfo from './MaintenanceTableInfo';
+import MaintenanceAction from './MaintenanceAction';
+import MaintenanceRequestForm from './MaintenanceRequestForm';
+import MaintenanceExport from './MaintenanceExport';
 
 type MaintenanceComponentProps = {
   mutatedMaintenance: MutatedMaintenance;

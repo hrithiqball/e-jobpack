@@ -25,9 +25,9 @@ import { useCurrentRole } from '@/hooks/use-current-role';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { updateChecklist } from '@/lib/actions/checklist';
 
-import TaskAdd from '@/app/(route)/task/[id]/_maintenance-component/_checklist-component/_maintenance-checklist/_task-checklist/_checklist-actions/TaskAdd';
-import ChecklistExportModal from '@/app/(route)/task/[id]/_maintenance-component/_checklist-component/_maintenance-checklist/_task-checklist/_checklist-actions/ChecklistExportModal';
-import ChecklistImport from '@/app/(route)/task/[id]/_maintenance-component/_checklist-component/_maintenance-checklist/_task-checklist/_checklist-actions/ChecklistImport';
+import TaskAdd from './TaskAdd';
+import ChecklistExportModal from './ChecklistExportModal';
+import ChecklistImport from './ChecklistImport';
 
 type AssetActionsProps = {
   checklist: MutatedMaintenance['checklist'][0];

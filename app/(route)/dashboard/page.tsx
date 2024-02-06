@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 
-import Dashboard from '@/app/(route)/dashboard/Dashboard';
+import Dashboard from './Dashboard';
 
 export default async function DashboardPage() {
   return (

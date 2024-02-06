@@ -48,7 +48,7 @@ import { createTaskLibrary } from '@/lib/actions/task-library';
 import { CreateTaskLibrary } from '@/lib/schemas/task';
 import { deleteTask } from '@/lib/actions/task';
 
-import TaskValue from '@/app/(route)/task/[id]/_maintenance-component/_checklist-component/TaskValue';
+import TaskValue from './TaskValue';
 
 type TaskTableProps = {
   taskList: TaskList;

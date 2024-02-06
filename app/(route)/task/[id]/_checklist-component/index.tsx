@@ -1,7 +1,7 @@
 import { MutatedMaintenance } from '@/types/maintenance';
 
-import ClosedChecklist from '@/app/(route)/task/[id]/_maintenance-component/_checklist-component/ClosedChecklist';
-import MaintenanceChecklist from '@/app/(route)/task/[id]/_maintenance-component/_checklist-component/_maintenance-checklist';
+import MaintenanceChecklist from './_maintenance-checklist';
+import ClosedChecklist from './_closed-checklist';
 
 type ChecklistComponentProps = {
   checklistList: MutatedMaintenance['checklist'];
