@@ -4,11 +4,17 @@ import { fetchTaskList } from '@/lib/actions/task';
 import { MutatedMaintenance } from '@/types/maintenance';
 import { fetchChecklistLibraryList } from '@/lib/actions/checklist-library';
 
-import TaskMaintenanceChecklist from '@/components/checklist/ChecklistItemComponent';
+import TaskMaintenanceChecklist from '@/app/(route)/task/[id]/_maintenance-component/_checklist-component/_maintenance-checklist/_task-checklist';
 
-const TaskTable = dynamic(() => import('@/components/task/TaskTable'), {
-  ssr: false,
-});
+const TaskTable = dynamic(
+  () =>
+    import(
+      '@/app/(route)/task/[id]/_maintenance-component/_checklist-component/TaskTable'
+    ),
+  {
+    ssr: false,
+  },
+);
 
 interface MaintenanceChecklistProps {
   checklist: MutatedMaintenance['checklist'][0];

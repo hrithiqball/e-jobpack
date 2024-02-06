@@ -19,10 +19,10 @@ import {
 import { toast } from 'sonner';
 import { Trash2 } from 'lucide-react';
 
-import { createTask } from '@/lib/actions/task';
-import { selectionChoices } from '@/public/utils/task-type-options';
-import { CreateTask } from '@/lib/schemas/task';
 import { MutatedMaintenance } from '@/types/maintenance';
+import { createTask } from '@/lib/actions/task';
+import { CreateTask } from '@/lib/schemas/task';
+import { selectionChoices } from '@/public/utils/task-type-options';
 
 type SubtaskOptions = {
   title: string;

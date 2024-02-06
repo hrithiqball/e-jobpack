@@ -1,7 +1,6 @@
 import { Fragment, Key, ReactNode, useState, useTransition } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-
 import { Asset, AssetStatus, AssetType, User } from '@prisma/client';
 
 import {
@@ -52,13 +51,14 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { updateAsset } from '@/lib/actions/asset';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { useCurrentRole } from '@/hooks/use-current-role';
-import emptyIcon from '@/public/image/empty.svg';
-import AddMaintenanceModal from '@/components/asset/AddMaintenanceModal';
-import DeleteAssetModal from '@/app/(route)/asset/_asset-table/DeleteAssetModal';
 import { AssetList, AssetItem } from '@/types/asset';
+import { updateAsset } from '@/lib/actions/asset';
+import emptyIcon from '@/public/image/empty.svg';
+
+import DeleteAssetModal from '@/app/(route)/asset/_asset-table/DeleteAssetModal';
+import AddMaintenanceModal from '@/components/asset/AddMaintenanceModal';
 
 type AssetTableProps = {
   assetList: AssetList;

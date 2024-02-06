@@ -6,8 +6,8 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Tab, Tabs } from '@nextui-org/react';
 
 import Overview from '@/app/(route)/dashboard/_overview/Overview';
-import Calendar from '@/app/(route)/dashboard/Calendar';
-import Report from '@/app/(route)/dashboard/Report';
+import Calendar from '@/app/(route)/dashboard/_calendar/Calendar';
+import Report from '@/app/(route)/dashboard/_report/Report';
 
 export default function Dashboard() {
   const searchParams = useSearchParams();

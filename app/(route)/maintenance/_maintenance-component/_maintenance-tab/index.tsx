@@ -20,7 +20,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 
-import MaintenanceCreate from './_maintenance-create/MaintenanceCreate';
+import MaintenanceCreate from './_maintenance-create';
 
 type MaintenanceAllTabProps = {
   maintenanceList: MaintenanceList;

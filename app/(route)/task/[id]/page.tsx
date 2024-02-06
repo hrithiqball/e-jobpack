@@ -3,8 +3,8 @@ import { fetchChecklistList } from '@/lib/actions/checklist';
 import { fetchChecklistLibraryList } from '@/lib/actions/checklist-library';
 import { fetchMutatedMaintenanceItem } from '@/lib/actions/maintenance';
 
-import ChecklistComponent from '@/app/(route)/task/[id]/ChecklistComponent';
-import MaintenanceComponent from '@/app/(route)/task/[id]/_maintenance-component/MaintenanceComponent';
+import ChecklistComponent from '@/app/(route)/task/[id]/_maintenance-component/_checklist-component';
+import MaintenanceComponent from '@/app/(route)/task/[id]/_maintenance-component';
 
 interface TaskItemPageProps {
   params: { id: string };

@@ -17,9 +17,9 @@ import { MaintenanceLibraryItem } from '@/types/maintenance';
 import { TaskLibraryItem, TaskLibraryList } from '@/types/task';
 import { CreateTaskLibrary } from '@/lib/schemas/task';
 
-import DropArea from '@/app/(route)/maintenance/_maintenance-component/_maintenance-library/_maintenance-library-edit/DropArea';
-import TaskLibraryItemCard from '@/app/(route)/maintenance/_maintenance-component/_maintenance-library/_maintenance-library-edit/TaskLibraryItemCard';
-import ChecklistTaskLibraryItem from '@/app/(route)/maintenance/_maintenance-component/_maintenance-library/_maintenance-library-edit/ChecklistTaskLibraryItem';
+import DropArea from '@/app/(route)/maintenance/_maintenance-component/_maintenance-library-tab/_maintenance-library-edit/DropArea';
+import TaskLibraryItemCard from '@/app/(route)/maintenance/_maintenance-component/_maintenance-library-tab/_maintenance-library-edit/TaskLibraryItemCard';
+import ChecklistTaskLibraryItem from '@/app/(route)/maintenance/_maintenance-component/_maintenance-library-tab/_maintenance-library-edit/ChecklistTaskLibraryItem';
 
 type MaintenanceLibraryEditProps = {
   maintenanceLibrary: MaintenanceLibraryItem;

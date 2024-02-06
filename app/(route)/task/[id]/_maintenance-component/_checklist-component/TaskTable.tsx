@@ -9,9 +9,20 @@ import {
   useTransition,
 } from 'react';
 import { useRouter } from 'next/navigation';
-
 import { v4 as uuidv4 } from 'uuid';
 
+import {
+  Button,
+  ButtonGroup,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+  Input,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@nextui-org/react';
 import {
   Table,
   TableBody,
@@ -31,24 +42,13 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { TaskList, TaskItem } from '@/types/task';
-import {
-  Button,
-  ButtonGroup,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-  Input,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@nextui-org/react';
 import { useCurrentUser } from '@/hooks/use-current-user';
+import { TaskList, TaskItem } from '@/types/task';
 import { createTaskLibrary } from '@/lib/actions/task-library';
 import { CreateTaskLibrary } from '@/lib/schemas/task';
-import TaskValue from '@/components/task/TaskValue';
 import { deleteTask } from '@/lib/actions/task';
+
+import TaskValue from '@/app/(route)/task/[id]/_maintenance-component/_checklist-component/TaskValue';
 
 type TaskTableProps = {
   taskList: TaskList;

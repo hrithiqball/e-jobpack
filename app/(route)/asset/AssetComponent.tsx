@@ -6,10 +6,11 @@ import { AssetStatus, AssetType, User } from '@prisma/client';
 import { Button } from '@nextui-org/react';
 import { PackagePlus } from 'lucide-react';
 
-import AssetTable from '@/app/(route)/asset/_asset-table/AssetTable';
-import AddAssetModal from '@/app/(route)/asset/_asset-table/AddAssetModal';
 import { useCurrentRole } from '@/hooks/use-current-role';
 import { AssetList } from '@/types/asset';
+
+import AssetTable from '@/app/(route)/asset/_asset-table/AssetTable';
+import AddAssetModal from '@/app/(route)/asset/_asset-table/AddAssetModal';
 
 type AssetComponentProps = {
   assetList: AssetList;

@@ -1,6 +1,5 @@
 import { ChangeEvent, useState } from 'react';
 import Image from 'next/image';
-
 import { Maintenance } from '@prisma/client';
 
 import { Button, Card, Chip, Input, Tooltip } from '@nextui-org/react';
@@ -24,8 +23,9 @@ import {
   X,
 } from 'lucide-react';
 
-import emptyIcon from '@/public/image/empty.svg';
 import { approved, progress, reject, schedule_pending } from '@/lib/color';
+import emptyIcon from '@/public/image/empty.svg';
+
 import AssetSideSheet from '@/app/(route)/asset/[id]/_asset-maintenance/AssetSideSheet';
 
 type AssetMaintenanceProps = {

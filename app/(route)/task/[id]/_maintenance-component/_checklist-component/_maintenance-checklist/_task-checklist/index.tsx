@@ -4,9 +4,10 @@ import { ReactNode } from 'react';
 
 import { Card } from '@nextui-org/react';
 
-import ChecklistActions from '@/components/checklist/ChecklistAction';
 import { MutatedMaintenance } from '@/types/maintenance';
 import { ChecklistLibraryList } from '@/types/checklist';
+
+import ChecklistActions from '@/app/(route)/task/[id]/_maintenance-component/_checklist-component/_maintenance-checklist/_task-checklist/_checklist-actions';
 
 type ChecklistItemComponentProps = {
   checklist: MutatedMaintenance['checklist'][0];

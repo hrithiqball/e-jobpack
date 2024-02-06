@@ -32,7 +32,7 @@ import {
 } from '@/types/maintenance';
 import emptyIcon from '@/public/image/empty.svg';
 
-import MaintenanceLibraryInfo from '@/app/(route)/maintenance/_maintenance-component/_maintenance-library/_maintenance-library-table/MaintenanceLibraryInfo';
+import MaintenanceLibraryInfo from '@/app/(route)/maintenance/_maintenance-component/_maintenance-library-tab/_maintenance-library-table/MaintenanceLibraryInfo';
 
 type MaintenanceLibraryTableProps = {
   maintenanceLibraryList: MaintenanceLibraryList;

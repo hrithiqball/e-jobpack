@@ -12,8 +12,8 @@ import {
   Divider,
   Link,
 } from '@nextui-org/react';
-import { motion } from 'framer-motion';
 import { FileCog, Wrench } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 import { useCurrentRole } from '@/hooks/use-current-role';
 
