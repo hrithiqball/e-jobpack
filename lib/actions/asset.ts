@@ -19,13 +19,13 @@ export async function createAsset(
     }
 
     if (validatedFields.data.type === '') validatedFields.data.type = null;
-    if (validatedFields.data.personInCharge === '')
-      validatedFields.data.personInCharge = null;
+    if (validatedFields.data.personInChargeId === '')
+      validatedFields.data.personInChargeId = null;
 
     return await db.asset.create({
       data: {
         id: `AS-${dayjs().format('YYMMDDHHmmssSSS')}`,
-        updatedBy: validatedFields.data.createdBy,
+        updatedById: validatedFields.data.createdById,
         ...validatedFields.data,
       },
     });
@@ -41,79 +41,17 @@ export async function fetchAssetList() {
       orderBy: {
         name: 'asc',
       },
+      include: {
+        assetStatus: true,
+        assetType: true,
+        personInCharge: true,
+        createdBy: true,
+        updatedBy: true,
+      },
     });
 
     revalidatePath('/asset');
     return assetList;
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-}
-
-export async function fetchMutatedAssetList() {
-  try {
-    const assetList = await db.asset.findMany({
-      orderBy: {
-        name: 'asc',
-      },
-    });
-
-    const mutatedAssetList = await Promise.all(
-      assetList.map(async asset => {
-        let status = null;
-        let type = null;
-        let personInCharge = null;
-
-        if (asset.statusId !== null) {
-          status = await db.assetStatus.findFirst({
-            where: {
-              id: asset.statusId,
-            },
-          });
-        }
-
-        if (asset.type !== null) {
-          type = await db.assetType.findFirst({
-            where: {
-              id: asset.type,
-            },
-          });
-        }
-
-        if (asset.personInCharge !== null) {
-          personInCharge = await db.user.findFirst({
-            where: {
-              id: asset.personInCharge,
-            },
-          });
-        }
-
-        const createdBy = await db.user.findFirst({
-          where: {
-            id: asset.createdBy,
-          },
-        });
-
-        const updatedBy = await db.user.findFirst({
-          where: {
-            id: asset.updatedBy,
-          },
-        });
-
-        return {
-          ...asset,
-          status: status,
-          type: type,
-          personInCharge: personInCharge,
-          createdBy: createdBy,
-          updatedBy: updatedBy,
-        };
-      }),
-    );
-
-    revalidatePath('/asset');
-    return mutatedAssetList.filter(asset => asset.isArchive === false);
   } catch (error) {
     console.error(error);
     throw error;
@@ -161,23 +99,23 @@ export async function fetchMutatedAssetItem(id: string) {
       });
     }
 
-    if (asset.personInCharge !== null) {
+    if (asset.personInChargeId !== null) {
       personInCharge = await db.user.findFirst({
         where: {
-          id: asset.personInCharge,
+          id: asset.personInChargeId,
         },
       });
     }
 
     const createdBy = await db.user.findFirstOrThrow({
       where: {
-        id: asset.createdBy,
+        id: asset.createdById,
       },
     });
 
     const updatedBy = await db.user.findFirstOrThrow({
       where: {
-        id: asset.updatedBy,
+        id: asset.updatedById,
       },
     });
 
@@ -211,7 +149,7 @@ export async function fetchFilteredAssetList(assetIds: string[]) {
 }
 
 export async function updateAsset(
-  updatedBy: string,
+  updatedById: string,
   id: string,
   values: z.infer<typeof UpdateAsset>,
 ) {
@@ -221,7 +159,7 @@ export async function updateAsset(
         id,
       },
       data: {
-        updatedBy,
+        updatedById,
         updatedOn: new Date(),
         ...values,
       },
@@ -237,18 +175,22 @@ export async function updateAsset(
 
 export async function deleteAsset(actionBy: string, id: string) {
   try {
-    await db.history.create({
-      data: {
-        actionBy,
-        activity: `Deleted asset ${id}`,
-      },
-    });
-
-    await db.asset.delete({
-      where: {
-        id,
-      },
-    });
+    await db.asset
+      .delete({
+        where: {
+          id,
+        },
+      })
+      .then(async () => {
+        await db.history.create({
+          data: {
+            actionBy,
+            activity: `Deleted asset ${id}`,
+            historyMeta: 'USER',
+            metaValue: actionBy,
+          },
+        });
+      });
 
     revalidatePath('/asset');
   } catch (error) {

@@ -16,6 +16,9 @@ const nextConfig = {
       fullUrl: true,
     },
   },
+  experimental: {
+    typedRoutes: false,
+  },
 };
 
 export default nextConfig;

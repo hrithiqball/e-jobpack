@@ -55,5 +55,11 @@ npx prisma format
 #### [Prisma Migration Blog](https://blog.logrocket.com/effortless-database-schema-migration-prisma/)
 
 ```bash
+# only for first time
+npx prisma migrate dev --name init
+```
+
+```bash
+# every migration after (will drop db and gen .sql file)
 npx prisma migrate dev --name cmd_why_migrate
 ```

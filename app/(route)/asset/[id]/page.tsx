@@ -1,10 +1,10 @@
-import AssetItemComponent from '@/components/asset/AssetItemComponent';
 import { fetchMaintenanceList } from '@/lib/actions/maintenance';
-import { fetchChecklistUseList } from '@/lib/actions/checklist-use';
 import { fetchMutatedAssetItem } from '@/lib/actions/asset';
 import { fetchUserList } from '@/lib/actions/user';
 import { fetchAssetStatusList } from '@/lib/actions/asset-status';
 import { fetchAssetTypeList } from '@/lib/actions/asset-type';
+
+import AssetItemComponent from './AssetItemComponent';
 
 interface AssetItemPageProps {
   params: { id: string };
@@ -15,17 +15,15 @@ export default async function AssetItemPage({ params }: AssetItemPageProps) {
   const statusList = await fetchAssetStatusList();
   const typeList = await fetchAssetTypeList();
   const maintenanceList = await fetchMaintenanceList(params.id);
-  const checklistUse = await fetchChecklistUseList(params.id);
   const userList = await fetchUserList();
 
   return (
-    <div className="flex flex-col flex-1">
+    <div className="flex flex-1 flex-col">
       <AssetItemComponent
         mutatedAsset={mutatedAsset}
         statusList={statusList}
         typeList={typeList}
         maintenanceList={maintenanceList}
-        checklistUse={checklistUse}
         userList={userList}
       />
     </div>

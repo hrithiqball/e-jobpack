@@ -1,6 +1,32 @@
 {
-  "extends": ["next", "next/core-web-vitals", "eslint:recommended"],
+  "env": {
+    "browser": false
+  },
+  "extends": [
+    "next",
+    "next/core-web-vitals",
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:import/typescript",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@tanstack/eslint-plugin-query/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
   "globals": {
     "React": "readonly"
-  }
+  },
+  "plugins": [
+    "@typescript-eslint",
+    "@tanstack/query",
+    "react",
+    "react-hooks",
+    "import",
+    "prettier"
+  ],
+  "rules": {
+    "react/prop-types": "off"
+  },
+  "ignorePatterns": ["types/**/*.d.ts", "lib/db.ts"]
 }

@@ -1,9 +1,13 @@
-import Dashboard from '@/components/dashboard/Dashboard';
+import { Suspense } from 'react';
+
+import Dashboard from './_dashboard';
 
 export default async function DashboardPage() {
   return (
-    <div className="flex flex-col flex-grow h-full">
-      <Dashboard />
+    <div className="flex flex-1 flex-col">
+      <Suspense fallback={<div>Loading...</div>}>
+        <Dashboard />
+      </Suspense>
     </div>
   );
 }

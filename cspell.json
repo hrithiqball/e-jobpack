@@ -39,5 +39,15 @@
     "CLUSE",
     "CLLIB"
   ],
-  "words": ["hookform", "Jobpack", "lucide", "tanstack", "unhashed"]
+  "words": [
+    "hookform",
+    "Jobpack",
+    "lucide",
+    "Signin",
+    "tanstack",
+    "unhashed",
+    "uuidv",
+    "vaul",
+    "zustand"
+  ]
 }

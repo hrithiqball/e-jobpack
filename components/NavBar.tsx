@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useTheme } from 'next-themes';
+
 import {
   Navbar,
   NavbarBrand,
@@ -23,21 +24,24 @@ import { CircleUserRound, DoorOpen, Moon, Sun } from 'lucide-react';
 
 import { useCurrentRole } from '@/hooks/use-current-role';
 import { useCurrentUser } from '@/hooks/use-current-user';
+import { useMounted } from '@/hooks/use-mounted';
 import { logout } from '@/lib/actions/logout';
 import clientIcon from '@/public/image/client-icon.svg';
+import { useMediaQuery } from '@/hooks/use-media-query';
 
 export default function Navigation() {
   const { theme, setTheme } = useTheme();
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const pathname = usePathname();
   const role = useCurrentRole();
   const user = useCurrentUser();
+  const mounted = useMounted();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
   const navLinks = [
-    { href: '/dashboard', label: 'Dashboard' },
     { href: '/asset', label: 'Asset' },
+    { href: '/maintenance', label: 'Maintenance' },
     { href: '/task', label: 'Task' },
   ];
 
@@ -45,18 +49,14 @@ export default function Navigation() {
     logout();
   }
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   if (!mounted) return null;
 
   return (
     <Navbar
       disableAnimation={true}
       onMenuOpenChange={setIsMenuOpen}
-      className="flex relative w-full items-center justify-between"
       maxWidth="full"
+      className="relative flex w-full items-center justify-between"
     >
       <NavbarContent justify="start">
         <NavbarMenuToggle
@@ -64,16 +64,18 @@ export default function Navigation() {
           className="px-4 sm:hidden"
         />
         <NavbarBrand>
-          <Image
-            priority
-            src={clientIcon}
-            alt="Petronas Logo"
-            className="w-6 mr-3"
-          />
-          <p className="font-bold text-inherit">eJobpack</p>
+          <Link href="/dashboard" className="hover:cursor-pointer">
+            <Image
+              priority
+              src={clientIcon}
+              alt="Petronas Logo"
+              className="mr-3 w-6"
+            />
+            {isDesktop && <p className="font-bold text-inherit">e-Jobpack</p>}
+          </Link>
         </NavbarBrand>
       </NavbarContent>
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+      <NavbarContent justify="center" className="hidden gap-4 sm:flex">
         {navLinks.map(link => {
           const isCurrentPage =
             pathname === link.href || pathname.startsWith(link.href);
@@ -98,6 +100,7 @@ export default function Navigation() {
         <Button
           isIconOnly
           size="sm"
+          variant="light"
           onClick={() => {
             setTheme(theme === 'dark' ? 'light' : 'dark');
           }}
@@ -115,7 +118,11 @@ export default function Navigation() {
             </Button>
           </DropdownTrigger>
           {role === 'ADMIN' ? (
-            <DropdownMenu aria-label="Profile Actions" variant="faded">
+            <DropdownMenu
+              aria-label="Profile Actions"
+              variant="faded"
+              color="primary"
+            >
               <DropdownItem key="name">{user?.name}</DropdownItem>
               <DropdownItem key="email">{user?.email}</DropdownItem>
               <DropdownItem key="account">My Account</DropdownItem>
@@ -127,7 +134,11 @@ export default function Navigation() {
               </DropdownItem>
             </DropdownMenu>
           ) : (
-            <DropdownMenu aria-label="Profile Actions" variant="faded">
+            <DropdownMenu
+              aria-label="Profile Actions"
+              variant="faded"
+              color="primary"
+            >
               <DropdownItem
                 key="account"
                 startContent={<CircleUserRound size={18} />}
@@ -147,6 +158,16 @@ export default function Navigation() {
         </Dropdown>
       </NavbarContent>
       <NavbarMenu>
+        <NavbarMenuItem key="dashboard">
+          <Link
+            size="lg"
+            color={pathname === '/dashboard' ? 'primary' : 'foreground'}
+            href="/dashboard"
+            className="w-full"
+          >
+            Dashboard
+          </Link>
+        </NavbarMenuItem>
         {navLinks.map(item => {
           const isCurrentPage = pathname === item.href;
           const linkColor = isCurrentPage ? 'primary' : 'foreground';
@@ -154,10 +175,10 @@ export default function Navigation() {
           return (
             <NavbarMenuItem key={item.href}>
               <Link
-                color={linkColor}
-                className="w-full"
-                href={item.href}
                 size="lg"
+                color={linkColor}
+                href={item.href}
+                className="w-full"
               >
                 {item.label}
               </Link>

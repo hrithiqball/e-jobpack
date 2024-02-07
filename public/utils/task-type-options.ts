@@ -2,23 +2,23 @@ import { TaskType } from '@prisma/client';
 
 export const selectionChoices: { key: TaskType; value: string }[] = [
   {
-    key: 'selectOne',
+    key: 'SINGLE_SELECT',
     value: 'Single Selection',
   },
   {
-    key: 'selectMultiple',
+    key: 'MULTIPLE_SELECT',
     value: 'Multiple Selection',
   },
   {
-    key: 'choice',
+    key: 'CHOICE',
     value: 'Choice',
   },
   {
-    key: 'number',
+    key: 'NUMBER',
     value: 'Number',
   },
   {
-    key: 'check',
+    key: 'CHECK',
     value: 'Check',
   },
 ];
