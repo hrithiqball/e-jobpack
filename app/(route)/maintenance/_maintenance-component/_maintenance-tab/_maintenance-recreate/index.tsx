@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { v4 as uuidv4 } from 'uuid';
 
-import { Button } from '@nextui-org/react';
 import {
   Drawer,
   DrawerContent,
@@ -40,25 +40,35 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
+import { CalendarIcon } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { useMediaQuery } from '@/hooks/use-media-query';
-import { MaintenanceItem } from '@/types/maintenance';
+import { useCurrentUser } from '@/hooks/use-current-user';
 import { useUserStore } from '@/hooks/use-user.store';
-import { useAssetStore } from '@/hooks/use-asset.store';
+import { MaintenanceItem } from '@/types/maintenance';
+import { recreateMaintenance } from '@/lib/actions/maintenance';
+import { TaskType } from '@prisma/client';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { PackageX } from 'lucide-react';
-import { useGetChecklistLibraryList } from '@/data/checklist-library';
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import dayjs from 'dayjs';
+import { Button } from '@/components/ui/button';
+import MaintenanceRecreateAssetCell from './MaintenanceRecreateAssetCell';
+import MaintenanceRecreateChecklistCell from './MaintenanceRecreateChecklistCell';
 
 const MaintenanceRecreateFormSchema = z.object({
-  id: z.string().min(1, { message: 'Maintenance ID is required' }),
-  // startDate: z.date({ required_error: 'Start date is required' }),
-  // deadline: z.date().optional().nullable(),
+  id: z
+    .string()
+    .min(1, { message: 'Maintenance ID is required' })
+    .refine(value => !/\s/.test(value), {
+      message: 'Maintenance ID cannot contain spaces',
+    }),
+  startDate: z.date({ required_error: 'Start date is required' }),
+  deadline: z.date().optional().nullable(),
   approvedById: z
     .string()
     .min(1, { message: 'Person in charge is required for approval' }),
@@ -77,7 +87,9 @@ export default function MaintenanceRecreate({
   onClose,
   maintenance,
 }: MaintenanceRecreateProps) {
+  const [transitioning, startTransition] = useTransition();
   const isDesktop = useMediaQuery('(min-width: 768px)');
+  const user = useCurrentUser();
   const userList = useUserStore.getState().userList;
 
   const [assetChecklist, setAssetChecklist] = useState<
@@ -90,6 +102,9 @@ export default function MaintenanceRecreate({
   );
 
   const form = useForm<MaintenanceRecreateForm>({
+    defaultValues: {
+      startDate: new Date(),
+    },
     resolver: zodResolver(MaintenanceRecreateFormSchema),
   });
 
@@ -119,27 +134,70 @@ export default function MaintenanceRecreate({
     });
   }
 
-  function onSubmit(data: MaintenanceRecreateForm) {
-    console.log('submit', data);
-    console.log(assetChecklist);
+  function handleClose() {
+    form.reset();
+    onClose();
+  }
 
-    const newMaintenanceChecklist = assetChecklist.map(asset => {
+  function onSubmit(data: MaintenanceRecreateForm) {
+    const newMaintenanceChecklist: {
+      assetId: string;
+      taskList:
+        | null
+        | undefined
+        | {
+            id: string;
+            taskActivity: string;
+            description: string | null;
+            taskType: TaskType;
+            listChoice: string[];
+            taskOrder: number;
+          }[];
+      checklistLibraryId: string | null;
+    }[] = assetChecklist.map(asset => {
+      const target = maintenance.checklist.find(
+        m => m.assetId === asset.assetId,
+      );
+
+      const taskList = target?.task.map(t => ({
+        id: uuidv4(),
+        taskActivity: t.taskActivity,
+        description: t.description,
+        taskType: t.taskType,
+        listChoice:
+          t.taskType === 'MULTIPLE_SELECT' || t.taskType === 'SINGLE_SELECT'
+            ? t.listChoice
+            : [],
+        taskOrder: t.taskOrder,
+      }));
+
       return {
         assetId: asset.assetId!,
-        checklist:
-          asset.library === 'prev' || asset.library === null
-            ? maintenance.checklist
-            : null,
+        taskList:
+          asset.library === 'prev' || asset.library === null ? taskList : null,
         checklistLibraryId: asset.library === 'default' ? null : asset.library,
       };
     });
 
-    console.log(newMaintenanceChecklist);
-    // TODO: send data to server
+    startTransition(() => {
+      if (user === undefined || user.id === undefined) {
+        toast.error('User session expired');
+        return;
+      }
+
+      toast.promise(recreateMaintenance(user, data, newMaintenanceChecklist), {
+        loading: 'Recreating maintenance...',
+        success: () => {
+          handleClose();
+          return 'Maintenance successfully recreated!';
+        },
+        error: 'Failed to recreate maintenance',
+      });
+    });
   }
 
   return isDesktop ? (
-    <Sheet open={open} onOpenChange={onClose}>
+    <Sheet open={open} onOpenChange={handleClose}>
       <SheetContent>
         <SheetHeader>Recreate Maintenance</SheetHeader>
         <div className="my-4 space-y-4">
@@ -190,6 +248,46 @@ export default function MaintenanceRecreate({
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name="startDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              color="primary"
+                              className="flex w-full items-center justify-start"
+                            >
+                              <div className="flex flex-1 items-center justify-between text-small">
+                                <div className="flex items-center space-x-2">
+                                  <CalendarIcon size={18} />
+                                  <span>Start Date</span>
+                                </div>
+                                <span>
+                                  {field.value &&
+                                    dayjs(field.value).format('DD/MM/YYYY')}
+                                </span>
+                              </div>
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={date => date < new Date()}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </FormItem>
+                  )}
+                />
                 <Table>
                   <TableHeader>
                     <TableHead> Asset </TableHead>
@@ -228,7 +326,8 @@ export default function MaintenanceRecreate({
                     <TableRow>
                       <TableCell colSpan={2}>
                         <Button
-                          variant="faded"
+                          type="button"
+                          variant="outline"
                           size="sm"
                           onClick={addAssetChecklist}
                           className="w-full"
@@ -244,15 +343,21 @@ export default function MaintenanceRecreate({
           </Form>
         </div>
         <SheetFooter>
-          <Button variant="faded" size="sm" onClick={onClose}>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={transitioning}
+            onClick={handleClose}
+          >
             Cancel
           </Button>
           <Button
             type="submit"
             form="recreate-form"
-            variant="faded"
+            variant="outline"
             size="sm"
             color="primary"
+            disabled={transitioning}
           >
             Save
           </Button>
@@ -260,181 +365,14 @@ export default function MaintenanceRecreate({
       </SheetContent>
     </Sheet>
   ) : (
-    <Drawer open={open} onOpenChange={onClose}>
+    <Drawer open={open} onOpenChange={handleClose}>
       <DrawerContent>
         <DrawerHeader>Recreate Maintenance</DrawerHeader>
         Mobile coming soon
         <DrawerFooter>
-          <Button onClick={onClose}>Close</Button>
+          <Button onClick={handleClose}>Close</Button>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
-  );
-}
-
-type MaintenanceRecreateAssetCellProps = {
-  asset: { assetId: string | null; library: string | null };
-  onAssetChange: (asset: {
-    assetId: string | null;
-    library: string | null;
-  }) => void;
-};
-
-function MaintenanceRecreateAssetCell({
-  asset,
-  onAssetChange,
-}: MaintenanceRecreateAssetCellProps) {
-  const assetList = useAssetStore.getState().assetList;
-
-  const [open, setOpen] = useState(false);
-  const [assetValue, setAssetValue] = useState(asset.assetId || 'empty');
-  const selectedAsset = assetList.find(asset => asset.id === assetValue);
-
-  function handleCloseMenu() {
-    setOpen(false);
-  }
-
-  function handleOpenMenu() {
-    setOpen(true);
-  }
-
-  function handleValueChange(value: string) {
-    setAssetValue(value);
-    if (value === 'prev') {
-      onAssetChange({ assetId: null, library: null });
-      return;
-    }
-    const selectedAsset = assetList.find(asset => asset.id === value)!;
-    const inferredAsset = {
-      assetId: selectedAsset.id,
-      library: null,
-    };
-
-    onAssetChange(inferredAsset);
-  }
-
-  return (
-    <DropdownMenu open={open} onOpenChange={handleCloseMenu}>
-      <DropdownMenuTrigger>
-        <Button
-          variant="faded"
-          size="sm"
-          color="primary"
-          onClick={handleOpenMenu}
-        >
-          {selectedAsset ? selectedAsset.name : 'Choose Asset'}
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuRadioGroup
-          value={assetValue}
-          onValueChange={handleValueChange}
-        >
-          {assetList
-            .filter(a => a.id !== asset.assetId)
-            .map(asset => (
-              <DropdownMenuRadioItem key={asset.id} value={asset.id}>
-                {asset.name}
-              </DropdownMenuRadioItem>
-            ))}
-          {assetList.filter(a => a.id !== asset.assetId).length === 0 && (
-            <div className="m-1 flex items-center space-x-2">
-              <PackageX size={18} />
-              <span className="text-red-600">No other asset can be added</span>
-            </div>
-          )}
-        </DropdownMenuRadioGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
-
-type MaintenanceRecreateChecklistCellProps = {
-  asset: { assetId: string; library: string | null };
-  isInPreviousMaintenance: boolean;
-  onChecklistChange: (asset: {
-    assetId: string | null;
-    library: string | null;
-  }) => void;
-};
-
-function MaintenanceRecreateChecklistCell({
-  asset,
-  isInPreviousMaintenance,
-  onChecklistChange,
-}: MaintenanceRecreateChecklistCellProps) {
-  const [checklistValue, setChecklistValue] = useState(
-    isInPreviousMaintenance ? 'prev' : 'default',
-  );
-  const [open, setOpen] = useState(false);
-
-  function handleCloseMenu() {
-    setOpen(false);
-  }
-
-  function handleOpenMenu() {
-    setOpen(true);
-  }
-
-  function handleValueChange(value: string) {
-    setChecklistValue(value);
-    if (value === 'prev') {
-      onChecklistChange({ assetId: asset.assetId, library: null });
-      return;
-    }
-
-    onChecklistChange({ assetId: asset.assetId, library: value });
-  }
-
-  const {
-    data: checklistLibraryList,
-    error: fetchError,
-    isLoading,
-  } = useGetChecklistLibraryList(asset.assetId);
-
-  const selectedChecklist = checklistLibraryList?.find(
-    checklist => checklist.id === checklistValue,
-  );
-
-  if (fetchError) return <span>{fetchError.message}</span>;
-  return (
-    <DropdownMenu open={open} onOpenChange={handleCloseMenu}>
-      <DropdownMenuTrigger>
-        <Button
-          variant="faded"
-          size="sm"
-          color="primary"
-          onClick={handleOpenMenu}
-        >
-          {checklistValue === 'prev' && <span> Previous Checklist </span>}
-          {checklistValue === 'default' && <span> Default </span>}
-          {checklistValue !== 'prev' &&
-            checklistValue !== 'default' &&
-            selectedChecklist && <span>{selectedChecklist.title}</span>}
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuRadioGroup
-          value={checklistValue}
-          onValueChange={handleValueChange}
-        >
-          {isInPreviousMaintenance && (
-            <DropdownMenuRadioItem value="prev">
-              Previous Checklist
-            </DropdownMenuRadioItem>
-          )}
-          <DropdownMenuRadioItem value="default">Default</DropdownMenuRadioItem>
-          {isLoading ? (
-            <span>Loading...</span>
-          ) : (
-            checklistLibraryList?.map(checklist => (
-              <DropdownMenuRadioItem key={checklist.id} value={checklist.id}>
-                {checklist.title}
-              </DropdownMenuRadioItem>
-            ))
-          )}
-        </DropdownMenuRadioGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
   );
 }

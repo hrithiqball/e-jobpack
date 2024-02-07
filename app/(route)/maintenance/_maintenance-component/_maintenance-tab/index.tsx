@@ -34,7 +34,7 @@ import {
 } from '@tanstack/react-table';
 
 import MaintenanceCreate from './_maintenance-create';
-import MaintenanceRecreate from './MaintenanceRecreate';
+import MaintenanceRecreate from './_maintenance-recreate';
 
 type MaintenanceAllTabProps = {
   maintenanceList: MaintenanceList;

@@ -135,31 +135,35 @@ model History {
 }
 
 model Maintenance {
-  date           DateTime    @default(now())
-  maintainee     String?
-  attachmentPath String?     @map("attachment_path")
-  approvedById   String      @map("approved_by_id")
-  approvedOn     DateTime?   @map("approved_on")
-  assetIds       String[]    @map("asset_ids")
-  startDate      DateTime    @default(now()) @map("start_date")
-  deadline       DateTime?
-  id             String      @id @default(cuid())
-  isClose        Boolean     @default(false) @map("is_close")
-  closedById     String?     @map("closed_by_id")
-  closedOn       DateTime?   @map("closed_on")
-  isOpen         Boolean     @default(false) @map("is_open")
-  requestedById  String?     @map("requested_by_id")
-  requestedOn    DateTime?   @default(now()) @map("requested_on")
-  isRejected     Boolean     @default(false) @map("is_rejected")
-  rejectedById   String?     @map("rejected_by_id")
-  rejectReason   String?     @map("reject_reason")
-  isRequested    Boolean     @default(false) @map("is_requested")
-  rejectedOn     DateTime?   @map("rejected_on")
-  checklist      Checklist[]
-  approvedBy     User        @relation("maintenance_approved_byTouser", fields: [approvedById], references: [id], onDelete: Cascade)
-  closedBy       User?       @relation("maintenance_closed_byTouser", fields: [closedById], references: [id], onDelete: Cascade)
-  rejectedBy     User?       @relation("maintenance_reject_byTouser", fields: [rejectedById], references: [id], onDelete: Cascade)
-  requestedBy    User?       @relation("maintenance_requested_byTouser", fields: [requestedById], references: [id], onDelete: Cascade)
+  date              DateTime          @default(now())
+  maintainee        String?
+  attachmentPath    String?           @map("attachment_path")
+  approvedById      String            @map("approved_by_id")
+  approvedOn        DateTime?         @map("approved_on")
+  assetIds          String[]          @map("asset_ids")
+  startDate         DateTime          @default(now()) @map("start_date")
+  deadline          DateTime?
+  id                String            @id @default(cuid())
+  isClose           Boolean           @default(false) @map("is_close")
+  closedById        String?           @map("closed_by_id")
+  closedOn          DateTime?         @map("closed_on")
+  isOpen            Boolean           @default(false) @map("is_open")
+  requestedById     String?           @map("requested_by_id")
+  requestedOn       DateTime?         @default(now()) @map("requested_on")
+  isRejected        Boolean           @default(false) @map("is_rejected")
+  rejectedById      String?           @map("rejected_by_id")
+  isRequested       Boolean           @default(false) @map("is_requested")
+  rejectedOn        DateTime?         @map("rejected_on")
+  acceptedById      String?           @map("accepted_by_id")
+  acceptedOn        DateTime?         @map("accepted_on")
+  maintenanceStatus MaintenanceStatus @default(REQUESTED) @map("maintenance_status")
+  rejectedReason    String?           @map("rejected_reason")
+  checklist         Checklist[]
+  acceptedBy        User?             @relation("maintenance_accepted_by_idTouser", fields: [acceptedById], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  approvedBy        User              @relation("maintenance_approved_byTouser", fields: [approvedById], references: [id], onDelete: Cascade)
+  closedBy          User?             @relation("maintenance_closed_byTouser", fields: [closedById], references: [id], onDelete: Cascade)
+  rejectedBy        User?             @relation("maintenance_reject_byTouser", fields: [rejectedById], references: [id], onDelete: Cascade)
+  requestedBy       User?             @relation("maintenance_requested_byTouser", fields: [requestedById], references: [id], onDelete: Cascade)
 
   @@map("maintenance")
   @@schema("public")
@@ -207,7 +211,6 @@ model Subtask {
 model SubtaskLibrary {
   taskActivity  String       @map("task_activity")
   description   String?
-  taskOrder     Int          @map("task_order") @db.SmallInt
   createdOn     DateTime     @default(now()) @map("created_on")
   createdById   String       @map("created_by_id")
   updatedOn     DateTime     @default(now()) @map("updated_on")
@@ -216,6 +219,7 @@ model SubtaskLibrary {
   taskLibraryId String?      @map("task_library_id")
   listChoice    String[]     @default([]) @map("list_choice")
   taskType      TaskType     @default(CHECK) @map("task_type")
+  taskOrder     Int          @map("task_order") @db.SmallInt
   createdBy     User         @relation("subtask_library_created_byTouser", fields: [createdById], references: [id], onDelete: Cascade)
   taskLibrary   TaskLibrary? @relation(fields: [taskLibraryId], references: [id], onDelete: Cascade)
   updatedBy     User         @relation("subtask_library_updated_byTouser", fields: [updatedById], references: [id], onDelete: Cascade)
@@ -256,11 +260,11 @@ model TaskLibrary {
   updatedOn          DateTime          @default(now()) @map("updated_on")
   taskActivity       String            @map("task_activity")
   description        String?
-  taskOrder          Int               @map("task_order") @db.SmallInt
   id                 String            @id @default(cuid())
-  checklistLibraryId String?           @map("checklist_library_id")
   listChoice         String[]          @default([]) @map("list_choice")
   taskType           TaskType          @default(CHECK) @map("task_type")
+  checklistLibraryId String?           @map("checklist_library_id")
+  taskOrder          Int               @map("task_order") @db.SmallInt
   subtaskLibrary     SubtaskLibrary[]
   checklistLibrary   ChecklistLibrary? @relation(fields: [checklistLibraryId], references: [id], onDelete: Cascade)
   createdBy          User              @relation("task_library_created_byTouser", fields: [createdById], references: [id], onDelete: Cascade)
@@ -317,6 +321,7 @@ model User {
   checklist_library_checklist_library_created_byTouser        ChecklistLibrary[]   @relation("checklist_library_created_byTouser")
   checklist_library_checklist_library_updated_byTouser        ChecklistLibrary[]   @relation("checklist_library_updated_byTouser")
   history                                                     History[]
+  maintenance_maintenance_accepted_by_idTouser                Maintenance[]        @relation("maintenance_accepted_by_idTouser")
   maintenance_maintenance_approved_byTouser                   Maintenance[]        @relation("maintenance_approved_byTouser")
   maintenance_maintenance_closed_byTouser                     Maintenance[]        @relation("maintenance_closed_byTouser")
   maintenance_maintenance_reject_byTouser                     Maintenance[]        @relation("maintenance_reject_byTouser")
@@ -363,6 +368,23 @@ enum HistoryMeta {
   ASSET
   MAINTENANCE
   USER
+
+  @@schema("public")
+}
+
+enum MaintenanceStatus {
+  /// only for technician
+  REQUESTED
+  /// only for sv/admin
+  REJECTED
+  /// only for sv/admin
+  ACCEPTED
+  /// only for sv/admin
+  OPENED
+  /// all can close
+  CLOSED
+  /// only for sv/admin
+  APPROVED
 
   @@schema("public")
 }

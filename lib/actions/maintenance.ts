@@ -1,8 +1,9 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { Prisma } from '@prisma/client';
-import z from 'zod';
+import { Prisma, TaskType } from '@prisma/client';
+import { z } from 'zod';
+import { v4 as uuidv4 } from 'uuid';
 
 import { db } from '@/lib/db';
 import {
@@ -11,6 +12,33 @@ import {
 } from '@/lib/schemas/maintenance';
 import { ExtendedUser } from '@/types/next-auth';
 import dayjs from 'dayjs';
+
+const MaintenanceRecreateFormSchema = z.object({
+  id: z.string().min(1, { message: 'Maintenance ID is required' }),
+  // startDate: z.date({ required_error: 'Start date is required' }),
+  // deadline: z.date().optional().nullable(),
+  approvedById: z
+    .string()
+    .min(1, { message: 'Person in charge is required for approval' }),
+});
+
+type MaintenanceRecreateForm = z.infer<typeof MaintenanceRecreateFormSchema>;
+
+type RecreateMaintenanceChecklist = {
+  assetId: string;
+  taskList:
+    | null
+    | undefined
+    | {
+        id: string;
+        taskActivity: string;
+        description: string | null;
+        taskType: TaskType;
+        listChoice: string[];
+        taskOrder: number;
+      }[];
+  checklistLibraryId: string | null;
+};
 
 export async function createMaintenance(
   user: ExtendedUser,
@@ -68,6 +96,51 @@ export async function fetchMaintenanceItem(id: string) {
     return await db.maintenance.findUniqueOrThrow({
       where: { id },
     });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function recreateMaintenance(
+  user: ExtendedUser,
+  form: MaintenanceRecreateForm,
+  checklists: RecreateMaintenanceChecklist[],
+) {
+  try {
+    return await db.maintenance
+      .create({
+        data: {
+          ...form,
+          maintenanceStatus:
+            user.role === 'TECHNICIAN' ? 'REQUESTED' : 'OPENED',
+          requestedById: user.role === 'TECHNICIAN' ? user.id : null,
+        },
+      })
+      .then(async res => {
+        checklists.forEach(async checklist => {
+          await db.checklist
+            .create({
+              data: {
+                id: uuidv4(),
+                assetId: checklist.assetId,
+                maintenanceId: res.id,
+                createdById: user.id,
+                updatedById: user.id,
+              },
+            })
+            .then(async checklistRes => {
+              if (checklist.taskList) {
+                await db.task.createMany({
+                  data: checklist.taskList.map(task => ({
+                    ...task,
+                    checklistId: checklistRes.id,
+                  })),
+                });
+              }
+            });
+        });
+      });
   } catch (error) {
     console.error(error);
     throw error;
