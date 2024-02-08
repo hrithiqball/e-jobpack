@@ -18,6 +18,10 @@
 # misc
 .DS_Store
 *.pem
+public/image/user/*
+
+# keep directory
+!public/image/user/
 
 # debug
 npm-debug.log*

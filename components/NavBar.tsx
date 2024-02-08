@@ -20,7 +20,7 @@ import {
   Dropdown,
   DropdownItem,
 } from '@nextui-org/react';
-import { CircleUserRound, DoorOpen, Moon, Sun } from 'lucide-react';
+import { CircleUserRound, DoorOpen, Moon, Shield, Sun } from 'lucide-react';
 
 import { useCurrentRole } from '@/hooks/use-current-role';
 import { useCurrentUser } from '@/hooks/use-current-user';
@@ -45,7 +45,7 @@ export default function Navigation() {
     { href: '/task', label: 'Task' },
   ];
 
-  function onClick() {
+  function handleLogout() {
     logout();
   }
 
@@ -123,13 +123,26 @@ export default function Navigation() {
               variant="faded"
               color="primary"
             >
-              <DropdownItem key="name">{user?.name}</DropdownItem>
-              <DropdownItem key="email">{user?.email}</DropdownItem>
-              <DropdownItem key="account">My Account</DropdownItem>
-              <DropdownItem key="admin" href="/admin">
+              <DropdownItem
+                key="account"
+                href={`/user/${user?.id}`}
+                startContent={<CircleUserRound size={18} />}
+              >
+                My Account
+              </DropdownItem>
+              <DropdownItem
+                key="admin"
+                href="/admin"
+                startContent={<Shield size={18} />}
+              >
                 Admin Settings
               </DropdownItem>
-              <DropdownItem color="danger" key="real" onClick={onClick}>
+              <DropdownItem
+                color="danger"
+                key="real"
+                onClick={handleLogout}
+                startContent={<DoorOpen size={18} />}
+              >
                 Sign Out
               </DropdownItem>
             </DropdownMenu>
@@ -141,6 +154,7 @@ export default function Navigation() {
             >
               <DropdownItem
                 key="account"
+                href={`/user/${user?.id}`}
                 startContent={<CircleUserRound size={18} />}
               >
                 My Account
@@ -148,8 +162,8 @@ export default function Navigation() {
               <DropdownItem
                 color="danger"
                 key="sign-out"
+                onClick={handleLogout}
                 startContent={<DoorOpen size={18} />}
-                onClick={onClick}
               >
                 Sign Out
               </DropdownItem>
