@@ -466,18 +466,20 @@ export default function AssetTable({
         const pic: User = row.getValue('personInCharge');
 
         return (
-          <div className="flex items-center">
-            {pic?.image !== null ||
-              (pic?.image !== undefined && (
-                <Avatar
-                  size="sm"
-                  showFallback
-                  src={pic?.image ?? ''}
-                  name={pic?.name}
-                  className="mr-1"
-                />
-              ))}
-            {pic?.name}
+          <div className="flex items-center space-x-2">
+            {pic.image !== null && pic.image !== '' ? (
+              <Image
+                src={pic.image}
+                alt={pic.name}
+                width={28}
+                height={28}
+                quality={100}
+                className="rounded-full"
+              />
+            ) : (
+              <Avatar name={pic.name} size="sm" />
+            )}
+            <span>{pic.name}</span>
           </div>
         );
       },
@@ -806,7 +808,7 @@ export default function AssetTable({
                   Add Asset
                 </Button>
                 <AddAssetModal
-                  isOpen={openAddAssetModal}
+                  open={openAddAssetModal}
                   onClose={() => setOpenAddAssetModal(false)}
                   assetStatusList={assetStatusList}
                   assetTypeList={assetTypeList}

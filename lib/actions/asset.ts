@@ -6,13 +6,15 @@ import dayjs from 'dayjs';
 import z from 'zod';
 
 import { db } from '@/lib/db';
-import { CreateAsset, UpdateAsset } from '@/lib/schemas/asset';
+import {
+  CreateAsset,
+  CreateAssetSchema,
+  UpdateAsset,
+} from '@/lib/schemas/asset';
 
-export async function createAsset(
-  values: z.infer<typeof CreateAsset>,
-): Promise<Asset> {
+export async function createAsset(values: CreateAsset): Promise<Asset> {
   try {
-    const validatedFields = CreateAsset.safeParse(values);
+    const validatedFields = CreateAssetSchema.safeParse(values);
 
     if (!validatedFields.success) {
       throw new Error(validatedFields.error.message);

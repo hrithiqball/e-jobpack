@@ -1,27 +1,52 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useTransition } from 'react';
+import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { AssetStatus, AssetType, User } from '@prisma/client';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import {
-  Button,
-  Input,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+} from '@/components/ui/drawer';
+import {
+  Sheet,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+} from '@/components/ui/sheet';
+import {
   Select,
+  SelectContent,
   SelectItem,
-} from '@nextui-org/react';
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
 import { useCurrentUser } from '@/hooks/use-current-user';
+import { useMediaQuery } from '@/hooks/use-media-query';
 import { createAsset } from '@/lib/actions/asset';
-import { CreateAsset } from '@/lib/schemas/asset';
+import {
+  CreateAsset,
+  CreateAssetForm,
+  CreateAssetFormSchema,
+  CreateAssetSchema,
+} from '@/lib/schemas/asset';
 
 interface AddAssetModalProps {
-  isOpen: boolean;
+  open: boolean;
   onClose: () => void;
   userList: User[];
   assetStatusList: AssetStatus[];
@@ -29,41 +54,34 @@ interface AddAssetModalProps {
 }
 
 export default function AddAssetModal({
-  isOpen,
+  open,
   onClose,
   userList,
   assetStatusList,
   assetTypeList,
 }: AddAssetModalProps) {
-  const [isPending, startTransition] = useTransition();
+  const [transitioning, startTransition] = useTransition();
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const router = useRouter();
   const user = useCurrentUser();
 
-  const [newAssetName, setNewAssetName] = useState('');
-  const [newAssetTag, setNewAssetTag] = useState('');
-  const [newAssetDescription, setNewAssetDescription] = useState('');
-  const [newAssetType, setNewAssetType] = useState('');
-  const [newAssetPIC, setNewAssetPIC] = useState('');
-  const [newAssetStatus, setNewAssetStatus] = useState('');
-  const [newAssetLocation, setNewAssetLocation] = useState('');
+  const form = useForm<CreateAssetForm>({
+    resolver: zodResolver(CreateAssetFormSchema),
+  });
 
-  function handleAddAsset() {
+  function onSubmit(data: CreateAssetForm) {
     startTransition(() => {
       if (user === undefined || user.id === undefined) {
-        toast.error('User not found');
+        toast.error('Session expired');
         return;
       }
 
-      const validatedFields = CreateAsset.safeParse({
+      const newAsset: CreateAsset = {
+        ...data,
         createdById: user.id,
-        name: newAssetName,
-        description: newAssetDescription,
-        type: newAssetType === '' ? null : newAssetType,
-        location: newAssetLocation,
-        personInCharge: newAssetPIC === '' ? null : newAssetPIC,
-        tag: newAssetTag,
-        statusId: newAssetStatus === '' ? null : newAssetStatus,
-      });
+      };
+
+      const validatedFields = CreateAssetSchema.safeParse(newAsset);
 
       if (!validatedFields.success) {
         if (
@@ -76,131 +94,307 @@ export default function AddAssetModal({
         return;
       }
 
-      createAsset({ ...validatedFields.data })
-        .then(res => {
-          if (isPending) console.info(res);
-          toast.success(`Asset ${res.name} created successfully`);
-          onClose();
+      toast.promise(createAsset(validatedFields.data), {
+        loading: 'Creating asset',
+        success: () => {
           router.refresh();
-        })
-        .catch(err => {
-          console.log(err);
-          toast.error(`Asset cannot created, ${err}`);
-        });
+          handleClose();
+          return 'Asset created successfully';
+        },
+        error: 'Failed to create asset',
+      });
     });
   }
 
-  function handleAssetType(selection: any) {
-    setNewAssetType(selection.currentKey);
+  function handleClose() {
+    form.reset();
+    onClose();
   }
 
-  function handleAssetStatus() {
-    return (selection: any) => {
-      setNewAssetStatus(selection.currentKey);
-    };
-  }
-
-  function handlePersonInChargeSelection(selection: any) {
-    setNewAssetPIC(selection.currentKey);
-  }
-
-  return (
-    <Modal
-      isOpen={isOpen}
-      hideCloseButton
-      backdrop="blur"
-      scrollBehavior="inside"
-    >
-      <ModalContent>
-        <ModalHeader className="flex flex-col gap-1">Add New Asset</ModalHeader>
-        <ModalBody>
-          <Input
-            isRequired
-            autoFocus
-            label="Name"
-            variant="faded"
-            value={newAssetName}
-            onValueChange={setNewAssetName}
-          />
-          <Input
-            label="Description"
-            variant="faded"
-            value={newAssetDescription}
-            onValueChange={setNewAssetDescription}
-          />
-          <Input
-            label="Tag"
-            variant="faded"
-            value={newAssetTag}
-            onValueChange={setNewAssetTag}
-          />
-          <Select
-            label="Type of asset"
-            variant="faded"
-            value={newAssetType}
-            onSelectionChange={e => handleAssetType(e)}
+  return isDesktop ? (
+    <Sheet open={open} onOpenChange={handleClose}>
+      <SheetContent>
+        <SheetHeader> Create Asset </SheetHeader>
+        <div className="my-4 space-y-4">
+          <Form {...form}>
+            <form id="create-asset-form" onSubmit={form.handleSubmit(onSubmit)}>
+              <div className="flex flex-col space-y-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Name <sup className="text-red-500">*</sup>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          required
+                          type="text"
+                          placeholder="e.g. Pump Filter"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel> Description </FormLabel>
+                      <FormControl>
+                        <Input type="text" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="tag"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel> Tag </FormLabel>
+                      <FormControl>
+                        <Input type="text" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="location"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel> Location </FormLabel>
+                      <FormControl>
+                        <Input type="text" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="personInChargeId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Person in Charge <sup className="text-red-500">*</sup>
+                      </FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Choose" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="space-x-4">
+                          {userList
+                            .filter(
+                              user =>
+                                user.role !== 'TECHNICIAN' && user.id !== '-99',
+                            )
+                            .map(user => (
+                              <SelectItem key={user.id} value={user.id}>
+                                {user.name}
+                              </SelectItem>
+                            ))}
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="type"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel> Type of asset </FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Choose" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="space-x-4">
+                          {assetTypeList.map(assetType => (
+                            <SelectItem key={assetType.id} value={assetType.id}>
+                              {assetType.title}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="statusId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel> Status </FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Choose" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="space-x-4">
+                          {assetStatusList.map(status => (
+                            <SelectItem key={status.id} value={status.id}>
+                              {status.title}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </form>
+          </Form>
+        </div>
+        <SheetFooter>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={transitioning}
+            onClick={handleClose}
           >
-            {assetTypeList.map(assetType => (
-              <SelectItem key={assetType.id} value={assetType.id}>
-                {assetType.title}
-              </SelectItem>
-            ))}
-          </Select>
-          <Input
-            label="Location"
-            variant="faded"
-            value={newAssetLocation}
-            onValueChange={setNewAssetLocation}
-          />
-          <Select
-            label="Asset Status"
-            variant="faded"
-            value={newAssetStatus}
-            onSelectionChange={handleAssetStatus}
-          >
-            {assetStatusList.map(assetStatus => (
-              <SelectItem key={assetStatus.id} value={assetStatus.id}>
-                {assetStatus.title}
-              </SelectItem>
-            ))}
-          </Select>
-          <Select
-            label="Person in charge"
-            variant="faded"
-            onSelectionChange={selection =>
-              handlePersonInChargeSelection(selection)
-            }
-          >
-            {userList
-              .filter(
-                u =>
-                  (u.role === 'SUPERVISOR' || u.role === 'ADMIN') &&
-                  u.id !== '-99',
-              )
-              .map(user => (
-                <SelectItem key={user.id} value={user.id}>
-                  {user.name}
-                </SelectItem>
-              ))}
-          </Select>
-        </ModalBody>
-        <ModalFooter>
-          <Button color="danger" variant="faded" onPress={onClose}>
             Close
           </Button>
           <Button
-            isDisabled={newAssetName === '' || isPending}
-            isLoading={isPending}
-            variant="faded"
+            type="submit"
+            form="create-asset-form"
+            variant="outline"
+            size="sm"
             color="primary"
-            onPress={() => {
-              handleAddAsset();
-            }}
           >
             Save
           </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
+  ) : (
+    // <Modal
+    //   isOpen={isOpen}
+    //   hideCloseButton
+    //   backdrop="blur"
+    //   scrollBehavior="inside"
+    // >
+    //   <ModalContent>
+    //     <ModalHeader className="flex flex-col gap-1">Add New Asset</ModalHeader>
+    //     <ModalBody>
+    //       <Input
+    //         isRequired
+    //         autoFocus
+    //         label="Name"
+    //         variant="faded"
+    //         value={newAssetName}
+    //         onValueChange={setNewAssetName}
+    //       />
+    //       <Input
+    //         label="Description"
+    //         variant="faded"
+    //         value={newAssetDescription}
+    //         onValueChange={setNewAssetDescription}
+    //       />
+    //       <Input
+    //         label="Tag"
+    //         variant="faded"
+    //         value={newAssetTag}
+    //         onValueChange={setNewAssetTag}
+    //       />
+    //       <Select
+    //         label="Type of asset"
+    //         variant="faded"
+    //         value={newAssetType}
+    //         onSelectionChange={e => handleAssetType(e)}
+    //       >
+    //         {assetTypeList.map(assetType => (
+    //           <SelectItem key={assetType.id} value={assetType.id}>
+    //             {assetType.title}
+    //           </SelectItem>
+    //         ))}
+    //       </Select>
+    //       <Input
+    //         label="Location"
+    //         variant="faded"
+    //         value={newAssetLocation}
+    //         onValueChange={setNewAssetLocation}
+    //       />
+    //       <Select
+    //         label="Asset Status"
+    //         variant="faded"
+    //         value={newAssetStatus}
+    //         onSelectionChange={handleAssetStatus}
+    //       >
+    //         {assetStatusList.map(assetStatus => (
+    //           <SelectItem key={assetStatus.id} value={assetStatus.id}>
+    //             {assetStatus.title}
+    //           </SelectItem>
+    //         ))}
+    //       </Select>
+    //       <Select
+    //         label="Person in charge"
+    //         variant="faded"
+    //         onSelectionChange={selection =>
+    //           handlePersonInChargeSelection(selection)
+    //         }
+    //       >
+    //         {userList
+    //           .filter(
+    //             u =>
+    //               (u.role === 'SUPERVISOR' || u.role === 'ADMIN') &&
+    //               u.id !== '-99',
+    //           )
+    //           .map(user => (
+    //             <SelectItem key={user.id} value={user.id}>
+    //               {user.name}
+    //             </SelectItem>
+    //           ))}
+    //       </Select>
+    //     </ModalBody>
+    //     <ModalFooter>
+    //       <Button color="danger" variant="faded" onPress={onClose}>
+    //         Close
+    //       </Button>
+    //       <Button
+    //         isDisabled={newAssetName === '' || transitioning}
+    //         isLoading={transitioning}
+    //         variant="faded"
+    //         color="primary"
+    //         onPress={() => {
+    //           handleAddAsset();
+    //         }}
+    //       >
+    //         Save
+    //       </Button>
+    //     </ModalFooter>
+    //   </ModalContent>
+    // </Modal>
+    <Drawer open={open} onOpenChange={handleClose}>
+      <DrawerContent>
+        <DrawerHeader> Create Asset </DrawerHeader>
+        Mobile Coming soon
+        <DrawerFooter>
+          <Button onClick={handleClose}> Close </Button>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
   );
 }
