@@ -120,7 +120,7 @@ export default function AssetMaintenance({
                     <Card
                       key={maintenance.id}
                       shadow="none"
-                      className="flex flex-row items-center space-x-4 px-4 py-2"
+                      className="flex flex-row items-center space-x-4 px-4 py-2 dark:bg-card"
                     >
                       {maintenance.isRequested && (
                         <Tooltip content="Requested">

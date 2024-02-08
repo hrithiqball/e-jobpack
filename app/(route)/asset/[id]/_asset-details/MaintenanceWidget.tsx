@@ -36,7 +36,7 @@ export default function MaintenanceWidget({
 
   return (
     <div className="flex flex-1 p-2">
-      <Card shadow="none" className="flex flex-1 p-4">
+      <Card shadow="none" className="flex flex-1 p-4 dark:bg-card">
         <div className="flex flex-row items-center">
           <Wrench />
           <span className="ml-4 font-bold">Maintenance</span>

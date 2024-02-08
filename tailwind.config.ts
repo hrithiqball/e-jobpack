@@ -29,6 +29,7 @@ const config: Config = {
         emeraldGreenDark: 'var(--emerald-green-dark)',
         emeraldGreenLight: 'var(--emerald-green-light)',
         deepGray: 'var(--deep-gray)',
+        card: 'var(--card)',
       },
       borderColor: {
         // default: 'var(--black)', // this causes too much black for border

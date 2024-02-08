@@ -200,7 +200,7 @@ export default function DetailsWidget({
   return (
     <div className="flex w-3/4 p-2">
       <form action={handleUpdateAsset} className="flex flex-1">
-        <Card shadow="none" className="flex flex-1 p-4">
+        <Card shadow="none" className="flex flex-1 p-4 dark:bg-card">
           <div className="flex min-w-min flex-1">
             <div className="flex flex-1 flex-row">
               <Image

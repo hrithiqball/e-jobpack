@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import AuthButton from '@/app/(route)/auth/AuthButton';
+import AuthButton from '@/app/AuthButton';
 
 export default async function Index() {
   return (

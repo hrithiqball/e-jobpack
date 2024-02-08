@@ -1,44 +1,40 @@
 # [3.0.0](https://github.com/hrithiqball/e-jobpack/compare/v2.2.0...v3.0.0) (2024-02-07)
 
-
 ### Bug Fixes
 
-* all undefined data type have safety net now ([ee1ca16](https://github.com/hrithiqball/e-jobpack/commit/ee1ca1682912028dc210a59de6864950ec1fdeb9))
-* export checklist not creating task as well ([0a4d673](https://github.com/hrithiqball/e-jobpack/commit/0a4d673fc30ab91b7e5bee5ee631f4491d4589f0))
-* next auth should use betav4. v4 = session gud, v5 = adapter prisma gud ([0c2d072](https://github.com/hrithiqball/e-jobpack/commit/0c2d0724d55475818ffb3bd8e2d58be06e34f14b))
-* removed checklist use, task use, subtask use as it is obsolete ([5830725](https://github.com/hrithiqball/e-jobpack/commit/5830725b0609dd84ae18797e9b6c6bc9f98f1f44))
-* some prop not tally to new db col ([89f8e19](https://github.com/hrithiqball/e-jobpack/commit/89f8e19965199fb85ac0e89a06b72c52135496dc))
-
+- all undefined data type have safety net now ([ee1ca16](https://github.com/hrithiqball/e-jobpack/commit/ee1ca1682912028dc210a59de6864950ec1fdeb9))
+- export checklist not creating task as well ([0a4d673](https://github.com/hrithiqball/e-jobpack/commit/0a4d673fc30ab91b7e5bee5ee631f4491d4589f0))
+- next auth should use betav4. v4 = session gud, v5 = adapter prisma gud ([0c2d072](https://github.com/hrithiqball/e-jobpack/commit/0c2d0724d55475818ffb3bd8e2d58be06e34f14b))
+- removed checklist use, task use, subtask use as it is obsolete ([5830725](https://github.com/hrithiqball/e-jobpack/commit/5830725b0609dd84ae18797e9b6c6bc9f98f1f44))
+- some prop not tally to new db col ([89f8e19](https://github.com/hrithiqball/e-jobpack/commit/89f8e19965199fb85ac0e89a06b72c52135496dc))
 
 ### Code Refactoring
 
-* removed route api and migrate to completely server actions ([5b7dac1](https://github.com/hrithiqball/e-jobpack/commit/5b7dac1332c7b33f7fae1e03faadb606ffc6fb1e))
-
+- removed route api and migrate to completely server actions ([5b7dac1](https://github.com/hrithiqball/e-jobpack/commit/5b7dac1332c7b33f7fae1e03faadb606ffc6fb1e))
 
 ### Features
 
-* able to import checklist library ([fd5d9d6](https://github.com/hrithiqball/e-jobpack/commit/fd5d9d6cd9dd28de03064372438274329659cee2))
-* able to update status from table ([6035364](https://github.com/hrithiqball/e-jobpack/commit/60353643b29a1a152193728b7f4d3c248c2457e1))
-* able to update task library in maintenance library ([2fac6ee](https://github.com/hrithiqball/e-jobpack/commit/2fac6ee3f2b1e28b839ceb9b9fd2eeb07ad881c9))
-* able to view maintenance info from asset maintenance tab and uses router ([9b0def1](https://github.com/hrithiqball/e-jobpack/commit/9b0def109387eb0f30897af9d8939bd8c9bf2c49))
-* add rows selected count ([b60f375](https://github.com/hrithiqball/e-jobpack/commit/b60f3755a943fc2355806a57c15d9c41f1f6c657))
-* add support disabling hover effect in table component ([8ba0a22](https://github.com/hrithiqball/e-jobpack/commit/8ba0a22cd3579866328f94a01c57e34d6ec922ab))
-* added features and dynamic search for asset table ([70a3acb](https://github.com/hrithiqball/e-jobpack/commit/70a3acb250fa4a5f937dec5ac7eaadbf80a5f03c))
-* added maintenance page and remove dashboard link and accessible by brand instead ([06509cb](https://github.com/hrithiqball/e-jobpack/commit/06509cb02ea86f90fc5aaaf71c9312d70f4948ea))
-* can create maintenance based on previous maintenance GH-52 task 7 ([9a3e9bb](https://github.com/hrithiqball/e-jobpack/commit/9a3e9bba79ea66c47be2c185e8d646e303a71012)), closes [#52](https://github.com/hrithiqball/e-jobpack/issues/52)
-* can export maintenance to a library ([f82e254](https://github.com/hrithiqball/e-jobpack/commit/f82e254360570402d8a1bdc66a098aa50fa3e20d))
-* crud of asset available for usage ([4c2b750](https://github.com/hrithiqball/e-jobpack/commit/4c2b7502d4ba28b1882d157698b4745e07c94533))
-* drag and drop successfully implemented ([81e35b4](https://github.com/hrithiqball/e-jobpack/commit/81e35b4e1eeec10ffaa8c42e1e55c2b3a5971dce))
-* existing checklist can now be exported as maintenance ([1015cab](https://github.com/hrithiqball/e-jobpack/commit/1015cab2a2d437e7fb3f8795d345653e3b20a71e))
-* multiple asset into maintenance ([f60c1f7](https://github.com/hrithiqball/e-jobpack/commit/f60c1f754a309f1637d269e119928cafc8669b71))
-* schedule maintenance from asset table page ([bc27571](https://github.com/hrithiqball/e-jobpack/commit/bc2757150bd2a227adf6526e05636a4cb482a263))
-* sv/admin can now reject mr by technician ([ff3ddac](https://github.com/hrithiqball/e-jobpack/commit/ff3ddac49617d146348dcd1a7f31fcab454a0938))
-
+- able to import checklist library ([fd5d9d6](https://github.com/hrithiqball/e-jobpack/commit/fd5d9d6cd9dd28de03064372438274329659cee2))
+- able to update status from table ([6035364](https://github.com/hrithiqball/e-jobpack/commit/60353643b29a1a152193728b7f4d3c248c2457e1))
+- able to update task library in maintenance library ([2fac6ee](https://github.com/hrithiqball/e-jobpack/commit/2fac6ee3f2b1e28b839ceb9b9fd2eeb07ad881c9))
+- able to view maintenance info from asset maintenance tab and uses router ([9b0def1](https://github.com/hrithiqball/e-jobpack/commit/9b0def109387eb0f30897af9d8939bd8c9bf2c49))
+- add rows selected count ([b60f375](https://github.com/hrithiqball/e-jobpack/commit/b60f3755a943fc2355806a57c15d9c41f1f6c657))
+- add support disabling hover effect in table component ([8ba0a22](https://github.com/hrithiqball/e-jobpack/commit/8ba0a22cd3579866328f94a01c57e34d6ec922ab))
+- added features and dynamic search for asset table ([70a3acb](https://github.com/hrithiqball/e-jobpack/commit/70a3acb250fa4a5f937dec5ac7eaadbf80a5f03c))
+- added maintenance page and remove dashboard link and accessible by brand instead ([06509cb](https://github.com/hrithiqball/e-jobpack/commit/06509cb02ea86f90fc5aaaf71c9312d70f4948ea))
+- can create maintenance based on previous maintenance GH-52 task 7 ([9a3e9bb](https://github.com/hrithiqball/e-jobpack/commit/9a3e9bba79ea66c47be2c185e8d646e303a71012)), closes [#52](https://github.com/hrithiqball/e-jobpack/issues/52)
+- can export maintenance to a library ([f82e254](https://github.com/hrithiqball/e-jobpack/commit/f82e254360570402d8a1bdc66a098aa50fa3e20d))
+- crud of asset available for usage ([4c2b750](https://github.com/hrithiqball/e-jobpack/commit/4c2b7502d4ba28b1882d157698b4745e07c94533))
+- drag and drop successfully implemented ([81e35b4](https://github.com/hrithiqball/e-jobpack/commit/81e35b4e1eeec10ffaa8c42e1e55c2b3a5971dce))
+- existing checklist can now be exported as maintenance ([1015cab](https://github.com/hrithiqball/e-jobpack/commit/1015cab2a2d437e7fb3f8795d345653e3b20a71e))
+- multiple asset into maintenance ([f60c1f7](https://github.com/hrithiqball/e-jobpack/commit/f60c1f754a309f1637d269e119928cafc8669b71))
+- schedule maintenance from asset table page ([bc27571](https://github.com/hrithiqball/e-jobpack/commit/bc2757150bd2a227adf6526e05636a4cb482a263))
+- sv/admin can now reject mr by technician ([ff3ddac](https://github.com/hrithiqball/e-jobpack/commit/ff3ddac49617d146348dcd1a7f31fcab454a0938))
 
 ### BREAKING CHANGES
 
-* updated most db column to explicitly refer id for join purposes
-* no REST api is provided
+- updated most db column to explicitly refer id for join purposes
+- no REST api is provided
 
 # [2.2.0](https://github.com/hrithiqball/e-jobpack/compare/v2.1.0...v2.2.0) (2024-01-13)
 

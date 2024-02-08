@@ -6,7 +6,6 @@ import MaintenanceRequestWidget from './MaintenanceRequestWidget';
 
 export default function Overview() {
   return (
-    //   TODO: Excess card info makes the page scrollable to the right, still can't find a fix
     <div className="flex h-full max-w-full grow flex-col overflow-x-hidden md:flex-row">
       <div className="flex w-full flex-col md:w-4/5">
         <div className="flex flex-1 p-2">

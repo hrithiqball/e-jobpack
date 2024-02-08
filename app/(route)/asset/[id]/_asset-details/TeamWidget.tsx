@@ -24,7 +24,7 @@ export default function TeamWidget({
 }: TeamWidgetProps) {
   return (
     <div className="flex flex-1 p-2">
-      <Card shadow="none" className="flex flex-1 p-4">
+      <Card shadow="none" className="flex flex-1 p-4 dark:bg-card">
         <div className="mb-2 flex flex-row items-center">
           <UsersRound />
           <span className="ml-4 font-bold">Team</span>
