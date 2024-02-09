@@ -7,3 +7,4 @@ export type AssetItem = typeof fetchAssetList extends () => Promise<infer T>
     : never
   : never;
 export type MutatedAsset = Awaited<ReturnType<typeof fetchMutatedAssetItem>>;
+export type Asset = Awaited<ReturnType<typeof fetchMutatedAssetItem>>;

@@ -2,7 +2,6 @@
 
 import { Key } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-
 import { AssetStatus, AssetType, Maintenance, User } from '@prisma/client';
 
 import {
@@ -24,22 +23,27 @@ import { MutatedAsset } from '@/types/asset';
 import AssetDetails from './_asset-details';
 import AssetMaintenance from './_asset-maintenance';
 import AssetAttachment from './_asset-attachment';
+import { useAssetStatusStore } from '@/hooks/use-asset-status.store';
+import { useAssetTypeStore } from '@/hooks/use-asset-type.store';
 
 type AssetItemComponentProps = {
   mutatedAsset: MutatedAsset;
-  statusList: AssetStatus[];
-  typeList: AssetType[];
+  assetStatusList: AssetStatus[];
+  assetTypeList: AssetType[];
   maintenanceList: Maintenance[];
   userList: User[];
 };
 
 export default function AssetItemComponent({
   mutatedAsset,
-  statusList,
-  typeList,
+  assetStatusList,
+  assetTypeList,
   maintenanceList,
   userList,
 }: AssetItemComponentProps) {
+  useAssetStatusStore.setState({ assetStatusList });
+  useAssetTypeStore.setState({ assetTypeList });
+
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -165,12 +169,7 @@ export default function AssetItemComponent({
       </div>
       <div className="flex flex-1 overflow-hidden">
         {tab === 'details' && (
-          <AssetDetails
-            mutatedAsset={mutatedAsset}
-            statusList={statusList}
-            typeList={typeList}
-            userList={userList}
-          />
+          <AssetDetails mutatedAsset={mutatedAsset} userList={userList} />
         )}
         {tab === 'maintenance' && (
           <AssetMaintenance maintenanceList={maintenanceList} />

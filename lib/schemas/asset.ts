@@ -38,6 +38,15 @@ export const CreateAssetFormSchema = z.object({
   }),
 });
 
-export type CreateAssetForm = z.infer<typeof CreateAssetFormSchema>;
+export const UpdateAssetFormSchema = z.object({
+  name: z.string({ required_error: 'Asset name is required' }).min(1, {
+    message: 'Asset name cannot be empty',
+  }),
+  description: z.string().optional(),
+  tag: z.string().optional(),
+  location: z.string().optional(),
+});
 
+export type CreateAssetForm = z.infer<typeof CreateAssetFormSchema>;
 export type CreateAsset = z.infer<typeof CreateAssetSchema>;
+export type UpdateAssetForm = z.infer<typeof UpdateAssetFormSchema>;

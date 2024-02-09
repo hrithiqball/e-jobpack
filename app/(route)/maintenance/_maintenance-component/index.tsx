@@ -36,6 +36,7 @@ export default function MaintenanceComponent({
 }: MaintenanceLibraryComponentProps) {
   useUserStore.setState({ userList });
   useAssetStore.setState({ assetList });
+
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();

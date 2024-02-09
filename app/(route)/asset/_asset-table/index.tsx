@@ -51,6 +51,7 @@ import {
   PackagePlus,
   Search,
   Trash,
+  UserIcon,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -465,7 +466,7 @@ export default function AssetTable({
       cell: ({ row }) => {
         const pic: User = row.getValue('personInCharge');
 
-        return (
+        return pic ? (
           <div className="flex items-center space-x-2">
             {pic.image !== null && pic.image !== '' ? (
               <Image
@@ -480,6 +481,16 @@ export default function AssetTable({
               <Avatar name={pic.name} size="sm" />
             )}
             <span>{pic.name}</span>
+          </div>
+        ) : (
+          <div className="flex items-center space-x-2">
+            <Avatar
+              showFallback
+              name="Not Specified"
+              size="sm"
+              fallback={<UserIcon size={18} />}
+            />
+            <span>Not Specified</span>
           </div>
         );
       },

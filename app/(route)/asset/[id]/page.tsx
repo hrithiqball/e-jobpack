@@ -21,8 +21,8 @@ export default async function AssetItemPage({ params }: AssetItemPageProps) {
     <div className="flex flex-1 flex-col">
       <AssetItemComponent
         mutatedAsset={mutatedAsset}
-        statusList={statusList}
-        typeList={typeList}
+        assetStatusList={statusList}
+        assetTypeList={typeList}
         maintenanceList={maintenanceList}
         userList={userList}
       />
