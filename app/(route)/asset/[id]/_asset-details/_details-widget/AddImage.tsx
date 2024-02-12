@@ -1,4 +1,5 @@
-import { ChangeEvent, useState } from 'react';
+import { useState, useCallback } from 'react';
+import Image from 'next/image';
 
 import {
   Button,
@@ -8,13 +9,13 @@ import {
   ModalHeader,
 } from '@nextui-org/react';
 import { Drawer, DrawerContent, DrawerFooter } from '@/components/ui/drawer';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Button as ShadButton } from '@/components/ui/button';
-import { ImagePlus, Trash } from 'lucide-react';
+import { useDropzone } from 'react-dropzone';
+import { ImagePlus, Replace, Trash } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { uploadAssetImage } from '@/lib/actions/upload';
 
 type AddImageProps = {
   open: boolean;
@@ -26,17 +27,28 @@ export default function AddImage({ open, onClose }: AddImageProps) {
 
   const [image, setImage] = useState<string | null>(null);
 
-  function handleImageUpload(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    const file = acceptedFiles[0];
 
     if (file) {
+      const mbSizeString = (file.size / (1024 * 1024)).toFixed(2);
+      toast.info(mbSizeString + 'MB');
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error('File size should be less than 2MB');
+      }
+
       const reader = new FileReader();
       reader.onload = () => {
         setImage(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
-  }
+  }, []);
+
+  const giga = 'giga';
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const uploadAssetImageWithId = uploadAssetImage.bind(null, giga);
 
   function clearImage() {
     setImage(null);
@@ -47,54 +59,86 @@ export default function AddImage({ open, onClose }: AddImageProps) {
     onClose();
   }
 
+  function customSubmission(formData: FormData) {
+    uploadAssetImageWithId(formData).then(() => {
+      handleClose();
+    });
+  }
+
   return isDesktop ? (
     <Modal hideCloseButton backdrop="blur" isOpen={open}>
       <ModalContent>
         <ModalHeader>Upload Image</ModalHeader>
         <div className="mx-4 flex flex-1 flex-col space-y-4">
           <div
+            {...getRootProps()}
             className={cn(
-              'flex flex-col items-center justify-center rounded-md border border-dashed border-gray-400 px-4 py-8',
-              { 'py-4': image != null },
+              'flex cursor-pointer flex-col items-center justify-center rounded-md border border-dashed border-gray-400 px-4 py-16',
+              { 'py-4': image !== null },
             )}
           >
+            <form id="asset-image-form" action={customSubmission}>
+              <input
+                id="picture"
+                type="file"
+                name="file"
+                accept=".png"
+                {...getInputProps()}
+              />
+            </form>
             {image ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={image} alt="Preview" className="rounded-md" />
+              <Image
+                src={image}
+                alt="Preview"
+                height={200}
+                width={500}
+                className="rounded-md"
+              />
             ) : (
-              <div className="flex items-center">
-                <ImagePlus />
-                Upload Image
+              <div
+                className={cn('flex items-center space-x-4', {
+                  'animate-bounce': isDragActive,
+                })}
+              >
+                {isDragActive ? <Replace /> : <ImagePlus />}
+                <span>
+                  {isDragActive
+                    ? 'Drop the files here'
+                    : 'Drag & drop or browse'}
+                </span>
               </div>
             )}
           </div>
           <div className="flex flex-1 flex-col gap-1.5">
-            <Label htmlFor="picture">Picture</Label>
             <div className="flex items-center">
-              <Input id="picture" type="file" onChange={handleImageUpload} />
               {image && (
-                <ShadButton
-                  variant="destructive"
-                  size={'icon'}
+                <Button
+                  variant="faded"
+                  color="danger"
+                  startContent={<Trash size={18} />}
                   onClick={clearImage}
+                  className="w-full"
                 >
-                  <Trash size={18} />
-                </ShadButton>
+                  Clear Image
+                </Button>
               )}
             </div>
           </div>
         </div>
         <ModalFooter>
           <Button variant="faded" size="sm" onClick={handleClose}>
-            Close
+            Cancel
           </Button>
           <Button
             variant="faded"
             size="sm"
             color="primary"
-            onClick={handleClose}
+            // onClick={handleClose}
+            isDisabled={!image}
+            type="submit"
+            form="asset-image-form"
           >
-            Close
+            Upload
           </Button>
         </ModalFooter>
       </ModalContent>
