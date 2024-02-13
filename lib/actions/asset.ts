@@ -3,8 +3,6 @@
 import { revalidatePath } from 'next/cache';
 import { Asset } from '@prisma/client';
 import dayjs from 'dayjs';
-import z from 'zod';
-
 import { db } from '@/lib/db';
 import {
   CreateAsset,
@@ -82,102 +80,27 @@ export async function fetchAssetItem(id: string) {
   }
 }
 
-export async function fetchMutatedAssetItem(id: string) {
-  try {
-    const asset = await db.asset.findUniqueOrThrow({
-      where: {
-        id,
-      },
-    });
-
-    let status = null;
-    let type = null;
-    let personInCharge = null;
-
-    if (asset.statusId !== null) {
-      status = await db.assetStatus.findFirstOrThrow({
-        where: {
-          id: asset.statusId,
-        },
-      });
-    }
-
-    if (asset.type !== null) {
-      type = await db.assetType.findFirstOrThrow({
-        where: {
-          id: asset.type,
-        },
-      });
-    }
-
-    if (asset.personInChargeId !== null) {
-      personInCharge = await db.user.findFirst({
-        where: {
-          id: asset.personInChargeId,
-        },
-      });
-    }
-
-    const createdBy = await db.user.findFirstOrThrow({
-      where: {
-        id: asset.createdById,
-      },
-    });
-
-    const updatedBy = await db.user.findFirstOrThrow({
-      where: {
-        id: asset.updatedById,
-      },
-    });
-
-    return {
-      ...asset,
-      status,
-      type,
-      createdBy,
-      updatedBy,
-      personInCharge,
-    };
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-}
-
-export async function fetchFilteredAssetList(assetIds: string[]) {
-  try {
-    return await db.asset.findMany({
-      where: {
-        id: {
-          in: assetIds,
-        },
-      },
-    });
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-}
-
 export async function updateAsset(
   updatedById: string,
   id: string,
-  values: z.infer<typeof UpdateAsset>,
+  updatedAsset: UpdateAsset,
 ) {
   try {
-    const updatedAsset = await db.asset.update({
-      where: {
-        id,
-      },
-      data: {
-        updatedById,
-        updatedOn: new Date(),
-        ...values,
-      },
-    });
-
-    revalidatePath('/asset');
-    return updatedAsset;
+    await db.asset
+      .update({
+        where: {
+          id,
+        },
+        data: {
+          updatedById,
+          updatedOn: new Date(),
+          ...updatedAsset,
+        },
+      })
+      .then(res => {
+        revalidatePath(`/asset/${id}`);
+        return res;
+      });
   } catch (error) {
     console.error(error);
     throw error;

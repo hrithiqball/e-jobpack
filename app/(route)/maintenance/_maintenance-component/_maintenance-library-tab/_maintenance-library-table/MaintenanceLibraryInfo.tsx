@@ -103,7 +103,7 @@ export default function MaintenanceLibraryInfo({
       </SheetContent>
     </Sheet>
   ) : (
-    <Drawer open={open} onClose={onClose}>
+    <Drawer open={open} onOpenChange={onClose}>
       <DrawerContent>
         <DrawerHeader>{maintenanceLibrary.title}</DrawerHeader>
         <DrawerFooter>

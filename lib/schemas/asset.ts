@@ -11,7 +11,7 @@ export const CreateAssetSchema = z.object({
   statusId: z.string().nullable().optional(),
 });
 
-export const UpdateAsset = z.object({
+export const UpdateAssetSchema = z.object({
   name: z
     .string()
     .min(1, {
@@ -22,6 +22,7 @@ export const UpdateAsset = z.object({
   isArchive: z.boolean().optional(),
   statusId: z.string().optional(),
   location: z.string().optional(),
+  assetCover: z.string().nullable().optional(),
   tag: z.string().optional(),
   type: z.string().optional(),
 });
@@ -49,4 +50,5 @@ export const UpdateAssetFormSchema = z.object({
 
 export type CreateAssetForm = z.infer<typeof CreateAssetFormSchema>;
 export type CreateAsset = z.infer<typeof CreateAssetSchema>;
+export type UpdateAsset = z.infer<typeof UpdateAssetSchema>;
 export type UpdateAssetForm = z.infer<typeof UpdateAssetFormSchema>;

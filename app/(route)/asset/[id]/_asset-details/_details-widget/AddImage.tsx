@@ -75,7 +75,10 @@ export default function AddImage({ open, onClose }: AddImageProps) {
     const formData = new FormData();
     formData.append('file', file);
 
-    uploadAssetImageWithId(formData).then(() => handleClose());
+    uploadAssetImageWithId(formData).then(() => {
+      toast.success('Image uploaded successfully');
+      handleClose();
+    });
   }
 
   return isDesktop ? (

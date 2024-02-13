@@ -16,7 +16,6 @@ export default function UserAvatar({ user }: UserAvatarProps) {
         size="lg"
         src={user?.image ?? ''}
         name={user?.name}
-        onClick={() => console.log(user?.image)}
       />
     </div>
   );
