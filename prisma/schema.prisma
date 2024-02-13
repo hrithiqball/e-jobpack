@@ -27,6 +27,8 @@ model Asset {
   id               String             @id
   statusId         String?            @map("status_id")
   isArchive        Boolean?           @default(false) @map("is_archive")
+  attachmentPath   String[]           @default([]) @map("attachment_path")
+  assetCover       String?            @map("asset_cover")
   createdBy        User               @relation("asset_created_byTouser", fields: [createdById], references: [id], onDelete: Cascade)
   personInCharge   User?              @relation("asset_person_in_chargeTouser", fields: [personInChargeId], references: [id], onDelete: Cascade)
   assetStatus      AssetStatus?       @relation(fields: [statusId], references: [id], onDelete: Cascade)

@@ -19,9 +19,11 @@
 .DS_Store
 *.pem
 public/image/user/*
+public/image/asset/*
 
 # keep directory
 !public/image/user/
+!public/image/asset/
 
 # debug
 npm-debug.log*

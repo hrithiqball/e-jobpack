@@ -60,13 +60,22 @@ export async function fetchAssetList() {
   }
 }
 
-export async function fetchAssetItem(id: string): Promise<Asset> {
+export async function fetchAssetItem(id: string) {
   try {
-    return await db.asset.findUniqueOrThrow({
+    const asset = await db.asset.findUniqueOrThrow({
       where: {
         id,
       },
+      include: {
+        assetStatus: true,
+        assetType: true,
+        personInCharge: true,
+        createdBy: true,
+        updatedBy: true,
+      },
     });
+
+    return asset;
   } catch (error) {
     console.error(error);
     throw error;

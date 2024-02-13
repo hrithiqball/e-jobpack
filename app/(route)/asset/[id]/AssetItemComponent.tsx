@@ -18,16 +18,17 @@ import {
 import { ChevronLeft } from 'lucide-react';
 
 import { useMediaQuery } from '@/hooks/use-media-query';
-import { MutatedAsset } from '@/types/asset';
+import { AssetItem } from '@/types/asset';
 
 import AssetDetails from './_asset-details';
 import AssetMaintenance from './_asset-maintenance';
 import AssetAttachment from './_asset-attachment';
 import { useAssetStatusStore } from '@/hooks/use-asset-status.store';
 import { useAssetTypeStore } from '@/hooks/use-asset-type.store';
+import { useAssetStore } from '@/hooks/use-asset.store';
 
 type AssetItemComponentProps = {
-  mutatedAsset: MutatedAsset;
+  asset: AssetItem;
   assetStatusList: AssetStatus[];
   assetTypeList: AssetType[];
   maintenanceList: Maintenance[];
@@ -35,7 +36,7 @@ type AssetItemComponentProps = {
 };
 
 export default function AssetItemComponent({
-  mutatedAsset,
+  asset,
   assetStatusList,
   assetTypeList,
   maintenanceList,
@@ -43,6 +44,7 @@ export default function AssetItemComponent({
 }: AssetItemComponentProps) {
   useAssetStatusStore.setState({ assetStatusList });
   useAssetTypeStore.setState({ assetTypeList });
+  useAssetStore.setState({ asset });
 
   const router = useRouter();
   const pathname = usePathname();
@@ -81,7 +83,7 @@ export default function AssetItemComponent({
               key="details"
               title={
                 <div className="flex items-center space-x-2">
-                  <span>{mutatedAsset.name}</span>
+                  <span>{asset.name}</span>
                 </div>
               }
             />
@@ -142,7 +144,7 @@ export default function AssetItemComponent({
                 selectedKeys={tab ?? 'details'}
                 onAction={handleTabChange}
               >
-                <DropdownItem key="details">{mutatedAsset.name}</DropdownItem>
+                <DropdownItem key="details">{asset.name}</DropdownItem>
                 <DropdownItem key="maintenance">
                   Maintenance
                   <Chip className="ml-1" size="sm" variant="faded">
@@ -168,9 +170,7 @@ export default function AssetItemComponent({
         <div></div>
       </div>
       <div className="flex flex-1 overflow-hidden">
-        {tab === 'details' && (
-          <AssetDetails mutatedAsset={mutatedAsset} userList={userList} />
-        )}
+        {tab === 'details' && <AssetDetails userList={userList} />}
         {tab === 'maintenance' && (
           <AssetMaintenance maintenanceList={maintenanceList} />
         )}

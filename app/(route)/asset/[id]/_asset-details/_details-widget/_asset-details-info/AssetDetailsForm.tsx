@@ -17,32 +17,30 @@ import {
   UpdateAssetForm,
   UpdateAssetFormSchema,
 } from '@/lib/schemas/asset';
-import { Asset } from '@/types/asset';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { toast } from 'sonner';
 import { updateAsset } from '@/lib/actions/asset';
 import { useRouter } from 'next/navigation';
+import { useAssetStore } from '@/hooks/use-asset.store';
 
 type AssetDetailsFormProps = {
-  asset: Asset;
   onClose: () => void;
 };
 
-export default function AssetDetailsForm({
-  asset,
-  onClose,
-}: AssetDetailsFormProps) {
+export default function AssetDetailsForm({ onClose }: AssetDetailsFormProps) {
   const [transitioning, startTransition] = useTransition();
   const user = useCurrentUser();
   const router = useRouter();
 
+  const asset = useAssetStore.getState().asset;
+
   const form = useForm<UpdateAssetForm>({
     resolver: zodResolver(UpdateAssetFormSchema),
     defaultValues: {
-      name: asset.name,
-      description: asset.description || '',
-      tag: asset.tag || '',
-      location: asset.location || '',
+      name: asset?.name,
+      description: asset?.description || '',
+      tag: asset?.tag || '',
+      location: asset?.location || '',
     },
   });
 
@@ -50,6 +48,11 @@ export default function AssetDetailsForm({
     startTransition(() => {
       if (user === undefined || user.id === undefined) {
         toast.error('Session expired');
+        return;
+      }
+
+      if (asset === null) {
+        toast.error('Asset not found');
         return;
       }
 

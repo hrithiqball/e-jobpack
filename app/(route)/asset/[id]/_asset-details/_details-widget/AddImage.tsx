@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, FormEvent } from 'react';
 import Image from 'next/image';
 
 import {
@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { useAssetStore } from '@/hooks/use-asset.store';
 import { uploadAssetImage } from '@/lib/actions/upload';
 
 type AddImageProps = {
@@ -24,15 +25,21 @@ type AddImageProps = {
 
 export default function AddImage({ open, onClose }: AddImageProps) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
+  const asset = useAssetStore.getState().asset;
 
   const [image, setImage] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
 
+    if (file?.type.split('/')[0] !== 'image') {
+      toast.error('File type should be an image');
+      return;
+    }
+
     if (file) {
-      const mbSizeString = (file.size / (1024 * 1024)).toFixed(2);
-      toast.info(mbSizeString + 'MB');
+      setFile(file);
       if (file.size > 2 * 1024 * 1024) {
         toast.error('File size should be less than 2MB');
       }
@@ -45,10 +52,11 @@ export default function AddImage({ open, onClose }: AddImageProps) {
     }
   }, []);
 
-  const giga = 'giga';
-
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
-  const uploadAssetImageWithId = uploadAssetImage.bind(null, giga);
+  const uploadAssetImageWithId = uploadAssetImage.bind(
+    null,
+    asset || undefined,
+  );
 
   function clearImage() {
     setImage(null);
@@ -59,10 +67,15 @@ export default function AddImage({ open, onClose }: AddImageProps) {
     onClose();
   }
 
-  function customSubmission(formData: FormData) {
-    uploadAssetImageWithId(formData).then(() => {
-      handleClose();
-    });
+  function customSubmission(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!image || !file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    uploadAssetImageWithId(formData).then(() => handleClose());
   }
 
   return isDesktop ? (
@@ -77,7 +90,7 @@ export default function AddImage({ open, onClose }: AddImageProps) {
               { 'py-4': image !== null },
             )}
           >
-            <form id="asset-image-form" action={customSubmission}>
+            <form id="asset-image-form" onSubmit={customSubmission}>
               <input
                 id="picture"
                 type="file"

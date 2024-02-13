@@ -4,22 +4,22 @@ import { revalidatePath } from 'next/cache';
 import { writeFile, access, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { db } from '@/lib/db';
-import { v4 as uuidv4 } from 'uuid';
+import { AssetItem } from '@/types/asset';
 
-export async function uploadUserImage(userId: string, data: FormData) {
+export async function uploadUserImage(id: string, data: FormData) {
   try {
     const file: File | null = data.get('file') as unknown as File;
 
-    if (!file || !userId) {
+    if (!file || !id) {
       throw new Error('No file found');
     }
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const directory = join('public', 'image', 'user', userId);
+    const directory = join('public', 'image', 'user', id);
     const filePath = join(directory, file.name);
-    const image = `/image/user/${userId}/${file.name}`;
+    const image = `/image/user/${id}/${file.name}`;
 
     try {
       await access(directory);
@@ -33,11 +33,11 @@ export async function uploadUserImage(userId: string, data: FormData) {
     await writeFile(filePath, buffer);
 
     const updatedUser = await db.user.update({
-      where: { id: userId },
+      where: { id },
       data: { image },
     });
 
-    revalidatePath(`/user/${userId}`);
+    revalidatePath(`/user/${id}`);
     return updatedUser;
   } catch (error) {
     console.error(error);
@@ -45,43 +45,48 @@ export async function uploadUserImage(userId: string, data: FormData) {
   }
 }
 
-export async function uploadAssetImage(assetId: string, data: FormData) {
+export async function uploadAssetImage(
+  asset: AssetItem | undefined,
+  data: FormData,
+) {
   try {
+    if (!asset) {
+      throw new Error('No assetId found');
+    }
+
     const file: File | null = data.get('file') as unknown as File;
 
-    if (!file || !assetId) {
+    if (!file || !asset.id) {
       throw new Error('No file found');
     }
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const fileName = file.name === 'undefined' ? uuidv4() : file.name;
-    console.log(fileName);
-
-    const directory = join('public', 'image', 'asset', assetId);
+    const directory = join('public', 'image', 'asset', asset.id);
     const filePath = join(directory, file.name);
-    const image = `/image/asset/${assetId}/${file.name}`;
+    const image = `/image/asset/${asset.id}/${file.name}`;
 
-    console.log(filePath, image, directory);
+    try {
+      await access(directory);
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+        await mkdir(directory, { recursive: true });
+      } else {
+        throw error;
+      }
+    }
+    await writeFile(filePath, buffer);
 
-    // try {
-    //   await access(directory);
-    // } catch (error) {
-    //   if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-    //     await mkdir(directory, { recursive: true });
-    //   } else {
-    //     throw error;
-    //   }
-    // }
-    // await writeFile(filePath, buffer);
+    const attachmentPath = asset.attachmentPath || [];
+    attachmentPath.push(image);
 
-    // const updatedUser = await db.user.update({
-    //   where: { id: userId },
-    //   data: { image },
-    // });
+    await db.asset.update({
+      where: { id: asset.id },
+      data: { attachmentPath },
+    });
 
-    revalidatePath(`/asset/${assetId}`);
+    revalidatePath(`/asset/${asset.id}`);
   } catch (error) {
     console.error(error);
     throw error;

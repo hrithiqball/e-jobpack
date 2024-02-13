@@ -1,11 +1,11 @@
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { useAssetStatusStore } from '@/hooks/use-asset-status.store';
 import { useAssetTypeStore } from '@/hooks/use-asset-type.store';
+import { useAssetStore } from '@/hooks/use-asset.store';
 import { useCurrentRole } from '@/hooks/use-current-role';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { updateAsset } from '@/lib/actions/asset';
 import { isNullOrEmpty } from '@/lib/function/string';
-import { Asset } from '@/types/asset';
 import {
   Avatar,
   Button,
@@ -22,12 +22,10 @@ import { Fragment, Key, useTransition } from 'react';
 import { toast } from 'sonner';
 
 type AssetDetailsStaticProps = {
-  asset: Asset;
   handleAssetDetailsAction: (key: Key) => void;
 };
 
 export default function AssetDetailsStatic({
-  asset,
   handleAssetDetailsAction,
 }: AssetDetailsStaticProps) {
   const [transitioning, startTransition] = useTransition();
@@ -36,11 +34,17 @@ export default function AssetDetailsStatic({
 
   const assetStatusList = useAssetStatusStore.getState().assetStatusList;
   const assetTypeList = useAssetTypeStore.getState().assetTypeList;
+  const asset = useAssetStore.getState().asset;
 
   function handleStatusUpdate(key: Key) {
     startTransition(() => {
       if (user === undefined || user.id === undefined) {
         toast.error('Session expired');
+        return;
+      }
+
+      if (asset === null) {
+        toast.error('Asset not found');
         return;
       }
 
@@ -62,6 +66,11 @@ export default function AssetDetailsStatic({
         return;
       }
 
+      if (asset === null) {
+        toast.error('Asset not found');
+        return;
+      }
+
       toast.promise(updateAsset(user.id, asset.id, { type: key as string }), {
         loading: 'Updating asset type...',
         success: 'Type updated',
@@ -70,7 +79,7 @@ export default function AssetDetailsStatic({
     });
   }
 
-  return (
+  return asset ? (
     <Fragment>
       <div className="flex items-center justify-between">
         <span className="text-3xl font-bold">{asset.name}</span>
@@ -136,14 +145,14 @@ export default function AssetDetailsStatic({
                     startContent={
                       <div
                         style={{
-                          backgroundColor: asset.status?.color ?? 'grey',
+                          backgroundColor: asset.assetStatus?.color ?? 'grey',
                         }}
                         className="mx-1 w-1 rounded-full p-1"
                       ></div>
                     }
                     className="hover:cursor-pointer"
                   >
-                    {isNullOrEmpty(asset.status?.title) || 'Not Specified'}
+                    {isNullOrEmpty(asset.assetStatus?.title) || 'Not Specified'}
                   </Chip>
                 </DropdownTrigger>
                 <DropdownMenu onAction={handleStatusUpdate}>
@@ -180,7 +189,7 @@ export default function AssetDetailsStatic({
                     variant="faded"
                     className="hover:cursor-pointer"
                   >
-                    {asset.type?.title}
+                    {asset.assetType?.title}
                   </Chip>
                 </DropdownTrigger>
                 <DropdownMenu onAction={handleTypeUpdate}>
@@ -234,5 +243,5 @@ export default function AssetDetailsStatic({
         </TableBody>
       </Table>
     </Fragment>
-  );
+  ) : null;
 }

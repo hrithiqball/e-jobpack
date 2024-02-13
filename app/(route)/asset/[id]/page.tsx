@@ -1,5 +1,5 @@
 import { fetchMaintenanceList } from '@/lib/actions/maintenance';
-import { fetchMutatedAssetItem } from '@/lib/actions/asset';
+import { fetchAssetItem } from '@/lib/actions/asset';
 import { fetchUserList } from '@/lib/actions/user';
 import { fetchAssetStatusList } from '@/lib/actions/asset-status';
 import { fetchAssetTypeList } from '@/lib/actions/asset-type';
@@ -11,7 +11,7 @@ interface AssetItemPageProps {
 }
 
 export default async function AssetItemPage({ params }: AssetItemPageProps) {
-  const mutatedAsset = await fetchMutatedAssetItem(params.id);
+  const mutatedAsset = await fetchAssetItem(params.id);
   const statusList = await fetchAssetStatusList();
   const typeList = await fetchAssetTypeList();
   const maintenanceList = await fetchMaintenanceList(params.id);
@@ -20,7 +20,7 @@ export default async function AssetItemPage({ params }: AssetItemPageProps) {
   return (
     <div className="flex flex-1 flex-col">
       <AssetItemComponent
-        mutatedAsset={mutatedAsset}
+        asset={mutatedAsset}
         assetStatusList={statusList}
         assetTypeList={typeList}
         maintenanceList={maintenanceList}

@@ -4,16 +4,13 @@ import Image from 'next/image';
 import { Button, Card } from '@nextui-org/react';
 import { BookImage, ChevronLeft, ImageIcon, ImagePlus } from 'lucide-react';
 
-import { MutatedAsset } from '@/types/asset';
-
 import AssetDetailsInfo from './_asset-details-info';
 import AddImage from './AddImage';
+import { useAssetStore } from '@/hooks/use-asset.store';
 
-type DetailsWidgetProps = {
-  mutatedAsset: MutatedAsset;
-};
+export default function DetailsWidget() {
+  const asset = useAssetStore.getState().asset;
 
-export default function DetailsWidget({ mutatedAsset }: DetailsWidgetProps) {
   const [hoverCoverImage, setHoverCoverImage] = useState(false);
   const [isCollapse, setIsCollapse] = useState(false);
   const [openUploadImage, setOpenUploadImage] = useState(false);
@@ -63,7 +60,7 @@ export default function DetailsWidget({ mutatedAsset }: DetailsWidgetProps) {
                       </Button>
                     )}
                     <Image
-                      alt={mutatedAsset.name}
+                      alt={asset!.name}
                       src={
                         'https://www.nu-heat.co.uk/wp-content/uploads/2020/10/Underfloor-heating-manifold.jpg'
                       }
@@ -74,7 +71,7 @@ export default function DetailsWidget({ mutatedAsset }: DetailsWidgetProps) {
                   </div>
                   <div className="flex flex-wrap space-x-4">
                     <Image
-                      alt={mutatedAsset.name}
+                      alt={asset!.name}
                       src={
                         'https://www.nu-heat.co.uk/wp-content/uploads/2020/10/Underfloor-heating-manifold.jpg'
                       }
@@ -83,7 +80,7 @@ export default function DetailsWidget({ mutatedAsset }: DetailsWidgetProps) {
                       className="flex flex-1 rounded-md object-cover"
                     />
                     <Image
-                      alt={mutatedAsset.name}
+                      alt={asset!.name}
                       src={
                         'https://www.nu-heat.co.uk/wp-content/uploads/2020/10/Underfloor-heating-manifold.jpg'
                       }
@@ -118,7 +115,7 @@ export default function DetailsWidget({ mutatedAsset }: DetailsWidgetProps) {
                 </Button>
               </div>
             </div>
-            <AssetDetailsInfo asset={mutatedAsset} />
+            <AssetDetailsInfo />
           </div>
         </div>
       </Card>

@@ -2,16 +2,10 @@ import { Key, useState } from 'react';
 
 import { toast } from 'sonner';
 
-import { Asset } from '@/types/asset';
-
 import AssetDetailsForm from './AssetDetailsForm';
 import AssetDetailsStatic from './AssetDetailsStatic';
 
-type AssetDetailsInfoProps = {
-  asset: Asset;
-};
-
-export default function AssetDetailsInfo({ asset }: AssetDetailsInfoProps) {
+export default function AssetDetailsInfo() {
   const [isUpdating, setIsUpdating] = useState(false);
 
   function handleAssetDetailsAction(key: Key) {
@@ -32,10 +26,9 @@ export default function AssetDetailsInfo({ asset }: AssetDetailsInfoProps) {
   return (
     <div className="flex flex-1 flex-col space-y-4">
       {isUpdating ? (
-        <AssetDetailsForm asset={asset} onClose={handleCancel} />
+        <AssetDetailsForm onClose={handleCancel} />
       ) : (
         <AssetDetailsStatic
-          asset={asset}
           handleAssetDetailsAction={handleAssetDetailsAction}
         />
       )}
