@@ -16,7 +16,10 @@ import { toast } from 'sonner';
 
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useAssetStore } from '@/hooks/use-asset.store';
-import { uploadAssetImage } from '@/lib/actions/upload';
+import {
+  uploadAssetImage,
+  uploadAssetImageToServer,
+} from '@/lib/actions/upload';
 
 type AddImageProps = {
   open: boolean;
@@ -81,6 +84,17 @@ export default function AddImage({ open, onClose }: AddImageProps) {
     });
   }
 
+  function testImageServer() {
+    if (!image || !file) return;
+    if (!asset) return;
+
+    const formData = new FormData();
+    formData.append('assetId', asset.id);
+    formData.append('image', file);
+
+    uploadAssetImageToServer(formData);
+  }
+
   return isDesktop ? (
     <Modal hideCloseButton backdrop="blur" isOpen={open}>
       <ModalContent>
@@ -140,6 +154,9 @@ export default function AddImage({ open, onClose }: AddImageProps) {
               )}
             </div>
           </div>
+          <Button onClick={testImageServer} type="button">
+            test
+          </Button>
         </div>
         <ModalFooter>
           <Button variant="faded" size="sm" onClick={handleClose}>

@@ -1,1 +1,4 @@
 node_modules
+
+src/upload/asset/**/*
+src/upload/user/**/*

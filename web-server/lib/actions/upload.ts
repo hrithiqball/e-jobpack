@@ -1,10 +1,10 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
 import { writeFile, access, mkdir } from 'fs/promises';
-import { join } from 'path';
-import { db } from '@/lib/db';
+import { revalidatePath } from 'next/cache';
 import { AssetItem } from '@/types/asset';
+import { db } from '@/lib/db';
+import { join } from 'path';
 
 export async function uploadUserImage(id: string, data: FormData) {
   try {
@@ -39,6 +39,22 @@ export async function uploadUserImage(id: string, data: FormData) {
 
     revalidatePath(`/user/${id}`);
     return updatedUser;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function uploadAssetImageToServer(formData: FormData) {
+  try {
+    const url = `${process.env.IMAGE_SERVER_URL}/upload/asset`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      body: formData,
+    });
+
+    return await response.json();
   } catch (error) {
     console.error(error);
     throw error;

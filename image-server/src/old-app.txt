@@ -1,0 +1,83 @@
+// const assetDir = path.join(__dirname, 'upload', 'asset');
+// const userDir = path.join(__dirname, 'upload', 'user');
+
+// createDirectories(assetDir, userDir);
+
+// const assetStorage = multer.diskStorage({
+//   destination: (
+//     req: Request,
+//     file: Express.Multer.File,
+//     cb: (error: Error | null, destination: string) => void,
+//   ) => {
+//     const { assetId } = req.body;
+//     const dir = path.join(assetDir, assetId);
+//     createDirectories(dir);
+//     cb(null, dir);
+//   },
+//   filename: (
+//     req: Request,
+//     file: Express.Multer.File,
+//     cb: (error: Error | null, filename: string) => void,
+//   ) => {
+//     cb(null, file.originalname);
+//   },
+// });
+
+// const userStorage = multer.diskStorage({
+//   destination: (
+//     req: Request,
+//     file: Express.Multer.File,
+//     cb: (error: Error | null, destination: string) => void,
+//   ) => {
+//     const { userId } = req.body;
+//     const dir = path.join(userDir, userId);
+//     createDirectories(dir);
+//     cb(null, dir);
+//   },
+//   filename: (
+//     req: Request,
+//     file: Express.Multer.File,
+//     cb: (error: Error | null, filename: string) => void,
+//   ) => {
+//     cb(null, file.originalname);
+//   },
+// });
+
+// const assetUpload = multer({ storage: assetStorage });
+// const userUpload = multer({ storage: userStorage });
+
+// app.post(
+//   '/upload/asset',
+//   assetUpload.single('image'),
+//   (req: Request, res: Response) => {
+//     const { assetId } = req.body;
+//     const fileName = (req.file as Express.Multer.File).filename;
+
+//     res.json({ success: true, assetId, fileName });
+//   },
+// );
+
+// app.post(
+//   '/upload/user',
+//   userUpload.single('image'),
+//   (req: Request, res: Response) => {
+//     const { userId } = req.body;
+//     const fileName = (req.file as Express.Multer.File).filename;
+
+//     res.json({ success: true, userId, fileName });
+//   },
+// );
+
+// app.get('/', (req: Request, res: Response) => {
+//   res.send('Image server running');
+// });
+
+// app.listen(port, () => {
+//   console.log(`Server is running on http://localhost:${port}`);
+// });
+
+// function createDirectories(...dirs: string[]) {
+//   dirs.forEach(dir => {
+//     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+//   });
+// }
