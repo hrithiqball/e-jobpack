@@ -18,7 +18,6 @@ export default function TeamWidget() {
   const maintainee = asset?.lastMaintainee;
 
   return (
-    personInCharge &&
     maintainee && (
       <div className="flex flex-1 p-2">
         <Card shadow="none" className="flex flex-1 p-4 dark:bg-card">
@@ -37,9 +36,7 @@ export default function TeamWidget() {
                   Person In Charge
                 </TableCell>
                 <TableCell className="justify-center">
-                  {personInCharge === null ? (
-                    <span>Not set</span>
-                  ) : (
+                  {personInCharge ? (
                     <div className="flex space-x-2">
                       <Avatar
                         showFallback
@@ -53,6 +50,8 @@ export default function TeamWidget() {
                         </span>
                       </div>
                     </div>
+                  ) : (
+                    <span>Not set</span>
                   )}
                 </TableCell>
               </TableRow>

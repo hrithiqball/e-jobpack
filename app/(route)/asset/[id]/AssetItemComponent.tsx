@@ -18,14 +18,16 @@ import {
 import { ChevronLeft } from 'lucide-react';
 
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { useAssetStatusStore } from '@/hooks/use-asset-status.store';
+import { useAssetTypeStore } from '@/hooks/use-asset-type.store';
+import { useAssetStore } from '@/hooks/use-asset.store';
+import { useChecklistLibStore } from '@/hooks/use-checklist-lib.store';
+import { ChecklistLibraryList } from '@/types/checklist';
 import { AssetItem } from '@/types/asset';
 
 import AssetDetails from './_asset-details';
 import AssetMaintenance from './_asset-maintenance';
-import AssetAttachment from './_asset-attachment';
-import { useAssetStatusStore } from '@/hooks/use-asset-status.store';
-import { useAssetTypeStore } from '@/hooks/use-asset-type.store';
-import { useAssetStore } from '@/hooks/use-asset.store';
+import AssetChecklist from './_asset-checklist';
 
 type AssetItemComponentProps = {
   asset: AssetItem;
@@ -33,6 +35,7 @@ type AssetItemComponentProps = {
   assetTypeList: AssetType[];
   maintenanceList: Maintenance[];
   userList: User[];
+  checklistLibraryList: ChecklistLibraryList;
 };
 
 export default function AssetItemComponent({
@@ -41,10 +44,12 @@ export default function AssetItemComponent({
   assetTypeList,
   maintenanceList,
   userList,
+  checklistLibraryList,
 }: AssetItemComponentProps) {
   useAssetStatusStore.setState({ assetStatusList });
   useAssetTypeStore.setState({ assetTypeList });
   useAssetStore.setState({ asset });
+  useChecklistLibStore.setState({ checklistLibraryList });
 
   const router = useRouter();
   const pathname = usePathname();
@@ -105,12 +110,12 @@ export default function AssetItemComponent({
               }
             />
             <Tab
-              key="attachment"
+              key="checklist"
               title={
                 <div className="flex items-center space-x-2">
-                  <span>Attachment</span>
+                  <span>Checklist</span>
                   <Chip size="sm" variant="faded">
-                    <span>1</span>
+                    <span>{checklistLibraryList.length}</span>
                   </Chip>
                 </div>
               }
@@ -158,9 +163,9 @@ export default function AssetItemComponent({
                   </Chip>
                 </DropdownItem>
                 <DropdownItem key="attachment">
-                  Attachment
+                  Checklist
                   <Chip className="ml-1" size="sm" variant="faded">
-                    <span>1</span>
+                    <span>{checklistLibraryList.length}</span>
                   </Chip>
                 </DropdownItem>
               </DropdownMenu>
@@ -174,7 +179,7 @@ export default function AssetItemComponent({
         {tab === 'maintenance' && (
           <AssetMaintenance maintenanceList={maintenanceList} />
         )}
-        {tab === 'attachment' && <AssetAttachment />}
+        {tab === 'checklist' && <AssetChecklist />}
       </div>
     </div>
   );

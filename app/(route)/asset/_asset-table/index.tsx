@@ -287,9 +287,7 @@ export default function AssetTable({
               }),
               {
                 loading: 'Updating asset status...',
-                success: res => {
-                  return `${res.name} status updated successfully`;
-                },
+                success: `${row.original.name} status updated successfully`,
                 error: 'Failed to update asset status',
               },
             );
@@ -685,9 +683,7 @@ export default function AssetTable({
 
       toast.promise(updateAsset(user.id, assetId, { isArchive: true }), {
         loading: 'Archiving asset...',
-        success: res => {
-          return `${res.name} archived successfully`;
-        },
+        success: `${assetId} archived successfully`,
         error: 'Failed to archive asset',
       });
     });

@@ -20,7 +20,15 @@ export default function AssetImageCarousel({
 }: AssetImageCarouselProps) {
   return (
     <Carousel opts={{ align: 'start' }} className="mx-12 w-full max-w-sm">
-      <CarouselContent>
+      <CarouselContent className="flex min-h-20 flex-1 items-center">
+        <CarouselItem className="flex h-full cursor-pointer items-center justify-center md:basis-1/2 lg:basis-1/3">
+          <div
+            onClick={handleOpenUploadImage}
+            className="flex h-full w-full flex-1 items-center justify-center rounded-md border-2 border-dashed border-gray-400 py-4"
+          >
+            <ImagePlus />
+          </div>
+        </CarouselItem>
         {attachmentPath.map((attachment, index) => (
           <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
             <Image
@@ -32,14 +40,6 @@ export default function AssetImageCarousel({
             />
           </CarouselItem>
         ))}
-        <CarouselItem className="flex cursor-pointer items-center justify-center md:basis-1/2 lg:basis-1/3">
-          <div
-            onClick={handleOpenUploadImage}
-            className="flex h-full w-full flex-1 items-center justify-center rounded-md border-2 border-dashed border-gray-400"
-          >
-            <ImagePlus />
-          </div>
-        </CarouselItem>
       </CarouselContent>
       <CarouselPrevious />
       <CarouselNext />

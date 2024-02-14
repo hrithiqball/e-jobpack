@@ -48,13 +48,18 @@ export default function AssetCover({ open, onClose }: AssetCoverProps) {
   const asset = useAssetStore.getState().asset;
 
   const [openAssetAddCoverImage, setOpenAssetAddCoverImage] = useState(false);
-  const [currentCover, setCurrentCover] = useState(asset?.assetCover || '');
-  const [assetCover, setAssetCover] = useState('');
+  const [assetCover, setAssetCover] = useState(asset?.assetCover || '');
 
   function updateCoverImage() {
     startTransition(() => {
-      if (!user || user.id || !asset) {
+      console.log(user);
+      if (!user) {
         toast.error('Session expired!');
+        return;
+      }
+
+      if (asset === null) {
+        toast.error('Asset not found');
         return;
       }
 
@@ -91,10 +96,6 @@ export default function AssetCover({ open, onClose }: AssetCoverProps) {
     setAssetCover(attachment);
   }
 
-  function handleUpdateCoverTemp() {
-    setCurrentCover(assetCover);
-  }
-
   return asset && isDesktop ? (
     <Sheet open={open} onOpenChange={handleClose}>
       <SheetContent className="space-y-4">
@@ -109,13 +110,13 @@ export default function AssetCover({ open, onClose }: AssetCoverProps) {
             className={cn(
               'cursor-pointer rounded-md border-2 border-dashed border-gray-400 px-4 py-16',
               {
-                'py-4': currentCover !== '',
+                'py-4': assetCover !== '',
               },
             )}
           >
-            {currentCover !== '' ? (
+            {assetCover !== '' ? (
               <Image
-                src={currentCover}
+                src={assetCover}
                 alt={asset.name}
                 width={400}
                 height={200}
@@ -164,17 +165,6 @@ export default function AssetCover({ open, onClose }: AssetCoverProps) {
               </Carousel>
             </div>
           )}
-          {assetCover !== '' && (
-            <div>
-              <Button
-                size="sm"
-                className="w-full"
-                onClick={handleUpdateCoverTemp}
-              >
-                Set As Cover
-              </Button>
-            </div>
-          )}
           <Dialog
             open={openAssetAddCoverImage}
             onOpenChange={handleCloseAssetAddCoverImage}
@@ -196,8 +186,15 @@ export default function AssetCover({ open, onClose }: AssetCoverProps) {
           </Dialog>
         </div>
         <SheetFooter>
-          <Button size="sm" variant="destructive" onClick={handleClose}>
+          <Button variant="destructive" onClick={handleClose}>
             Close
+          </Button>
+          <Button
+            disabled={transitioning || assetCover === ''}
+            variant="outline"
+            onClick={updateCoverImage}
+          >
+            Save
           </Button>
         </SheetFooter>
       </SheetContent>

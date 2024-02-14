@@ -2,7 +2,7 @@ import { Fragment, useState } from 'react';
 import Image from 'next/image';
 
 import { Button, Card } from '@nextui-org/react';
-import { BookImage, ChevronLeft, ImageIcon, ImagePlus } from 'lucide-react';
+import { ImageIcon, ImagePlus } from 'lucide-react';
 
 import AssetDetailsInfo from './_asset-details-info';
 import AddImage from './AddImage';
@@ -11,12 +11,11 @@ import AssetImageCarousel from './AssetImageCarousel';
 import AssetCover from './AssetCover';
 
 export default function DetailsWidget() {
-  const asset = useAssetStore.getState().asset;
+  const { asset, assetImageSidebar } = useAssetStore();
 
   const [hoverCoverImage, setHoverCoverImage] = useState(false);
   const [openUploadImage, setOpenUploadImage] = useState(false);
   const [openChangeCover, setOpenChangeCover] = useState(false);
-  const [isCollapse, setIsCollapse] = useState(false);
 
   function handleCoverHoverEnter() {
     setHoverCoverImage(true);
@@ -24,10 +23,6 @@ export default function DetailsWidget() {
 
   function handleCoverHoverLeave() {
     setHoverCoverImage(false);
-  }
-
-  function handleCollapse() {
-    setIsCollapse(!isCollapse);
   }
 
   function handleOpenUploadImage() {
@@ -53,7 +48,7 @@ export default function DetailsWidget() {
           <div className="flex min-w-min flex-1">
             <div className="flex flex-1 space-x-4">
               <div className="flex flex-col space-y-4">
-                {!isCollapse && (
+                {!assetImageSidebar && (
                   <Fragment>
                     <div
                       className="flex w-full flex-1"
@@ -81,35 +76,19 @@ export default function DetailsWidget() {
                           className="flex w-full flex-1 cursor-pointer rounded-md object-cover filter hover:brightness-75"
                         />
                       ) : (
-                        <div className="flex w-full flex-1 cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-gray-400">
+                        <div className="flex w-full flex-1 cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-gray-400 px-36">
                           <ImagePlus size={32} />
                         </div>
                       )}
                     </div>
                     <div className="flex flex-wrap space-x-4">
-                      {asset.attachmentPath.length > 0 && (
-                        <AssetImageCarousel
-                          handleOpenUploadImage={handleOpenUploadImage}
-                          attachmentPath={asset.attachmentPath}
-                        />
-                      )}
+                      <AssetImageCarousel
+                        handleOpenUploadImage={handleOpenUploadImage}
+                        attachmentPath={asset.attachmentPath}
+                      />
                     </div>
                   </Fragment>
                 )}
-                <div className="flex justify-between">
-                  <Button
-                    size="sm"
-                    variant="faded"
-                    color="primary"
-                    isIconOnly={isCollapse}
-                    startContent={
-                      !isCollapse ? <ChevronLeft size={18} /> : null
-                    }
-                    onClick={handleCollapse}
-                  >
-                    {isCollapse ? <BookImage size={18} /> : 'Collapse'}
-                  </Button>
-                </div>
               </div>
               <AssetDetailsInfo />
             </div>

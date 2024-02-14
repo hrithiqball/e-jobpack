@@ -17,7 +17,13 @@ import {
   DropdownTrigger,
 } from '@nextui-org/react';
 import dayjs from 'dayjs';
-import { MoreHorizontal, PencilLine, Printer } from 'lucide-react';
+import {
+  BookImage,
+  ChevronLeft,
+  MoreHorizontal,
+  PencilLine,
+  Printer,
+} from 'lucide-react';
 import { Fragment, Key, useTransition } from 'react';
 import { toast } from 'sonner';
 
@@ -32,9 +38,9 @@ export default function AssetDetailsStatic({
   const role = useCurrentRole();
   const user = useCurrentUser();
 
-  const assetStatusList = useAssetStatusStore.getState().assetStatusList;
-  const assetTypeList = useAssetTypeStore.getState().assetTypeList;
-  const asset = useAssetStore.getState().asset;
+  const { assetStatusList } = useAssetStatusStore();
+  const { assetTypeList } = useAssetTypeStore();
+  const { asset, assetImageSidebar, setAssetImageSidebar } = useAssetStore();
 
   function handleStatusUpdate(key: Key) {
     startTransition(() => {
@@ -82,7 +88,20 @@ export default function AssetDetailsStatic({
   return asset ? (
     <Fragment>
       <div className="flex items-center justify-between">
-        <span className="text-3xl font-bold">{asset.name}</span>
+        <div className="flex items-center space-x-2">
+          {assetImageSidebar ? (
+            <BookImage
+              onClick={setAssetImageSidebar}
+              className="cursor-pointer hover:text-primary-500"
+            />
+          ) : (
+            <ChevronLeft
+              onClick={setAssetImageSidebar}
+              className="cursor-pointer hover:text-primary-500"
+            />
+          )}
+          <span className="text-3xl font-bold">{asset.name}</span>
+        </div>
         <Dropdown>
           <DropdownTrigger>
             <Button

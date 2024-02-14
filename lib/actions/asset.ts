@@ -83,7 +83,7 @@ export async function fetchAssetItem(id: string) {
 export async function updateAsset(
   updatedById: string,
   id: string,
-  updatedAsset: UpdateAsset,
+  updateAsset: UpdateAsset,
 ) {
   try {
     await db.asset
@@ -94,12 +94,11 @@ export async function updateAsset(
         data: {
           updatedById,
           updatedOn: new Date(),
-          ...updatedAsset,
+          ...updateAsset,
         },
       })
-      .then(res => {
+      .then(() => {
         revalidatePath(`/asset/${id}`);
-        return res;
       });
   } catch (error) {
     console.error(error);

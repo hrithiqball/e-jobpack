@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
-  UpdateAsset,
+  UpdateAssetSchema,
   UpdateAssetForm,
   UpdateAssetFormSchema,
 } from '@/lib/schemas/asset';
@@ -56,7 +56,7 @@ export default function AssetDetailsForm({ onClose }: AssetDetailsFormProps) {
         return;
       }
 
-      const validatedFields = UpdateAsset.safeParse(data);
+      const validatedFields = UpdateAssetSchema.safeParse(data);
 
       if (validatedFields.success === false) {
         toast.error(validatedFields.error?.issues[0]?.message);

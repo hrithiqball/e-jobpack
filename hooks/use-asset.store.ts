@@ -6,6 +6,8 @@ type useAssetStore = {
   setAsset: (asset: AssetItem) => void;
   assetList: AssetList;
   setAssetList: (assetList: AssetList) => void;
+  assetImageSidebar: boolean;
+  setAssetImageSidebar: () => void;
 };
 
 export const useAssetStore = create<useAssetStore>(set => ({
@@ -16,5 +18,9 @@ export const useAssetStore = create<useAssetStore>(set => ({
   assetList: [],
   setAssetList: assetList => {
     set({ assetList });
+  },
+  assetImageSidebar: false,
+  setAssetImageSidebar: () => {
+    set(state => ({ assetImageSidebar: !state.assetImageSidebar }));
   },
 }));
