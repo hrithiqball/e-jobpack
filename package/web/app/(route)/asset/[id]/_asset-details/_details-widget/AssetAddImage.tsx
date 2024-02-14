@@ -16,10 +16,7 @@ import { toast } from 'sonner';
 
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useAssetStore } from '@/hooks/use-asset.store';
-import {
-  uploadAssetImage,
-  uploadAssetImageToServer,
-} from '@/lib/actions/upload';
+import { uploadAssetImageToServer } from '@/lib/actions/upload';
 
 type AddImageProps = {
   open: boolean;
@@ -56,10 +53,6 @@ export default function AddImage({ open, onClose }: AddImageProps) {
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
-  const uploadAssetImageWithId = uploadAssetImage.bind(
-    null,
-    asset || undefined,
-  );
 
   function clearImage() {
     setImage(null);
@@ -70,21 +63,9 @@ export default function AddImage({ open, onClose }: AddImageProps) {
     onClose();
   }
 
-  function customSubmission(event: FormEvent<HTMLFormElement>) {
+  function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!image || !file) return;
-
-    const formData = new FormData();
-    formData.append('file', file);
-
-    uploadAssetImageWithId(formData).then(() => {
-      toast.success('Image uploaded successfully');
-      handleClose();
-    });
-  }
-
-  function testImageServer() {
     if (!image || !file) return;
     if (!asset) return;
 
@@ -92,7 +73,14 @@ export default function AddImage({ open, onClose }: AddImageProps) {
     formData.append('assetId', asset.id);
     formData.append('image', file);
 
-    uploadAssetImageToServer(formData);
+    toast.promise(uploadAssetImageToServer(asset, formData), {
+      loading: 'Uploading image...',
+      success: () => {
+        handleClose();
+        return 'Image uploaded successfully';
+      },
+      error: "Couldn't upload image",
+    });
   }
 
   return isDesktop ? (
@@ -107,7 +95,7 @@ export default function AddImage({ open, onClose }: AddImageProps) {
               { 'py-4': image !== null },
             )}
           >
-            <form id="asset-image-form" onSubmit={customSubmission}>
+            <form id="asset-image-form" onSubmit={onSubmit}>
               <input
                 id="picture"
                 type="file"
@@ -154,9 +142,6 @@ export default function AddImage({ open, onClose }: AddImageProps) {
               )}
             </div>
           </div>
-          <Button onClick={testImageServer} type="button">
-            test
-          </Button>
         </div>
         <ModalFooter>
           <Button variant="faded" size="sm" onClick={handleClose}>
@@ -166,7 +151,6 @@ export default function AddImage({ open, onClose }: AddImageProps) {
             variant="faded"
             size="sm"
             color="primary"
-            // onClick={handleClose}
             isDisabled={!image}
             type="submit"
             form="asset-image-form"

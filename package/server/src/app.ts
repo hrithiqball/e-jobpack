@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import favicon from 'serve-favicon';
 import swaggerUi from 'swagger-ui-express';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
@@ -18,11 +19,12 @@ const port = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 app.use(morgan('tiny'));
+app.use(favicon(path.join(process.cwd(), 'public', 'favicon.ico')));
 
 // serve
 app.use(express.static('public'));
 app.use(
-  express.static(path.join(__dirname, 'upload'), {
+  express.static(path.join('upload'), {
     dotfiles: 'allow',
   }),
 );

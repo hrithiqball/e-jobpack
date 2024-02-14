@@ -1,11 +1,14 @@
 import express from 'express';
-import multer from 'multer';
 
 import userController from '../controllers/userController';
+import userMiddleware from '../middleware/userMiddleware';
 
 const router = express.Router();
-const userUpload = multer({ storage: userController.userStorage });
 
-router.post('/', userUpload.single('image'), userController.uploadUser);
+router.post(
+  '/',
+  userMiddleware.userUpload.single('image'),
+  userController.uploadUser,
+);
 
 export default router;

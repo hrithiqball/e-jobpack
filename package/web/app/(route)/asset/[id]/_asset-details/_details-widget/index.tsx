@@ -4,10 +4,11 @@ import Image from 'next/image';
 import { Button, Card } from '@nextui-org/react';
 import { ImageIcon, ImagePlus } from 'lucide-react';
 
-import AssetDetailsInfo from './_asset-details-info';
-import AddImage from './AddImage';
 import { useAssetStore } from '@/hooks/use-asset.store';
+
+import AssetDetailsInfo from './_asset-details-info';
 import AssetImageCarousel from './AssetImageCarousel';
+import AssetAddImage from './AssetAddImage';
 import AssetCover from './AssetCover';
 
 export default function DetailsWidget() {
@@ -94,7 +95,10 @@ export default function DetailsWidget() {
             </div>
           </div>
         </Card>
-        <AddImage open={openUploadImage} onClose={handleCloseUploadImage} />
+        <AssetAddImage
+          open={openUploadImage}
+          onClose={handleCloseUploadImage}
+        />
         <AssetCover open={openChangeCover} onClose={handleCloseChangeCover} />
       </div>
     )

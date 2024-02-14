@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { AssetItem } from '@/types/asset';
 import { db } from '@/lib/db';
 import { join } from 'path';
+import { ServerResponseSchema } from '../schemas/server-response';
 
 export async function uploadUserImage(id: string, data: FormData) {
   try {
@@ -45,16 +46,35 @@ export async function uploadUserImage(id: string, data: FormData) {
   }
 }
 
-export async function uploadAssetImageToServer(formData: FormData) {
+export async function uploadAssetImageToServer(
+  asset: AssetItem,
+  formData: FormData,
+) {
   try {
-    const url = `${process.env.IMAGE_SERVER_URL}/upload/asset`;
+    const url = `${process.env.NEXT_PUBLIC_IMAGE_SERVER_URL}/upload/asset`;
 
     const response = await fetch(url, {
       method: 'POST',
       body: formData,
     });
 
-    return await response.json();
+    const data = await response.json();
+    const validatedResponse = ServerResponseSchema.safeParse(data);
+
+    if (!validatedResponse.success) {
+      throw new Error('Failed to upload image');
+    }
+
+    const attachmentPath = asset.attachmentPath || [];
+    attachmentPath.push(validatedResponse.data.path);
+
+    const updatedAsset = await db.asset.update({
+      where: { id: asset.id },
+      data: { attachmentPath },
+    });
+
+    revalidatePath(`/asset/${asset.id}`);
+    return updatedAsset;
   } catch (error) {
     console.error(error);
     throw error;
