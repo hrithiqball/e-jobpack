@@ -64,7 +64,9 @@ export async function uploadAssetImage(
     const buffer = Buffer.from(bytes);
 
     const directory = join('public', 'image', 'asset', asset.id);
+    console.log('directory', directory);
     const filePath = join(directory, file.name);
+    console.log('filePath', filePath);
     const image = `/image/asset/${asset.id}/${file.name}`;
 
     try {
@@ -73,6 +75,7 @@ export async function uploadAssetImage(
       if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
         await mkdir(directory, { recursive: true });
       } else {
+        console.error(error);
         throw error;
       }
     }

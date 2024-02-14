@@ -29,8 +29,8 @@ export default function AssetImageCarousel({
             <ImagePlus />
           </div>
         </CarouselItem>
-        {attachmentPath.map((attachment, index) => (
-          <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+        {attachmentPath.map(attachment => (
+          <CarouselItem key={attachment} className="md:basis-1/2 lg:basis-1/3">
             <Image
               alt={attachment}
               src={attachment}

@@ -1,0 +1,15 @@
+{
+  "material-icon-theme.activeIconPack": "react",
+  "material-icon-theme.files.associations": {
+    "prisma/prisma.ts": "prisma",
+    "cspell.json": "todo"
+  },
+  "material-icon-theme.folders.associations": {
+    "asset": "",
+    "(route)": "routes",
+    "actions": "next",
+    "_components": "react-components",
+    "components/ui": "packages"
+  },
+  "typescript.tsdk": "node_modules\\typescript\\lib"
+}
