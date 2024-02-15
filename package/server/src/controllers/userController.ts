@@ -5,11 +5,14 @@ import { IUserService } from '../services/userService';
 import {
   UserUploadFileSchema,
   UserDownloadFileSchema,
+  UserDeleteFileSchema,
 } from '../schema/userSchema';
+import { Result } from '../models/result';
 
-interface IUserController {
+export interface IUserController {
   userUploadFile(req: Request, res: Response): Promise<void>;
   userDownloadFile(req: Request, res: Response): Promise<void>;
+  userDeleteFile(req: Request, res: Response): Promise<void>;
 }
 
 export class UserController implements IUserController {
@@ -47,6 +50,34 @@ export class UserController implements IUserController {
       res.sendFile(result.data!);
     } else {
       res.status(404).send({ error: 'File not found' });
+    }
+  }
+
+  public async userDeleteFile(req: Request, res: Response) {
+    try {
+      const validateFields = UserDeleteFileSchema.safeParse(req.query);
+
+      if (!validateFields.success) {
+        res.status(400).send({ error: validateFields.error.message });
+        return;
+      }
+
+      const { filename } = validateFields.data;
+      const result = await this.userService.deleteUserImageAsync(filename);
+
+      if (result.success) {
+        res.json(result);
+      } else {
+        res.status(404).send(result);
+      }
+    } catch (error) {
+      console.error(error);
+
+      const result = new Result();
+      result.success = false;
+      result.message = 'Internal server error';
+
+      res.status(500).send(result);
     }
   }
 }

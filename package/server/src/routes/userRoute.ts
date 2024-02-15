@@ -1,12 +1,11 @@
 import express from 'express';
 
 import { UserController } from '../controllers/userController';
-import { UserService } from '../services/userService';
 import userMiddleware from '../middleware/multer/userMiddleware';
+import { UserService } from '../services/userService';
 
 const router = express.Router();
-const userService = new UserService();
-const userController = new UserController(userService);
+const userController = new UserController(new UserService());
 
 router.post(
   '/upload',
@@ -14,5 +13,6 @@ router.post(
   userController.userUploadFile,
 );
 router.get('/:userId/:filename', userController.userDownloadFile);
+router.delete('/delete', userController.userDeleteFile);
 
 export default router;
