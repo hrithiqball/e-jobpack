@@ -1,13 +1,15 @@
 import express from 'express';
-import PingController from '../controllers/ping';
+
+import pingRoute from './pingRoute';
+import userRoute from './userRoute';
+import assetRoute from './assetRoute';
+import maintenanceRoute from './maintenanceRoute';
 
 const router = express.Router();
 
-router.get('/ping', async (_req, res) => {
-  const controller = new PingController();
-  const response = await controller.getMessage();
-
-  return res.send(response);
-});
+router.use('/ping', pingRoute);
+router.use('/user', userRoute);
+router.use('/asset', assetRoute);
+router.use('/maintenance', maintenanceRoute);
 
 export default router;
