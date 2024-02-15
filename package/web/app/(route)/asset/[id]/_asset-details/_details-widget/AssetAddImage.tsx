@@ -16,7 +16,7 @@ import { toast } from 'sonner';
 
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useAssetStore } from '@/hooks/use-asset.store';
-import { uploadAssetImageToServer } from '@/lib/actions/upload';
+import { uploadAssetImage } from '@/lib/actions/upload';
 
 type AddImageProps = {
   open: boolean;
@@ -73,7 +73,7 @@ export default function AddImage({ open, onClose }: AddImageProps) {
     formData.append('assetId', asset.id);
     formData.append('image', file);
 
-    toast.promise(uploadAssetImageToServer(asset, formData), {
+    toast.promise(uploadAssetImage(asset, formData), {
       loading: 'Uploading image...',
       success: () => {
         handleClose();

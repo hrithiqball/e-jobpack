@@ -8,11 +8,18 @@
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:import/typescript",
+    "plugin:import/recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:@tanstack/eslint-plugin-query/recommended",
     "plugin:prettier/recommended"
   ],
+  "settings": {
+    "import/resolver": {
+      "typescript": true,
+      "node": true
+    }
+  },
   "parser": "@typescript-eslint/parser",
   "globals": {
     "React": "readonly"

@@ -46,12 +46,9 @@ export async function uploadUserImage(id: string, data: FormData) {
   }
 }
 
-export async function uploadAssetImageToServer(
-  asset: AssetItem,
-  formData: FormData,
-) {
+export async function uploadAssetImage(asset: AssetItem, formData: FormData) {
   try {
-    const url = `${process.env.NEXT_PUBLIC_IMAGE_SERVER_URL}/upload/asset`;
+    const url = `${process.env.NEXT_PUBLIC_IMAGE_SERVER_URL}/asset/upload`;
 
     const response = await fetch(url, {
       method: 'POST',
@@ -61,7 +58,7 @@ export async function uploadAssetImageToServer(
     const data = await response.json();
     const validatedResponse = ServerResponseSchema.safeParse(data);
 
-    if (!validatedResponse.success) {
+    if (!validatedResponse.success || !validatedResponse.data.success) {
       throw new Error('Failed to upload image');
     }
 
@@ -75,57 +72,6 @@ export async function uploadAssetImageToServer(
 
     revalidatePath(`/asset/${asset.id}`);
     return updatedAsset;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-}
-
-export async function uploadAssetImage(
-  asset: AssetItem | undefined,
-  data: FormData,
-) {
-  try {
-    if (!asset) {
-      throw new Error('No assetId found');
-    }
-
-    const file: File | null = data.get('file') as unknown as File;
-
-    if (!file || !asset.id) {
-      throw new Error('No file found');
-    }
-
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    const directory = join('public', 'image', 'asset', asset.id);
-    console.log('directory', directory);
-    const filePath = join(directory, file.name);
-    console.log('filePath', filePath);
-    const image = `/image/asset/${asset.id}/${file.name}`;
-
-    try {
-      await access(directory);
-    } catch (error) {
-      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-        await mkdir(directory, { recursive: true });
-      } else {
-        console.error(error);
-        throw error;
-      }
-    }
-    await writeFile(filePath, buffer);
-
-    const attachmentPath = asset.attachmentPath || [];
-    attachmentPath.push(image);
-
-    await db.asset.update({
-      where: { id: asset.id },
-      data: { attachmentPath },
-    });
-
-    revalidatePath(`/asset/${asset.id}`);
   } catch (error) {
     console.error(error);
     throw error;

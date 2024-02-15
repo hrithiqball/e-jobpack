@@ -21,7 +21,9 @@ const userStorage = multer.diskStorage({
     file: Express.Multer.File,
     cb: (error: Error | null, filename: string) => void,
   ) => {
-    cb(null, file.originalname);
+    const fileName = file.originalname.replace(/\s/g, '_');
+
+    cb(null, fileName);
   },
 });
 

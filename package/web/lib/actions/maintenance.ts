@@ -12,6 +12,8 @@ import {
 } from '@/lib/schemas/maintenance';
 import { ExtendedUser } from '@/types/next-auth';
 import dayjs from 'dayjs';
+import { MaintenanceItem } from '@/types/maintenance';
+import { ServerResponseSchema } from '@/lib/schemas/server-response';
 
 const MaintenanceRecreateFormSchema = z.object({
   id: z.string().min(1, { message: 'Maintenance ID is required' }),
@@ -282,6 +284,40 @@ export async function updateMaintenance(
     } else {
       console.error(error);
     }
+    throw error;
+  }
+}
+
+export async function uploadMaintenanceImage(
+  maintenance: MaintenanceItem,
+  formData: FormData,
+) {
+  try {
+    const url = `${process.env.NEXT_PUBLIC_IMAGE_SERVER_URL}/maintenance/upload`;
+
+    const response = await fetch(url, {
+      body: formData,
+    });
+
+    const data = await response.json();
+    const validateResponse = ServerResponseSchema.safeParse(data);
+
+    if (!validateResponse.success) {
+      throw new Error('Failed to upload image');
+    }
+
+    const attachmentPath = maintenance.attachmentPath || [];
+    attachmentPath.push(validateResponse.data.path);
+
+    const updatedMaintenance = await db.maintenance.update({
+      where: { id: maintenance.id },
+      data: { attachmentPath },
+    });
+
+    revalidatePath(`/maintenance/${maintenance.id}`);
+    return updatedMaintenance;
+  } catch (error) {
+    console.error(error);
     throw error;
   }
 }

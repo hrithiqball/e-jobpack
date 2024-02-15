@@ -16,7 +16,7 @@ export default async function UserItemPage({ params }: UserItemPage) {
   return (
     <div className="flex flex-1 flex-col">
       <div className="flex flex-col items-center justify-center">
-        <form id="user-image-form" action={uploadUserImageWithId}>
+        {/* <form id="user-image-form" action={uploadUserImageWithId}>
           <label htmlFor="upload-photo">
             <UserAvatar user={user} />
           </label>
@@ -27,10 +27,11 @@ export default async function UserItemPage({ params }: UserItemPage) {
             accept=".png"
             className="hidden"
           />
-        </form>
-        <button form="user-image-form" type="submit">
+        </form> */}
+        {/* <button form="user-image-form" type="submit">
           Upload
-        </button>
+        </button> */}
+        {user && <UserAvatar user={user} />}
       </div>
       <pre>{JSON.stringify(user, null, 2)}</pre>
     </div>

@@ -5,7 +5,7 @@ const app: Application = express();
 const port = config.port;
 
 app.get('/', (req: Request, res: Response) => {
-  res.send('Image server running');
+  res.sendFile('views/index.html', { root: __dirname });
 });
 
 app.listen(port, () => {

@@ -9,6 +9,8 @@ import {
   CreateAssetSchema,
   UpdateAsset,
 } from '@/lib/schemas/asset';
+import { AssetItem } from '@/types/asset';
+import { ServerResponseSchema } from '@/lib/schemas/server-response';
 
 export async function createAsset(values: CreateAsset): Promise<Asset> {
   try {
@@ -126,6 +128,38 @@ export async function deleteAsset(actionBy: string, id: string) {
       });
 
     revalidatePath('/asset');
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function uploadAssetImage(asset: AssetItem, formData: FormData) {
+  try {
+    const url = `${process.env.NEXT_PUBLIC_IMAGE_SERVER_URL}/asset/upload`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      body: formData,
+    });
+
+    const data = await response.json();
+    const validatedResponse = ServerResponseSchema.safeParse(data);
+
+    if (!validatedResponse.success || !validatedResponse.data.success) {
+      throw new Error('Failed to upload image');
+    }
+
+    const attachmentPath = asset.attachmentPath || [];
+    attachmentPath.push(validatedResponse.data.path);
+
+    const updatedAsset = await db.asset.update({
+      where: { id: asset.id },
+      data: { attachmentPath },
+    });
+
+    revalidatePath(`/asset/${asset.id}`);
+    return updatedAsset;
   } catch (error) {
     console.error(error);
     throw error;

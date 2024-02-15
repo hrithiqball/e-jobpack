@@ -30,7 +30,7 @@ export const UpdateMaintenance = z.object({
   rejectedById: z.string().optional(),
   rejectedOn: z.date().optional(),
   approvedOn: z.date().optional(),
-  attachmentPath: z.string().optional(),
+  attachmentPath: z.array(z.string()).optional(),
   maintainee: z.string().optional(),
   deadline: z.date().optional(),
   startDate: z.date().optional(),
