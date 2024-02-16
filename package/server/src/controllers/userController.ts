@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
 
 import { UploadResponse } from '../models/uploadResponse';
-import { IUserService } from '../services/userService';
 import {
   UserUploadFileSchema,
   UserDownloadFileSchema,
   UserDeleteFileSchema,
 } from '../schema/userSchema';
 import { Result } from '../models/result';
+import userService from '../services/userService';
 
 export interface IUserController {
   userUploadFile(req: Request, res: Response): Promise<void>;
@@ -16,11 +16,6 @@ export interface IUserController {
 }
 
 export class UserController implements IUserController {
-  private readonly userService: IUserService;
-
-  constructor(userService: IUserService) {
-    this.userService = userService;
-  }
   public async userUploadFile(req: Request, res: Response) {
     const validateFields = UserUploadFileSchema.safeParse(req.body);
 
@@ -44,7 +39,7 @@ export class UserController implements IUserController {
     }
 
     const { filename, userId } = validateFields.data;
-    const result = await this.userService.findUserImageAsync(userId, filename);
+    const result = await userService.findUserImageAsync(userId, filename);
 
     if (result.success) {
       res.sendFile(result.data!);
@@ -63,7 +58,7 @@ export class UserController implements IUserController {
       }
 
       const { filename } = validateFields.data;
-      const result = await this.userService.deleteUserImageAsync(filename);
+      const result = await userService.deleteUserImageAsync(filename);
 
       if (result.success) {
         res.json(result);

@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 
 import { UploadResponse } from '../models/uploadResponse';
-import { IMaintenanceService } from '../services/maintenanceService';
 import {
   MaintenanceUploadFileSchema,
   MaintenanceDownloadFileSchema,
 } from '../schema/maintenanceSchema';
+import maintenanceService from '../services/maintenanceService';
 
 interface IMaintenanceController {
   maintenanceUploadFile(req: Request, res: Response): Promise<void>;
@@ -13,12 +13,6 @@ interface IMaintenanceController {
 }
 
 export class MaintenanceController implements IMaintenanceController {
-  private readonly maintenanceService: IMaintenanceService;
-
-  constructor(maintenanceService: IMaintenanceService) {
-    this.maintenanceService = maintenanceService;
-  }
-
   public async maintenanceUploadFile(req: Request, res: Response) {
     const validateFields = MaintenanceUploadFileSchema.safeParse(req.body);
 
@@ -42,7 +36,7 @@ export class MaintenanceController implements IMaintenanceController {
     }
 
     const { filename, maintenanceId } = validateFields.data;
-    const result = await this.maintenanceService.findMaintenanceImageAsync(
+    const result = await maintenanceService.findMaintenanceImageAsync(
       maintenanceId,
       filename,
     );

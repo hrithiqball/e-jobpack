@@ -2,10 +2,9 @@ import express from 'express';
 
 import { UserController } from '../controllers/userController';
 import userMiddleware from '../middleware/multer/userMiddleware';
-import { UserService } from '../services/userService';
 
 const router = express.Router();
-const userController = new UserController(new UserService());
+const userController = new UserController();
 
 router.post(
   '/upload',

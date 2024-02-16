@@ -1,12 +1,10 @@
 import express from 'express';
 
 import { MaintenanceController } from '../controllers/maintenanceController';
-import { MaintenanceService } from '../services/maintenanceService';
 import maintenanceMiddleware from '../middleware/multer/maintenanceMiddleware';
 
 const router = express.Router();
-const maintenanceService = new MaintenanceService();
-const maintenanceController = new MaintenanceController(maintenanceService);
+const maintenanceController = new MaintenanceController();
 
 router.post(
   '/upload',

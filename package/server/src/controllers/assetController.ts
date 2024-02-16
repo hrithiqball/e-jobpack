@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 
-import { IAssetService } from '../services/assetService';
 import {
   AssetDownloadFileSchema,
   AssetUploadFileSchema,
 } from '../schema/assetSchema';
+import assetService from '../services/assetService';
 
 interface IAssetController {
   assetUploadFile(req: Request, res: Response): Promise<void>;
@@ -12,12 +12,6 @@ interface IAssetController {
 }
 
 export class AssetController implements IAssetController {
-  private readonly assetService: IAssetService;
-
-  constructor(assetService: IAssetService) {
-    this.assetService = assetService;
-  }
-
   public async assetUploadFile(req: Request, res: Response) {
     const validateFields = AssetUploadFileSchema.safeParse(req.body);
 
@@ -41,29 +35,12 @@ export class AssetController implements IAssetController {
     }
 
     const { filename, assetId } = validateFields.data;
-    const result = await this.assetService.findAssetImageAsync(
-      assetId,
-      filename,
-    );
+    const result = await assetService.findAssetImageAsync(assetId, filename);
 
     if (result.success) {
       res.sendFile(result.data!);
     } else {
       res.status(404).send({ error: 'File not found' });
     }
-    // const { assetId, filename } = req.params;
-    // const imagePath = path.join(
-    //   process.cwd(),
-    //   'upload',
-    //   'asset',
-    //   assetId,
-    //   filename,
-    // );
-
-    // if (fs.existsSync(imagePath)) {
-    //   res.sendFile(imagePath);
-    // } else {
-    //   res.status(404).send({ error: 'File not found' });
-    // }
   }
 }

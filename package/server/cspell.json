@@ -1,12 +1,7 @@
 {
   "version": "0.2",
   "language": "en",
-  "ignorePaths": [
-    "node_modules/**",
-    "dist/**",
-    "*.svg",
-    "*.md"
-  ],
+  "ignorePaths": ["node_modules/**", "dist/**", "*.svg", "*.md"],
   "words": [
     "autogen",
     "dotfiles",
