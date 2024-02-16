@@ -90,13 +90,8 @@ export async function deleteUserImage(userId: string) {
     const url = new URL('/user/delete', baseServerUrl);
     url.searchParams.append('filename', userImage.image);
 
-    const response = await fetch(url, {
-      method: 'DELETE',
-    });
-
-    const data = await response.json();
-
-    const validateResponse = ResultSchema.safeParse(data);
+    const response = await (await fetch(url, { method: 'DELETE' })).json();
+    const validateResponse = ResultSchema.safeParse(response);
 
     if (!validateResponse.success) {
       throw new Error(validateResponse.error.message);

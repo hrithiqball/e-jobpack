@@ -7,7 +7,7 @@ import { ImageIcon, ImagePlus } from 'lucide-react';
 import { useAssetStore } from '@/hooks/use-asset.store';
 
 import AssetDetailsInfo from './_asset-details-info';
-import AssetImageCarousel from './AssetImageCarousel';
+import AssetImageCarousel from './_asset-image-carousel';
 import AssetAddImage from './AssetAddImage';
 import AssetCover from './AssetCover';
 

@@ -10,7 +10,12 @@ import {
   UpdateAsset,
 } from '@/lib/schemas/asset';
 import { AssetItem } from '@/types/asset';
-import { ServerResponseSchema } from '@/lib/schemas/server-response';
+import {
+  ResultSchema,
+  ServerResponseSchema,
+} from '@/lib/schemas/server-response';
+
+const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
 
 export async function createAsset(values: CreateAsset): Promise<Asset> {
   try {
@@ -152,6 +157,42 @@ export async function uploadAssetImage(asset: AssetItem, formData: FormData) {
 
     const attachmentPath = asset.attachmentPath || [];
     attachmentPath.push(validatedResponse.data.path);
+
+    const updatedAsset = await db.asset.update({
+      where: { id: asset.id },
+      data: { attachmentPath },
+    });
+
+    revalidatePath(`/asset/${asset.id}`);
+    return updatedAsset;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function deleteAssetImage(filename: string, asset: AssetItem) {
+  try {
+    const url = new URL('/asset/delete', baseServerUrl);
+    url.searchParams.append('filename', filename);
+
+    const response = await (await fetch(url, { method: 'DELETE' })).json();
+    const validateResponse = ResultSchema.safeParse(response);
+
+    if (!validateResponse.success) {
+      throw new Error(validateResponse.error.message);
+    }
+
+    const { success, message } = validateResponse.data;
+
+    if (!success) {
+      console.error(message);
+      throw new Error(message);
+    }
+
+    const attachmentPath = asset.attachmentPath.filter(
+      attachment => attachment !== filename,
+    );
 
     const updatedAsset = await db.asset.update({
       where: { id: asset.id },
