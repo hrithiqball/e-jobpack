@@ -1,15 +1,15 @@
 import { Request, Response } from 'express';
 
 import { UploadResponse } from '../models/uploadResponse';
+import { Result } from '../models/result';
+import userService from '../services/userService';
 import {
   UserUploadFileSchema,
   UserDownloadFileSchema,
   UserDeleteFileSchema,
 } from '../schema/userSchema';
-import { Result } from '../models/result';
-import userService from '../services/userService';
 
-export interface IUserController {
+interface IUserController {
   userUploadFile(req: Request, res: Response): Promise<void>;
   userDownloadFile(req: Request, res: Response): Promise<void>;
   userDeleteFile(req: Request, res: Response): Promise<void>;
@@ -18,9 +18,12 @@ export interface IUserController {
 export class UserController implements IUserController {
   public async userUploadFile(req: Request, res: Response) {
     const validateFields = UserUploadFileSchema.safeParse(req.body);
+    const result = new Result();
 
     if (!validateFields.success) {
-      res.status(400).send({ error: validateFields.error.message });
+      result.success = false;
+      result.message = validateFields.error.message;
+      res.status(400).send(result);
       return;
     }
 
@@ -49,21 +52,25 @@ export class UserController implements IUserController {
   }
 
   public async userDeleteFile(req: Request, res: Response) {
+    const result = new Result();
+
     try {
       const validateFields = UserDeleteFileSchema.safeParse(req.query);
 
       if (!validateFields.success) {
-        res.status(400).send({ error: validateFields.error.message });
+        result.success = false;
+        result.message = validateFields.error.message;
+        res.status(400).send(result);
         return;
       }
 
       const { filename } = validateFields.data;
-      const result = await userService.deleteUserImageAsync(filename);
+      const process = await userService.deleteUserImageAsync(filename);
 
-      if (result.success) {
-        res.json(result);
+      if (process.success) {
+        res.json(process);
       } else {
-        res.status(404).send(result);
+        res.status(404).send(process);
       }
     } catch (error) {
       console.error(error);

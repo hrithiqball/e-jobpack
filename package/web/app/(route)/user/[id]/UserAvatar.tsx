@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { ImagePlus, Replace } from 'lucide-react';
-import { uploadUserImage } from '@/lib/actions/user';
+import { deleteUserImage, uploadUserImage } from '@/lib/actions/user';
 
 type UserAvatarProps = {
   user: User;
@@ -78,7 +78,15 @@ export default function UserAvatar({ user }: UserAvatarProps) {
         error: 'Failed to upload image',
       });
     } else {
-      toast.info('Implement remove');
+      toast.promise(deleteUserImage(user.id), {
+        loading: 'Clearing image...',
+        success: () => {
+          setIsDirty(false);
+          setIsLoading(false);
+          return 'Image cleared successfully';
+        },
+        error: 'Failed to clear image',
+      });
     }
   }
 

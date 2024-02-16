@@ -5,4 +5,9 @@ export const ServerResponseSchema = z.object({
   path: z.string(),
 });
 
+export const ResultSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
+});
+
 export type ServerResponse = z.infer<typeof ServerResponseSchema>;

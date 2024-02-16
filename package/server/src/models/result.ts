@@ -1,6 +1,6 @@
 export class Result {
   success: boolean = true;
-  message?: string;
+  message: string = '';
 }
 
 export class ResultWithPayload<T> extends Result {
