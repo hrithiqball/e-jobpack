@@ -1,7 +1,7 @@
 import { fetchAssetList } from '@/lib/actions/asset';
 import { fetchChecklistList } from '@/lib/actions/checklist';
 import { fetchChecklistLibraryList } from '@/lib/actions/checklist-library';
-import { fetchMutatedMaintenanceItem } from '@/lib/actions/maintenance';
+import { fetchMaintenanceItemAndAssetOption } from '@/lib/actions/maintenance';
 
 import ChecklistComponent from './_checklist-component';
 import MaintenanceComponent from './_maintenance-component';
@@ -11,7 +11,9 @@ interface TaskItemPageProps {
 }
 
 export default async function TaskItemPage({ params }: TaskItemPageProps) {
-  const mutatedMaintenance = await fetchMutatedMaintenanceItem(params.id);
+  const mutatedMaintenance = await fetchMaintenanceItemAndAssetOption(
+    params.id,
+  );
   const assetList = await fetchAssetList();
   const checklistList = await fetchChecklistList(params.id);
   const checklistLibrary = await fetchChecklistLibraryList();

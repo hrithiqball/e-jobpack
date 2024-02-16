@@ -3,10 +3,10 @@ import dayjs from 'dayjs';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { AlarmClock, Contact2 } from 'lucide-react';
 
-import { MutatedMaintenance } from '@/types/maintenance';
+import { MaintenanceAndAssetOptions } from '@/types/maintenance';
 
 type MaintenanceTableInfoProps = {
-  maintenance: MutatedMaintenance;
+  maintenance: MaintenanceAndAssetOptions;
 };
 
 export default function MaintenanceTableInfo({

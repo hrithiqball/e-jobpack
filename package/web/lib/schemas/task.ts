@@ -1,5 +1,5 @@
 import { TaskType } from '@prisma/client';
-import z from 'zod';
+import { z } from 'zod';
 
 import { SubtaskSchema } from '@/lib/schemas/subtask';
 

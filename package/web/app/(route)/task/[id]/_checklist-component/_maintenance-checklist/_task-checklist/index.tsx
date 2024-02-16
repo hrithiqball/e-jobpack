@@ -4,13 +4,13 @@ import { ReactNode } from 'react';
 
 import { Card } from '@nextui-org/react';
 
-import { MutatedMaintenance } from '@/types/maintenance';
+import { MaintenanceAndAssetOptions } from '@/types/maintenance';
 import { ChecklistLibraryList } from '@/types/checklist';
 
 import ChecklistActions from './_checklist-actions';
 
 type ChecklistItemComponentProps = {
-  checklist: MutatedMaintenance['checklist'][0];
+  checklist: MaintenanceAndAssetOptions['checklist'][0];
   checklistLibraryList: ChecklistLibraryList;
   children: ReactNode;
 };
@@ -21,7 +21,7 @@ export default function ChecklistItemComponent({
   children,
 }: ChecklistItemComponentProps) {
   return (
-    <Card shadow="none" className="flex-1 space-y-4 p-4">
+    <Card shadow="none" className="flex-1 space-y-4 p-4 dark:bg-card">
       <div className="flex items-center justify-between">
         <span className="text-lg font-bold">{checklist.asset.name}</span>
         <ChecklistActions

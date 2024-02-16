@@ -218,7 +218,7 @@ export default function TaskTable({ taskList }: TaskTableProps) {
   }
 
   return taskList.length > 0 ? (
-    <Table>
+    <Table className="bg-zinc-200 dark:bg-zinc-900">
       <TableHeader>
         <TableHead className="text-center">Task</TableHead>
         <TableHead></TableHead>

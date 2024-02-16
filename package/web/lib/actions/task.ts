@@ -2,7 +2,7 @@
 
 import { Prisma, Task, TaskType } from '@prisma/client';
 import dayjs from 'dayjs';
-import z from 'zod';
+import { z } from 'zod';
 
 import { db } from '@/lib/db';
 import { CreateTask, UpdateTask } from '@/lib/schemas/task';

@@ -93,17 +93,6 @@ export async function createMaintenance(
   }
 }
 
-export async function fetchMaintenanceItem(id: string) {
-  try {
-    return await db.maintenance.findUniqueOrThrow({
-      where: { id },
-    });
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-}
-
 export async function recreateMaintenance(
   user: ExtendedUser,
   form: MaintenanceRecreateForm,
@@ -149,11 +138,15 @@ export async function recreateMaintenance(
   }
 }
 
-export async function fetchMutatedMaintenanceItem(id: string) {
+export async function fetchMaintenanceItemAndAssetOption(id: string) {
   try {
     const maintenance = await db.maintenance.findUniqueOrThrow({
       where: { id },
       include: {
+        approvedBy: true,
+        closedBy: true,
+        rejectedBy: true,
+        requestedBy: true,
         checklist: {
           include: {
             asset: true,
@@ -169,10 +162,6 @@ export async function fetchMutatedMaintenanceItem(id: string) {
             },
           },
         },
-        approvedBy: true,
-        closedBy: true,
-        rejectedBy: true,
-        requestedBy: true,
       },
     });
 
@@ -194,39 +183,7 @@ export async function fetchMutatedMaintenanceItem(id: string) {
   }
 }
 
-export async function fetchMaintenanceList(assetIds?: string) {
-  try {
-    const filters: Prisma.MaintenanceWhereInput[] = [];
-    const orderBy: Prisma.MaintenanceOrderByWithRelationInput[] = [];
-
-    if (assetIds) {
-      filters.push({
-        assetIds: {
-          hasSome: assetIds.split(','),
-        },
-      });
-    }
-
-    orderBy.push({
-      date: 'desc',
-    });
-
-    const maintenanceList = await db.maintenance.findMany({
-      orderBy,
-      where: {
-        AND: filters,
-      },
-    });
-
-    revalidatePath('/task');
-    return maintenanceList;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-}
-
-export async function fetchMaintenanceList2() {
+export async function fetchMaintenanceList() {
   try {
     return await db.maintenance.findMany({
       orderBy: {

@@ -32,10 +32,10 @@ import { updateChecklist } from '@/lib/actions/checklist';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { complete } from '@/lib/color';
-import { MutatedMaintenance } from '@/types/maintenance';
+import { MaintenanceAndAssetOptions } from '@/types/maintenance';
 
 type CloseChecklistProps = {
-  checklistList: MutatedMaintenance['checklist'];
+  checklistList: MaintenanceAndAssetOptions['checklist'];
 };
 
 export default function ClosedChecklist({

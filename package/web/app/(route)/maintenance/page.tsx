@@ -1,4 +1,4 @@
-import { fetchMaintenanceList2 } from '@/lib/actions/maintenance';
+import { fetchMaintenanceList } from '@/lib/actions/maintenance';
 import { fetchMaintenanceLibraryList } from '@/lib/actions/maintenance-library';
 import { fetchTaskLibraryList } from '@/lib/actions/task-library';
 import { fetchChecklistLibraryList } from '@/lib/actions/checklist-library';
@@ -9,7 +9,7 @@ import MaintenanceComponent from './_maintenance-component';
 
 export default async function MaintenancePage() {
   const maintenanceLibraryList = await fetchMaintenanceLibraryList();
-  const maintenanceList = await fetchMaintenanceList2();
+  const maintenanceList = await fetchMaintenanceList();
   const taskLibraryList = await fetchTaskLibraryList();
   const checklistLibrary = await fetchChecklistLibraryList();
   const userList = await fetchUserList();

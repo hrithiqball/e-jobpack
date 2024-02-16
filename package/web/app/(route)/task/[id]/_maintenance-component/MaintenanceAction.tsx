@@ -54,13 +54,13 @@ export default function MaintenanceAction({
             key="add-asset"
             startContent={<PackagePlus size={18} />}
           >
-            Add Asset
+            Add Checklist
           </DropdownItem>
           <DropdownItem
-            key="edit-maintenance"
+            key="add-attachment"
             startContent={<FileBox size={18} />}
           >
-            Edit Asset
+            Add Attachment
           </DropdownItem>
           <DropdownItem
             key="export-maintenance"
@@ -102,10 +102,10 @@ export default function MaintenanceAction({
             Add Asset
           </DropdownItem>
           <DropdownItem
-            key="edit-maintenance"
+            key="add-attachment"
             startContent={<FileBox size={18} />}
           >
-            Edit Asset
+            Add Attachment
           </DropdownItem>
           <DropdownItem
             key="download-excel"
@@ -117,8 +117,6 @@ export default function MaintenanceAction({
             Upload Excel
           </DropdownItem>
           <DropdownItem key="download-pdf" startContent={<Table2 size={18} />}>
-            {/* TODO: figure out how to optimize this behavior */}
-            {/* <MaintenanceForm maintenance={maintenance} /> */}
             Download PDF
           </DropdownItem>
           <DropdownItem

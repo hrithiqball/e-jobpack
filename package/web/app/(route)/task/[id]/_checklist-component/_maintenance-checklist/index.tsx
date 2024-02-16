@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic';
 
 import { fetchTaskList } from '@/lib/actions/task';
-import { MutatedMaintenance } from '@/types/maintenance';
+import { MaintenanceAndAssetOptions } from '@/types/maintenance';
 import { fetchChecklistLibraryList } from '@/lib/actions/checklist-library';
 
 import TaskMaintenanceChecklist from './_task-checklist';
@@ -9,7 +9,7 @@ import TaskMaintenanceChecklist from './_task-checklist';
 const TaskTable = dynamic(() => import('./TaskTable'), { ssr: false });
 
 interface MaintenanceChecklistProps {
-  checklist: MutatedMaintenance['checklist'][0];
+  checklist: MaintenanceAndAssetOptions['checklist'][0];
 }
 
 export default async function MaintenanceChecklist({

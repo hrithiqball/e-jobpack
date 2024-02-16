@@ -1,10 +1,10 @@
-import { MutatedMaintenance } from '@/types/maintenance';
+import { MaintenanceAndAssetOptions } from '@/types/maintenance';
 
 import MaintenanceChecklist from './_maintenance-checklist';
 import ClosedChecklist from './_closed-checklist';
 
 type ChecklistComponentProps = {
-  checklistList: MutatedMaintenance['checklist'];
+  checklistList: MaintenanceAndAssetOptions['checklist'];
 };
 
 export default function ChecklistComponent({

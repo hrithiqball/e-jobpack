@@ -9,7 +9,9 @@ import { useAssetStore } from '@/hooks/use-asset.store';
 import AssetDetailsInfo from './_asset-details-info';
 import AssetImageCarousel from './_asset-image-carousel';
 import AssetAddImage from './AssetAddImage';
-import AssetCover from './AssetCover';
+import AssetCover from './_asset-cover';
+
+const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
 
 export default function DetailsWidget() {
   const { asset, assetImageSidebar } = useAssetStore();
@@ -56,7 +58,7 @@ export default function DetailsWidget() {
                       onMouseEnter={handleCoverHoverEnter}
                       onMouseLeave={handleCoverHoverLeave}
                     >
-                      {hoverCoverImage && (
+                      {hoverCoverImage && asset.assetCover && (
                         <Button
                           size="sm"
                           variant="faded"
@@ -70,8 +72,8 @@ export default function DetailsWidget() {
                       )}
                       {asset.assetCover ? (
                         <Image
-                          alt={asset.name}
-                          src={asset.assetCover}
+                          alt={`${baseServerUrl}/asset${asset.assetCover}`}
+                          src={`${baseServerUrl}/asset${asset.assetCover}`}
                           width={400}
                           height={800}
                           className="flex w-full flex-1 cursor-pointer rounded-md object-cover filter hover:brightness-75"

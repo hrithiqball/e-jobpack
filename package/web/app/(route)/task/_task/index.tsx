@@ -1,6 +1,5 @@
 'use client';
 
-import { Maintenance } from '@prisma/client';
 import dayjs from 'dayjs';
 
 import {
@@ -16,9 +15,10 @@ import { FileCog, Wrench } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 import { useCurrentRole } from '@/hooks/use-current-role';
+import { MaintenanceList } from '@/types/maintenance';
 
 type TaskComponentProps = {
-  maintenanceList: Maintenance[];
+  maintenanceList: MaintenanceList;
 };
 
 export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
@@ -27,7 +27,7 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
   return (
     <div className="flex flex-1 flex-grow flex-col rounded-md">
       <div className="flex h-full w-full flex-1 flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
-        <Card shadow="none" className="w-100 flex-1 p-4">
+        <Card shadow="none" className="w-100 flex-1 p-4 dark:bg-card">
           <div>
             <div className="mb-4 flex items-center justify-center space-x-4">
               <span className="text-lg font-semibold">My Tasks</span>
@@ -53,7 +53,7 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
                 <Card
                   shadow="none"
                   key={maintenance.id}
-                  className="my-4 w-full"
+                  className="my-4 w-full bg-zinc-200 dark:bg-zinc-900"
                 >
                   <CardHeader className="flex gap-3">
                     <Button color="danger" isIconOnly>
@@ -78,7 +78,7 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
                     <Card
                       shadow="none"
                       key={maintenance.id}
-                      className="my-4 w-full"
+                      className="my-4 w-full bg-zinc-200 dark:bg-zinc-900"
                     >
                       <CardHeader className="flex gap-3">
                         <Button color="success" isIconOnly>
@@ -103,7 +103,7 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
                   )))}
           </div>
         </Card>
-        <Card shadow="none" className="flex-1 p-4">
+        <Card shadow="none" className="flex-1 p-4 dark:bg-card">
           <div>
             <div className="mb-4 flex items-center justify-center space-x-4">
               <span className="text-lg font-semibold">Completed Tasks</span>
@@ -115,7 +115,10 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
             {maintenanceList
               .filter(m => m.isClose)
               .map(maintenance => (
-                <Card key={maintenance.id} className="my-4 w-full">
+                <Card
+                  key={maintenance.id}
+                  className="my-4 w-full bg-zinc-200 dark:bg-zinc-900"
+                >
                   <CardHeader className="flex gap-3">
                     <Button color="danger" isIconOnly>
                       <Wrench />
@@ -133,7 +136,7 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
               ))}
           </div>
         </Card>
-        <Card shadow="none" className="flex-1 p-4">
+        <Card shadow="none" className="flex-1 p-4 dark:bg-card">
           <div>
             <div className="mb-4 flex items-center justify-center space-x-4">
               <span className="text-lg font-semibold">Upcoming Tasks</span>

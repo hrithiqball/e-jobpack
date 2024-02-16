@@ -1,6 +1,6 @@
 'use server';
 
-import z from 'zod';
+import { z } from 'zod';
 import { AuthError } from 'next-auth';
 
 import { signIn } from '@/auth';

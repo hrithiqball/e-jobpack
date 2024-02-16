@@ -35,7 +35,7 @@ import { updateMaintenance } from '@/lib/actions/maintenance';
 import { SimplifiedTask } from '@/types/simplified-task';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { MutatedMaintenance } from '@/types/maintenance';
+import { MaintenanceAndAssetOptions } from '@/types/maintenance';
 
 import MaintenanceRejectConfirmation from './MaintenanceRejectConfirmation';
 import MaintenanceAddChecklistModal from './MaintenanceAddChecklistModal';
@@ -43,9 +43,10 @@ import MaintenanceTableInfo from './MaintenanceTableInfo';
 import MaintenanceAction from './MaintenanceAction';
 import MaintenanceRequestForm from './MaintenanceRequestForm';
 import MaintenanceExport from './MaintenanceExport';
+import MaintenanceAddAttachment from './MaintenanceAddAttachment';
 
 type MaintenanceComponentProps = {
-  mutatedMaintenance: MutatedMaintenance;
+  mutatedMaintenance: MaintenanceAndAssetOptions;
   checklistList: Checklist[];
   checklistLibraryList: ChecklistLibrary[];
   assetList: Asset[];
@@ -68,6 +69,7 @@ export default function MaintenanceComponent({
   const [openAddChecklist, setOpenAddChecklist] = useState(false);
   const [openRejectConfirmation, setOpenRejectConfirmation] = useState(false);
   const [openExportMaintenance, setOpenExportMaintenance] = useState(false);
+  const [openAddAttachment, setOpenAddAttachment] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const selectedSaveOptionCurrent = Array.from(new Set(['saveOnly']))[0];
@@ -100,6 +102,10 @@ export default function MaintenanceComponent({
 
       case 'export-maintenance':
         setOpenExportMaintenance(!openExportMaintenance);
+        break;
+
+      case 'add-attachment':
+        setOpenAddAttachment(!openAddAttachment);
         break;
     }
   }
@@ -163,6 +169,10 @@ export default function MaintenanceComponent({
   function handleCloseAddChecklist() {
     setOpenAddChecklist(false);
     router.refresh();
+  }
+
+  function handleCloseAddAttachment() {
+    setOpenAddAttachment(false);
   }
 
   function handleRejectMaintenance() {
@@ -614,6 +624,10 @@ export default function MaintenanceComponent({
         open={openExportMaintenance}
         onClose={handleCloseExportMaintenance}
         maintenance={mutatedMaintenance}
+      />
+      <MaintenanceAddAttachment
+        open={openAddAttachment}
+        onClose={handleCloseAddAttachment}
       />
     </div>
   );

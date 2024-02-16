@@ -18,7 +18,8 @@
     "import/resolver": {
       "typescript": true,
       "node": true
-    }
+    },
+    "import/ignore": ["uuid"]
   },
   "parser": "@typescript-eslint/parser",
   "globals": {

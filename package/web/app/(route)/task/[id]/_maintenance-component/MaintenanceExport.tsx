@@ -1,6 +1,6 @@
 import { useState, useTransition } from 'react';
 
-import z from 'zod';
+import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
@@ -14,7 +14,7 @@ import {
   ModalHeader,
 } from '@nextui-org/react';
 
-import { MutatedMaintenance } from '@/types/maintenance';
+import { MaintenanceAndAssetOptions } from '@/types/maintenance';
 import { CreateMaintenanceLibrary } from '@/lib/schemas/maintenance';
 import { ChecklistSchema } from '@/lib/schemas/checklist';
 import { toast } from 'sonner';
@@ -22,7 +22,7 @@ import { useCurrentUser } from '@/hooks/use-current-user';
 import { createMaintenanceLibrary } from '@/lib/actions/maintenance-library';
 
 type MaintenanceExportProps = {
-  maintenance: MutatedMaintenance;
+  maintenance: MaintenanceAndAssetOptions;
   open: boolean;
   onClose: () => void;
 };

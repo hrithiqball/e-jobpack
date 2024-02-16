@@ -24,12 +24,12 @@ import { ChevronDown } from 'lucide-react';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { createChecklist } from '@/lib/actions/checklist';
 import { descriptionsMap, labelsMap } from '@/public/utils/labels';
-import { MutatedMaintenance } from '@/types/maintenance';
+import { MaintenanceAndAssetOptions } from '@/types/maintenance';
 
 type MaintenanceAddChecklistModalProps = {
   open: boolean;
   onClose: () => void;
-  maintenance: MutatedMaintenance;
+  maintenance: MaintenanceAndAssetOptions;
   assetList: Asset[];
   checklistLibraryList: ChecklistLibrary[];
   selectedSaveOptionCurrent: string;

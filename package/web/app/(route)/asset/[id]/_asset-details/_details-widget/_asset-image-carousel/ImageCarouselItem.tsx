@@ -6,6 +6,9 @@ import { Trash } from 'lucide-react';
 import { useAssetStore } from '@/hooks/use-asset.store';
 import { toast } from 'sonner';
 import { deleteAssetImage } from '@/lib/actions/asset';
+import DeleteConfirmation from '@/components/DeleteConfirmation';
+
+const baseUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
 
 type AssetImageCarouselProps = {
   attachment: string;
@@ -14,9 +17,8 @@ type AssetImageCarouselProps = {
 export default function ImageCarouselItem({
   attachment,
 }: AssetImageCarouselProps) {
-  const baseUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
-
   const [isHover, setIsHover] = useState(false);
+  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
 
   const { asset } = useAssetStore();
 
@@ -26,6 +28,18 @@ export default function ImageCarouselItem({
 
   function handleHoverLeave() {
     setIsHover(false);
+  }
+
+  function handleOpenConfirmation() {
+    setIsConfirmationOpen(true);
+  }
+
+  function handleConfirmationChoice(confirm: boolean) {
+    setIsConfirmationOpen(false);
+
+    if (confirm) {
+      handleDeleteImage();
+    }
   }
 
   function handleDeleteImage() {
@@ -48,7 +62,7 @@ export default function ImageCarouselItem({
       <div className="relative flex">
         {isHover && (
           <div className="absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center text-red-500">
-            <Trash onClick={handleDeleteImage} />
+            <Trash onClick={handleOpenConfirmation} />
           </div>
         )}
         <Image
@@ -59,6 +73,10 @@ export default function ImageCarouselItem({
           className="flex flex-1 rounded-md object-cover"
         />
       </div>
+      <DeleteConfirmation
+        open={isConfirmationOpen}
+        onClose={handleConfirmationChoice}
+      />
     </CarouselItem>
   );
 }
