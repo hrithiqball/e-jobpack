@@ -41,7 +41,7 @@ export default function MaintenanceAddChecklistModal({
   checklistLibraryList,
   selectedSaveOptionCurrent,
 }: MaintenanceAddChecklistModalProps) {
-  const [isPending, startTransition] = useTransition();
+  const [transitioning, startTransition] = useTransition();
   const user = useCurrentUser();
 
   const { maintenance } = useMaintenanceStore();
@@ -115,19 +115,19 @@ export default function MaintenanceAddChecklistModal({
           </Select>
         </ModalBody>
         <ModalFooter>
-          <Button color="danger" isDisabled={isPending} onClick={onClose}>
+          <Button color="danger" isDisabled={transitioning} onClick={onClose}>
             Cancel
           </Button>
           <ButtonGroup>
             <Button
-              isDisabled={selectedAsset.length === 0 || isPending}
+              isDisabled={selectedAsset.length === 0 || transitioning}
               onClick={handleAddAsset}
             >
               {labelsMap[selectedSaveOptionCurrent as keyof typeof labelsMap]}
             </Button>
             <Dropdown placement="bottom-end">
               <DropdownTrigger>
-                <Button isIconOnly isDisabled={isPending}>
+                <Button isIconOnly isDisabled={transitioning}>
                   <ChevronDown size={18} />
                 </Button>
               </DropdownTrigger>

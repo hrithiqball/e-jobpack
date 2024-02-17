@@ -47,7 +47,7 @@ export default function MaintenanceComponent({
   assetList,
   children,
 }: MaintenanceComponentProps) {
-  const [isPending, startTransition] = useTransition();
+  const [transitioning, startTransition] = useTransition();
   const user = useCurrentUser();
   const router = useRouter();
   const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -275,7 +275,7 @@ export default function MaintenanceComponent({
         <MaintenanceRequestForm
           handleApproveMaintenance={handleApproveMaintenance}
           handleRejectMaintenance={handleRejectMaintenance}
-          isPending={isPending}
+          transitioning={transitioning}
         />
       )}
       <div className="my-4 flex flex-col ">

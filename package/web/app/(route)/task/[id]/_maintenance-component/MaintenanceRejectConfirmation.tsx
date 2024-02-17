@@ -32,7 +32,7 @@ export default function MaintenanceRejectConfirmation({
   open,
   onClose,
 }: MaintenanceRejectConfirmationProps) {
-  const [isPending, startTransition] = useTransition();
+  const [transitioning, startTransition] = useTransition();
   const user = useCurrentUser();
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
@@ -90,21 +90,21 @@ export default function MaintenanceRejectConfirmation({
             size="sm"
             variant="faded"
             placeholder="Reject message...(optional)"
-            isDisabled={isPending}
+            isDisabled={transitioning}
             value={rejectReason}
             onValueChange={setRejectReason}
           />
         </ModalBody>
         <ModalFooter>
-          <Button variant="faded" isDisabled={isPending} onClick={onClose}>
+          <Button variant="faded" isDisabled={transitioning} onClick={onClose}>
             Cancel
           </Button>
           <Button
             variant="faded"
             color="danger"
-            isDisabled={isPending}
+            isDisabled={transitioning}
             onClick={handleRejectMaintenance}
-            isLoading={isPending}
+            isLoading={transitioning}
           >
             Confirm
           </Button>
@@ -126,14 +126,18 @@ export default function MaintenanceRejectConfirmation({
         </div>
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
-            <Button variant="faded" isDisabled={isPending} onClick={onClose}>
+            <Button
+              variant="faded"
+              isDisabled={transitioning}
+              onClick={onClose}
+            >
               Cancel
             </Button>
             <Button
               variant="faded"
               color="danger"
-              isDisabled={isPending}
-              isLoading={isPending}
+              isDisabled={transitioning}
+              isLoading={transitioning}
               onClick={handleRejectMaintenance}
             >
               Confirm

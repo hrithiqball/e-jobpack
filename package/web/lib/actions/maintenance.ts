@@ -240,6 +240,7 @@ export async function uploadMaintenanceImage(
     const url = `${process.env.NEXT_PUBLIC_IMAGE_SERVER_URL}/maintenance/upload`;
 
     const response = await fetch(url, {
+      method: 'POST',
       body: formData,
     });
 

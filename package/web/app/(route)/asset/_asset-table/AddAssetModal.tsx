@@ -45,13 +45,13 @@ import {
   CreateAssetSchema,
 } from '@/lib/schemas/asset';
 
-interface AddAssetModalProps {
+type AddAssetModalProps = {
   open: boolean;
   onClose: () => void;
   userList: User[];
   assetStatusList: AssetStatus[];
   assetTypeList: AssetType[];
-}
+};
 
 export default function AddAssetModal({
   open,

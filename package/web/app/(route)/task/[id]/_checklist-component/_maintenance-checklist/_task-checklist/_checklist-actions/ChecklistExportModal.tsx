@@ -36,7 +36,7 @@ export default function ChecklistExportModal({
   onClose,
   checklist,
 }: ChecklistExportModalProps) {
-  const [isPending, startTransition] = useTransition();
+  const [transitioning, startTransition] = useTransition();
   const user = useCurrentUser();
 
   const [checklistLibraryTitle, setChecklistLibraryTitle] = useState('');
@@ -250,7 +250,7 @@ export default function ChecklistExportModal({
             size="sm"
             variant="faded"
             color="danger"
-            isDisabled={isPending}
+            isDisabled={transitioning}
             onClick={onClose}
           >
             Cancel
@@ -259,7 +259,7 @@ export default function ChecklistExportModal({
             size="sm"
             variant="faded"
             color="primary"
-            isDisabled={isPending || checklistLibraryTitle === ''}
+            isDisabled={transitioning || checklistLibraryTitle === ''}
             onClick={handleSave}
           >
             Save

@@ -82,22 +82,23 @@ model AssetType {
 }
 
 model Checklist {
-  createdOn     DateTime    @default(now()) @map("created_on")
-  createdById   String      @map("created_by_id")
-  updatedOn     DateTime    @default(now()) @map("updated_on")
-  updatedById   String      @map("updated_by_id")
-  isClose       Boolean     @default(false) @map("is_close")
-  description   String?
-  color         String?
-  icon          String?
-  assetId       String      @map("asset_id")
-  id            String      @id
-  maintenanceId String      @map("maintenance_id")
-  asset         Asset       @relation(fields: [assetId], references: [id], onDelete: Cascade, map: "checklist_asset_fk")
-  createdBy     User        @relation("checklist_created_byTouser", fields: [createdById], references: [id], onDelete: Cascade)
-  maintenance   Maintenance @relation(fields: [maintenanceId], references: [id], onDelete: Cascade)
-  updatedBy     User        @relation("checklist_updated_byTouser", fields: [updatedById], references: [id], onDelete: Cascade)
-  task          Task[]
+  createdOn      DateTime    @default(now()) @map("created_on")
+  createdById    String      @map("created_by_id")
+  updatedOn      DateTime    @default(now()) @map("updated_on")
+  updatedById    String      @map("updated_by_id")
+  isClose        Boolean     @default(false) @map("is_close")
+  attachmentPath String[]    @default([]) @map("attachment_path")
+  description    String?
+  color          String?
+  icon           String?
+  assetId        String      @map("asset_id")
+  id             String      @id
+  maintenanceId  String      @map("maintenance_id")
+  asset          Asset       @relation(fields: [assetId], references: [id], onDelete: Cascade, map: "checklist_asset_fk")
+  createdBy      User        @relation("checklist_created_byTouser", fields: [createdById], references: [id], onDelete: Cascade)
+  maintenance    Maintenance @relation(fields: [maintenanceId], references: [id], onDelete: Cascade)
+  updatedBy      User        @relation("checklist_updated_byTouser", fields: [updatedById], references: [id], onDelete: Cascade)
+  task           Task[]
 
   @@map("checklist")
   @@schema("public")

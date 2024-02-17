@@ -9,8 +9,13 @@ const maintenanceController = new MaintenanceController();
 
 router.post(
   '/upload',
-  maintenanceMiddleware.maintenanceUpload.single('image'),
-  maintenanceController.maintenanceUploadFile,
+  maintenanceMiddleware.maintenanceGeneralUpload.single('file'),
+  maintenanceController.maintenanceGeneralUploadFile,
+);
+router.post(
+  '/checklist/upload',
+  maintenanceMiddleware.maintenanceChecklistUpload.single('file'),
+  maintenanceController.maintenanceChecklistUploadFile,
 );
 router.get(
   '/:maintenanceId/:filename',

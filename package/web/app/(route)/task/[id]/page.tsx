@@ -5,9 +5,9 @@ import { fetchMaintenanceItem } from '@/lib/actions/maintenance';
 import ChecklistComponent from './_checklist-component';
 import MaintenanceComponent from './_maintenance-component';
 
-interface TaskItemPageProps {
+type TaskItemPageProps = {
   params: { id: string };
-}
+};
 
 export default async function TaskItemPage({ params }: TaskItemPageProps) {
   const maintenance = await fetchMaintenanceItem(params.id);

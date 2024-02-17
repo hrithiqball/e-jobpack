@@ -17,7 +17,7 @@ import { toast } from 'sonner';
 import { login } from '@/lib/actions/login';
 
 export default function SignInCard() {
-  const [isPending, startTransition] = useTransition();
+  const [transitioning, startTransition] = useTransition();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl');
 
@@ -28,7 +28,7 @@ export default function SignInCard() {
     startTransition(() => {
       login({ email, password }, callbackUrl).then(data => {
         if (data?.error) {
-          if (!isPending) console.error(data.error);
+          if (!transitioning) console.error(data.error);
           toast.error(data.error);
           setEmail('');
           setPassword('');

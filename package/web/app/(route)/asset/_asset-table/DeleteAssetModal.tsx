@@ -25,7 +25,7 @@ export default function DeleteAssetModal({
   onClose,
   assetId,
 }: DeleteAssetModalProps) {
-  const [isPending, startTransition] = useTransition();
+  const [transitioning, startTransition] = useTransition();
   const user = useCurrentUser();
 
   function handleDeleteAsset() {
@@ -95,8 +95,8 @@ export default function DeleteAssetModal({
             variant="faded"
             size="sm"
             color="primary"
-            isDisabled={isPending}
-            isLoading={isPending}
+            isDisabled={transitioning}
+            isLoading={transitioning}
             onClick={handleDeleteAsset}
           >
             Confirm

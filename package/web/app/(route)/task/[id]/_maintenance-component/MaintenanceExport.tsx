@@ -30,7 +30,7 @@ export default function MaintenanceExport({
   open,
   onClose,
 }: MaintenanceExportProps) {
-  const [isPending, startTransition] = useTransition();
+  const [transitioning, startTransition] = useTransition();
   const user = useCurrentUser();
 
   const { maintenance } = useMaintenanceStore();
@@ -169,7 +169,7 @@ export default function MaintenanceExport({
               size="sm"
               variant="faded"
               label="Title"
-              isDisabled={isPending}
+              isDisabled={transitioning}
               value={title}
               onValueChange={setTitle}
             />
@@ -177,7 +177,7 @@ export default function MaintenanceExport({
               size="sm"
               variant="faded"
               label="Description"
-              isDisabled={isPending}
+              isDisabled={transitioning}
               value={description}
               onValueChange={setDescription}
             />
@@ -202,7 +202,7 @@ export default function MaintenanceExport({
               variant="faded"
               size="sm"
               color="danger"
-              isDisabled={isPending}
+              isDisabled={transitioning}
               onClick={onClose}
             >
               Close
@@ -211,7 +211,7 @@ export default function MaintenanceExport({
               variant="faded"
               size="sm"
               color="primary"
-              isDisabled={isPending || !title}
+              isDisabled={transitioning || !title}
               onClick={handleSave}
             >
               Save

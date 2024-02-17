@@ -4,19 +4,19 @@ import { useState, useTransition } from 'react';
 import { z } from 'zod';
 
 import { Checkbox, Input, Select, SelectItem, Switch } from '@nextui-org/react';
+import { toast } from 'sonner';
 
+import { TaskItem } from '@/types/task';
+import { useCurrentUser } from '@/hooks/use-current-user';
 import { updateTask } from '@/lib/actions/task';
 import { UpdateTask } from '@/lib/schemas/task';
-import { useCurrentUser } from '@/hooks/use-current-user';
-import { toast } from 'sonner';
-import { TaskItem } from '@/types/task';
 
 type TaskValueProps = {
   task: TaskItem;
 };
 
 export default function TaskValue({ task }: TaskValueProps) {
-  const [isPending, startTransition] = useTransition();
+  const [transitioning, startTransition] = useTransition();
   const user = useCurrentUser();
 
   const [taskIsComplete, setTaskIsComplete] = useState(task.isComplete);
@@ -80,7 +80,7 @@ export default function TaskValue({ task }: TaskValueProps) {
     case 'CHECK':
       return (
         <Checkbox
-          isDisabled={isPending}
+          isDisabled={transitioning}
           aria-label="Task Checkbox"
           isSelected={taskIsComplete}
           onValueChange={() => {

@@ -17,7 +17,7 @@ import { toast } from 'sonner';
 import { createUser } from '@/lib/actions/user';
 
 export default function SignUpCard() {
-  const [isPending, startTransition] = useTransition();
+  const [transitioning, startTransition] = useTransition();
   const router = useRouter();
 
   const [name, setName] = useState('');
@@ -121,7 +121,7 @@ export default function SignUpCard() {
         />
         <Divider />
         <Button
-          isDisabled={isPending}
+          isDisabled={transitioning}
           variant="faded"
           className="mt-4 w-full"
           onClick={signUpClient}

@@ -78,7 +78,7 @@ export default function AssetTable({
   userList,
   assetTypeList,
 }: AssetTableProps) {
-  const [isPending, startTransition] = useTransition();
+  const [transitioning, startTransition] = useTransition();
   const user = useCurrentUser();
   const role = useCurrentRole();
 
@@ -594,6 +594,9 @@ export default function AssetTable({
               <DropdownMenu
                 color="primary"
                 variant="light"
+                disabledKeys={
+                  transitioning ? ['archive-asset', 'delete-asset'] : []
+                }
                 onAction={handleAssetAction(row.original.id)}
               >
                 <DropdownItem
@@ -678,8 +681,6 @@ export default function AssetTable({
         toast.error('User session expired');
         return;
       }
-
-      if (!isPending) console.log('archiving');
 
       toast.promise(updateAsset(user.id, assetId, { isArchive: true }), {
         loading: 'Archiving asset...',
@@ -908,8 +909,6 @@ export default function AssetTable({
             <ChevronRight size={18} />
           </Button>
         </div>
-
-        {/* Empty div for balancing, also with fixed width */}
         <div className="flex-1"></div>
       </div>
       <DeleteAssetModal

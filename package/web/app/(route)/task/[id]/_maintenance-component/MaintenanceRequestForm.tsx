@@ -3,13 +3,13 @@ import { Button, ButtonGroup } from '@nextui-org/react';
 import { Check, X } from 'lucide-react';
 
 type MaintenanceRequestFormProps = {
-  isPending: boolean;
+  transitioning: boolean;
   handleApproveMaintenance: () => void;
   handleRejectMaintenance: () => void;
 };
 
 export default function MaintenanceRequestForm({
-  isPending,
+  transitioning,
   handleApproveMaintenance,
   handleRejectMaintenance,
 }: MaintenanceRequestFormProps) {
@@ -29,7 +29,7 @@ export default function MaintenanceRequestForm({
             color="success"
             startContent={<Check size={18} />}
             onClick={handleApproveMaintenance}
-            isDisabled={isPending}
+            isDisabled={transitioning}
           >
             Approve
           </Button>
@@ -39,7 +39,7 @@ export default function MaintenanceRequestForm({
             color="danger"
             startContent={<X size={18} />}
             onClick={handleRejectMaintenance}
-            isDisabled={isPending}
+            isDisabled={transitioning}
           >
             Reject
           </Button>

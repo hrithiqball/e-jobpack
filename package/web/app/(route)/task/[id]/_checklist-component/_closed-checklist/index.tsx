@@ -41,7 +41,7 @@ type CloseChecklistProps = {
 export default function ClosedChecklist({
   checklistList,
 }: CloseChecklistProps) {
-  const [isPending, startTransition] = useTransition();
+  const [transitioning, startTransition] = useTransition();
   const user = useCurrentUser();
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const router = useRouter();
@@ -72,7 +72,7 @@ export default function ClosedChecklist({
     if (choice) {
       handleReopenChecklist();
       setIsConfirmationOpen(false);
-      if (!isPending) {
+      if (!transitioning) {
         setCurrentChecklist(undefined);
       }
     }

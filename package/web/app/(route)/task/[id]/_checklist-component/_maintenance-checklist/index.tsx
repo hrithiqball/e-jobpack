@@ -8,9 +8,9 @@ import TaskMaintenanceChecklist from './_task-checklist';
 
 const TaskTable = dynamic(() => import('./TaskTable'), { ssr: false });
 
-interface MaintenanceChecklistProps {
+type MaintenanceChecklistProps = {
   checklist: Maintenance['checklist'][0];
-}
+};
 
 export default async function MaintenanceChecklist({
   checklist,
