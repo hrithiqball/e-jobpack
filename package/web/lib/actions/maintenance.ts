@@ -2,18 +2,20 @@
 
 import { revalidatePath } from 'next/cache';
 import { Prisma, TaskType } from '@prisma/client';
-import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
+import { z } from 'zod';
+import dayjs from 'dayjs';
 
 import { db } from '@/lib/db';
+import { MaintenanceItem } from '@/types/maintenance';
+import { ExtendedUser } from '@/types/next-auth';
 import {
   CreateMaintenance,
   UpdateMaintenance,
 } from '@/lib/schemas/maintenance';
-import { ExtendedUser } from '@/types/next-auth';
-import dayjs from 'dayjs';
-import { MaintenanceItem } from '@/types/maintenance';
 import { ServerResponseSchema } from '@/lib/schemas/server-response';
+
+const baseUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
 
 const MaintenanceRecreateFormSchema = z.object({
   id: z.string().min(1, { message: 'Maintenance ID is required' }),
@@ -237,15 +239,16 @@ export async function uploadMaintenanceImage(
   formData: FormData,
 ) {
   try {
-    const url = `${process.env.NEXT_PUBLIC_IMAGE_SERVER_URL}/maintenance/upload`;
+    const url = new URL('/maintenance/upload', baseUrl);
 
-    const response = await fetch(url, {
-      method: 'POST',
-      body: formData,
-    });
+    const response = await (
+      await fetch(url, {
+        method: 'POST',
+        body: formData,
+      })
+    ).json();
 
-    const data = await response.json();
-    const validateResponse = ServerResponseSchema.safeParse(data);
+    const validateResponse = ServerResponseSchema.safeParse(response);
 
     if (!validateResponse.success) {
       throw new Error('Failed to upload image');

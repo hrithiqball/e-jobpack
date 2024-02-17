@@ -15,6 +15,8 @@ import { ImagePlus, Replace } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
+import { uploadChecklistImage } from '@/lib/actions/checklist';
+import { uploadMaintenanceImage } from '@/lib/actions/maintenance';
 
 type MaintenanceAddAttachmentDialogProps = {
   checklistId: string | null;
@@ -70,18 +72,37 @@ export default function MaintenanceAddAttachmentDialog({
     formData.append('maintenanceId', maintenance.id);
 
     if (checklistId) {
+      const checklist = maintenance.checklist.find(
+        checklist => checklist.id === checklistId,
+      );
+
+      if (!checklist) {
+        toast.error('Checklist not found');
+        return;
+      }
+
       formData.append('checklistId', checklistId);
+      formData.append('file', file);
+
+      toast.promise(uploadChecklistImage(checklist, formData), {
+        loading: 'Uploading image...',
+        success: 'Image uploaded successfully',
+        error: 'Failed to upload image',
+      });
+    } else {
+      formData.append('file', file);
+
+      toast.promise(uploadMaintenanceImage(maintenance, formData), {
+        loading: 'Uploading image...',
+        success: 'Image uploaded successfully',
+        error: 'Failed to upload image',
+      });
     }
   }
 
   function handleClose() {
     setFile(null);
     setFilename(null);
-    onClose();
-  }
-
-  function handleUpload() {
-    console.log('uploading', checklistId);
     onClose();
   }
 
@@ -103,7 +124,7 @@ export default function MaintenanceAddAttachmentDialog({
             },
           )}
         >
-          <form id="maintenance-attachment-form" onSubmit={onSubmit}>
+          <form id="carousel-attachment-form" onSubmit={onSubmit}>
             <input
               id="picture"
               type="file"
@@ -134,7 +155,9 @@ export default function MaintenanceAddAttachmentDialog({
           )}
         </div>
         <DialogFooter>
-          <Button onClick={handleUpload}>Upload</Button>
+          <Button type="submit" form="carousel-attachment-form">
+            Upload
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -1,12 +1,17 @@
 'use server';
 
-import { Checklist, Prisma } from '@prisma/client';
-import dayjs from 'dayjs';
-import { v4 as uuidv4 } from 'uuid';
-
-import { db } from '@/lib/db';
-import { CreateChecklist, UpdateChecklist } from '@/lib/schemas/checklist';
+import { revalidatePath } from 'next/cache';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { Checklist, Prisma } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+import dayjs from 'dayjs';
+
+import { Maintenance } from '@/types/maintenance';
+import { CreateChecklist, UpdateChecklist } from '@/lib/schemas/checklist';
+import { ServerResponseSchema } from '@/lib/schemas/server-response';
+import { db } from '@/lib/db';
+
+const baseUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
 
 export async function createChecklist(checklist: CreateChecklist) {
   try {
@@ -138,6 +143,48 @@ export async function updateChecklist(
       console.error(error);
     }
 
+    throw error;
+  }
+}
+
+export async function uploadChecklistImage(
+  checklist: Maintenance['checklist'][0],
+  formData: FormData,
+) {
+  try {
+    const url = new URL('/maintenance/checklist/upload', baseUrl);
+
+    const response = await (
+      await fetch(url, {
+        method: 'POST',
+        body: formData,
+      })
+    ).json();
+
+    const validateResponse = ServerResponseSchema.safeParse(response);
+
+    if (!validateResponse.success) {
+      throw new Error(validateResponse.error.message);
+    }
+
+    const { success, path } = validateResponse.data;
+
+    if (!success) {
+      throw new Error('Failed to upload image');
+    }
+
+    const attachmentPath = checklist.attachmentPath || [];
+    attachmentPath.push(path);
+
+    const updatedChecklist = await db.checklist.update({
+      where: { id: checklist.id },
+      data: { attachmentPath },
+    });
+
+    revalidatePath(`/maintenance/${checklist.maintenanceId}`);
+    return updatedChecklist;
+  } catch (error) {
+    console.error(error);
     throw error;
   }
 }

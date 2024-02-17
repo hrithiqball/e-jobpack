@@ -74,7 +74,6 @@ export default function MaintenanceAddAttachment({
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    console.log('upload');
 
     if (!file || !maintenance) {
       return;
@@ -166,67 +165,32 @@ export default function MaintenanceAddAttachment({
             </div>
             <div className="space-y-2">
               <span>General Attachment</span>
-              <Carousel
-                opts={{ align: 'start' }}
-                className="mx-12 w-full max-w-sm"
-              >
-                <CarouselContent>
-                  <CarouselItem
-                    className="cursor-pointer md:basis-1/2 lg:basis-1/3"
-                    onClick={() =>
-                      handleOpenMaintenanceAddAttachmentDialog(null)
-                    }
-                  >
-                    <div className="flex h-full w-full flex-1 items-center justify-center rounded-md border-2 border-dashed border-gray-400 py-4">
-                      <ImagePlus />
-                    </div>
-                  </CarouselItem>
-                  {maintenance.attachmentPath.map(attachment => (
-                    <CarouselItem
-                      key={attachment}
-                      className="md:basis-1/2 lg:basis-1/3"
-                    >
-                      <div className="relative">
-                        <Image
-                          src={`${baseServerUrl}/maintenance/${attachment}`}
-                          alt={attachment}
-                          width={100}
-                          height={100}
-                          className="rounded-md"
-                        />
-                      </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <CarouselPrevious />
-                <CarouselNext />
-              </Carousel>
-            </div>
-            {maintenance.checklist.map(checklist => (
-              <div key={checklist.id} className="space-y-2">
-                <span>{checklist.asset.name}</span>
-                <Carousel
-                  opts={{ align: 'start' }}
-                  className="mx-12 w-full max-w-sm"
-                >
+              <div className="px-12">
+                <Carousel opts={{ align: 'start' }} className="w-full max-w-sm">
                   <CarouselContent>
-                    <CarouselItem className="cursor-pointer md:basis-1/2 lg:basis-1/3">
-                      <div
-                        className="flex h-full w-full flex-1 items-center justify-center rounded-md border-2 border-dashed border-gray-400 py-4"
-                        onClick={() =>
-                          handleOpenMaintenanceAddAttachmentDialog(checklist.id)
-                        }
-                      >
+                    <CarouselItem
+                      className="cursor-pointer md:basis-1/2 lg:basis-1/3"
+                      onClick={() =>
+                        handleOpenMaintenanceAddAttachmentDialog(null)
+                      }
+                    >
+                      <div className="flex h-full w-full flex-1 items-center justify-center rounded-md border-2 border-dashed border-gray-400 py-4">
                         <ImagePlus />
                       </div>
                     </CarouselItem>
-                    {checklist.attachmentPath.map(attachment => (
+                    {maintenance.attachmentPath.map(attachment => (
                       <CarouselItem
                         key={attachment}
                         className="md:basis-1/2 lg:basis-1/3"
                       >
                         <div className="relative">
-                          <span>{attachment}</span>
+                          <Image
+                            src={`${baseServerUrl}/maintenance/${attachment}`}
+                            alt={attachment}
+                            width={100}
+                            height={100}
+                            className="rounded-md"
+                          />
                         </div>
                       </CarouselItem>
                     ))}
@@ -234,6 +198,50 @@ export default function MaintenanceAddAttachment({
                   <CarouselPrevious />
                   <CarouselNext />
                 </Carousel>
+              </div>
+            </div>
+            {maintenance.checklist.map(checklist => (
+              <div key={checklist.id} className="space-y-2">
+                <span>{checklist.asset.name}</span>
+                <div className="px-12">
+                  <Carousel
+                    opts={{ align: 'start' }}
+                    className="w-full max-w-sm"
+                  >
+                    <CarouselContent>
+                      <CarouselItem className="cursor-pointer md:basis-1/2 lg:basis-1/3">
+                        <div
+                          className="relative flex h-full w-full flex-1 items-center justify-center rounded-md border-2 border-dashed border-gray-400 py-4"
+                          onClick={() =>
+                            handleOpenMaintenanceAddAttachmentDialog(
+                              checklist.id,
+                            )
+                          }
+                        >
+                          <ImagePlus />
+                        </div>
+                      </CarouselItem>
+                      {checklist.attachmentPath.map(attachment => (
+                        <CarouselItem
+                          key={attachment}
+                          className="md:basis-1/2 lg:basis-1/3"
+                        >
+                          <div className="relative h-full">
+                            <Image
+                              src={`${baseServerUrl}/maintenance/${attachment}`}
+                              alt={attachment}
+                              width={400}
+                              height={200}
+                              className="flex flex-1 rounded-md object-cover"
+                            />
+                          </div>
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                    <CarouselPrevious />
+                    <CarouselNext />
+                  </Carousel>
+                </div>
               </div>
             ))}
           </SheetContent>
