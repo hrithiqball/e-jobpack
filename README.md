@@ -1,49 +1,17 @@
-# e-Jobpack an Asset Management System
+# E-jobpack
 
-### This is a web based asset management system that will fully automate your job in maintaining an asset in your property
+This repository contains the website for e-jobpack to replace client system where they are using hardcopy of the jobpack. This website will be used to store all the jobpack and the client can access it anytime and anywhere.
 
-#### Core features
+### This monorepo contains the following packages:
 
-- Manage asset details
-- Create and configure asset checklist and workflow
-- Able to attach graphic or files to a task
-- Fully up to date information of an asset
+- Web Apps (Nextjs)
+- Image Server (Express)
 
-Project Manager
+### How to run the project
 
-- epi
-
-Software Quality Assurance and Documentation
-
-- icam
-
-Software Engineer and Developer
-
-- kyziq
-- mishu
-
-## Getting Started
-
-1. Install packages using
-
-```bash
-npm i
-# or
-npm install
-```
-
-2. Create a new file `.env.local` on root directory
-3. Copy the content of `.env.development` into the file and fill out the information needed inside
-4. Run the development server:
-
-```bash
-npm run dev
-```
-
-5. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-#### Resources
-
-[Color Palette](https://colors.muz.li/palette/00625c/004540/bffffb/80fff7/80fff7)
+1. Clone the repository
+2. Copy the `.env.example` file to `.env` and fill in the required environment variables
+3. Change directory to the project folder and run `npm i` to install all the dependencies
+4. Run `npm run dev` to start the development server
+5. Run `npm run build` to build the project
+6. Run `npm run start` to start the production server

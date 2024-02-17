@@ -1,0 +1,7 @@
+/node_modules
+
+/dist
+
+/upload/asset/**/*
+/upload/user/**/*
+/upload/maintenance/**/*
