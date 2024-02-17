@@ -4,13 +4,13 @@ import { ReactNode } from 'react';
 
 import { Card } from '@nextui-org/react';
 
-import { MaintenanceAndAssetOptions } from '@/types/maintenance';
+import { Maintenance } from '@/types/maintenance';
 import { ChecklistLibraryList } from '@/types/checklist';
 
 import ChecklistActions from './_checklist-actions';
 
 type ChecklistItemComponentProps = {
-  checklist: MaintenanceAndAssetOptions['checklist'][0];
+  checklist: Maintenance['checklist'][0];
   checklistLibraryList: ChecklistLibraryList;
   children: ReactNode;
 };

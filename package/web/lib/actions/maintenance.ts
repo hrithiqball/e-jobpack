@@ -138,9 +138,9 @@ export async function recreateMaintenance(
   }
 }
 
-export async function fetchMaintenanceItemAndAssetOption(id: string) {
+export async function fetchMaintenanceItem(id: string) {
   try {
-    const maintenance = await db.maintenance.findUniqueOrThrow({
+    return await db.maintenance.findUniqueOrThrow({
       where: { id },
       include: {
         approvedBy: true,
@@ -164,19 +164,6 @@ export async function fetchMaintenanceItemAndAssetOption(id: string) {
         },
       },
     });
-
-    const assetOptionsList = await db.asset.findMany({
-      where: {
-        id: {
-          notIn: maintenance.checklist.map(checklist => checklist.assetId),
-        },
-      },
-    });
-
-    return {
-      ...maintenance,
-      assetOptionsList,
-    };
   } catch (error) {
     console.error(error);
     throw error;

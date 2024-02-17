@@ -1,12 +1,10 @@
 import {
-  fetchMaintenanceItemAndAssetOption,
+  fetchMaintenanceItem,
   fetchMaintenanceList,
 } from '@/lib/actions/maintenance';
 import { fetchMaintenanceLibraryList } from '@/lib/actions/maintenance-library';
 
-export type MaintenanceAndAssetOptions = Awaited<
-  ReturnType<typeof fetchMaintenanceItemAndAssetOption>
->;
+export type Maintenance = Awaited<ReturnType<typeof fetchMaintenanceItem>>;
 export type MaintenanceList = Awaited<ReturnType<typeof fetchMaintenanceList>>;
 
 export type MaintenanceLibraryList = Awaited<

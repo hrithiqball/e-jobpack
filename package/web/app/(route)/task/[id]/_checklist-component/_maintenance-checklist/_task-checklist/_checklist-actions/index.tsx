@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { MaintenanceAndAssetOptions } from '@/types/maintenance';
+import { Maintenance } from '@/types/maintenance';
 import { ChecklistLibraryList } from '@/types/checklist';
 import { useCurrentRole } from '@/hooks/use-current-role';
 import { useCurrentUser } from '@/hooks/use-current-user';
@@ -30,7 +30,7 @@ import ChecklistExportModal from './ChecklistExportModal';
 import ChecklistImport from './ChecklistImport';
 
 type AssetActionsProps = {
-  checklist: MaintenanceAndAssetOptions['checklist'][0];
+  checklist: Maintenance['checklist'][0];
   checklistLibraryList: ChecklistLibraryList;
 };
 

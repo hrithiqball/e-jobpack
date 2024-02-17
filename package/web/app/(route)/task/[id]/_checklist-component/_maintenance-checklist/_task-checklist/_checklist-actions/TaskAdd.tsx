@@ -19,7 +19,7 @@ import {
 import { toast } from 'sonner';
 import { Trash2 } from 'lucide-react';
 
-import { MaintenanceAndAssetOptions } from '@/types/maintenance';
+import { Maintenance } from '@/types/maintenance';
 import { createTask } from '@/lib/actions/task';
 import { CreateTask } from '@/lib/schemas/task';
 import { selectionChoices } from '@/public/utils/task-type-options';
@@ -32,7 +32,7 @@ type SubtaskOptions = {
 };
 
 type TaskAddProps = {
-  checklist: MaintenanceAndAssetOptions['checklist'][0];
+  checklist: Maintenance['checklist'][0];
   open: boolean;
   onClose: () => void;
 };

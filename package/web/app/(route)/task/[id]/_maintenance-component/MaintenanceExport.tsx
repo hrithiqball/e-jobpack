@@ -14,31 +14,31 @@ import {
   ModalHeader,
 } from '@nextui-org/react';
 
-import { MaintenanceAndAssetOptions } from '@/types/maintenance';
 import { CreateMaintenanceLibrary } from '@/lib/schemas/maintenance';
 import { ChecklistSchema } from '@/lib/schemas/checklist';
 import { toast } from 'sonner';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { createMaintenanceLibrary } from '@/lib/actions/maintenance-library';
+import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 
 type MaintenanceExportProps = {
-  maintenance: MaintenanceAndAssetOptions;
   open: boolean;
   onClose: () => void;
 };
 
 export default function MaintenanceExport({
-  maintenance,
   open,
   onClose,
 }: MaintenanceExportProps) {
   const [isPending, startTransition] = useTransition();
   const user = useCurrentUser();
 
+  const { maintenance } = useMaintenanceStore();
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [selectedChecklists, setSelectedChecklists] = useState(
-    maintenance.checklist.map(checklist => ({
+    maintenance?.checklist.map(checklist => ({
       id: checklist.id,
       asset: checklist.asset,
       isSelected: true,
@@ -55,6 +55,11 @@ export default function MaintenanceExport({
     startTransition(() => {
       if (user === undefined || user.id === undefined) {
         toast.error('User session is expired');
+        return;
+      }
+
+      if (selectedChecklists === undefined) {
+        toast.error('No checklist selected');
         return;
       }
 
@@ -142,7 +147,7 @@ export default function MaintenanceExport({
 
   function toggleChecklist(checklistId: string) {
     setSelectedChecklists(checklists =>
-      checklists.map(checklist =>
+      checklists?.map(checklist =>
         checklist.id === checklistId
           ? {
               ...checklist,
@@ -154,62 +159,66 @@ export default function MaintenanceExport({
   }
 
   return (
-    <Modal hideCloseButton backdrop="blur" isOpen={open}>
-      <ModalContent>
-        <ModalHeader>Export Maintenance</ModalHeader>
-        <ModalBody>
-          <Input
-            isRequired
-            size="sm"
-            variant="faded"
-            label="Title"
-            isDisabled={isPending}
-            value={title}
-            onValueChange={setTitle}
-          />
-          <Input
-            size="sm"
-            variant="faded"
-            label="Description"
-            isDisabled={isPending}
-            value={description}
-            onValueChange={setDescription}
-          />
-          {maintenance.checklist.map(checklist => (
-            <Checkbox
-              key={checklist.id}
-              isSelected={
-                selectedChecklists.find(
-                  selectedChecklist => selectedChecklist.id === checklist.id,
-                )?.isSelected
-              }
-              onValueChange={() => toggleChecklist(checklist.id)}
+    maintenance && (
+      <Modal hideCloseButton backdrop="blur" isOpen={open}>
+        <ModalContent>
+          <ModalHeader>Export Maintenance</ModalHeader>
+          <ModalBody>
+            <Input
+              isRequired
+              size="sm"
+              variant="faded"
+              label="Title"
+              isDisabled={isPending}
+              value={title}
+              onValueChange={setTitle}
+            />
+            <Input
+              size="sm"
+              variant="faded"
+              label="Description"
+              isDisabled={isPending}
+              value={description}
+              onValueChange={setDescription}
+            />
+            {selectedChecklists !== undefined &&
+              maintenance.checklist.map(checklist => (
+                <Checkbox
+                  key={checklist.id}
+                  isSelected={
+                    selectedChecklists.find(
+                      selectedChecklist =>
+                        selectedChecklist.id === checklist.id,
+                    )?.isSelected
+                  }
+                  onValueChange={() => toggleChecklist(checklist.id)}
+                >
+                  {checklist.asset.name}
+                </Checkbox>
+              ))}
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              variant="faded"
+              size="sm"
+              color="danger"
+              isDisabled={isPending}
+              onClick={onClose}
             >
-              {checklist.asset.name}
-            </Checkbox>
-          ))}
-        </ModalBody>
-        <ModalFooter>
-          <Button
-            variant="faded"
-            size="sm"
-            color="danger"
-            isDisabled={isPending}
-            onClick={onClose}
-          >
-            Close
-          </Button>
-          <Button
-            variant="faded"
-            size="sm"
-            color="primary"
-            isDisabled={isPending || !title}
-            onClick={handleSave}
-          >
-            Save
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+              Close
+            </Button>
+            <Button
+              variant="faded"
+              size="sm"
+              color="primary"
+              isDisabled={isPending || !title}
+              onClick={handleSave}
+            >
+              Save
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    )
   );
 }

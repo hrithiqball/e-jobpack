@@ -13,7 +13,7 @@ import {
 import { toast } from 'sonner';
 
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { MaintenanceAndAssetOptions } from '@/types/maintenance';
+import { Maintenance } from '@/types/maintenance';
 import {
   CreateChecklistLibrary,
   CreateChecklistLibrarySchema,
@@ -28,7 +28,7 @@ import { createChecklistLibrary } from '@/lib/actions/checklist-library';
 type ChecklistExportModalProps = {
   open: boolean;
   onClose: () => void;
-  checklist: MaintenanceAndAssetOptions['checklist'][0];
+  checklist: Maintenance['checklist'][0];
 };
 
 export default function ChecklistExportModal({

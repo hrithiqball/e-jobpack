@@ -1,17 +1,14 @@
-import { MaintenanceAndAssetOptions } from '@/types/maintenance';
+import { Maintenance } from '@/types/maintenance';
 import { create } from 'zustand';
 
-type MaintenanceAndAssetOptionsStore = {
-  maintenanceAndAssetOptions: MaintenanceAndAssetOptions | null;
-  setMaintenanceAndAssetOptions: (
-    maintenanceAndAssetOptions: MaintenanceAndAssetOptions,
-  ) => void;
+type MaintenanceStore = {
+  maintenance: Maintenance | null;
+  setMaintenance: (maintenanceAndAssetOptions: Maintenance) => void;
 };
 
-export const useMaintenanceAndAssetOptionsStore =
-  create<MaintenanceAndAssetOptionsStore>(set => ({
-    maintenanceAndAssetOptions: null,
-    setMaintenanceAndAssetOptions: maintenanceAndAssetOptions => {
-      set({ maintenanceAndAssetOptions });
-    },
-  }));
+export const useMaintenanceStore = create<MaintenanceStore>(set => ({
+  maintenance: null,
+  setMaintenance: maintenance => {
+    set({ maintenance });
+  },
+}));

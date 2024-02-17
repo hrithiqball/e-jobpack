@@ -18,18 +18,17 @@ import {
   DropdownItem,
   DropdownMenu,
 } from '@nextui-org/react';
-import { toast } from 'sonner';
 import { ChevronDown } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { useCurrentUser } from '@/hooks/use-current-user';
+import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 import { createChecklist } from '@/lib/actions/checklist';
 import { descriptionsMap, labelsMap } from '@/public/utils/labels';
-import { MaintenanceAndAssetOptions } from '@/types/maintenance';
 
 type MaintenanceAddChecklistModalProps = {
   open: boolean;
   onClose: () => void;
-  maintenance: MaintenanceAndAssetOptions;
   assetList: Asset[];
   checklistLibraryList: ChecklistLibrary[];
   selectedSaveOptionCurrent: string;
@@ -39,18 +38,20 @@ export default function MaintenanceAddChecklistModal({
   open,
   onClose,
   assetList,
-  maintenance,
   checklistLibraryList,
   selectedSaveOptionCurrent,
 }: MaintenanceAddChecklistModalProps) {
   const [isPending, startTransition] = useTransition();
   const user = useCurrentUser();
 
+  const { maintenance } = useMaintenanceStore();
+
   const [selectedAsset, setSelectedAsset] = useState<any>([]);
   const [description, setDescription] = useState('');
   const [selectedSaveOption, setSelectedSaveOption] = useState(
     new Set(['saveOnly']),
   );
+
   function handleAddAsset() {
     if (user === undefined || user.id === undefined || user.id === null) {
       console.error('not found');
@@ -58,6 +59,11 @@ export default function MaintenanceAddChecklistModal({
     }
 
     startTransition(() => {
+      if (!maintenance) {
+        console.error('Maintenance not found');
+        return;
+      }
+
       toast.promise(
         createChecklist({
           assetId: selectedAsset.currentKey,

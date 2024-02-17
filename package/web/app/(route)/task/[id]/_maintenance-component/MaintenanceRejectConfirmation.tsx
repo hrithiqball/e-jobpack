@@ -1,7 +1,5 @@
 import React, { useState, useTransition } from 'react';
 
-import { Maintenance } from '@prisma/client';
-
 import {
   Button,
   Input,
@@ -22,22 +20,23 @@ import { toast } from 'sonner';
 
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useCurrentUser } from '@/hooks/use-current-user';
+import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 import { updateMaintenance } from '@/lib/actions/maintenance';
 
 type MaintenanceRejectConfirmationProps = {
   open: boolean;
   onClose: () => void;
-  maintenance: Maintenance;
 };
 
 export default function MaintenanceRejectConfirmation({
   open,
   onClose,
-  maintenance,
 }: MaintenanceRejectConfirmationProps) {
   const [isPending, startTransition] = useTransition();
   const user = useCurrentUser();
   const isDesktop = useMediaQuery('(min-width: 768px)');
+
+  const { maintenance } = useMaintenanceStore();
 
   const [rejectReason, setRejectReason] = useState('');
 
@@ -50,6 +49,11 @@ export default function MaintenanceRejectConfirmation({
   function handleRejectMaintenance() {
     if (user === undefined || user.id === undefined) {
       toast.error('Session expired');
+      return;
+    }
+
+    if (!maintenance) {
+      toast.error('Maintenance not found');
       return;
     }
 
