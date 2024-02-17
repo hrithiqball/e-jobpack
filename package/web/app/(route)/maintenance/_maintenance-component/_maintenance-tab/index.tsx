@@ -53,7 +53,7 @@ export default function MaintenanceAllTab({
 
   const columns: ColumnDef<MaintenanceItem>[] = [
     { accessorKey: 'id', header: 'ID' },
-    { accessorKey: 'isOpen', header: 'Description' },
+    { accessorKey: 'maintenanceStatus', header: 'Status' },
     {
       id: 'actions',
       header: () => null,
