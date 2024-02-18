@@ -10,12 +10,11 @@ import {
   ChangeEvent,
 } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 
 import { Asset, ChecklistLibrary } from '@prisma/client';
 
 import { Button, ButtonGroup, Divider } from '@nextui-org/react';
-import { ChevronLeft, FileUp, FolderSync } from 'lucide-react';
+import { FileUp, FolderSync } from 'lucide-react';
 import { Workbook } from 'exceljs';
 import { toast } from 'sonner';
 
@@ -227,7 +226,7 @@ export default function MaintenanceComponent({
     <div className="flex-grow rounded-md">
       <div className="flex flex-row items-center justify-between">
         <div className="flex items-center space-x-4">
-          <Button
+          {/* <Button
             className="max-w-min"
             as={Link}
             href="/task"
@@ -236,7 +235,7 @@ export default function MaintenanceComponent({
             size="sm"
           >
             Back
-          </Button>
+          </Button> */}
           <h2 className="text-medium font-semibold sm:text-xl">
             {maintenance.id}
           </h2>

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export function useMediaQuery(query: string) {
   const [value, setValue] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     function onChange(event: MediaQueryListEvent) {
       setValue(event.matches);
     }
