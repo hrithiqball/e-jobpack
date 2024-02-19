@@ -1,3 +1,5 @@
+import { Fragment, Key, useState } from 'react';
+
 import {
   Dropdown,
   DropdownTrigger,
@@ -5,11 +7,10 @@ import {
   DropdownItem,
   Button,
 } from '@nextui-org/react';
+import { Edit, MoreVertical, Trash, ListTree, Library } from 'lucide-react';
 
 import { TaskItem } from '@/types/task';
-import { Edit, MoreVertical, Trash, ListTree, Library } from 'lucide-react';
-import { Key } from 'react';
-import { useTaskStore } from '@/hooks/use-task.store';
+import TaskValueEdit from './TaskValueEdit';
 
 type TaskActionsProps = {
   task: TaskItem;
@@ -24,17 +25,15 @@ export default function TaskActions({
   handleRemoveTask,
   handleExportTask,
 }: TaskActionsProps) {
-  const { setTaskId, setTmpTask } = useTaskStore();
+  const [openEditTask, setOpenEditTask] = useState(false);
+  const [currentTask, setCurrentTask] = useState<TaskItem | null>(null);
 
   function handleAction(task: TaskItem) {
     return (key: Key) => {
       switch (key) {
         case 'edit-task':
-          setTmpTask({
-            taskActivity: task.taskActivity,
-            description: task.description,
-          });
-          setTaskId(task.id);
+          setCurrentTask(task);
+          setOpenEditTask(true);
           break;
 
         case 'remove-task':
@@ -51,41 +50,54 @@ export default function TaskActions({
     };
   }
 
+  function handleCloseEditTask() {
+    setOpenEditTask(false);
+  }
+
   return (
-    <Dropdown>
-      <DropdownTrigger>
-        <Button isIconOnly size="sm" variant="light">
-          <MoreVertical size={18} />
-        </Button>
-      </DropdownTrigger>
-      <DropdownMenu
-        variant="faded"
-        aria-label="Task action"
-        color="primary"
-        disabledKeys={
-          transitioning
-            ? ['edit-task', 'add-subtask', 'export-task', 'remove-task']
-            : []
-        }
-        onAction={handleAction(task)}
-      >
-        <DropdownItem key="edit-task" startContent={<Edit size={18} />}>
-          Edit
-        </DropdownItem>
-        <DropdownItem key="add-subtask" startContent={<ListTree size={18} />}>
-          Add subtask
-        </DropdownItem>
-        <DropdownItem key="export-task" startContent={<Library size={18} />}>
-          Save as library
-        </DropdownItem>
-        <DropdownItem
-          key="remove-task"
-          color="danger"
-          startContent={<Trash size={18} />}
+    <Fragment>
+      <Dropdown>
+        <DropdownTrigger>
+          <Button isIconOnly size="sm" variant="light">
+            <MoreVertical size={18} />
+          </Button>
+        </DropdownTrigger>
+        <DropdownMenu
+          variant="faded"
+          aria-label="Task action"
+          color="primary"
+          disabledKeys={
+            transitioning
+              ? ['edit-task', 'add-subtask', 'export-task', 'remove-task']
+              : []
+          }
+          onAction={handleAction(task)}
         >
-          Remove Task
-        </DropdownItem>
-      </DropdownMenu>
-    </Dropdown>
+          <DropdownItem key="edit-task" startContent={<Edit size={18} />}>
+            Edit
+          </DropdownItem>
+          <DropdownItem key="add-subtask" startContent={<ListTree size={18} />}>
+            Add subtask
+          </DropdownItem>
+          <DropdownItem key="export-task" startContent={<Library size={18} />}>
+            Save as library
+          </DropdownItem>
+          <DropdownItem
+            key="remove-task"
+            color="danger"
+            startContent={<Trash size={18} />}
+          >
+            Remove Task
+          </DropdownItem>
+        </DropdownMenu>
+      </Dropdown>
+      {currentTask && (
+        <TaskValueEdit
+          task={currentTask}
+          open={openEditTask}
+          onClose={handleCloseEditTask}
+        />
+      )}
+    </Fragment>
   );
 }

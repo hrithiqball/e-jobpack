@@ -15,7 +15,7 @@ export default async function AssetItemPage({ params }: AssetItemPageProps) {
   const asset = await fetchAssetItem(params.id);
   const assetStatusList = await fetchAssetStatusList();
   const assetTypeList = await fetchAssetTypeList();
-  const maintenanceList = await fetchMaintenanceList(params.id);
+  const maintenanceList = await fetchMaintenanceList();
   const userList = await fetchUserList();
   const checklistLibrary = await fetchChecklistLibraryList(params.id);
 

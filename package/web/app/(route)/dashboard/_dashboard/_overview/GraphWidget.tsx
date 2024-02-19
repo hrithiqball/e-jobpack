@@ -22,7 +22,7 @@ export default function GraphWidget() {
 
   return (
     <div className="flex grow flex-col">
-      <Card shadow="none" className="flex flex-1 p-4">
+      <Card shadow="none" className="flex flex-1 p-4 dark:bg-card">
         <div className="flex flex-1">
           <div className="h-80 w-1/2">
             <Bar

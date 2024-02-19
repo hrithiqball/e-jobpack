@@ -20,6 +20,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import { Check, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { TaskList, TaskItem } from '@/types/task';
@@ -32,7 +33,6 @@ import { deleteTask } from '@/lib/actions/task';
 
 import TaskValue from './TaskValue';
 import TaskActions from './TaskActions';
-import { Check, X } from 'lucide-react';
 import TaskIssue from './TaskIssue';
 import TaskRemark from './TaskRemark';
 
@@ -186,72 +186,7 @@ export default function TaskTable({ taskList }: TaskTableProps) {
     setTaskId(null);
   }
 
-  // function handleTaskUpdate(id: string, value: string) {
-  //   console.log(id, value);
-  // }
-
-  // function handleTaskActivityChange(taskActivity: string) {
-  //   setTmpActivity(taskActivity);
-  // }
-
-  // function handleTaskDescriptionChange(description: string) {
-  //   setTmpDescription(description);
-  // }
-
   return taskList.length > 0 ? (
-    //             {editingTaskId === task.id ? (
-    //               // TODO: use TaskValueEdit component instead
-    //               <Popover placement="bottom" showArrow offset={10}>
-    //                 <PopoverTrigger>
-    //                   <Button variant="faded" size="sm" color="primary">
-    //                     {task.taskType
-    //                       .replace(/_/g, ' ')
-    //                       .toLowerCase()
-    //                       .replace(/(?:^|\s)\S/g, function (char) {
-    //                         return char.toUpperCase();
-    //                       })}
-    //                   </Button>
-    //                 </PopoverTrigger>
-    //                 <PopoverContent className="w-[240px]">
-    //                   {titleProps => (
-    //                     <div className="w-full px-1 py-2">
-    //                       <p
-    //                         className="text-small font-bold text-foreground"
-    //                         {...titleProps}
-    //                       >
-    //                         Value Type
-    //                       </p>
-    //                       <div className="mt-2 flex w-full flex-col gap-2">
-    //                         <Input
-    //                           defaultValue="100%"
-    //                           label="Width"
-    //                           size="sm"
-    //                           variant="bordered"
-    //                         />
-    //                         <Input
-    //                           defaultValue="300px"
-    //                           label="Max. width"
-    //                           size="sm"
-    //                           variant="bordered"
-    //                         />
-    //                         <Input
-    //                           defaultValue="24px"
-    //                           label="Height"
-    //                           size="sm"
-    //                           variant="bordered"
-    //                         />
-    //                         <Input
-    //                           defaultValue="30px"
-    //                           label="Max. height"
-    //                           size="sm"
-    //                           variant="bordered"
-    //                         />
-    //                       </div>
-    //                     </div>
-    //                   )}
-    //                 </PopoverContent>
-    //               </Popover>
-    //             ) : (
     <Table>
       <TableHeader>
         {table.getHeaderGroups().map(headerGroup => (
