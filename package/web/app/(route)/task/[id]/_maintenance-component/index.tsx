@@ -5,7 +5,6 @@ import {
   useState,
   useTransition,
   useEffect,
-  ReactNode,
   Key,
   useRef,
   ChangeEvent,
@@ -23,6 +22,7 @@ import { SimplifiedTask } from '@/types/simplified-task';
 import { MaintenanceItem } from '@/types/maintenance';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useCurrentUser } from '@/hooks/use-current-user';
+import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 import { updateMaintenance } from '@/lib/actions/maintenance';
 
 import MaintenanceRejectConfirmation from './MaintenanceRejectConfirmation';
@@ -32,20 +32,18 @@ import MaintenanceAction from './MaintenanceAction';
 import MaintenanceRequestForm from './MaintenanceRequestForm';
 import MaintenanceExport from './MaintenanceExport';
 import MaintenanceAddAttachment from './MaintenanceAddAttachment';
-import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
+import ChecklistComponent from '../_checklist-component';
 
 type MaintenanceComponentProps = {
   maintenance: MaintenanceItem;
   checklistLibraryList: ChecklistLibrary[];
   assetList: Asset[];
-  children: ReactNode;
 };
 
 export default function MaintenanceComponent({
   maintenance,
   checklistLibraryList,
   assetList,
-  children,
 }: MaintenanceComponentProps) {
   const [transitioning, startTransition] = useTransition();
   const user = useCurrentUser();
@@ -231,16 +229,6 @@ export default function MaintenanceComponent({
     <div className="flex-grow rounded-md">
       <div className="flex flex-row items-center justify-between">
         <div className="flex items-center space-x-4">
-          {/* <Button
-            className="max-w-min"
-            as={Link}
-            href="/task"
-            startContent={<ChevronLeft size={18} />}
-            variant="faded"
-            size="sm"
-          >
-            Back
-          </Button> */}
           <h2 className="text-medium font-semibold sm:text-xl">
             {maintenance.id}
           </h2>
@@ -301,7 +289,9 @@ export default function MaintenanceComponent({
       <Divider />
       <div className="mt-4 rounded-md">
         <div className="flex h-full flex-col overflow-y-auto">
-          <div className="w-full flex-shrink-0 rounded-2xl p-1">{children}</div>
+          <div className="w-full flex-shrink-0 rounded-2xl p-1">
+            <ChecklistComponent checklistList={maintenance.checklist} />
+          </div>
         </div>
       </div>
       <MaintenanceRejectConfirmation

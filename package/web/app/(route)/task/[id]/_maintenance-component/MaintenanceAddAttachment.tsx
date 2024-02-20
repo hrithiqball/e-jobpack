@@ -36,6 +36,8 @@ export default function MaintenanceAddAttachment({
 }: MaintenanceAddAttachmentProps) {
   const { maintenance } = useMaintenanceStore();
 
+  const [Test, setTest] = useState('second');
+
   const [filename, setFilename] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [selectedChecklist, setSelectedChecklist] = useState<string | null>(
@@ -200,6 +202,11 @@ export default function MaintenanceAddAttachment({
                 </Carousel>
               </div>
             </div>
+            {/* <input
+              type="text"
+              value={Test}
+              onChange={e => setTest(e.target.value)}
+            /> */}
             {maintenance.checklist.map(checklist => (
               <div key={checklist.id} className="space-y-2">
                 <span>{checklist.asset.name}</span>

@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Drawer,
   DrawerContent,
+  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer';
@@ -55,10 +56,10 @@ export default function TaskValueEdit({
 
   const form = useForm<UpdateTaskForm>({
     resolver: zodResolver(UpdateTaskFormSchema),
-    // defaultValues: {
-    //   taskActivity: task.taskActivity,
-    //   description: task.description ?? '',
-    // },
+    defaultValues: {
+      taskActivity: task.taskActivity,
+      description: task.description ?? '',
+    },
   });
 
   function onSubmit(data: UpdateTaskForm) {
@@ -77,13 +78,13 @@ export default function TaskValueEdit({
   }
 
   return isDesktop ? (
-    <Sheet open={open} onOpenChange={handleClose}>
-      <SheetContent>
-        <SheetHeader>
-          <SheetTitle>Edit Task</SheetTitle>
-        </SheetHeader>
+    <Drawer open={open} onClose={handleClose}>
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>Edit Task</DrawerTitle>
+        </DrawerHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+          <form id="update-task-form" onSubmit={form.handleSubmit(onSubmit)}>
             <div className="flex flex-col space-y-4">
               {task.taskActivity}
               {task.taskType}
@@ -118,7 +119,7 @@ export default function TaskValueEdit({
             </div>
           </form>
         </Form>
-        <SheetFooter>
+        <DrawerFooter>
           <Button
             type="submit"
             form="update-task-form"
@@ -128,9 +129,9 @@ export default function TaskValueEdit({
           >
             Save
           </Button>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
   ) : (
     <Drawer open={open} onOpenChange={handleClose}>
       <DrawerContent>
