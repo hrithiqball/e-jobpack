@@ -4,6 +4,7 @@
 import {
   useState,
   useTransition,
+  useEffect,
   ReactNode,
   Key,
   useRef,
@@ -52,13 +53,17 @@ export default function MaintenanceComponent({
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  useMaintenanceStore.setState({ maintenance });
+  const { setMaintenance } = useMaintenanceStore();
 
   const [openAddChecklist, setOpenAddChecklist] = useState(false);
   const [openRejectConfirmation, setOpenRejectConfirmation] = useState(false);
   const [openExportMaintenance, setOpenExportMaintenance] = useState(false);
   const [openAddAttachment, setOpenAddAttachment] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  useEffect(() => {
+    setMaintenance(maintenance);
+  }, [setMaintenance, maintenance]);
 
   const selectedSaveOptionCurrent = Array.from(new Set(['saveOnly']))[0];
 
