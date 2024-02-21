@@ -16,6 +16,7 @@ import { motion } from 'framer-motion';
 
 import { useCurrentRole } from '@/hooks/use-current-role';
 import { MaintenanceList } from '@/types/maintenance';
+import MyTaskBoardHelper from '@/components/helper/MyTaskBoardHelper';
 
 type TaskComponentProps = {
   maintenanceList: MaintenanceList;
@@ -42,7 +43,28 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
               </Chip>
             </div>
             <Divider />
-            {maintenanceList
+            {role !== 'TECHNICIAN' &&
+              maintenanceList
+                .filter(
+                  mtn =>
+                    (mtn.maintenanceStatus === 'OPENED' ||
+                      mtn.maintenanceStatus === 'REQUESTED') &&
+                    mtn.startDate < dayjs().add(1, 'day').toDate(),
+                )
+                .map(maintenance => (
+                  <Card
+                    key={maintenance.id}
+                    as={Link}
+                    href={`/task/${maintenance.id}`}
+                    shadow="none"
+                    className="my-4 w-full bg-zinc-200 dark:bg-zinc-900"
+                  >
+                    <CardHeader>
+                      <MyTaskBoardHelper maintenance={maintenance} />
+                    </CardHeader>
+                  </Card>
+                ))}
+            {/* {maintenanceList
               .filter(
                 m =>
                   !m.isClose &&
@@ -100,7 +122,7 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
                         </div>
                       </CardHeader>
                     </Card>
-                  )))}
+                  )))} */}
           </div>
         </Card>
         <Card shadow="none" className="flex-1 p-4 dark:bg-card">

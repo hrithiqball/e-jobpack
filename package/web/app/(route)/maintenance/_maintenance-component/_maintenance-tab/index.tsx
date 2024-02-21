@@ -35,6 +35,7 @@ import {
 
 import MaintenanceCreate from './_maintenance-create';
 import MaintenanceRecreate from './_maintenance-recreate';
+import MaintenanceStatusHelper from '@/components/helper/MaintenanceStatusHelper';
 
 type MaintenanceAllTabProps = {
   maintenanceList: MaintenanceList;
@@ -53,7 +54,17 @@ export default function MaintenanceAllTab({
 
   const columns: ColumnDef<MaintenanceItem>[] = [
     { accessorKey: 'id', header: 'ID' },
-    { accessorKey: 'maintenanceStatus', header: 'Status' },
+    {
+      accessorKey: 'maintenanceStatus',
+      header: 'Status',
+      cell: ({ row }) => {
+        return (
+          <MaintenanceStatusHelper
+            maintenanceStatus={row.original.maintenanceStatus}
+          />
+        );
+      },
+    },
     {
       id: 'actions',
       header: () => null,
