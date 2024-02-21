@@ -44,7 +44,15 @@ export const CreateMaintenanceLibrarySchema = z.object({
   checklistLibrary: z.array(ChecklistSchema),
 });
 
+export const CreateMaintenanceLibraryFormSchema = z.object({
+  title: z.string({ required_error: 'Title is required' }),
+  description: z.string().optional(),
+});
+
 export type CreateMaintenance = z.infer<typeof CreateMaintenanceSchema>;
 export type CreateMaintenanceLibrary = z.infer<
   typeof CreateMaintenanceLibrarySchema
+>;
+export type CreateMaintenanceLibraryForm = z.infer<
+  typeof CreateMaintenanceLibraryFormSchema
 >;

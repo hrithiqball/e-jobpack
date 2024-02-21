@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 
-import { Button, Input, Link } from '@nextui-org/react';
-import { ChevronLeft, LibraryBig, Search } from 'lucide-react';
+import { Button, Input } from '@nextui-org/react';
+import { LibraryBig, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 import {
@@ -52,16 +52,6 @@ export default function MaintenanceLibraryTab({
   return isEdit && currentMaintenanceLibrary ? (
     <div className="flex flex-1 flex-col space-y-4">
       <div className="flex items-center space-x-4">
-        <Button
-          as={Link}
-          size="sm"
-          variant="faded"
-          color="primary"
-          href={`${pathName}?tab=library&isCreate=false`}
-          startContent={<ChevronLeft size={18} />}
-        >
-          Back
-        </Button>
         <span className="text-xl font-bold">
           {currentMaintenanceLibrary.title}
         </span>

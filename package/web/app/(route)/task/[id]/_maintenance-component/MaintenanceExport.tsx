@@ -1,25 +1,39 @@
-import { useState, useTransition } from 'react';
-
+import { useState, useTransition, useEffect } from 'react';
 import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import {
-  Button,
-  Checkbox,
-  Input,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-} from '@nextui-org/react';
+  Drawer,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from '@/components/ui/drawer';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 
-import { CreateMaintenanceLibrary } from '@/lib/schemas/maintenance';
-import { ChecklistSchema } from '@/lib/schemas/checklist';
+import { Checkbox } from '@nextui-org/react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
+
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { createMaintenanceLibrary } from '@/lib/actions/maintenance-library';
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
+import {
+  CreateMaintenanceLibrary,
+  CreateMaintenanceLibraryForm,
+  CreateMaintenanceLibraryFormSchema,
+} from '@/lib/schemas/maintenance';
+import { ChecklistSchema } from '@/lib/schemas/checklist';
+import { createMaintenanceLibrary } from '@/lib/actions/maintenance-library';
 
 type MaintenanceExportProps = {
   open: boolean;
@@ -35,8 +49,6 @@ export default function MaintenanceExport({
 
   const { maintenance } = useMaintenanceStore();
 
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
   const [selectedChecklists, setSelectedChecklists] = useState(
     maintenance?.checklist.map(checklist => ({
       id: checklist.id,
@@ -51,7 +63,47 @@ export default function MaintenanceExport({
     })),
   );
 
-  function handleSave() {
+  useEffect(() => {
+    if (!maintenance) return;
+
+    setSelectedChecklists(
+      maintenance.checklist.map(checklist => ({
+        id: checklist.id,
+        asset: checklist.asset,
+        isSelected: true,
+        task: checklist.task.map(task => ({
+          ...task,
+          subtask: task.subtask.map(subtask => ({
+            ...subtask,
+          })),
+        })),
+      })),
+    );
+  }, [maintenance]);
+
+  const form = useForm<CreateMaintenanceLibraryForm>({
+    resolver: zodResolver(CreateMaintenanceLibraryFormSchema),
+    defaultValues: {
+      description: '  ',
+    },
+  });
+
+  function toggleChecklist(checklistId: string) {
+    setSelectedChecklists(checklists =>
+      checklists?.map(checklist =>
+        checklist.id === checklistId
+          ? {
+              ...checklist,
+              isSelected: !checklist.isSelected,
+            }
+          : checklist,
+      ),
+    );
+  }
+
+  function onSubmit(data: CreateMaintenanceLibraryForm) {
+    console.log(data);
+
     startTransition(() => {
       if (user === undefined || user.id === undefined) {
         toast.error('User session is expired');
@@ -127,8 +179,8 @@ export default function MaintenanceExport({
         });
 
       const newMaintenanceLibrary: CreateMaintenanceLibrary = {
-        title,
-        description,
+        title: data.title,
+        description: data.description,
         createdById: user.id,
         updatedById: user.id,
         checklistLibrary: checklistLibraries,
@@ -145,42 +197,55 @@ export default function MaintenanceExport({
     });
   }
 
-  function toggleChecklist(checklistId: string) {
-    setSelectedChecklists(checklists =>
-      checklists?.map(checklist =>
-        checklist.id === checklistId
-          ? {
-              ...checklist,
-              isSelected: !checklist.isSelected,
-            }
-          : checklist,
-      ),
-    );
+  function handleClose() {
+    onClose();
   }
 
   return (
     maintenance && (
-      <Modal hideCloseButton backdrop="blur" isOpen={open}>
-        <ModalContent>
-          <ModalHeader>Export Maintenance</ModalHeader>
-          <ModalBody>
-            <Input
-              isRequired
-              size="sm"
-              variant="faded"
-              label="Title"
-              isDisabled={transitioning}
-              value={title}
-              onValueChange={setTitle}
-            />
-            <Input
-              size="sm"
-              variant="faded"
-              label="Description"
-              isDisabled={transitioning}
-              value={description}
-              onValueChange={setDescription}
-            />
+      <Drawer open={open} onClose={handleClose}>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>Export Maintenance</DrawerTitle>
+          </DrawerHeader>
+          <div className="space-y-4 p-4">
+            <Form {...form}>
+              <form
+                id="create-maintenance-lib"
+                onSubmit={form.handleSubmit(onSubmit)}
+              >
+                <div className="flex flex-col space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Title <sup className="text-red-500">*</sup>
+                        </FormLabel>
+                        <FormControl>
+                          <Input type="text" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <Input type="text" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </form>
+            </Form>
             {selectedChecklists !== undefined &&
               maintenance.checklist.map(checklist => (
                 <Checkbox
@@ -196,29 +261,18 @@ export default function MaintenanceExport({
                   {checklist.asset.name}
                 </Checkbox>
               ))}
-          </ModalBody>
-          <ModalFooter>
+          </div>
+          <DrawerFooter>
             <Button
-              variant="faded"
-              size="sm"
-              color="danger"
-              isDisabled={transitioning}
-              onClick={onClose}
+              type="submit"
+              form="create-maintenance-lib"
+              disabled={transitioning}
             >
-              Close
+              Export
             </Button>
-            <Button
-              variant="faded"
-              size="sm"
-              color="primary"
-              isDisabled={transitioning || !title}
-              onClick={handleSave}
-            >
-              Save
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     )
   );
 }

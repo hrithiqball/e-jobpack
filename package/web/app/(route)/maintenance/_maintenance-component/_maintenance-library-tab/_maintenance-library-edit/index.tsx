@@ -97,7 +97,7 @@ export default function MaintenanceLibraryEdit({
 
   return (
     <motion.div className="flex flex-1 space-x-4">
-      <Card shadow="none" className="space-y-4 p-4 lg:w-3/4">
+      <Card shadow="none" className="space-y-4 p-4 dark:bg-card lg:w-3/4">
         <div className="flex items-center justify-between ">
           <span className="text-lg font-bold">Checklist</span>
           <Button
@@ -151,7 +151,7 @@ export default function MaintenanceLibraryEdit({
           ))}
         </div>
       </Card>
-      <Card shadow="none" className="p-4 lg:w-1/4">
+      <Card shadow="none" className="p-4 dark:bg-card lg:w-1/4">
         <div className="flex flex-col space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-medium font-bold">Task Library</span>
