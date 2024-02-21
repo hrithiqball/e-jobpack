@@ -25,7 +25,7 @@ import { toast } from 'sonner';
 import { TaskItem } from '@/types/task';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { useMediaQuery } from '@/hooks/use-media-query';
-import { UpdateTaskForm, UpdateTaskFormSchema } from '@/lib/schemas/task';
+import { UpdateTask, UpdateTaskSchema } from '@/lib/schemas/task';
 import {
   Select,
   SelectContent,
@@ -37,6 +37,8 @@ import { selectionChoices } from '@/public/utils/task-type-options';
 import { Trash } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { TaskType } from '@prisma/client';
+import { updateTask } from '@/lib/actions/task';
+import { useRouter } from 'next/navigation';
 
 type TaskValueEditProps = {
   task: TaskItem;
@@ -51,6 +53,7 @@ export default function TaskValueEdit({
 }: TaskValueEditProps) {
   const [transitioning, startTransition] = useTransition();
   const isDesktop = useMediaQuery('(min-width: 768px');
+  const router = useRouter();
   const user = useCurrentUser();
 
   const [taskType, setTaskType] = useState(task.taskType);
@@ -68,19 +71,20 @@ export default function TaskValueEdit({
         })),
   );
 
-  const form = useForm<UpdateTaskForm>({
-    resolver: zodResolver(UpdateTaskFormSchema),
+  const form = useForm<UpdateTask>({
+    resolver: zodResolver(UpdateTaskSchema),
     defaultValues: {
-      taskActivity: task.taskActivity,
-      description: task.description ?? '',
+      taskActivity: task.taskActivity + ' ',
+      description: task.description || '  ',
       taskType: task.taskType,
     },
   });
 
-  function onSubmit(data: UpdateTaskForm) {
+  function onSubmit(data: UpdateTask) {
     startTransition(() => {
       if (!user || !user.id) {
         toast.error('Session expired');
+        return;
       }
 
       const dataListChoice =
@@ -98,7 +102,7 @@ export default function TaskValueEdit({
         return;
       }
 
-      const updatedTask = {
+      const updatedTask: UpdateTask = {
         ...data,
         listChoice:
           data.taskType === 'MULTIPLE_SELECT' ||
@@ -107,8 +111,22 @@ export default function TaskValueEdit({
             : [],
       };
 
-      console.log(updatedTask);
-      toast.success('Task updated');
+      const validatedFields = UpdateTaskSchema.safeParse(updatedTask);
+
+      if (!validatedFields.success) {
+        toast.error(validatedFields.error?.issues[0]?.message);
+        return;
+      }
+
+      toast.promise(updateTask(task.id, user.id, validatedFields.data), {
+        loading: 'Updating task...',
+        success: () => {
+          router.refresh();
+          onClose();
+          return 'Task updated';
+        },
+        error: 'Failed to update task',
+      });
     });
   }
 

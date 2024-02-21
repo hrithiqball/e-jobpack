@@ -84,13 +84,13 @@ export async function fetchTaskList(checklistId?: string) {
 export async function updateTask(
   id: string,
   updatedBy: string,
-  values: z.infer<typeof UpdateTask>,
+  updateTask: UpdateTask,
 ) {
   try {
     return await db.task.update({
       where: { id },
       data: {
-        ...values,
+        ...updateTask,
       },
     });
   } catch (error) {

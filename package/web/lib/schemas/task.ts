@@ -32,8 +32,10 @@ export const CreateTask = z.object({
   }),
 });
 
-export const UpdateTask = z.object({
-  taskActivity: z.string().optional(),
+export const UpdateTaskSchema = z.object({
+  taskActivity: z
+    .string({ required_error: 'Task activity is required' })
+    .optional(),
   description: z.string().optional(),
   remarks: z.string().optional(),
   issue: z.string().optional(),
@@ -45,6 +47,13 @@ export const UpdateTask = z.object({
   taskSelected: z.array(z.string()).optional(),
   taskBool: z.boolean().optional(),
   taskNumberVal: z.number().optional(),
+  taskType: z.nativeEnum(TaskType).optional(),
+});
+
+export const UpdateTaskFormSchema = z.object({
+  taskActivity: z.string({ required_error: 'Task name is required' }),
+  description: z.string().optional(),
+  taskType: z.nativeEnum(TaskType),
 });
 
 export const CreateTaskLibrarySchema = z.object({
@@ -65,12 +74,7 @@ export const UpdateTaskLibrarySchema = z.object({
   taskOrder: z.number().optional(),
 });
 
-export const UpdateTaskFormSchema = z.object({
-  taskActivity: z.string({ required_error: 'Task name is required' }),
-  description: z.string().optional(),
-  taskType: z.nativeEnum(TaskType),
-});
-
+export type UpdateTask = z.infer<typeof UpdateTaskSchema>;
 export type UpdateTaskForm = z.infer<typeof UpdateTaskFormSchema>;
 export type TaskSchemaType = z.infer<typeof TaskSchema>;
 export type CreateTaskLibrary = z.infer<typeof CreateTaskLibrarySchema>;

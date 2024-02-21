@@ -1,15 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useTransition } from 'react';
 
-import { z } from 'zod';
-
 import { Checkbox, Input, Select, SelectItem, Switch } from '@nextui-org/react';
 import { toast } from 'sonner';
 
 import { TaskItem } from '@/types/task';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { updateTask } from '@/lib/actions/task';
-import { UpdateTask } from '@/lib/schemas/task';
+import { UpdateTask, UpdateTaskSchema } from '@/lib/schemas/task';
 
 type TaskValueProps = {
   task: TaskItem;
@@ -26,7 +24,7 @@ export default function TaskValue({ task }: TaskValueProps) {
     task.taskNumberVal?.toString() ?? '',
   );
 
-  function handleUpdateTask(updatedTask: z.infer<typeof UpdateTask>) {
+  function handleUpdateTask(updatedTask: UpdateTask) {
     startTransition(() => {
       if (user === undefined || user.id === undefined) {
         toast.error('Session expired');
@@ -49,7 +47,7 @@ export default function TaskValue({ task }: TaskValueProps) {
       changedValue.every((value, index) => value === taskSelected[index])
     ) {
       setTaskSelected(changedValue);
-      const validatedFields = UpdateTask.safeParse({
+      const validatedFields = UpdateTaskSchema.safeParse({
         taskSelected: changedValue,
       });
 
@@ -85,7 +83,7 @@ export default function TaskValue({ task }: TaskValueProps) {
           isSelected={taskIsComplete}
           onValueChange={() => {
             setTaskIsComplete(!taskIsComplete);
-            const updatedTask: z.infer<typeof UpdateTask> = {
+            const updatedTask: UpdateTask = {
               isComplete: !taskIsComplete,
             };
             handleUpdateTask(updatedTask);
@@ -102,7 +100,7 @@ export default function TaskValue({ task }: TaskValueProps) {
           isSelected={taskBool}
           onValueChange={() => {
             setTaskBool(!taskBool);
-            const taskUpdate: z.infer<typeof UpdateTask> = {
+            const taskUpdate: UpdateTask = {
               taskBool: !taskBool,
             };
             handleUpdateTask(taskUpdate);
