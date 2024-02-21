@@ -9,23 +9,26 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
+import {
+  ChecklistStore,
+  useMaintenanceStore,
+} from '@/hooks/use-maintenance.store';
 import { useGetChecklistLibraryList } from '@/data/checklist-library';
 
 type ChecklistChoiceCellProps = {
-  assetId: string;
+  checklist: ChecklistStore;
 };
 
 export default function ChecklistChoiceCell({
-  assetId,
+  checklist,
 }: ChecklistChoiceCellProps) {
-  const { updateChecklistId } = useMaintenanceStore();
+  const { updateChecklist } = useMaintenanceStore();
 
   const [checklistValue, setChecklistValue] = useState('default');
   const [open, setOpen] = useState(false);
 
   function handleSelectedLibraryChange(libraryId: string) {
-    updateChecklistId(assetId, libraryId);
+    updateChecklist(checklist.id, libraryId, selectedChecklist?.title);
   }
 
   function handleCloseMenu() {
@@ -40,7 +43,7 @@ export default function ChecklistChoiceCell({
     data: checklistList,
     error: fetchError,
     isLoading,
-  } = useGetChecklistLibraryList(assetId);
+  } = useGetChecklistLibraryList(checklist.assetId!);
 
   const selectedChecklist = checklistList?.find(
     checklist => checklist.id === checklistValue,

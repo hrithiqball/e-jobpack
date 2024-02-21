@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { ChecklistSchema } from '@/lib/schemas/checklist';
 
-export const CreateMaintenanceSchema = z.object({
+export const CreateMaintenanceSchema2 = z.object({
   id: z.string().min(1, {
     message: 'Maintenance ID is required',
   }),
@@ -17,13 +17,28 @@ export const CreateMaintenanceSchema = z.object({
   isRequested: z.boolean().default(false),
 });
 
+export const CreateMaintenanceSchema = z.object({
+  id: z.string({ required_error: 'Maintenance ID is required' }),
+  approvedById: z.string({
+    required_error: 'Person in charge is required for approval',
+  }),
+  checklist: z.array(
+    z.object({
+      assetId: z.string(),
+      checklistId: z.string().nullable(),
+    }),
+  ),
+  startDate: z.date({ required_error: 'Start date is required' }),
+  deadline: z.date().optional().nullable(),
+});
+
+export type CreateMaintenanceType = z.infer<typeof CreateMaintenanceSchema>;
+
 export const CreateMaintenanceFormSchema = z.object({
   id: z.string({ required_error: 'Maintenance ID is required' }),
   approvedById: z.string({
     required_error: 'Person in charge is required for approval',
   }),
-  // startDate: z.date({ required_error: 'Start date is required' }),
-  // deadline: z.date().optional().nullable(),
 });
 
 export const UpdateMaintenance = z.object({
@@ -58,7 +73,7 @@ export const CreateMaintenanceLibraryFormSchema = z.object({
   description: z.string().optional(),
 });
 
-export type CreateMaintenance = z.infer<typeof CreateMaintenanceSchema>;
+export type CreateMaintenance = z.infer<typeof CreateMaintenanceSchema2>;
 export type CreateMaintenanceForm = z.infer<typeof CreateMaintenanceFormSchema>;
 export type CreateMaintenanceLibrary = z.infer<
   typeof CreateMaintenanceLibrarySchema

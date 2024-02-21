@@ -10,15 +10,18 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 import { useAssetStore } from '@/hooks/use-asset.store';
+import {
+  ChecklistStore,
+  useMaintenanceStore,
+} from '@/hooks/use-maintenance.store';
 
 type AssetChoiceCellProps = {
-  onAssetChange: (asset: { assetId: string | null; title: string }) => void;
+  checklist: ChecklistStore;
 };
 
-export default function AssetChoiceCell({
-  onAssetChange,
-}: AssetChoiceCellProps) {
-  const assetList = useAssetStore.getState().assetList;
+export default function AssetChoiceCell({ checklist }: AssetChoiceCellProps) {
+  const { assetList } = useAssetStore();
+  const { updateAsset } = useMaintenanceStore();
 
   const [open, setOpen] = useState(false);
   const [assetValue, setAssetValue] = useState('default');
@@ -34,17 +37,7 @@ export default function AssetChoiceCell({
 
   function handleValueChange(value: string) {
     setAssetValue(value);
-    if (value === 'default') {
-      onAssetChange({ assetId: null, title: '' });
-      return;
-    }
-    const selectedAsset = assetList.find(asset => asset.id === value)!;
-    const inferredAsset = {
-      assetId: selectedAsset.id,
-      title: selectedAsset.name,
-    };
-
-    onAssetChange(inferredAsset);
+    updateAsset(checklist.id, value, selectedAsset?.name);
   }
 
   return (

@@ -24,7 +24,7 @@ import { CalendarIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { createMaintenance } from '@/lib/actions/maintenance';
+import { createMaintenance2 } from '@/lib/actions/maintenance';
 import { CreateMaintenance } from '@/lib/schemas/maintenance';
 
 type AddMaintenanceModalProps = {
@@ -71,7 +71,7 @@ export default function AddMaintenanceModal({
       };
 
       toast.promise(
-        createMaintenance(user, { ...newMaintenance }).then(() => {
+        createMaintenance2(user, { ...newMaintenance }).then(() => {
           setMaintenanceId('');
           setMaintainee(new Set([]));
           setDeadline(undefined);

@@ -2,12 +2,12 @@ import { Maintenance } from '@/types/maintenance';
 import { create } from 'zustand';
 import { v4 as uuidv4 } from 'uuid';
 
-type ChecklistStore = {
+export type ChecklistStore = {
   id: string;
   assetId: string | null;
-  assetTitle: string;
+  assetTitle: string | undefined;
   checklistId: string | null;
-  checklistTitle: string;
+  checklistTitle: string | undefined;
 };
 
 type MaintenanceStore = {
@@ -17,7 +17,16 @@ type MaintenanceStore = {
   clearChecklistSelected: () => void;
   addChecklistSelected: () => void;
   removeChecklistSelected: (id: string) => void;
-  updateChecklistId: (assetId: string, checklistId: string) => void;
+  updateChecklist: (
+    id: string,
+    checklistId: string,
+    checklistTitle: string | undefined,
+  ) => void;
+  updateAsset: (
+    id: string,
+    assetId: string,
+    assetTitle: string | undefined,
+  ) => void;
 };
 
 export const useMaintenanceStore = create<MaintenanceStore>(set => ({
@@ -52,11 +61,22 @@ export const useMaintenanceStore = create<MaintenanceStore>(set => ({
       return { checklistSelected: newChecklistSelected };
     });
   },
-  updateChecklistId: (assetId, checklistId) => {
+  updateChecklist: (id, checklistId, checklistTitle) => {
     set(state => {
       const newChecklistSelected = state.checklistSelected.map(checklist => {
-        if (checklist.assetId === assetId) {
-          return { ...checklist, checklistId };
+        if (checklist.id === id) {
+          return { ...checklist, checklistId, checklistTitle };
+        }
+        return checklist;
+      });
+      return { checklistSelected: newChecklistSelected };
+    });
+  },
+  updateAsset: (id, assetId, assetTitle) => {
+    set(state => {
+      const newChecklistSelected = state.checklistSelected.map(checklist => {
+        if (checklist.id === id) {
+          return { ...checklist, assetId, assetTitle };
         }
         return checklist;
       });

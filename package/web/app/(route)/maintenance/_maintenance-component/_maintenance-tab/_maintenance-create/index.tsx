@@ -1,6 +1,9 @@
 import { useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { DateRange } from 'react-day-picker';
+import dayjs from 'dayjs';
 
 import {
   Sheet,
@@ -22,6 +25,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import {
   Form,
   FormControl,
   FormField,
@@ -37,12 +45,14 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Trash } from 'lucide-react';
+import { Calendar } from '@/components/ui/calendar';
+import { CalendarIcon, Trash } from 'lucide-react';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 
-import { MaintenanceChecklist } from '@/types/maintenance';
 import { useUserStore } from '@/hooks/use-user.store';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { useMediaQuery } from '@/hooks/use-media-query';
@@ -50,7 +60,9 @@ import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 import {
   CreateMaintenanceForm,
   CreateMaintenanceFormSchema,
+  CreateMaintenanceType,
 } from '@/lib/schemas/maintenance';
+import { createMaintenance } from '@/lib/actions/maintenance';
 
 import AssetChoiceCell from './MaintenanceCreateAssetCell';
 import ChecklistChoiceCell from './MaintenanceCreateChecklistCell';
@@ -67,6 +79,7 @@ export default function MaintenanceCreate({
   const [transitioning, startTransition] = useTransition();
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const user = useCurrentUser();
+  const router = useRouter();
 
   const { userList } = useUserStore();
   const {
@@ -75,73 +88,57 @@ export default function MaintenanceCreate({
     clearChecklistSelected,
     removeChecklistSelected,
   } = useMaintenanceStore();
-  // CHECKPOINT: do this
 
-  const [assetChecklist, setAssetChecklist] = useState<
-    { assetId: string | null; title: string }[]
-  >([]);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: new Date(),
+    to: new Date(),
+  });
 
   const form = useForm<CreateMaintenanceForm>({
     resolver: zodResolver(CreateMaintenanceFormSchema),
   });
 
-  function addAssetChecklist() {
-    setAssetChecklist(prev => [...prev, { assetId: null, title: '' }]);
-  }
-
-  function handleSelectedAssetChange(
-    updatedAsset: { assetId: string | null; title: string },
-    index: number,
-  ) {
-    setAssetChecklist(prev => {
-      const updatedAssetChecklist = [...prev];
-      updatedAssetChecklist[index] = updatedAsset;
-      return updatedAssetChecklist;
-    });
-  }
-
-  function handleDeleteAssetChecklist(index: number) {
-    setAssetChecklist(prev => {
-      const updatedAssetChecklist = [...prev];
-      updatedAssetChecklist.splice(index, 1);
-      return updatedAssetChecklist;
-    });
-  }
-
-  function handleDeleteSelectedChecklist(id: string) {
-    removeChecklistSelected(id);
-  }
-
   function onSubmit(data: CreateMaintenanceForm) {
     startTransition(() => {
-      if (!user || !user.id) {
+      if (!user) {
         toast.error('Session expired');
         return;
       }
 
-      console.log(assetChecklist);
+      if (!dateRange?.from) {
+        toast.error('Date is required');
+        return;
+      }
 
-      const checklists: MaintenanceChecklist[] = assetChecklist.map(
-        checklist => {
+      const checklist: { assetId: string; checklistId: string | null }[] =
+        checklistSelected.map(checklist => {
           return {
-            assetId: checklist.assetId,
-            taskList: [],
-            checklistLibraryId: null,
+            assetId: checklist.assetId!,
+            checklistId: checklist.checklistId,
           };
-        },
-      );
+        });
 
-      const newMaintenance = {
+      const newMaintenance: CreateMaintenanceType = {
         ...data,
-        checklists: assetChecklist,
+        checklist,
+        startDate: dateRange.from,
+        deadline: dateRange.to,
       };
 
-      console.log(newMaintenance);
+      toast.promise(createMaintenance(user, newMaintenance), {
+        loading: 'Creating maintenance...',
+        success: () => {
+          router.refresh();
+          return 'Maintenance created';
+        },
+        error: 'Failed to create maintenance',
+      });
     });
   }
 
   function handleClose() {
     form.reset();
+    clearChecklistSelected();
     onClose();
   }
 
@@ -209,6 +206,52 @@ export default function MaintenanceCreate({
                     </FormItem>
                   )}
                 />
+                <div className="space-y-2">
+                  <Label>Maintenance Date</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        id="date"
+                        variant={'outline'}
+                        className={cn(
+                          'h-10 w-full justify-start p-4 text-left font-normal dark:bg-gray-800',
+                          !dateRange && 'text-gray-400',
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {dateRange?.from ? (
+                          dateRange.to ? (
+                            <>
+                              {dayjs(dateRange.from).format('DD/MM/YYYY')} -{' '}
+                              {dayjs(dateRange.to).format('DD/MM/YYYY')}
+                            </>
+                          ) : (
+                            dayjs(dateRange.from).format('DD/MM/YYYY')
+                          )
+                        ) : (
+                          <span>
+                            Pick a date <sup className="text-red-500">*</sup>{' '}
+                          </span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        initialFocus
+                        mode="range"
+                        defaultMonth={dateRange?.from}
+                        selected={dateRange}
+                        onSelect={setDateRange}
+                        numberOfMonths={2}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  {!dateRange?.from && (
+                    <span className="text-sm font-medium text-red-500">
+                      Date is required
+                    </span>
+                  )}
+                </div>
               </div>
             </form>
           </Form>
@@ -218,52 +261,21 @@ export default function MaintenanceCreate({
               <TableHead> Checklist </TableHead>
             </TableHeader>
             <TableBody>
-              {assetChecklist.map((asset, index) => (
-                <TableRow key={index}>
-                  <TableCell>
-                    <AssetChoiceCell
-                      onAssetChange={updatedAsset =>
-                        handleSelectedAssetChange(updatedAsset, index)
-                      }
-                    />
-                  </TableCell>
-                  <TableCell>
-                    {asset.assetId && (
-                      <ChecklistChoiceCell assetId={asset.assetId} />
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      size="icon"
-                      variant="destructive"
-                      onClick={() => handleDeleteAssetChecklist(index)}
-                    >
-                      <Trash size={18} />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
               {checklistSelected.map(checklist => (
                 <TableRow key={checklist.id}>
                   <TableCell>
-                    <AssetChoiceCell
-                      onAssetChange={updatedAsset =>
-                        handleSelectedAssetChange(updatedAsset, 1)
-                      }
-                    />
+                    <AssetChoiceCell checklist={checklist} />
                   </TableCell>
                   <TableCell>
                     {checklist.assetId && (
-                      <ChecklistChoiceCell assetId={checklist.assetId} />
+                      <ChecklistChoiceCell checklist={checklist} />
                     )}
                   </TableCell>
                   <TableCell>
                     <Button
                       size="icon"
                       variant="destructive"
-                      onClick={() =>
-                        handleDeleteSelectedChecklist(checklist.id)
-                      }
+                      onClick={() => removeChecklistSelected(checklist.id)}
                     >
                       <Trash size={18} />
                     </Button>
@@ -274,7 +286,7 @@ export default function MaintenanceCreate({
                 <TableCell colSpan={3}>
                   <Button
                     size="sm"
-                    onClick={addAssetChecklist}
+                    onClick={addChecklistSelected}
                     className="w-full"
                   >
                     Add

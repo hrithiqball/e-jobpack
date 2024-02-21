@@ -65,6 +65,8 @@ import DeleteAssetModal from './DeleteAssetModal';
 import AddAssetModal from './AddAssetModal';
 import AddMaintenanceModal from '@/components/asset/AddMaintenance';
 
+const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
+
 type AssetTableProps = {
   assetList: AssetList;
   assetStatusList: AssetStatus[];
@@ -468,7 +470,7 @@ export default function AssetTable({
           <div className="flex items-center space-x-2">
             {pic.image !== null && pic.image !== '' ? (
               <Image
-                src={pic.image}
+                src={`${baseServerUrl}/user/${pic.image}`}
                 alt={pic.name}
                 width={28}
                 height={28}
