@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
+import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 import { useGetChecklistLibraryList } from '@/data/checklist-library';
 
 type ChecklistChoiceCellProps = {
@@ -18,8 +19,14 @@ type ChecklistChoiceCellProps = {
 export default function ChecklistChoiceCell({
   assetId,
 }: ChecklistChoiceCellProps) {
+  const { updateChecklistId } = useMaintenanceStore();
+
   const [checklistValue, setChecklistValue] = useState('default');
   const [open, setOpen] = useState(false);
+
+  function handleSelectedLibraryChange(libraryId: string) {
+    updateChecklistId(assetId, libraryId);
+  }
 
   function handleCloseMenu() {
     setOpen(false);
@@ -50,7 +57,10 @@ export default function ChecklistChoiceCell({
       <DropdownMenuContent>
         <DropdownMenuRadioGroup
           value={checklistValue}
-          onValueChange={setChecklistValue}
+          onValueChange={val => {
+            setChecklistValue(val);
+            handleSelectedLibraryChange(val);
+          }}
         >
           <DropdownMenuRadioItem value="default">Default</DropdownMenuRadioItem>
           {isLoading ? (

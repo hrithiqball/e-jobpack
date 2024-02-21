@@ -17,6 +17,15 @@ export const CreateMaintenanceSchema = z.object({
   isRequested: z.boolean().default(false),
 });
 
+export const CreateMaintenanceFormSchema = z.object({
+  id: z.string({ required_error: 'Maintenance ID is required' }),
+  approvedById: z.string({
+    required_error: 'Person in charge is required for approval',
+  }),
+  // startDate: z.date({ required_error: 'Start date is required' }),
+  // deadline: z.date().optional().nullable(),
+});
+
 export const UpdateMaintenance = z.object({
   assetIds: z.array(z.string()).optional(),
   isClose: z.boolean().optional(),
@@ -50,6 +59,7 @@ export const CreateMaintenanceLibraryFormSchema = z.object({
 });
 
 export type CreateMaintenance = z.infer<typeof CreateMaintenanceSchema>;
+export type CreateMaintenanceForm = z.infer<typeof CreateMaintenanceFormSchema>;
 export type CreateMaintenanceLibrary = z.infer<
   typeof CreateMaintenanceLibrarySchema
 >;

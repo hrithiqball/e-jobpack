@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
+import dayjs from 'dayjs';
 
 import {
   Drawer,
@@ -39,24 +40,23 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Input } from '@/components/ui/input';
-import { CalendarIcon } from 'lucide-react';
-import { toast } from 'sonner';
-
-import { useMediaQuery } from '@/hooks/use-media-query';
-import { useCurrentUser } from '@/hooks/use-current-user';
-import { useUserStore } from '@/hooks/use-user.store';
-import { MaintenanceItem } from '@/types/maintenance';
-import { recreateMaintenance } from '@/lib/actions/maintenance';
-import { TaskType } from '@prisma/client';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import dayjs from 'dayjs';
+import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { CalendarIcon } from 'lucide-react';
+import { toast } from 'sonner';
+
+import { MaintenanceChecklist, MaintenanceItem } from '@/types/maintenance';
+import { useMediaQuery } from '@/hooks/use-media-query';
+import { useCurrentUser } from '@/hooks/use-current-user';
+import { useUserStore } from '@/hooks/use-user.store';
+import { recreateMaintenance } from '@/lib/actions/maintenance';
+
 import MaintenanceRecreateAssetCell from './MaintenanceRecreateAssetCell';
 import MaintenanceRecreateChecklistCell from './MaintenanceRecreateChecklistCell';
 
@@ -140,44 +140,35 @@ export default function MaintenanceRecreate({
   }
 
   function onSubmit(data: MaintenanceRecreateForm) {
-    const newMaintenanceChecklist: {
-      assetId: string;
-      taskList:
-        | null
-        | undefined
-        | {
-            id: string;
-            taskActivity: string;
-            description: string | null;
-            taskType: TaskType;
-            listChoice: string[];
-            taskOrder: number;
-          }[];
-      checklistLibraryId: string | null;
-    }[] = assetChecklist.map(asset => {
-      const target = maintenance.checklist.find(
-        m => m.assetId === asset.assetId,
-      );
+    const newMaintenanceChecklist: MaintenanceChecklist[] = assetChecklist.map(
+      asset => {
+        const target = maintenance.checklist.find(
+          m => m.assetId === asset.assetId,
+        );
 
-      const taskList = target?.task.map(t => ({
-        id: uuidv4(),
-        taskActivity: t.taskActivity,
-        description: t.description,
-        taskType: t.taskType,
-        listChoice:
-          t.taskType === 'MULTIPLE_SELECT' || t.taskType === 'SINGLE_SELECT'
-            ? t.listChoice
-            : [],
-        taskOrder: t.taskOrder,
-      }));
+        const taskList = target?.task.map(t => ({
+          id: uuidv4(),
+          taskActivity: t.taskActivity,
+          description: t.description,
+          taskType: t.taskType,
+          listChoice:
+            t.taskType === 'MULTIPLE_SELECT' || t.taskType === 'SINGLE_SELECT'
+              ? t.listChoice
+              : [],
+          taskOrder: t.taskOrder,
+        }));
 
-      return {
-        assetId: asset.assetId!,
-        taskList:
-          asset.library === 'prev' || asset.library === null ? taskList : null,
-        checklistLibraryId: asset.library === 'default' ? null : asset.library,
-      };
-    });
+        return {
+          assetId: asset.assetId!,
+          taskList:
+            asset.library === 'prev' || asset.library === null
+              ? taskList
+              : null,
+          checklistLibraryId:
+            asset.library === 'default' ? null : asset.library,
+        };
+      },
+    );
 
     startTransition(() => {
       if (user === undefined || user.id === undefined) {

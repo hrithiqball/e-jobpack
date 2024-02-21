@@ -1,3 +1,5 @@
+import { TaskType } from '@prisma/client';
+
 import {
   fetchMaintenanceItem,
   fetchMaintenanceList,
@@ -6,7 +8,21 @@ import { fetchMaintenanceLibraryList } from '@/lib/actions/maintenance-library';
 
 export type Maintenance = Awaited<ReturnType<typeof fetchMaintenanceItem>>;
 export type MaintenanceList = Awaited<ReturnType<typeof fetchMaintenanceList>>;
-
+export type MaintenanceChecklist = {
+  assetId: string;
+  taskList:
+    | null
+    | undefined
+    | {
+        id: string;
+        taskActivity: string;
+        description: string | null;
+        taskType: TaskType;
+        listChoice: string[];
+        taskOrder: number;
+      }[];
+  checklistLibraryId: string | null;
+};
 export type MaintenanceLibraryList = Awaited<
   ReturnType<typeof fetchMaintenanceLibraryList>
 >;
