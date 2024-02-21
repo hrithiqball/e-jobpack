@@ -65,6 +65,13 @@ export const UpdateTaskLibrarySchema = z.object({
   taskOrder: z.number().optional(),
 });
 
+export const UpdateTaskFormSchema = z.object({
+  taskActivity: z.string({ required_error: 'Task name is required' }),
+  description: z.string().optional(),
+  taskType: z.nativeEnum(TaskType),
+});
+
+export type UpdateTaskForm = z.infer<typeof UpdateTaskFormSchema>;
 export type TaskSchemaType = z.infer<typeof TaskSchema>;
 export type CreateTaskLibrary = z.infer<typeof CreateTaskLibrarySchema>;
 export type UpdateTaskLibrary = z.infer<typeof UpdateTaskLibrarySchema>;

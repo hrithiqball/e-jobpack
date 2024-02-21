@@ -1,6 +1,7 @@
-import { useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { v4 as uuidv4 } from 'uuid';
 
 import {
   Drawer,
@@ -9,13 +10,6 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer';
-import {
-  Sheet,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet';
 import {
   Form,
   FormControl,
@@ -31,13 +25,18 @@ import { toast } from 'sonner';
 import { TaskItem } from '@/types/task';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { useMediaQuery } from '@/hooks/use-media-query';
-
-import { z } from 'zod';
-const UpdateTaskFormSchema = z.object({
-  taskActivity: z.string({ required_error: 'Task name is required' }),
-  description: z.string().optional(),
-});
-type UpdateTaskForm = z.infer<typeof UpdateTaskFormSchema>;
+import { UpdateTaskForm, UpdateTaskFormSchema } from '@/lib/schemas/task';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { selectionChoices } from '@/public/utils/task-type-options';
+import { Trash } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { TaskType } from '@prisma/client';
 
 type TaskValueEditProps = {
   task: TaskItem;
@@ -54,11 +53,27 @@ export default function TaskValueEdit({
   const isDesktop = useMediaQuery('(min-width: 768px');
   const user = useCurrentUser();
 
+  const [taskType, setTaskType] = useState(task.taskType);
+  const [listChoice, setListChoice] = useState<
+    { key: string; value: string }[]
+  >(
+    task.listChoice.length < 2
+      ? [
+          { key: uuidv4(), value: 'Choice 1' },
+          { key: uuidv4(), value: 'Choice 2' },
+        ]
+      : task.listChoice.map(choice => ({
+          key: uuidv4(),
+          value: choice,
+        })),
+  );
+
   const form = useForm<UpdateTaskForm>({
     resolver: zodResolver(UpdateTaskFormSchema),
     defaultValues: {
       taskActivity: task.taskActivity,
       description: task.description ?? '',
+      taskType: task.taskType,
     },
   });
 
@@ -68,12 +83,63 @@ export default function TaskValueEdit({
         toast.error('Session expired');
       }
 
-      console.log(data);
+      const dataListChoice =
+        taskType === 'MULTIPLE_SELECT' || taskType === 'SINGLE_SELECT'
+          ? listChoice.map(choice => choice.value)
+          : [];
+
+      if (
+        data.taskActivity === task.taskActivity &&
+        data.description === task.description &&
+        data.taskType === task.taskType &&
+        JSON.stringify(dataListChoice) === JSON.stringify(task.listChoice)
+      ) {
+        handleClose();
+        return;
+      }
+
+      const updatedTask = {
+        ...data,
+        listChoice:
+          data.taskType === 'MULTIPLE_SELECT' ||
+          data.taskType === 'SINGLE_SELECT'
+            ? listChoice.map(choice => choice.value)
+            : [],
+      };
+
+      console.log(updatedTask);
       toast.success('Task updated');
     });
   }
 
+  function handleAddChoice() {
+    const prevLength = listChoice.length + 1;
+
+    setListChoice(prevChoices => [
+      ...prevChoices,
+      { key: uuidv4(), value: `Choice ${prevLength}` },
+    ]);
+  }
+
+  function handleDeleteChoice(id: string) {
+    setListChoice(prevChoices =>
+      prevChoices.filter(choice => choice.key !== id),
+    );
+  }
+
+  function handleChoiceChange(id: string, value: string) {
+    setListChoice(prevChoices =>
+      prevChoices.map(choice => {
+        if (choice.key === id) {
+          return { ...choice, value };
+        }
+        return choice;
+      }),
+    );
+  }
+
   function handleClose() {
+    form.reset();
     onClose();
   }
 
@@ -83,42 +149,107 @@ export default function TaskValueEdit({
         <DrawerHeader>
           <DrawerTitle>Edit Task</DrawerTitle>
         </DrawerHeader>
-        <Form {...form}>
-          <form id="update-task-form" onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="flex flex-col space-y-4">
-              {task.taskActivity}
-              {task.taskType}
-              <FormField
-                control={form.control}
-                name="taskActivity"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Name <sup className="text-red-500">*</sup>
-                    </FormLabel>
-                    <FormControl>
-                      <Input type="text" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+        <div className="p-4">
+          <Form {...form}>
+            <form id="update-task-form" onSubmit={form.handleSubmit(onSubmit)}>
+              <div className="flex flex-col space-y-4">
+                <FormField
+                  control={form.control}
+                  name="taskActivity"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Name <sup className="text-red-500">*</sup>
+                      </FormLabel>
+                      <FormControl>
+                        <Input type="text" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          placeholder="Enter details of task here"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="taskType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Type <sup className="text-red-500">*</sup>
+                      </FormLabel>
+                      <Select
+                        onValueChange={value => {
+                          field.onChange(value);
+                          setTaskType(value as TaskType);
+                        }}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Task Type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {selectionChoices.map(choice => (
+                            <SelectItem key={choice.key} value={choice.key}>
+                              {choice.value}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
+                {(taskType === 'MULTIPLE_SELECT' ||
+                  taskType === 'SINGLE_SELECT') && (
+                  <div className="space-y-2">
+                    <Label>List Choice</Label>
+                    {listChoice.map(choice => (
+                      <div
+                        key={choice.key}
+                        className="flex items-center space-x-4"
+                      >
+                        <Input
+                          value={choice.value}
+                          onChange={e =>
+                            handleChoiceChange(choice.key, e.target.value)
+                          }
+                        />
+                        <Button
+                          type="button"
+                          size="icon"
+                          variant="destructive"
+                          onClick={() => handleDeleteChoice(choice.key)}
+                        >
+                          <Trash size={18} />
+                        </Button>
+                      </div>
+                    ))}
+                    <Button type="button" onClick={handleAddChoice}>
+                      Add Choice
+                    </Button>
+                  </div>
                 )}
-              />
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Input type="text" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </form>
-        </Form>
+              </div>
+            </form>
+          </Form>
+        </div>
         <DrawerFooter>
           <Button
             type="submit"
