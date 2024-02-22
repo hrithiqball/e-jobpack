@@ -12,7 +12,7 @@ const buttonVariants = cva(
         default:
           'bg-gray-900 text-gray-50 hover:bg-gray-900/90 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-50/90',
         destructive:
-          'bg-rose-500 text-gray-50 hover:bg-red-500/90 dark:bg-red-900 dark:text-gray-50 dark:hover:bg-red-900/90',
+          'bg-rose-500 text-gray-50 hover:bg-red-500/90 dark:bg-red-600 dark:text-gray-50 dark:hover:bg-red-900/90',
         outline:
           'border border-gray-200 bg-white hover:bg-gray-100 hover:text-gray-900 dark:border-gray-800 dark:bg-gray-950 dark:hover:bg-gray-800 dark:hover:text-gray-50',
         secondary:
@@ -25,7 +25,7 @@ const buttonVariants = cva(
         default: 'h-8 px-8',
         sm: 'h-10 rounded-md px-6',
         lg: 'h-12 rounded-md px-8',
-        icon: 'h-8 w-8',
+        icon: 'h-8 w-8 p-2',
       },
     },
     defaultVariants: {

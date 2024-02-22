@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, Key, useState, useTransition } from 'react';
+import { Fragment, Key, useState, useTransition, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Asset, AssetStatus, AssetType, User } from '@prisma/client';
@@ -27,16 +27,16 @@ import {
 } from '@/components/ui/table';
 import {
   Avatar,
-  Button,
   Checkbox,
   Chip,
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-  Input,
   Pagination,
 } from '@nextui-org/react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Archive,
   ArrowDown,
@@ -44,18 +44,19 @@ import {
   ChevronLeft,
   ChevronRight,
   Columns2,
-  FileBox,
+  FilePlus2,
   Filter,
   MoreHorizontal,
   PackageMinus,
   PackagePlus,
   Search,
-  Trash,
+  Trash2,
   UserIcon,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useCurrentUser } from '@/hooks/use-current-user';
+import { useMediaQuery } from '@/hooks/use-media-query';
 import { useCurrentRole } from '@/hooks/use-current-role';
 import { AssetList, AssetItem } from '@/types/asset';
 import { updateAsset } from '@/lib/actions/asset';
@@ -81,6 +82,7 @@ export default function AssetTable({
   assetTypeList,
 }: AssetTableProps) {
   const [transitioning, startTransition] = useTransition();
+  const isDesktop = useMediaQuery('(min-width: 768px');
   const user = useCurrentUser();
   const role = useCurrentRole();
 
@@ -101,6 +103,21 @@ export default function AssetTable({
     createdBy: false,
     updatedBy: false,
   });
+
+  useEffect(() => {
+    setColumnVisibility({
+      lastMaintenance: false,
+      nextMaintenance: false,
+      description: false,
+      location: false,
+      createdBy: false,
+      updatedBy: false,
+      personInCharge: isDesktop,
+      assetType: isDesktop,
+      actions: isDesktop,
+      assetStatus: isDesktop,
+    });
+  }, [isDesktop]);
 
   const columns: ColumnDef<AssetItem>[] = [
     {
@@ -141,20 +158,16 @@ export default function AssetTable({
         return (
           <Button
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            variant="faded"
-            size="sm"
-            color="primary"
-            endContent={
-              column.getIsSorted() === 'desc' ? (
-                <ArrowDown size={15} />
-              ) : (
-                <ArrowUp size={15} />
-              )
-            }
+            variant="ghost"
           >
             {column.id
               .replace(/([a-z])([A-Z])/g, '$1 $2')
               .replace(/\b\w/g, c => c.toUpperCase())}
+            {column.getIsSorted() === 'desc' ? (
+              <ArrowDown size={15} />
+            ) : (
+              <ArrowUp size={15} />
+            )}
           </Button>
         );
       },
@@ -175,20 +188,16 @@ export default function AssetTable({
         return (
           <Button
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            variant="faded"
-            size="sm"
-            color="primary"
-            endContent={
-              column.getIsSorted() === 'desc' ? (
-                <ArrowDown size={15} />
-              ) : (
-                <ArrowUp size={15} />
-              )
-            }
+            variant="ghost"
           >
             {column.id
               .replace(/([a-z])([A-Z])/g, '$1 $2')
               .replace(/\b\w/g, c => c.toUpperCase())}
+            {column.getIsSorted() === 'desc' ? (
+              <ArrowDown size={15} />
+            ) : (
+              <ArrowUp size={15} />
+            )}
           </Button>
         );
       },
@@ -199,18 +208,14 @@ export default function AssetTable({
         return (
           <Button
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            variant="faded"
-            size="sm"
-            color="primary"
-            endContent={
-              column.getIsSorted() === 'desc' ? (
-                <ArrowDown size={15} />
-              ) : (
-                <ArrowUp size={15} />
-              )
-            }
+            variant="ghost"
           >
             Tag
+            {column.getIsSorted() === 'desc' ? (
+              <ArrowDown size={15} />
+            ) : (
+              <ArrowUp size={15} />
+            )}
           </Button>
         );
       },
@@ -221,20 +226,16 @@ export default function AssetTable({
         return (
           <Button
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            variant="faded"
-            size="sm"
-            color="primary"
-            endContent={
-              column.getIsSorted() === 'desc' ? (
-                <ArrowDown size={15} />
-              ) : (
-                <ArrowUp size={15} />
-              )
-            }
+            variant="ghost"
           >
             {column.id
               .replace(/([a-z])([A-Z])/g, '$1 $2')
               .replace(/\b\w/g, c => c.toUpperCase())}
+            {column.getIsSorted() === 'desc' ? (
+              <ArrowDown size={15} />
+            ) : (
+              <ArrowUp size={15} />
+            )}
           </Button>
         );
       },
@@ -256,16 +257,7 @@ export default function AssetTable({
         return (
           <Button
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            variant="faded"
-            size="sm"
-            color="primary"
-            endContent={
-              column.getIsSorted() === 'desc' ? (
-                <ArrowDown size={15} />
-              ) : (
-                <ArrowUp size={15} />
-              )
-            }
+            variant="ghost"
           >
             {column.id
               .replace(/([a-z])([A-Z])/g, '$1 $2')
@@ -302,7 +294,6 @@ export default function AssetTable({
               <Chip
                 size="sm"
                 variant="faded"
-                onClick={() => console.log(status)}
                 startContent={
                   <div
                     style={{ backgroundColor: status?.color ?? 'grey' }}
@@ -346,20 +337,16 @@ export default function AssetTable({
         return (
           <Button
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            variant="faded"
-            size="sm"
-            color="primary"
-            endContent={
-              column.getIsSorted() === 'desc' ? (
-                <ArrowDown size={15} />
-              ) : (
-                <ArrowUp size={15} />
-              )
-            }
+            variant="ghost"
           >
             {column.id
               .replace(/([a-z])([A-Z])/g, '$1 $2')
               .replace(/\b\w/g, c => c.toUpperCase())}
+            {column.getIsSorted() === 'desc' ? (
+              <ArrowDown size={15} />
+            ) : (
+              <ArrowUp size={15} />
+            )}
           </Button>
         );
       },
@@ -379,20 +366,16 @@ export default function AssetTable({
         return (
           <Button
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            variant="faded"
-            size="sm"
-            color="primary"
-            endContent={
-              column.getIsSorted() === 'desc' ? (
-                <ArrowDown size={15} />
-              ) : (
-                <ArrowUp size={15} />
-              )
-            }
+            variant="ghost"
           >
             {column.id
               .replace(/([a-z])([A-Z])/g, '$1 $2')
               .replace(/\b\w/g, c => c.toUpperCase())}
+            {column.getIsSorted() === 'desc' ? (
+              <ArrowDown size={15} />
+            ) : (
+              <ArrowUp size={15} />
+            )}
           </Button>
         );
       },
@@ -412,20 +395,16 @@ export default function AssetTable({
         return (
           <Button
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            variant="faded"
-            size="sm"
-            color="primary"
-            endContent={
-              column.getIsSorted() === 'desc' ? (
-                <ArrowDown size={15} />
-              ) : (
-                <ArrowUp size={15} />
-              )
-            }
+            variant="ghost"
           >
             {column.id
               .replace(/([a-z])([A-Z])/g, '$1 $2')
               .replace(/\b\w/g, c => c.toUpperCase())}
+            {column.getIsSorted() === 'desc' ? (
+              <ArrowDown size={15} />
+            ) : (
+              <ArrowUp size={15} />
+            )}
           </Button>
         );
       },
@@ -437,7 +416,6 @@ export default function AssetTable({
         ) : (
           <Link href={'/asset/location'} className="flex items-center">
             <span className="mr-2">{row.getValue('location')}</span>
-            <ChevronRight size={18} />
           </Link>
         );
       },
@@ -448,18 +426,14 @@ export default function AssetTable({
         return (
           <Button
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            variant="faded"
-            size="sm"
-            color="primary"
-            endContent={
-              column.getIsSorted() === 'desc' ? (
-                <ArrowDown size={15} />
-              ) : (
-                <ArrowUp size={15} />
-              )
-            }
+            variant="ghost"
           >
             Person In Charge
+            {column.getIsSorted() === 'desc' ? (
+              <ArrowDown size={15} />
+            ) : (
+              <ArrowUp size={15} />
+            )}
           </Button>
         );
       },
@@ -475,7 +449,7 @@ export default function AssetTable({
                 width={28}
                 height={28}
                 quality={100}
-                className="rounded-full"
+                className="size-7 rounded-full"
               />
             ) : (
               <Avatar name={pic.name} size="sm" />
@@ -501,18 +475,14 @@ export default function AssetTable({
         return (
           <Button
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            variant="faded"
-            size="sm"
-            color="primary"
-            endContent={
-              column.getIsSorted() === 'desc' ? (
-                <ArrowDown size={15} />
-              ) : (
-                <ArrowUp size={15} />
-              )
-            }
+            variant="ghost"
           >
             Created By
+            {column.getIsSorted() === 'desc' ? (
+              <ArrowDown size={15} />
+            ) : (
+              <ArrowUp size={15} />
+            )}
           </Button>
         );
       },
@@ -520,18 +490,22 @@ export default function AssetTable({
         const user: User = row.getValue('createdBy');
 
         return (
-          <div className="flex items-center">
-            {user?.image !== null ||
-              (user?.image !== undefined && (
-                <Avatar
-                  size="sm"
-                  showFallback
-                  src={user?.image ?? ''}
-                  name={user?.name}
-                  className="mr-1"
-                />
-              ))}
-            {user?.name}
+          <div className="flex items-center space-x-2">
+            {user.image ? (
+              <Image
+                src={`${baseServerUrl}/user/${user.image}`}
+                alt={user.name}
+                width={28}
+                height={28}
+                quality={100}
+                className="size-7 rounded-full"
+              />
+            ) : (
+              <div className="size-7 rounded-full bg-gray-500">
+                <UserIcon size={18} />
+              </div>
+            )}
+            <span>{user?.name}</span>
           </div>
         );
       },
@@ -542,18 +516,15 @@ export default function AssetTable({
         return (
           <Button
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            variant="faded"
+            variant="ghost"
             size="sm"
-            color="primary"
-            endContent={
-              column.getIsSorted() === 'desc' ? (
-                <ArrowDown size={15} />
-              ) : (
-                <ArrowUp size={15} />
-              )
-            }
           >
             Updated By
+            {column.getIsSorted() === 'desc' ? (
+              <ArrowDown size={15} />
+            ) : (
+              <ArrowUp size={15} />
+            )}
           </Button>
         );
       },
@@ -561,18 +532,22 @@ export default function AssetTable({
         const user: User = row.getValue('updatedBy');
 
         return (
-          <div className="flex items-center">
-            {user?.image !== null ||
-              (user?.image !== undefined && (
-                <Avatar
-                  size="sm"
-                  showFallback
-                  src={user?.image ?? ''}
-                  name={user?.name}
-                  className="mr-1"
-                />
-              ))}
-            {user?.name}
+          <div className="flex items-center space-x-2">
+            {user.image ? (
+              <Image
+                src={`${baseServerUrl}/user/${user.image}`}
+                alt={user.name}
+                width={28}
+                height={28}
+                quality={100}
+                className="size-7 rounded-full"
+              />
+            ) : (
+              <div className="size-7 rounded-full bg-gray-500">
+                <UserIcon size={18} />
+              </div>
+            )}
+            <span>{user?.name}</span>
           </div>
         );
       },
@@ -589,7 +564,7 @@ export default function AssetTable({
           <div className="text-right">
             <Dropdown>
               <DropdownTrigger>
-                <Button variant="light" size="sm" isIconOnly>
+                <Button variant="ghost" size="icon">
                   <MoreHorizontal size={18} />
                 </Button>
               </DropdownTrigger>
@@ -717,22 +692,27 @@ export default function AssetTable({
     <div className="flex flex-1 flex-col space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Input
-            placeholder="Search"
-            size="sm"
-            startContent={<Search size={18} />}
-            value={
-              (table.getColumn(filterBy)?.getFilterValue() as string) ?? ''
-            }
-            onChange={event =>
-              table.getColumn(filterBy)?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-          />
+          <div className="flex items-center">
+            <Search
+              size={18}
+              className="relative left-7 top-2 -translate-y-1/2 transform"
+            />
+            <Input
+              placeholder="Search"
+              type="search"
+              value={
+                (table.getColumn(filterBy)?.getFilterValue() as string) ?? ''
+              }
+              onChange={event =>
+                table.getColumn(filterBy)?.setFilterValue(event.target.value)
+              }
+              className="max-w-sm pl-8"
+            />
+          </div>
           <Dropdown>
             <DropdownTrigger>
-              <Button isIconOnly size="md">
-                <Filter size={18} />
+              <Button size="icon">
+                <Filter />
               </Button>
             </DropdownTrigger>
             <DropdownMenu
@@ -760,7 +740,7 @@ export default function AssetTable({
           </Dropdown>
           <Dropdown>
             <DropdownTrigger>
-              <Button isIconOnly size="md">
+              <Button size="icon">
                 <Columns2 size={18} />
               </Button>
             </DropdownTrigger>
@@ -787,45 +767,62 @@ export default function AssetTable({
           </Dropdown>
         </div>
         <div className="flex items-center space-x-2">
-          {(table.getIsSomeRowsSelected() || table.getIsAllRowsSelected()) && (
-            <Fragment>
-              <Button
-                onClick={handleOpenAddMaintenanceModal}
-                endContent={<FileBox size={18} />}
-              >
-                Create Maintenance Request
-              </Button>
-              <Button onClick={handleMe} endContent={<Archive size={18} />}>
-                Archive
-              </Button>
-              <Button
-                color="danger"
-                onClick={handleMe}
-                endContent={<Trash size={18} />}
-              >
-                Delete
-              </Button>
-            </Fragment>
-          )}
-          {role === 'ADMIN' ||
-            (role === 'SUPERVISOR' && (
+          {table.getIsSomeRowsSelected() || table.getIsAllRowsSelected() ? (
+            isDesktop ? (
               <Fragment>
                 <Button
-                  size="md"
-                  onClick={() => setOpenAddAssetModal(!openAddAssetModal)}
-                  endContent={<PackagePlus size={18} />}
+                  onClick={handleOpenAddMaintenanceModal}
+                  className="space-x-2 px-2"
                 >
-                  Add Asset
+                  <FilePlus2 size={18} />
+                  <span>Create Maintenance Request</span>
                 </Button>
-                <AddAssetModal
-                  open={openAddAssetModal}
-                  onClose={() => setOpenAddAssetModal(false)}
-                  assetStatusList={assetStatusList}
-                  assetTypeList={assetTypeList}
-                  userList={userList}
-                />
+                <Button onClick={handleMe} className="space-x-2 px-2">
+                  <Archive size={18} />
+                  <span>Archive</span>
+                </Button>
+                <Button
+                  color="danger"
+                  variant="destructive"
+                  onClick={handleMe}
+                  className="space-x-2 px-2"
+                >
+                  <Trash2 size={18} />
+                  <span>Delete</span>
+                </Button>
               </Fragment>
-            ))}
+            ) : (
+              <Fragment>
+                <Button size="icon" onClick={handleOpenAddMaintenanceModal}>
+                  <FilePlus2 />
+                </Button>
+                <Button size="icon" onClick={handleMe}>
+                  <Archive />
+                </Button>
+                <Button size="icon" variant="destructive" onClick={handleMe}>
+                  <Trash2 />
+                </Button>
+              </Fragment>
+            )
+          ) : (
+            role !== 'TECHNICIAN' &&
+            (isDesktop ? (
+              <Button
+                onClick={() => setOpenAddAssetModal(!openAddAssetModal)}
+                className="space-x-2 px-2"
+              >
+                <PackagePlus size={18} />
+                <span>Add Asset</span>
+              </Button>
+            ) : (
+              <Button
+                size="icon"
+                onClick={() => setOpenAddAssetModal(!openAddAssetModal)}
+              >
+                <PackagePlus />
+              </Button>
+            ))
+          )}
         </div>
       </div>
       <div className="flex flex-1 flex-col">
@@ -873,11 +870,9 @@ export default function AssetTable({
 
         <div className="flex justify-center space-x-2">
           <Button
-            isIconOnly
-            size="sm"
-            variant={table.getCanPreviousPage() ? 'ghost' : 'faded'}
+            size="icon"
             onClick={() => table.previousPage()}
-            isDisabled={!table.getCanPreviousPage()}
+            disabled={!table.getCanPreviousPage()}
             className={`${
               table.getCanPreviousPage()
                 ? 'hover:opacity-75'
@@ -897,11 +892,9 @@ export default function AssetTable({
             </div>
           )}
           <Button
-            isIconOnly
-            size="sm"
-            variant={table.getCanNextPage() ? 'ghost' : 'faded'}
+            size="icon"
             onClick={() => table.nextPage()}
-            isDisabled={!table.getCanNextPage()}
+            disabled={!table.getCanNextPage()}
             className={`${
               table.getCanNextPage()
                 ? 'hover:opacity-75'
@@ -922,6 +915,13 @@ export default function AssetTable({
         isOpen={openAddMaintenanceModal}
         onClose={() => setOpenAddMaintenanceModal(false)}
         assetIds={assetIds}
+        userList={userList}
+      />
+      <AddAssetModal
+        open={openAddAssetModal}
+        onClose={() => setOpenAddAssetModal(false)}
+        assetStatusList={assetStatusList}
+        assetTypeList={assetTypeList}
         userList={userList}
       />
     </div>

@@ -43,12 +43,12 @@ type TaskTableProps = {
 };
 
 export default function TaskTable({ taskList }: TaskTableProps) {
-  const { taskId, tmpTask, setTaskId } = useTaskStore();
-
   const [transitioning, startTransition] = useTransition();
   const isDesktop = useMediaQuery('(min-width: 768px');
   const user = useCurrentUser();
   const router = useRouter();
+
+  const { taskId, tmpTask, setTaskId } = useTaskStore();
 
   const columns: ColumnDef<TaskItem>[] = [
     {
