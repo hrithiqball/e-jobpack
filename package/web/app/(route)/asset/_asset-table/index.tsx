@@ -714,7 +714,7 @@ export default function AssetTable({
           </div>
           <Dropdown>
             <DropdownTrigger>
-              <Button size="icon">
+              <Button variant="outline" size="icon">
                 <Filter />
               </Button>
             </DropdownTrigger>
@@ -743,7 +743,7 @@ export default function AssetTable({
           </Dropdown>
           <Dropdown>
             <DropdownTrigger>
-              <Button size="icon">
+              <Button variant="outline" size="icon">
                 <Columns2 size={18} />
               </Button>
             </DropdownTrigger>
@@ -774,13 +774,18 @@ export default function AssetTable({
             isDesktop ? (
               <Fragment>
                 <Button
+                  variant="outline"
                   onClick={handleOpenAddMaintenanceModal}
                   className="space-x-2 px-3"
                 >
                   <FilePlus2 size={18} />
                   <span>Create Maintenance</span>
                 </Button>
-                <Button onClick={handleMe} className="space-x-2 px-3">
+                <Button
+                  variant="outline"
+                  onClick={handleMe}
+                  className="space-x-2 px-3"
+                >
                   <Archive size={18} />
                   <span>Archive</span>
                 </Button>
@@ -811,6 +816,7 @@ export default function AssetTable({
             role !== 'TECHNICIAN' &&
             (isDesktop ? (
               <Button
+                variant="outline"
                 onClick={() => setOpenAddAssetModal(!openAddAssetModal)}
                 className="space-x-2 px-3"
               >
@@ -819,6 +825,7 @@ export default function AssetTable({
               </Button>
             ) : (
               <Button
+                variant="outline"
                 size="icon"
                 onClick={() => setOpenAddAssetModal(!openAddAssetModal)}
               >
@@ -832,7 +839,11 @@ export default function AssetTable({
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id} noHover>
+              <TableRow
+                noHover
+                key={headerGroup.id}
+                className="bg-white dark:bg-gray-950"
+              >
                 {headerGroup.headers.map(header => (
                   <TableHead key={header.id}>
                     {flexRender(

@@ -67,7 +67,7 @@ export default function MaintenanceLibraryTab({
     </div>
   ) : (
     <div className="flex flex-1 flex-col">
-      {!isCreate && maintenanceLibraryList.length > 0 && (
+      {/* {!isCreate && maintenanceLibraryList.length > 0 && (
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <Input
@@ -92,7 +92,7 @@ export default function MaintenanceLibraryTab({
             </Button>
           </div>
         </div>
-      )}
+      )} */}
       <div
         className={cn('flex flex-1 flex-col', {
           'py-4': maintenanceLibraryList.length > 0,
