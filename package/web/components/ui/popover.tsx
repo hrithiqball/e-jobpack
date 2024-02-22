@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import * as PopoverPrimitive from '@radix-ui/react-popover';
+import { Button } from '@/components/ui/button';
 
 import { cn } from '@/lib/utils';
 
@@ -27,4 +28,25 @@ const PopoverContent = React.forwardRef<
 ));
 PopoverContent.displayName = PopoverPrimitive.Content.displayName;
 
-export { Popover, PopoverTrigger, PopoverContent };
+const PopoverItem = ({
+  onClick,
+  startContent,
+  children,
+}: {
+  onClick: () => void;
+  startContent?: React.ReactNode;
+  children: React.ReactNode;
+}) => {
+  return (
+    <Button
+      variant="ghost"
+      onClick={onClick}
+      className="group flex w-full justify-start space-x-2 px-2 hover:text-teal-500"
+    >
+      <span className="group-hover:text-teal-500">{startContent}</span>
+      <span className="pr-2 group-hover:text-teal-500">{children}</span>
+    </Button>
+  );
+};
+
+export { Popover, PopoverTrigger, PopoverContent, PopoverItem };

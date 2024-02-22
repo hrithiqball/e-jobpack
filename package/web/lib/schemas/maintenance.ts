@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { ChecklistSchema } from '@/lib/schemas/checklist';
+import { MaintenanceStatus } from '@prisma/client';
 
 export const CreateMaintenanceSchema2 = z.object({
   id: z.string().min(1, {
@@ -41,7 +42,7 @@ export const CreateMaintenanceFormSchema = z.object({
   }),
 });
 
-export const UpdateMaintenance = z.object({
+export const UpdateMaintenanceSchema = z.object({
   assetIds: z.array(z.string()).optional(),
   isClose: z.boolean().optional(),
   closedOn: z.date().optional(),
@@ -58,6 +59,7 @@ export const UpdateMaintenance = z.object({
   maintainee: z.string().optional(),
   deadline: z.date().optional(),
   startDate: z.date().optional(),
+  maintenanceStatus: z.nativeEnum(MaintenanceStatus).optional(),
 });
 
 export const CreateMaintenanceLibrarySchema = z.object({
@@ -72,7 +74,7 @@ export const CreateMaintenanceLibraryFormSchema = z.object({
   title: z.string({ required_error: 'Title is required' }),
   description: z.string().optional(),
 });
-
+export type UpdateMaintenance = z.infer<typeof UpdateMaintenanceSchema>;
 export type CreateMaintenance = z.infer<typeof CreateMaintenanceSchema2>;
 export type CreateMaintenanceForm = z.infer<typeof CreateMaintenanceFormSchema>;
 export type CreateMaintenanceLibrary = z.infer<

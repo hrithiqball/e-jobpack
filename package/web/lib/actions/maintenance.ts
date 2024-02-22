@@ -13,6 +13,7 @@ import {
   CreateMaintenance,
   CreateMaintenanceType,
   UpdateMaintenance,
+  UpdateMaintenanceSchema,
 } from '@/lib/schemas/maintenance';
 import { ServerResponseSchema } from '@/lib/schemas/server-response';
 
@@ -292,12 +293,9 @@ export async function fetchMaintenanceList() {
   }
 }
 
-export async function updateMaintenance(
-  id: string,
-  values: z.infer<typeof UpdateMaintenance>,
-) {
+export async function updateMaintenance(id: string, values: UpdateMaintenance) {
   try {
-    const validatedFields = UpdateMaintenance.safeParse(values);
+    const validatedFields = UpdateMaintenanceSchema.safeParse(values);
 
     if (!validatedFields.success) {
       console.error(validatedFields.error);

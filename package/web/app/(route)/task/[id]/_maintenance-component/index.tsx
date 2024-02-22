@@ -28,11 +28,12 @@ import { updateMaintenance } from '@/lib/actions/maintenance';
 import MaintenanceRejectConfirmation from './MaintenanceRejectConfirmation';
 import MaintenanceAddChecklistModal from './MaintenanceAddChecklistModal';
 import MaintenanceTableInfo from './MaintenanceTableInfo';
-import MaintenanceAction from './MaintenanceAction';
 import MaintenanceRequestForm from './MaintenanceRequestForm';
 import MaintenanceExport from './MaintenanceExport';
 import MaintenanceAddAttachment from './MaintenanceAddAttachment';
 import ChecklistComponent from '../_checklist-component';
+import MaintenanceDropdown from './MaintenanceDropdown';
+import dayjs from 'dayjs';
 
 type MaintenanceComponentProps = {
   maintenance: MaintenanceItem;
@@ -67,7 +68,7 @@ export default function MaintenanceComponent({
 
   function handleAction(key: Key) {
     switch (key) {
-      case 'add-asset':
+      case 'add-checklist':
         setOpenAddChecklist(!openAddChecklist);
         break;
 
@@ -81,6 +82,9 @@ export default function MaintenanceComponent({
       case 'download-pdf':
         break;
 
+      case 'reopen-maintenance':
+        break;
+
       case 'mark-complete':
         handleMarkMaintenanceComplete();
         break;
@@ -92,7 +96,36 @@ export default function MaintenanceComponent({
       case 'add-attachment':
         setOpenAddAttachment(!openAddAttachment);
         break;
+
+      case 'approve-completion':
+        handleApproveCompletionMaintenance();
+        break;
     }
+  }
+
+  function handleApproveCompletionMaintenance() {
+    if (!user || !user.id) {
+      console.error('session expired');
+      return;
+    }
+
+    startTransition(() => {
+      toast.promise(
+        updateMaintenance(maintenance.id, {
+          approvedById: user.id,
+          maintenanceStatus: 'APPROVED',
+          approvedOn: dayjs().toDate(),
+        }),
+        {
+          loading: 'Approving maintenance...',
+          success: () => {
+            router.refresh();
+            return 'Maintenance approved!';
+          },
+          error: 'Failed to approve maintenance 😥',
+        },
+      );
+    });
   }
 
   function handleCloseExportMaintenance() {
@@ -112,12 +145,12 @@ export default function MaintenanceComponent({
           closedOn: new Date(),
           isClose: true,
           closedById: user.id,
+          maintenanceStatus: 'CLOSED',
         }),
         {
           loading: 'Closing maintenance...',
-          success: res => {
+          success: () => {
             router.refresh();
-            console.log(res);
             return 'Maintenance closed!';
           },
           error: 'Failed to close maintenance 😥',
@@ -260,7 +293,7 @@ export default function MaintenanceComponent({
               </Button>
             </ButtonGroup>
           )}
-          <MaintenanceAction handleAction={handleAction} />
+          <MaintenanceDropdown handleAction={handleAction} />
         </div>
       </div>
       {maintenance.isRequested && (
