@@ -11,13 +11,13 @@ export default function MaintenanceStatusHelper({
     case 'OPENED':
       return (
         <div className="flex items-center space-x-4">
-          <div className="rounded-md bg-orange-600 px-2 text-white">Opened</div>
+          <div className="rounded-md bg-orange-400 px-2 text-white">Opened</div>
         </div>
       );
     case 'APPROVED':
       return (
         <div className="flex items-center space-x-4">
-          <div className="rounded-md bg-green-600 px-2 text-white">
+          <div className="rounded-md bg-green-400 px-2 text-white">
             Approved
           </div>
         </div>
@@ -25,7 +25,7 @@ export default function MaintenanceStatusHelper({
     case 'REQUESTED':
       return (
         <div className="flex items-center space-x-4">
-          <div className="rounded-md bg-blue-600 px-2 text-white">
+          <div className="rounded-md bg-blue-400 px-2 text-white">
             Requested
           </div>
         </div>
@@ -33,7 +33,7 @@ export default function MaintenanceStatusHelper({
     case 'REJECTED':
       return (
         <div className="flex items-center space-x-4">
-          <div className="rounded-md bg-red-600 px-2 text-white">Rejected</div>
+          <div className="rounded-md bg-red-400 px-2 text-white">Rejected</div>
         </div>
       );
   }

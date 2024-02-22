@@ -1,4 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import { User } from '@prisma/client';
+import dayjs from 'dayjs';
 
 import {
   DropdownMenu,
@@ -35,6 +38,7 @@ import {
 } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Checkbox } from '@nextui-org/react';
 import {
   Columns2,
   FilePlus2,
@@ -45,13 +49,17 @@ import {
 } from 'lucide-react';
 
 import { MaintenanceItem, MaintenanceList } from '@/types/maintenance';
+import { useMediaQuery } from '@/hooks/use-media-query';
+import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
+import { stopPropagation } from '@/lib/function/stopPropagation';
 
 import MaintenanceCreate from './_maintenance-create';
 import MaintenanceRecreate from './_maintenance-recreate';
-import MaintenanceStatusHelper from '@/components/helper/MaintenanceStatusHelper';
-import { Checkbox } from '@nextui-org/react';
 import MaintenanceDetails from './MaintenanceDetails';
-import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
+import MaintenanceStatusHelper from '@/components/helper/MaintenanceStatusHelper';
+import emptyIcon from '@/public/image/empty.svg';
+
+const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
 
 type MaintenanceAllTabProps = {
   maintenanceList: MaintenanceList;
@@ -60,6 +68,8 @@ type MaintenanceAllTabProps = {
 export default function MaintenanceAllTab({
   maintenanceList,
 }: MaintenanceAllTabProps) {
+  const isDesktop = useMediaQuery('(min-width: 768px)');
+
   const { setMaintenance } = useMaintenanceStore();
 
   const [openCreateMaintenance, setOpenCreateMaintenance] = useState(false);
@@ -70,13 +80,17 @@ export default function MaintenanceAllTab({
   const [filterBy, setFilterBy] = useState('id');
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
-    location: false,
-    description: false,
-    lastMaintenance: false,
-    nextMaintenance: false,
-    createdBy: false,
-    updatedBy: false,
+    requestedBy: false,
   });
+
+  useEffect(() => {
+    setColumnVisibility({
+      startDate: isDesktop,
+      deadline: isDesktop,
+      requestedBy: isDesktop,
+      approvedBy: isDesktop,
+    });
+  }, [isDesktop]);
 
   const columns: ColumnDef<MaintenanceItem>[] = [
     {
@@ -124,6 +138,78 @@ export default function MaintenanceAllTab({
       },
     },
     {
+      accessorKey: 'startDate',
+      header: 'Start Date',
+      cell: ({ row }) => {
+        return <p>{dayjs(row.original.startDate).format('DD/MM/YYYY')}</p>;
+      },
+    },
+    {
+      accessorKey: 'deadline',
+      header: 'Deadline',
+      cell: ({ row }) => {
+        return row.original.deadline ? (
+          <p>{dayjs(row.original.deadline).format('DD/MM/YYYY')}</p>
+        ) : (
+          <p>Not Set</p>
+        );
+      },
+    },
+    {
+      accessorKey: 'requestedBy',
+      header: 'Requested By',
+      cell: ({ row }) => {
+        const user: User = row.getValue('requestedBy');
+        const initials = user.name.substring(0, 3);
+
+        return (
+          <div className="flex items-center space-x-2">
+            {user.image ? (
+              <Image
+                src={`${baseServerUrl}/user/${user.image}`}
+                alt={user.name}
+                width={28}
+                height={28}
+                className="size-7 rounded-full"
+              />
+            ) : (
+              <div className="flex size-7 items-center justify-center rounded-full bg-gray-500 text-xs">
+                {initials}
+              </div>
+            )}
+            <p>{user.name}</p>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'approvedBy',
+      header: 'Person In Charge',
+      cell: ({ row }) => {
+        const user: User = row.getValue('approvedBy');
+        const initials = user.name.substring(0, 3);
+
+        return (
+          <div className="flex items-center space-x-2">
+            {user.image ? (
+              <Image
+                src={`${baseServerUrl}/user/${user.image}`}
+                alt={user.name}
+                width={28}
+                height={28}
+                className="size-7 rounded-full"
+              />
+            ) : (
+              <div className="flex size-7 items-center justify-center rounded-full bg-gray-500 text-xs">
+                {initials}
+              </div>
+            )}
+            <p>{user.name}</p>
+          </div>
+        );
+      },
+    },
+    {
       id: 'actions',
       header: () => null,
       cell: ({ row }) => {
@@ -136,7 +222,7 @@ export default function MaintenanceAllTab({
           <div className="text-right">
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" onClick={stopPropagation}>
                   <MoreHorizontal size={18} />
                 </Button>
               </PopoverTrigger>
@@ -220,7 +306,7 @@ export default function MaintenanceAllTab({
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button size="icon">
+              <Button size="icon" variant="outline">
                 <Filter size={18} />
               </Button>
             </DropdownMenuTrigger>
@@ -254,7 +340,7 @@ export default function MaintenanceAllTab({
           </DropdownMenu>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button size="icon">
+              <Button size="icon" variant="outline">
                 <Columns2 size={18} />
               </Button>
             </DropdownMenuTrigger>
@@ -286,16 +372,30 @@ export default function MaintenanceAllTab({
           </DropdownMenu>
         </div>
         <div className="flex items-center space-x-1">
-          <Button onClick={handleCreateMaintenance} className="space-x-2 px-3">
-            <FilePlus2 size={18} />
-            <span>Create Maintenance</span>
-          </Button>
+          {isDesktop ? (
+            <Button
+              variant="outline"
+              onClick={handleCreateMaintenance}
+              className="space-x-2 px-3"
+            >
+              <FilePlus2 size={18} />
+              <span>Create Maintenance</span>
+            </Button>
+          ) : (
+            <Button variant="outline" size="icon">
+              <FilePlus2 size={18} />
+            </Button>
+          )}
         </div>
       </div>
       <Table aria-label="Maintenance Library Table">
         <TableHeader>
           {table.getHeaderGroups().map(headerGroup => (
-            <TableRow key={headerGroup.id} noHover>
+            <TableRow
+              noHover
+              key={headerGroup.id}
+              className="bg-white dark:bg-gray-950"
+            >
               {headerGroup.headers.map(header => (
                 <TableHead key={header.id}>
                   {flexRender(
@@ -323,6 +423,14 @@ export default function MaintenanceAllTab({
           ))}
         </TableBody>
       </Table>
+      {table.getPaginationRowModel().rows.length === 0 && (
+        <div className="flex flex-1 items-center justify-center">
+          <div className="flex flex-col items-center justify-center space-y-4">
+            <Image priority src={emptyIcon} alt="Empty list" width={70} />
+            <span className="ml-2">No assets found</span>
+          </div>
+        </div>
+      )}
       <MaintenanceCreate
         open={openCreateMaintenance}
         onClose={handleCloseCreateMaintenance}

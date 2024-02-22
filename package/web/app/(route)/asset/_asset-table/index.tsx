@@ -865,12 +865,10 @@ export default function AssetTable({
           </div>
         )}
       </div>
-
       <div className="flex items-center justify-between">
         <div className="flex-1 text-sm text-gray-600">
           {`${table.getSelectedRowModel().flatRows.length} of ${table.getCoreRowModel().flatRows.length} row(s) selected.`}
         </div>
-
         <div className="flex justify-center space-x-2">
           <Button
             size="icon"

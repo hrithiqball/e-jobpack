@@ -25,6 +25,7 @@ const config: Config = {
         black: 'var(--black)',
         white: 'var(--white)',
         silver: 'var(--silver)',
+        timberwolf: 'var(--timberwolf)',
         lightPrimary: 'var(--primary-light)',
         emeraldGreenDark: 'var(--emerald-green-dark)',
         emeraldGreenLight: 'var(--emerald-green-light)',

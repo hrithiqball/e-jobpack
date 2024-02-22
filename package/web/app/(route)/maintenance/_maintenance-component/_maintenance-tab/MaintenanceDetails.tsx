@@ -34,7 +34,7 @@ export default function MaintenanceDetails({
             {maintenance.checklist.map(checklist => (
               <div
                 key={checklist.id}
-                className="flex flex-col space-y-2 rounded-md p-2 dark:bg-gray-800"
+                className="bg-timberwolf flex flex-col space-y-2 rounded-md px-3 py-4 dark:bg-gray-800"
               >
                 <p className="mx-4 text-lg font-medium">
                   {checklist.asset.name}
