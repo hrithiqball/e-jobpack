@@ -37,6 +37,7 @@ import {
   Popover,
   PopoverContent,
   PopoverItem,
+  PopoverItemDestructive,
   PopoverTrigger,
 } from '@/components/ui/popover';
 import {
@@ -48,8 +49,8 @@ import {
   Columns2,
   Copy,
   FilePen,
-  FilePlus2,
   Filter,
+  LibraryBig,
   MoreHorizontal,
   Package,
   Search,
@@ -204,8 +205,6 @@ export default function MaintenanceLibraryTable({
       accessorKey: 'checklistLibrary',
       header: 'Asset Count',
       cell: ({ row }) => {
-        const checklistLibrary = row.original.checklistLibrary;
-
         return (
           <HoverCard>
             <HoverCardTrigger asChild>
@@ -221,12 +220,12 @@ export default function MaintenanceLibraryTable({
                 >
                   <Package size={18} />
                 </motion.span>
-                <span>{checklistLibrary.length}</span>
+                <span>{row.original.checklistLibrary.length}</span>
               </motion.div>
             </HoverCardTrigger>
             <HoverCardContent>
               <div className="flex flex-col">
-                {checklistLibrary.map(checklist => (
+                {row.original.checklistLibrary.map(checklist => (
                   <div key={checklist.id}>
                     <Link href={`/asset/${checklist.assetId}`}>
                       <div className="flex justify-between">
@@ -293,13 +292,12 @@ export default function MaintenanceLibraryTable({
                 >
                   Duplicate
                 </PopoverItem>
-                <PopoverItem
-                  variant="destructive"
+                <PopoverItemDestructive
                   onClick={handleDelete}
                   startContent={<Trash size={18} />}
                 >
                   Delete
-                </PopoverItem>
+                </PopoverItemDestructive>
               </PopoverContent>
             </Popover>
           </div>
@@ -436,12 +434,12 @@ export default function MaintenanceLibraryTable({
               onClick={handleCreateLibraryRoute}
               className="space-x-2 px-3"
             >
-              <FilePlus2 size={18} />
+              <LibraryBig size={18} />
               <span>Create Maintenance Library</span>
             </Button>
           ) : (
             <Button variant="outline" size="icon">
-              <FilePlus2 size={18} />
+              <LibraryBig size={18} />
             </Button>
           )}
         </div>

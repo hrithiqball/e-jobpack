@@ -31,26 +31,49 @@ PopoverContent.displayName = PopoverPrimitive.Content.displayName;
 const PopoverItem = ({
   onClick,
   startContent,
-  variant,
   children,
 }: {
   onClick: () => void;
   startContent?: React.ReactNode;
-  variant?: 'destructive' | 'primary';
   children: React.ReactNode;
 }) => {
-  const color = variant === 'destructive' ? 'red' : 'teal';
-
   return (
     <Button
       variant="ghost"
       onClick={onClick}
-      className={`group flex w-full justify-start space-x-2 px-2 hover:text-${color}-500`}
+      className="group flex w-full justify-start space-x-2 px-2 hover:text-teal-500"
     >
-      <span className={`group-hover:text-${color}-500`}>{startContent}</span>
-      <span className={`pr-2 group-hover:text-${color}-500`}>{children}</span>
+      <span className="group-hover:text-teal-500">{startContent}</span>
+      <span className="pr-2 group-hover:text-teal-500">{children}</span>
     </Button>
   );
 };
 
-export { Popover, PopoverTrigger, PopoverContent, PopoverItem };
+const PopoverItemDestructive = ({
+  onClick,
+  startContent,
+  children,
+}: {
+  onClick: () => void;
+  startContent?: React.ReactNode;
+  children: React.ReactNode;
+}) => {
+  return (
+    <Button
+      variant="ghost"
+      onClick={onClick}
+      className="group flex w-full justify-start space-x-2 px-2 hover:bg-red-50 hover:text-red-500"
+    >
+      <span className="group-hover:text-red-500">{startContent}</span>
+      <span className="pr-2 group-hover:text-red-500">{children}</span>
+    </Button>
+  );
+};
+
+export {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverItem,
+  PopoverItemDestructive,
+};
