@@ -601,6 +601,9 @@ export default function AssetTable({
     });
   }
 
+  // TODO: update to this infinite scroll
+  // https://tanstack.com/table/v8/docs/framework/react/examples/virtualized-infinite-scrolling
+  // https://tanstack.com/virtual/v3/docs/framework/react/examples/table
   const table = useReactTable({
     data: assetList,
     columns,
@@ -772,12 +775,12 @@ export default function AssetTable({
               <Fragment>
                 <Button
                   onClick={handleOpenAddMaintenanceModal}
-                  className="space-x-2 px-2"
+                  className="space-x-2 px-3"
                 >
                   <FilePlus2 size={18} />
-                  <span>Create Maintenance Request</span>
+                  <span>Create Maintenance</span>
                 </Button>
-                <Button onClick={handleMe} className="space-x-2 px-2">
+                <Button onClick={handleMe} className="space-x-2 px-3">
                   <Archive size={18} />
                   <span>Archive</span>
                 </Button>
@@ -785,7 +788,7 @@ export default function AssetTable({
                   color="danger"
                   variant="destructive"
                   onClick={handleMe}
-                  className="space-x-2 px-2"
+                  className="space-x-2 px-3"
                 >
                   <Trash2 size={18} />
                   <span>Delete</span>
@@ -809,7 +812,7 @@ export default function AssetTable({
             (isDesktop ? (
               <Button
                 onClick={() => setOpenAddAssetModal(!openAddAssetModal)}
-                className="space-x-2 px-2"
+                className="space-x-2 px-3"
               >
                 <PackagePlus size={18} />
                 <span>Add Asset</span>

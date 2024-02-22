@@ -10,30 +10,30 @@ export default function MaintenanceStatusHelper({
   switch (maintenanceStatus) {
     case 'OPENED':
       return (
-        <div className="flex items-center">
-          <div className="mr-2 h-3 w-3 rounded-full bg-green-500"></div>
-          <div>Opened</div>
+        <div className="flex items-center space-x-4">
+          <div className="rounded-md bg-orange-600 px-2 text-white">Opened</div>
         </div>
       );
     case 'APPROVED':
       return (
-        <div className="flex items-center">
-          <div className="mr-2 h-3 w-3 rounded-full bg-green-500"></div>
-          <div>Approved</div>
+        <div className="flex items-center space-x-4">
+          <div className="rounded-md bg-green-600 px-2 text-white">
+            Approved
+          </div>
         </div>
       );
     case 'REQUESTED':
       return (
-        <div className="flex items-center">
-          <div className="mr-2 h-3 w-3 rounded-full bg-yellow-500"></div>
-          <div>Requested</div>
+        <div className="flex items-center space-x-4">
+          <div className="rounded-md bg-blue-600 px-2 text-white">
+            Requested
+          </div>
         </div>
       );
     case 'REJECTED':
       return (
-        <div className="flex items-center">
-          <div className="mr-2 h-3 w-3 rounded-full bg-red-500"></div>
-          <div>Rejected</div>
+        <div className="flex items-center space-x-4">
+          <div className="rounded-md bg-red-600 px-2 text-white">Rejected</div>
         </div>
       );
   }

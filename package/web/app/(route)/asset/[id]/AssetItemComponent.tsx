@@ -1,6 +1,6 @@
 'use client';
 
-import { Key } from 'react';
+import { Key, useEffect } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { AssetStatus, AssetType, Maintenance, User } from '@prisma/client';
 
@@ -17,13 +17,13 @@ import {
 } from '@nextui-org/react';
 import { ChevronLeft } from 'lucide-react';
 
+import { AssetItem } from '@/types/asset';
+import { ChecklistLibraryList } from '@/types/checklist';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useAssetStatusStore } from '@/hooks/use-asset-status.store';
 import { useAssetTypeStore } from '@/hooks/use-asset-type.store';
 import { useAssetStore } from '@/hooks/use-asset.store';
 import { useChecklistLibStore } from '@/hooks/use-checklist-lib.store';
-import { ChecklistLibraryList } from '@/types/checklist';
-import { AssetItem } from '@/types/asset';
 
 import AssetDetails from './_asset-details';
 import AssetMaintenance from './_asset-maintenance';
@@ -46,15 +46,31 @@ export default function AssetItemComponent({
   userList,
   checklistLibraryList,
 }: AssetItemComponentProps) {
-  useAssetStatusStore.setState({ assetStatusList });
-  useAssetTypeStore.setState({ assetTypeList });
-  useAssetStore.setState({ asset });
-  useChecklistLibStore.setState({ checklistLibraryList });
-
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isDesktop = useMediaQuery('(min-width: 768px)');
+
+  const { setAsset } = useAssetStore();
+  const { setChecklistLibraryList } = useChecklistLibStore();
+  const { setAssetStatusList } = useAssetStatusStore();
+  const { setAssetTypeList } = useAssetTypeStore();
+
+  useEffect(() => {
+    setAsset(asset);
+    setChecklistLibraryList(checklistLibraryList);
+    setAssetStatusList(assetStatusList);
+    setAssetTypeList(assetTypeList);
+  }, [
+    setAsset,
+    setChecklistLibraryList,
+    setAssetStatusList,
+    setAssetTypeList,
+    asset,
+    assetStatusList,
+    assetTypeList,
+    checklistLibraryList,
+  ]);
 
   const tab = searchParams.get('tab') ?? 'details';
 

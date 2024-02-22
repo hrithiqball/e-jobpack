@@ -55,4 +55,21 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 );
 Button.displayName = 'Button';
 
-export { Button, buttonVariants };
+const ButtonIcon = ({
+  onClick,
+  startContent,
+  children,
+}: {
+  onClick?: () => void;
+  startContent?: React.ReactNode;
+  children: React.ReactNode;
+}) => {
+  return (
+    <Button size="icon" className="space-x-2 px-2" onClick={onClick}>
+      {startContent}
+      {children}
+    </Button>
+  );
+};
+
+export { Button, buttonVariants, ButtonIcon };

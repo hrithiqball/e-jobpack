@@ -51,9 +51,10 @@ import { Calendar } from '@/components/ui/calendar';
 import { CalendarIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { MaintenanceChecklist, MaintenanceItem } from '@/types/maintenance';
+import { MaintenanceChecklist } from '@/types/maintenance';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useCurrentUser } from '@/hooks/use-current-user';
+import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 import { useUserStore } from '@/hooks/use-user.store';
 import { recreateMaintenance } from '@/lib/actions/maintenance';
 
@@ -79,26 +80,26 @@ type MaintenanceRecreateForm = z.infer<typeof MaintenanceRecreateFormSchema>;
 type MaintenanceRecreateProps = {
   open: boolean;
   onClose: () => void;
-  maintenance: MaintenanceItem;
 };
 
 export default function MaintenanceRecreate({
   open,
   onClose,
-  maintenance,
 }: MaintenanceRecreateProps) {
   const [transitioning, startTransition] = useTransition();
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const user = useCurrentUser();
-  const userList = useUserStore.getState().userList;
+
+  const { maintenance } = useMaintenanceStore();
+  const { userList } = useUserStore();
 
   const [assetChecklist, setAssetChecklist] = useState<
     { assetId: string | null; library: string | null }[]
   >(
-    maintenance.checklist.map(checklist => ({
+    maintenance?.checklist.map(checklist => ({
       assetId: checklist.assetId,
       library: null,
-    })),
+    })) || [],
   );
 
   const form = useForm<MaintenanceRecreateForm>({
@@ -140,6 +141,11 @@ export default function MaintenanceRecreate({
   }
 
   function onSubmit(data: MaintenanceRecreateForm) {
+    if (!maintenance) {
+      toast.error('Maintenance not found');
+      return;
+    }
+
     const newMaintenanceChecklist: MaintenanceChecklist[] = assetChecklist.map(
       asset => {
         const target = maintenance.checklist.find(
@@ -187,7 +193,7 @@ export default function MaintenanceRecreate({
     });
   }
 
-  return isDesktop ? (
+  return maintenance && isDesktop ? (
     <Sheet open={open} onOpenChange={handleClose}>
       <SheetContent>
         <SheetHeader>Recreate Maintenance</SheetHeader>

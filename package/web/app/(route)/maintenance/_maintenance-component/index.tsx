@@ -1,6 +1,6 @@
 'use client';
 
-import { Key } from 'react';
+import { Key, useEffect } from 'react';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { User } from '@prisma/client';
 
@@ -34,12 +34,17 @@ export default function MaintenanceComponent({
   userList,
   assetList,
 }: MaintenanceLibraryComponentProps) {
-  useUserStore.setState({ userList });
-  useAssetStore.setState({ assetList });
-
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
+
+  const { setAssetList } = useAssetStore();
+  const { setUserList } = useUserStore();
+
+  useEffect(() => {
+    setAssetList(assetList);
+    setUserList(userList);
+  }, [assetList, userList, setAssetList, setUserList]);
 
   const tab = searchParams.get('tab') ?? 'all';
 
