@@ -1,5 +1,3 @@
-import React from 'react';
-
 import RecentActivity from './RecentActivity';
 import GraphWidget from './GraphWidget';
 import MaintenanceRequestWidget from './MaintenanceRequestWidget';

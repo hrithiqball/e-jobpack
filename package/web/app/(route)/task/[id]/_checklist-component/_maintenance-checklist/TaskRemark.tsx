@@ -1,13 +1,16 @@
 import { ChangeEvent, useEffect, useState, useTransition } from 'react';
+import { useDebounce } from 'use-debounce';
 
 import { Input } from '@/components/ui/input';
-import { useCurrentUser } from '@/hooks/use-current-user';
-import { useDebounce } from 'use-debounce';
-import { toast } from 'sonner';
-import { updateTask } from '@/lib/actions/task';
-import { Button } from '@nextui-org/react';
-import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+
 import { X } from 'lucide-react';
+import { toast } from 'sonner';
+
+import { useCurrentUser } from '@/hooks/use-current-user';
+
+import { updateTask } from '@/lib/actions/task';
+import { cn } from '@/lib/utils';
 type TaskRemarkProps = {
   remarks: string | null;
   taskId: string;
@@ -57,9 +60,9 @@ export default function TaskRemark({ remarks, taskId }: TaskRemarkProps) {
     <div className="flex items-center space-x-4">
       <Input value={remarksVal} onChange={onChange} />
       <Button
-        isIconOnly
-        variant="light"
-        isDisabled={remarksVal === '' || !remarksVal || transitioning}
+        size="icon"
+        variant="ghost"
+        disabled={remarksVal === '' || !remarksVal || transitioning}
         onClick={clearInput}
       >
         <div

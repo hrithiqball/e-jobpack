@@ -1,8 +1,7 @@
 import { useChecklistLibStore } from '@/hooks/use-checklist-lib.store';
 
 export default function AssetChecklist() {
-  const checklistLibraryList =
-    useChecklistLibStore.getState().checklistLibraryList;
+  const { checklistLibraryList } = useChecklistLibStore();
 
   return (
     <div className="flex flex-1 flex-col p-4">

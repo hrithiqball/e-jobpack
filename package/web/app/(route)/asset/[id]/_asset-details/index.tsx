@@ -1,9 +1,9 @@
 import { User } from '@prisma/client';
 
+import MaintenanceWidget from './MaintenanceWidget';
+import ChecklistWidget from './ChecklistWidget';
 import DetailsWidget from './_details-widget';
 import TeamWidget from './TeamWidget';
-import ChecklistWidget from './ChecklistWidget';
-import MaintenanceWidget from './MaintenanceWidget';
 
 type AssetDetailsProps = {
   userList: User[];

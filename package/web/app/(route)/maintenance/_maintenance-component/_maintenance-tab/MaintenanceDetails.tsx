@@ -1,12 +1,14 @@
-import TaskTypeHelper from '@/components/helper/TaskTypeHelper';
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 import { Divider } from '@nextui-org/react';
+
+import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
+
+import TaskTypeHelper from '@/components/helper/TaskTypeHelper';
 
 type MaintenanceDetailsProps = {
   open: boolean;
@@ -34,7 +36,7 @@ export default function MaintenanceDetails({
             {maintenance.checklist.map(checklist => (
               <div
                 key={checklist.id}
-                className="bg-timberwolf flex flex-col space-y-2 rounded-md px-3 py-4 dark:bg-gray-800"
+                className="flex flex-col space-y-2 rounded-md bg-timberwolf px-3 py-4 dark:bg-gray-800"
               >
                 <p className="mx-4 text-lg font-medium">
                   {checklist.asset.name}

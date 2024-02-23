@@ -3,9 +3,11 @@ import Image from 'next/image';
 
 import { CarouselItem } from '@/components/ui/carousel';
 import { Trash } from 'lucide-react';
-import { useAssetStore } from '@/hooks/use-asset.store';
 import { toast } from 'sonner';
+
+import { useAssetStore } from '@/hooks/use-asset.store';
 import { deleteAssetImage } from '@/lib/actions/asset';
+
 import DeleteConfirmation from '@/components/DeleteConfirmation';
 
 const baseUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;

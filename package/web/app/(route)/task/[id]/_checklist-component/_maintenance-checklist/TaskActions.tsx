@@ -5,11 +5,13 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-  Button,
 } from '@nextui-org/react';
+import { Button } from '@/components/ui/button';
+
 import { Edit, MoreVertical, Trash, ListTree, Library } from 'lucide-react';
 
 import { TaskItem } from '@/types/task';
+
 import TaskValueEdit from './TaskValueEdit';
 
 type TaskActionsProps = {
@@ -58,7 +60,7 @@ export default function TaskActions({
     <Fragment>
       <Dropdown>
         <DropdownTrigger>
-          <Button isIconOnly size="sm" variant="light">
+          <Button size="icon" variant="outline">
             <MoreVertical size={18} />
           </Button>
         </DropdownTrigger>

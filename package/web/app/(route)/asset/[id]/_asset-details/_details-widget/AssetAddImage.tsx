@@ -1,5 +1,6 @@
 import { useState, useCallback, FormEvent } from 'react';
 import Image from 'next/image';
+import { useDropzone } from 'react-dropzone';
 
 import {
   Button,
@@ -9,14 +10,14 @@ import {
   ModalHeader,
 } from '@nextui-org/react';
 import { Drawer, DrawerContent, DrawerFooter } from '@/components/ui/drawer';
-import { useDropzone } from 'react-dropzone';
 import { ImagePlus, Replace, Trash } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useAssetStore } from '@/hooks/use-asset.store';
+
 import { uploadAssetImage } from '@/lib/actions/upload';
+import { cn } from '@/lib/utils';
 
 type AddImageProps = {
   open: boolean;
@@ -25,7 +26,8 @@ type AddImageProps = {
 
 export default function AddImage({ open, onClose }: AddImageProps) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
-  const asset = useAssetStore.getState().asset;
+
+  const { asset } = useAssetStore();
 
   const [image, setImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);

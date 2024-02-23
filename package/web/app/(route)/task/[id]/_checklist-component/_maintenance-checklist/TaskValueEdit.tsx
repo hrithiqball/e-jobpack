@@ -1,4 +1,6 @@
 import { useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
+import { TaskType } from '@prisma/client';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { v4 as uuidv4 } from 'uuid';
@@ -18,14 +20,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
-
-import { TaskItem } from '@/types/task';
-import { useCurrentUser } from '@/hooks/use-current-user';
-import { useMediaQuery } from '@/hooks/use-media-query';
-import { UpdateTask, UpdateTaskSchema } from '@/lib/schemas/task';
 import {
   Select,
   SelectContent,
@@ -33,12 +27,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { selectionChoices } from '@/public/utils/task-type-options';
-import { Trash } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { TaskType } from '@prisma/client';
+
+import { Trash } from 'lucide-react';
+import { toast } from 'sonner';
+
+import { TaskItem } from '@/types/task';
+
+import { useCurrentUser } from '@/hooks/use-current-user';
+import { useMediaQuery } from '@/hooks/use-media-query';
+
+import { UpdateTask, UpdateTaskSchema } from '@/lib/schemas/task';
 import { updateTask } from '@/lib/actions/task';
-import { useRouter } from 'next/navigation';
+
+import { selectionChoices } from '@/public/utils/task-type-options';
 
 type TaskValueEditProps = {
   task: TaskItem;

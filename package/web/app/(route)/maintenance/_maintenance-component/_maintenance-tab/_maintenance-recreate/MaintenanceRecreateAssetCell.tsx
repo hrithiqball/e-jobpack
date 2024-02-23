@@ -24,7 +24,7 @@ export default function MaintenanceRecreateAssetCell({
   asset,
   onAssetChange,
 }: MaintenanceRecreateAssetCellProps) {
-  const assetList = useAssetStore.getState().assetList;
+  const { assetList } = useAssetStore();
 
   const [open, setOpen] = useState(false);
   const [assetValue, setAssetValue] = useState(asset.assetId || 'empty');

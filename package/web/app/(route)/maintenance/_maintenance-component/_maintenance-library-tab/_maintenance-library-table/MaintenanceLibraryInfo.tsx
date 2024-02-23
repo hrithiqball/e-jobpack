@@ -8,13 +8,16 @@ import {
   DrawerHeader,
 } from '@/components/ui/drawer';
 import { Sheet, SheetContent, SheetHeader } from '@/components/ui/sheet';
-
 import { Button, Divider } from '@nextui-org/react';
+
 import { Edit, ExternalLink } from 'lucide-react';
 
-import { useMediaQuery } from '@/hooks/use-media-query';
 import { MaintenanceLibraryItem } from '@/types/maintenance';
+
+import { useMediaQuery } from '@/hooks/use-media-query';
+
 import { cn } from '@/lib/utils';
+
 import TaskTypeHelper from '@/components/helper/TaskTypeHelper';
 
 type MaintenanceLibraryInfoProps = {

@@ -1,8 +1,6 @@
-import React, { useState, useTransition } from 'react';
+import { useState, useTransition } from 'react';
 
 import {
-  Button,
-  Input,
   Modal,
   ModalBody,
   ModalContent,
@@ -16,11 +14,15 @@ import {
   DrawerFooter,
   DrawerClose,
 } from '@/components/ui/drawer';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+
 import { toast } from 'sonner';
 
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
+
 import { updateMaintenance } from '@/lib/actions/maintenance';
 
 type MaintenanceRejectConfirmationProps = {
@@ -40,14 +42,12 @@ export default function MaintenanceRejectConfirmation({
 
   const [rejectReason, setRejectReason] = useState('');
 
-  function handleOpenChange(open: boolean) {
-    if (!open) {
-      onClose();
-    }
+  function handleOpenChange() {
+    onClose();
   }
 
   function handleRejectMaintenance() {
-    if (user === undefined || user.id === undefined) {
+    if (!user || !user.id) {
       toast.error('Session expired');
       return;
     }
@@ -87,24 +87,21 @@ export default function MaintenanceRejectConfirmation({
         <ModalHeader>Reject Maintenance Request</ModalHeader>
         <ModalBody>
           <Input
-            size="sm"
-            variant="faded"
+            type="search"
             placeholder="Reject message...(optional)"
-            isDisabled={transitioning}
+            disabled={transitioning}
             value={rejectReason}
-            onValueChange={setRejectReason}
+            onChange={e => setRejectReason(e.target.value)}
           />
         </ModalBody>
         <ModalFooter>
-          <Button variant="faded" isDisabled={transitioning} onClick={onClose}>
+          <Button variant="outline" disabled={transitioning} onClick={onClose}>
             Cancel
           </Button>
           <Button
-            variant="faded"
-            color="danger"
-            isDisabled={transitioning}
+            variant="destructive"
+            disabled={transitioning}
             onClick={handleRejectMaintenance}
-            isLoading={transitioning}
           >
             Confirm
           </Button>
@@ -112,35 +109,25 @@ export default function MaintenanceRejectConfirmation({
       </ModalContent>
     </Modal>
   ) : (
-    <Drawer open={open} onOpenChange={handleOpenChange}>
+    <Drawer open={open} onClose={handleOpenChange}>
       <DrawerContent>
         <DrawerHeader>Reject Maintenance Request</DrawerHeader>
         <div className="flex px-4">
           <Input
-            size="sm"
-            variant="faded"
+            type="text"
             placeholder="Reject message...(optional)"
             value={rejectReason}
-            onValueChange={setRejectReason}
+            onChange={e => setRejectReason(e.target.value)}
           />
         </div>
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
             <Button
-              variant="faded"
-              isDisabled={transitioning}
+              variant="outline"
+              disabled={transitioning}
               onClick={onClose}
             >
               Cancel
-            </Button>
-            <Button
-              variant="faded"
-              color="danger"
-              isDisabled={transitioning}
-              isLoading={transitioning}
-              onClick={handleRejectMaintenance}
-            >
-              Confirm
             </Button>
           </DrawerClose>
         </DrawerFooter>

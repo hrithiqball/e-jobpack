@@ -1,11 +1,10 @@
 'use client';
 
 import { FormEvent, useCallback, useState } from 'react';
-import Image from 'next/image';
 import { User } from '@prisma/client';
-
+import Image from 'next/image';
 import { useDropzone } from 'react-dropzone';
-import { Avatar } from '@nextui-org/react';
+
 import {
   Dialog,
   DialogTrigger,
@@ -14,10 +13,13 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
+import { Avatar } from '@nextui-org/react';
+
 import { ImagePlus, Replace } from 'lucide-react';
+import { toast } from 'sonner';
+
 import { deleteUserImage, uploadUserImage } from '@/lib/actions/user';
+import { cn } from '@/lib/utils';
 
 type UserAvatarProps = {
   user: User;

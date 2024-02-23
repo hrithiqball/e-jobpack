@@ -1,10 +1,10 @@
-import { useChecklistLibStore } from '@/hooks/use-checklist-lib.store';
-import { Card } from '@nextui-org/react';
 import { FilePenLine } from 'lucide-react';
+import { Card } from '@nextui-org/react';
+
+import { useChecklistLibStore } from '@/hooks/use-checklist-lib.store';
 
 export default function ChecklistWidget() {
-  const checklistLibraryList =
-    useChecklistLibStore.getState().checklistLibraryList;
+  const { checklistLibraryList } = useChecklistLibStore();
 
   return (
     <div className="flex flex-1 p-2">

@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { Checklist } from '@prisma/client';
 
 import {
-  Button,
   Modal,
   ModalBody,
   ModalContent,
@@ -25,14 +24,18 @@ import {
   DrawerFooter,
   DrawerHeader,
 } from '@/components/ui/drawer';
+import { Button } from '@/components/ui/button';
+
 import { CheckCircle2, DoorClosed, DoorOpen } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { updateChecklist } from '@/lib/actions/checklist';
+import { Maintenance } from '@/types/maintenance';
+
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { useMediaQuery } from '@/hooks/use-media-query';
+
+import { updateChecklist } from '@/lib/actions/checklist';
 import { complete } from '@/lib/color';
-import { Maintenance } from '@/types/maintenance';
 
 type CloseChecklistProps = {
   checklistList: Maintenance['checklist'];
@@ -132,24 +135,20 @@ export default function ClosedChecklist({
               className="flex items-center justify-between"
             >
               <Button
-                size="sm"
-                variant="faded"
+                variant="outline"
                 onClick={() => handleOpenChecklistModal(checklist)}
               >
                 {checklist.id}
               </Button>
               <Button
-                size="sm"
-                variant="faded"
+                variant="outline"
                 onClick={() => handleOpenConfirmationModal(checklist)}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => {
                   setIsHovered(false);
                 }}
-                startContent={
-                  isHovered ? <DoorOpen size={18} /> : <DoorClosed size={18} />
-                }
               >
+                {isHovered ? <DoorOpen size={18} /> : <DoorClosed size={18} />}
                 Reopen
               </Button>
             </div>
@@ -163,7 +162,10 @@ export default function ClosedChecklist({
                     Closed By {currentChecklist?.updatedById}
                   </ModalBody>
                   <ModalFooter>
-                    <Button variant="faded" onClick={handleCloseChecklistModal}>
+                    <Button
+                      variant="outline"
+                      onClick={handleCloseChecklistModal}
+                    >
                       Close
                     </Button>
                   </ModalFooter>
@@ -181,14 +183,13 @@ export default function ClosedChecklist({
                   </ModalBody>
                   <ModalFooter>
                     <Button
-                      variant="faded"
+                      variant="outline"
                       onClick={() => handleCloseConfirmationModal(false)}
                     >
                       Cancel
                     </Button>
                     <Button
-                      variant="faded"
-                      color="danger"
+                      variant="destructive"
                       onClick={() => handleCloseConfirmationModal(true)}
                     >
                       Confirm
@@ -228,15 +229,14 @@ export default function ClosedChecklist({
                   <DrawerFooter>
                     <DrawerClose asChild>
                       <Button
-                        variant="faded"
+                        variant="outline"
                         onClick={() => handleCloseConfirmationModal(false)}
                       >
                         Cancel
                       </Button>
                     </DrawerClose>
                     <Button
-                      variant="faded"
-                      color="danger"
+                      variant="destructive"
                       onClick={() => handleCloseConfirmationModal(true)}
                     >
                       Confirm

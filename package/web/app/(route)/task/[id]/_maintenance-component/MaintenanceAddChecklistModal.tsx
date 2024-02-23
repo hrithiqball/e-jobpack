@@ -18,12 +18,15 @@ import {
   DropdownItem,
   DropdownMenu,
 } from '@nextui-org/react';
+
 import { ChevronDown } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
+
 import { createChecklist } from '@/lib/actions/checklist';
+
 import { descriptionsMap, labelsMap } from '@/public/utils/labels';
 
 type MaintenanceAddChecklistModalProps = {

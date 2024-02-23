@@ -1,6 +1,8 @@
 import { Fragment, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
-import { Button } from '@nextui-org/react';
 import {
   Form,
   FormControl,
@@ -9,19 +11,18 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'sonner';
+
+import { useCurrentUser } from '@/hooks/use-current-user';
+import { useAssetStore } from '@/hooks/use-asset.store';
 import {
   UpdateAssetSchema,
   UpdateAssetForm,
   UpdateAssetFormSchema,
 } from '@/lib/schemas/asset';
-import { useCurrentUser } from '@/hooks/use-current-user';
-import { toast } from 'sonner';
 import { updateAsset } from '@/lib/actions/asset';
-import { useRouter } from 'next/navigation';
-import { useAssetStore } from '@/hooks/use-asset.store';
 
 type AssetDetailsFormProps = {
   onClose: () => void;
@@ -32,7 +33,7 @@ export default function AssetDetailsForm({ onClose }: AssetDetailsFormProps) {
   const user = useCurrentUser();
   const router = useRouter();
 
-  const asset = useAssetStore.getState().asset;
+  const { asset } = useAssetStore();
 
   const form = useForm<UpdateAssetForm>({
     resolver: zodResolver(UpdateAssetFormSchema),
@@ -143,10 +144,8 @@ export default function AssetDetailsForm({ onClose }: AssetDetailsFormProps) {
       <div className="flex justify-end space-x-4">
         <Button
           type="button"
-          size="sm"
-          variant="faded"
-          color="danger"
-          isDisabled={transitioning}
+          variant="outline"
+          disabled={transitioning}
           onClick={onClose}
         >
           Cancel
@@ -154,10 +153,8 @@ export default function AssetDetailsForm({ onClose }: AssetDetailsFormProps) {
         <Button
           type="submit"
           form="update-form"
-          size="sm"
-          variant="faded"
-          color="primary"
-          isDisabled={transitioning}
+          variant="outline"
+          disabled={transitioning}
         >
           Save
         </Button>

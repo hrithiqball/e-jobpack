@@ -1,9 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 
-import { ChecklistLibraryItem, ChecklistLibraryList } from '@/types/checklist';
+import { ChecklistLibraryList } from '@/types/checklist';
+import { useChecklistLibStore } from '@/hooks/use-checklist-lib.store';
 
+import ChecklistLibraryEdit from './ChecklistLibraryEdit';
 import ChecklistLibraryTable from './ChecklistLibraryTable';
+import ChecklistLibraryEmpty from './ChecklistLibraryEmpty';
 import ChecklistLibraryCreate from './ChecklistLibraryCreate';
 import Wrapper from '@/components/ui/wrapper';
 
@@ -20,40 +23,34 @@ export default function MaintenanceChecklistTab({
   const isCreate = searchParams.get('isCreate') === 'true' || false;
   const details = searchParams.get('details') === 'true' || false;
 
-  const [currentChecklistLibrary, setCurrentChecklistLibrary] =
-    useState<ChecklistLibraryItem | null>(null);
+  const { setCurrentChecklistLibrary } = useChecklistLibStore();
 
   useEffect(() => {
     const library = checklistLibraryList.find(
       checklist => checklist.id === checklistLibId,
     );
 
-    if (library) setCurrentChecklistLibrary(library);
-  }, [checklistLibId, checklistLibraryList]);
+    library && setCurrentChecklistLibrary(library);
+  }, [setCurrentChecklistLibrary, checklistLibId, checklistLibraryList]);
 
-  if (details && currentChecklistLibrary) {
+  if (details)
     return (
       <Wrapper>
-        <span>EditingComponent</span>
+        <ChecklistLibraryEdit />
       </Wrapper>
     );
-  }
-
-  if (isCreate) {
+  if (isCreate)
     return (
       <Wrapper>
         <ChecklistLibraryCreate />
       </Wrapper>
     );
-  }
-
-  if (!isCreate && checklistLibraryList.length === 0) {
+  if (!isCreate && checklistLibraryList.length === 0)
     return (
       <Wrapper>
-        <span>display empty prompt</span>
+        <ChecklistLibraryEmpty />
       </Wrapper>
     );
-  }
 
   return (
     <Wrapper>

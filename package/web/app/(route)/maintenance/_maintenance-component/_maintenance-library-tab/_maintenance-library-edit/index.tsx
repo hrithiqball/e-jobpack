@@ -1,20 +1,25 @@
 import { Fragment, useState, useTransition } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { v4 as uuidv4 } from 'uuid';
 
-import { Button, Card } from '@nextui-org/react';
+import { Card } from '@nextui-org/react';
+import { Button } from '@/components/ui/button';
+
 import { ExternalLink, FilePlus2, ListPlus } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 
+import { MaintenanceLibraryItem } from '@/types/maintenance';
+import { TaskLibraryItem, TaskLibraryList } from '@/types/task';
+
 import { useCurrentUser } from '@/hooks/use-current-user';
+
 import {
   createTaskLibrary,
   deleteTaskLibrary,
 } from '@/lib/actions/task-library';
-import { MaintenanceLibraryItem } from '@/types/maintenance';
-import { TaskLibraryItem, TaskLibraryList } from '@/types/task';
+
 import { CreateTaskLibrary } from '@/lib/schemas/task';
 
 import DropArea from './DropArea';
@@ -100,13 +105,9 @@ export default function MaintenanceLibraryEdit({
       <Card shadow="none" className="space-y-4 p-4 dark:bg-card lg:w-3/4">
         <div className="flex items-center justify-between ">
           <span className="text-lg font-bold">Checklist</span>
-          <Button
-            size="sm"
-            variant="faded"
-            color="primary"
-            startContent={<FilePlus2 size={18} />}
-          >
-            Add Checklist
+          <Button variant="outline">
+            <FilePlus2 size={18} />
+            <span>Add Checklist</span>
           </Button>
         </div>
         <div className="flex flex-1 flex-col space-y-4">
@@ -155,12 +156,8 @@ export default function MaintenanceLibraryEdit({
         <div className="flex flex-col space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-medium font-bold">Task Library</span>
-            <Button
-              size="sm"
-              variant="faded"
-              color="primary"
-              startContent={<ListPlus size={18} />}
-            >
+            <Button variant="outline">
+              <ListPlus size={18} />
               Add New
             </Button>
           </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
 import { User } from '@prisma/client';
+import Image from 'next/image';
 import dayjs from 'dayjs';
 
 import {
@@ -39,6 +39,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@nextui-org/react';
+
 import {
   Columns2,
   FilePlus2,
@@ -49,15 +50,19 @@ import {
 } from 'lucide-react';
 
 import { MaintenanceItem, MaintenanceList } from '@/types/maintenance';
+
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
+
 import { stopPropagation } from '@/lib/function/stopPropagation';
 
+import emptyIcon from '@/public/image/empty.svg';
+
+import MaintenanceDetails from './MaintenanceDetails';
 import MaintenanceCreate from './_maintenance-create';
 import MaintenanceRecreate from './_maintenance-recreate';
-import MaintenanceDetails from './MaintenanceDetails';
+
 import MaintenanceStatusHelper from '@/components/helper/MaintenanceStatusHelper';
-import emptyIcon from '@/public/image/empty.svg';
 
 const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
 

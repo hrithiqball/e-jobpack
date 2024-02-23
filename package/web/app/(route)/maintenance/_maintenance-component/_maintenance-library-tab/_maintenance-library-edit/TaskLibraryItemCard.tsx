@@ -7,6 +7,7 @@ import {
   DropdownTrigger,
   Tooltip,
 } from '@nextui-org/react';
+
 import { motion, useDragControls } from 'framer-motion';
 import {
   Binary,

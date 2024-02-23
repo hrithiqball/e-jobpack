@@ -1,25 +1,29 @@
 import { useState, useTransition } from 'react';
 import Link from 'next/link';
 
-import { Button, Divider } from '@nextui-org/react';
-import { Drawer, DrawerContent, DrawerHeader } from '@/components/ui/drawer';
 import {
   Sheet,
   SheetContent,
   SheetFooter,
   SheetHeader,
 } from '@/components/ui/sheet';
+import { Drawer, DrawerContent, DrawerHeader } from '@/components/ui/drawer';
+import { Divider } from '@nextui-org/react';
+import { Button } from '@/components/ui/button';
+
 import { AlertCircle, CopyX, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
 
 import { ChecklistLibraryItem, ChecklistLibraryList } from '@/types/checklist';
+
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useCurrentUser } from '@/hooks/use-current-user';
+
+import { UpdateChecklist } from '@/lib/schemas/checklist';
 import { updateChecklist } from '@/lib/actions/checklist';
+import { cn } from '@/lib/utils';
 
 import TaskTypeHelper from '@/components/helper/TaskTypeHelper';
-import { UpdateChecklist } from '@/lib/schemas/checklist';
 
 type ChecklistImportProps = {
   open: boolean;
@@ -161,18 +165,15 @@ export default function ChecklistImport({
         </div>
         <SheetFooter>
           <Button
-            size="sm"
-            variant="faded"
-            isDisabled={transitioning}
+            variant="outline"
+            disabled={transitioning}
             onClick={handleClose}
           >
             Cancel
           </Button>
           <Button
-            size="sm"
-            variant="faded"
-            color="primary"
-            isDisabled={!selectedChecklistLibrary || transitioning}
+            variant="outline"
+            disabled={!selectedChecklistLibrary || transitioning}
             onClick={handleImportChecklist}
           >
             Import

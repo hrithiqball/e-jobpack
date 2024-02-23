@@ -3,9 +3,9 @@ import { fetchAssetItem } from '@/lib/actions/asset';
 import { fetchUserList } from '@/lib/actions/user';
 import { fetchAssetStatusList } from '@/lib/actions/asset-status';
 import { fetchAssetTypeList } from '@/lib/actions/asset-type';
+import { fetchChecklistLibraryList } from '@/lib/actions/checklist-library';
 
 import AssetItemComponent from './AssetItemComponent';
-import { fetchChecklistLibraryList } from '@/lib/actions/checklist-library';
 
 type AssetItemPageProps = {
   params: { id: string };

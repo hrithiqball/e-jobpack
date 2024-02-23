@@ -5,7 +5,6 @@ import { TaskType } from '@prisma/client';
 import { useRouter } from 'next/navigation';
 
 import {
-  Button,
   Checkbox,
   Input,
   Modal,
@@ -16,12 +15,16 @@ import {
   Select,
   SelectItem,
 } from '@nextui-org/react';
+import { Button } from '@/components/ui/button';
+
 import { toast } from 'sonner';
 import { Trash2 } from 'lucide-react';
 
 import { Maintenance } from '@/types/maintenance';
+
 import { createTask } from '@/lib/actions/task';
 import { CreateTask } from '@/lib/schemas/task';
+
 import { selectionChoices } from '@/public/utils/task-type-options';
 
 type SubtaskOptions = {
@@ -145,7 +148,12 @@ export default function TaskAdd({ checklist, open, onClose }: TaskAddProps) {
   }
 
   return (
-    <Modal isOpen={open} hideCloseButton backdrop="blur">
+    <Modal
+      hideCloseButton
+      isOpen={open}
+      onOpenChange={handleClose}
+      backdrop="blur"
+    >
       <ModalContent>
         <ModalHeader className="flex flex-col gap-1">Add New Task</ModalHeader>
         <ModalBody>
@@ -178,11 +186,11 @@ export default function TaskAdd({ checklist, open, onClose }: TaskAddProps) {
                       variant="faded"
                     />
                     <Button
-                      isIconOnly
+                      size="icon"
+                      variant="destructive"
                       onClick={() => handleDeleteSubtask(index)}
-                      color="warning"
                     >
-                      <Trash2 />
+                      <Trash2 size={18} />
                     </Button>
                   </div>
                   <Input
@@ -224,7 +232,8 @@ export default function TaskAdd({ checklist, open, onClose }: TaskAddProps) {
                   />
                   <Button
                     className="ml-2"
-                    isIconOnly
+                    size="icon"
+                    variant="destructive"
                     onClick={() => handleDeleteChoice(index)}
                   >
                     <Trash2 />
@@ -236,19 +245,14 @@ export default function TaskAdd({ checklist, open, onClose }: TaskAddProps) {
           )}
         </ModalBody>
         <ModalFooter>
-          <Button color="danger" variant="faded" onPress={handleClose}>
-            Close
-          </Button>
           <Button
-            isDisabled={
+            variant="outline"
+            disabled={
               taskActivity === '' ||
               (selection === 'SINGLE_SELECT' && listCount < 2) ||
               (selection === 'MULTIPLE_SELECT' && listCount < 2)
             }
-            color="primary"
-            onPress={() => {
-              addTaskClient();
-            }}
+            onClick={addTaskClient}
           >
             Save
           </Button>

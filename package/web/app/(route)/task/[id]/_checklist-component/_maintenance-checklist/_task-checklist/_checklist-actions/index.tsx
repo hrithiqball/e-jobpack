@@ -2,12 +2,13 @@ import { Key, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 
 import {
-  Button,
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
 } from '@nextui-org/react';
+import { Button } from '@/components/ui/button';
+
 import {
   FileBox,
   FilePlus2,
@@ -21,8 +22,10 @@ import { toast } from 'sonner';
 
 import { Maintenance } from '@/types/maintenance';
 import { ChecklistLibraryList } from '@/types/checklist';
+
 import { useCurrentRole } from '@/hooks/use-current-role';
 import { useCurrentUser } from '@/hooks/use-current-user';
+
 import { updateChecklist } from '@/lib/actions/checklist';
 
 import TaskAdd from './TaskAdd';
@@ -114,7 +117,7 @@ export default function ChecklistActions({
     <div>
       <Dropdown>
         <DropdownTrigger>
-          <Button isIconOnly size="sm" variant="light">
+          <Button size="icon" variant="ghost">
             <MoreVertical size={18} />
           </Button>
         </DropdownTrigger>

@@ -1,5 +1,4 @@
 import { useState } from 'react';
-
 import { User } from '@prisma/client';
 import dayjs from 'dayjs';
 
@@ -17,9 +16,9 @@ import {
 import { Clock, Wrench, History } from 'lucide-react';
 
 import { useCurrentUser } from '@/hooks/use-current-user';
+import { useAssetStore } from '@/hooks/use-asset.store';
 
 import AddMaintenanceModal from '@/components/asset/AddMaintenance';
-import { useAssetStore } from '@/hooks/use-asset.store';
 
 type MaintenanceWidgetProps = {
   userList: User[];
@@ -29,7 +28,7 @@ export default function MaintenanceWidget({
   userList,
 }: MaintenanceWidgetProps) {
   const user = useCurrentUser();
-  const asset = useAssetStore.getState().asset;
+  const { asset } = useAssetStore();
 
   const [openAddMaintenanceModal, setOpenAddMaintenanceModal] = useState(false);
 

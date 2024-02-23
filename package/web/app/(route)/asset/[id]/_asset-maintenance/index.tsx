@@ -1,8 +1,8 @@
 import { ChangeEvent, useState } from 'react';
-import Image from 'next/image';
 import { Maintenance } from '@prisma/client';
+import Image from 'next/image';
 
-import { Button, Card, Chip, Input, Tooltip } from '@nextui-org/react';
+import { Card, Tooltip } from '@nextui-org/react';
 import {
   Sheet,
   SheetContent,
@@ -11,6 +11,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Badge,
   BadgeCheck,
@@ -19,8 +21,6 @@ import {
   BadgeX,
   CalendarClock,
   Filter,
-  Search,
-  X,
 } from 'lucide-react';
 
 import { approved, progress, reject, schedule_pending } from '@/lib/color';
@@ -42,39 +42,22 @@ export default function AssetMaintenance({
     setSearchId(e.target.value);
   }
 
-  function handleClearSearch() {
-    setSearchId('');
-  }
-
   return (
     <div className="flex h-full flex-1 flex-col space-y-4 pt-4 ">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <Input
-            size="sm"
             placeholder="Search"
+            type="search"
             value={searchId}
             onChange={handleSearch}
-            startContent={<Search size={18} />}
-            endContent={
-              searchId !== '' ? (
-                <Button
-                  isIconOnly
-                  variant="light"
-                  size="sm"
-                  onClick={handleClearSearch}
-                >
-                  <X size={18} />
-                </Button>
-              ) : null
-            }
-            className="max-w-screen-sm"
+            className="max-w-screen-sm pl-8"
           />
-          <Button isIconOnly variant="light" size="sm">
+          <Button variant="outline" size="icon">
             <Filter size={18} />
           </Button>
         </div>
-        <Button
+        {/* <Button
           size="sm"
           variant="faded"
           onClick={() => setIsRejectedList(!isRejectedList)}
@@ -88,7 +71,7 @@ export default function AssetMaintenance({
           }
         >
           {isRejectedList ? 'Show All' : 'Show Rejected'}
-        </Button>
+        </Button> */}
       </div>
       {!isRejectedList ? (
         maintenanceList.filter(

@@ -1,8 +1,6 @@
 import { Tooltip } from '@nextui-org/react';
 import { TaskType } from '@prisma/client';
 import { Binary, Check, Dice2, ListChecks } from 'lucide-react';
-import React from 'react';
-
 type TaskTypeHelperProps = {
   taskType: TaskType;
   size: number;

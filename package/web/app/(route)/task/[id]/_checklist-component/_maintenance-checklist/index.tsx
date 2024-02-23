@@ -11,7 +11,6 @@ export default function MaintenanceChecklist({
   checklist,
 }: MaintenanceChecklistProps) {
   return (
-    // TODO: give value here
     <TaskMaintenanceChecklist checklist={checklist} checklistLibraryList={[]}>
       <TaskTable taskList={checklist.task} />
     </TaskMaintenanceChecklist>

@@ -1,7 +1,7 @@
 import { FormEvent, useCallback, useState } from 'react';
 import Image from 'next/image';
+import { useDropzone } from 'react-dropzone';
 
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -10,10 +10,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { useDropzone } from 'react-dropzone';
+import { Button } from '@/components/ui/button';
 import { ImagePlus, Replace } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 import { uploadChecklistImage } from '@/lib/actions/checklist';
 import { uploadMaintenanceImage } from '@/lib/actions/maintenance';

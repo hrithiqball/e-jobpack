@@ -1,5 +1,6 @@
 import { useState, useCallback, FormEvent, Fragment } from 'react';
 import Image from 'next/image';
+import { useDropzone } from 'react-dropzone';
 
 import {
   Sheet,
@@ -7,7 +8,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
 import {
   Carousel,
   CarouselContent,
@@ -15,13 +15,16 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
-import { useDropzone } from 'react-dropzone';
+import { Button } from '@/components/ui/button';
+
 import { ImagePlus, Replace } from 'lucide-react';
 import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
 
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
+
 import { uploadMaintenanceImage } from '@/lib/actions/maintenance';
+import { cn } from '@/lib/utils';
+
 import MaintenanceAddAttachmentDialog from './MaintenanceAddAttachmentDialog';
 
 const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
@@ -35,8 +38,6 @@ export default function MaintenanceAddAttachment({
   onClose,
 }: MaintenanceAddAttachmentProps) {
   const { maintenance } = useMaintenanceStore();
-
-  const [Test, setTest] = useState('second');
 
   const [filename, setFilename] = useState('');
   const [file, setFile] = useState<File | null>(null);

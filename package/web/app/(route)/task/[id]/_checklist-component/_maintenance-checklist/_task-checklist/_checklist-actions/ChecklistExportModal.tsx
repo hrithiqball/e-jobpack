@@ -1,7 +1,6 @@
 import { useState, useTransition } from 'react';
 
 import {
-  Button,
   Checkbox,
   Input,
   Modal,
@@ -10,20 +9,23 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@nextui-org/react';
+import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
-import { useCurrentUser } from '@/hooks/use-current-user';
 import { Maintenance } from '@/types/maintenance';
+
+import { useCurrentUser } from '@/hooks/use-current-user';
+
+import { CreateTaskLibrary, CreateTaskLibrarySchema } from '@/lib/schemas/task';
+import { createChecklistLibrary } from '@/lib/actions/checklist-library';
 import {
   CreateChecklistLibrary,
   CreateChecklistLibrarySchema,
 } from '@/lib/schemas/checklist';
-import { CreateTaskLibrary, CreateTaskLibrarySchema } from '@/lib/schemas/task';
 import {
   CreateSubtaskLibrary,
   CreateSubtaskLibrarySchema,
 } from '@/lib/schemas/subtask';
-import { createChecklistLibrary } from '@/lib/actions/checklist-library';
 
 type ChecklistExportModalProps = {
   open: boolean;
@@ -247,19 +249,16 @@ export default function ChecklistExportModal({
         </ModalBody>
         <ModalFooter>
           <Button
-            size="sm"
-            variant="faded"
+            variant="outline"
             color="danger"
-            isDisabled={transitioning}
+            disabled={transitioning}
             onClick={onClose}
           >
             Cancel
           </Button>
           <Button
-            size="sm"
-            variant="faded"
-            color="primary"
-            isDisabled={transitioning || checklistLibraryTitle === ''}
+            variant="outline"
+            disabled={transitioning || checklistLibraryTitle === ''}
             onClick={handleSave}
           >
             Save

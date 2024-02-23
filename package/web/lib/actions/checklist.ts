@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { Checklist, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
 
@@ -15,7 +15,7 @@ const baseUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
 
 export async function createChecklist(checklist: CreateChecklist) {
   try {
-    const newChecklist: Checklist = await db.checklist.create({
+    const newChecklist = await db.checklist.create({
       data: {
         id: `CL-${dayjs().format('YYMMDDHHmmssSSS')}`,
         updatedById: checklist.createdById,

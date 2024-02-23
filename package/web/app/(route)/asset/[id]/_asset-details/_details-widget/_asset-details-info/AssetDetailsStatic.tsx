@@ -1,11 +1,7 @@
+import { Fragment, Key, useTransition } from 'react';
+import dayjs from 'dayjs';
+
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
-import { useAssetStatusStore } from '@/hooks/use-asset-status.store';
-import { useAssetTypeStore } from '@/hooks/use-asset-type.store';
-import { useAssetStore } from '@/hooks/use-asset.store';
-import { useCurrentRole } from '@/hooks/use-current-role';
-import { useCurrentUser } from '@/hooks/use-current-user';
-import { updateAsset } from '@/lib/actions/asset';
-import { isNullOrEmpty } from '@/lib/function/string';
 import {
   Avatar,
   Button,
@@ -16,7 +12,6 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from '@nextui-org/react';
-import dayjs from 'dayjs';
 import {
   BookImage,
   ChevronLeft,
@@ -24,8 +19,16 @@ import {
   PencilLine,
   Printer,
 } from 'lucide-react';
-import { Fragment, Key, useTransition } from 'react';
 import { toast } from 'sonner';
+
+import { useAssetStatusStore } from '@/hooks/use-asset-status.store';
+import { useAssetTypeStore } from '@/hooks/use-asset-type.store';
+import { useAssetStore } from '@/hooks/use-asset.store';
+import { useCurrentRole } from '@/hooks/use-current-role';
+import { useCurrentUser } from '@/hooks/use-current-user';
+
+import { updateAsset } from '@/lib/actions/asset';
+import { isNullOrEmpty } from '@/lib/function/string';
 
 type AssetDetailsStaticProps = {
   handleAssetDetailsAction: (key: Key) => void;

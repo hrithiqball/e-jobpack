@@ -10,12 +10,13 @@ import {
   TableRow,
 } from '@nextui-org/react';
 import { UsersRound } from 'lucide-react';
+
 import { useAssetStore } from '@/hooks/use-asset.store';
 
 export default function TeamWidget() {
-  const asset = useAssetStore.getState().asset;
+  const { asset } = useAssetStore();
+  const maintainee = asset?.lastMaintainee ?? [];
   const personInCharge = asset?.personInCharge;
-  const maintainee = asset?.lastMaintainee;
 
   return (
     maintainee && (

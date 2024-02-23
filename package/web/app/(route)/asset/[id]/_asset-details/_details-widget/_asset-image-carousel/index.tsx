@@ -6,6 +6,7 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel';
 import { ImagePlus } from 'lucide-react';
+
 import ImageCarouselItem from './ImageCarouselItem';
 
 type AssetImageCarouselProps = {

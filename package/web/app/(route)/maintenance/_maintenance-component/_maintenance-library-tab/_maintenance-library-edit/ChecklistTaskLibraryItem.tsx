@@ -1,7 +1,6 @@
 import { ChangeEvent, useState, useTransition } from 'react';
-import { useRouter } from 'next/navigation';
-
 import { TaskType } from '@prisma/client';
+import { useRouter } from 'next/navigation';
 
 import {
   Button,
@@ -25,12 +24,14 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { TaskTypeEnum } from '@/types/enum';
+import { TaskLibraryItem } from '@/types/task';
+
 import { useCurrentUser } from '@/hooks/use-current-user';
+
 import { updateTaskLibrary } from '@/lib/actions/task-library';
 import { convertToTaskTypeEnum } from '@/lib/function/convertToEnum';
 import { UpdateTaskLibrary } from '@/lib/schemas/task';
-import { TaskTypeEnum } from '@/types/enum';
-import { TaskLibraryItem } from '@/types/task';
 
 type ChecklistTaskLibraryItemProps = {
   task: TaskLibraryItem;

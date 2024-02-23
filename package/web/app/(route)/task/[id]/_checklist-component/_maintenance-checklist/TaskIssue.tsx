@@ -2,12 +2,15 @@ import { ChangeEvent, useState, useEffect, useTransition } from 'react';
 import { useDebounce } from 'use-debounce';
 
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+
 import { X } from 'lucide-react';
-import { Button } from '@nextui-org/react';
-import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+
 import { useCurrentUser } from '@/hooks/use-current-user';
+
 import { updateTask } from '@/lib/actions/task';
+import { cn } from '@/lib/utils';
 
 type TaskIssueProps = {
   taskId: string;
@@ -55,9 +58,9 @@ export default function TaskIssue({ issue, taskId }: TaskIssueProps) {
     <div className="flex items-center space-x-4">
       <Input value={issueVal} onChange={onChange} />
       <Button
-        isIconOnly
-        variant="light"
-        isDisabled={issueVal === '' || !issueVal || transitioning}
+        size="icon"
+        variant="ghost"
+        disabled={issueVal === '' || !issueVal || transitioning}
         onClick={clearInput}
       >
         <div
