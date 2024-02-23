@@ -3,7 +3,7 @@
 import { hash } from 'bcryptjs';
 import { z } from 'zod';
 
-import { RegisterSchema } from '@/lib/schemas';
+import { RegisterSchema } from '@/lib/schemas/auth';
 import { getUserByEmail } from '@/data/user';
 import { db } from '@/lib/db';
 

@@ -29,13 +29,11 @@ const config: Config = {
         lightPrimary: 'var(--primary-light)',
         emeraldGreenDark: 'var(--emerald-green-dark)',
         emeraldGreenLight: 'var(--emerald-green-light)',
-        deepGray: 'var(--deep-gray)',
         card: 'var(--card)',
       },
-      borderColor: {
-        // default: 'var(--black)', // this causes too much black for border
-        dark: 'var(--white)',
-      },
+      // borderColor: {
+      //   dark: 'var(--white)',
+      // },
       keyframes: {
         'accordion-down': {
           from: { height: '0' },

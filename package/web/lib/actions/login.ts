@@ -1,29 +1,18 @@
 'use server';
 
-import { z } from 'zod';
 import { AuthError } from 'next-auth';
 
 import { signIn } from '@/auth';
-import { LoginSchema } from '@/lib/schemas';
+import { LoginForm } from '@/lib/schemas/auth';
 import { getUserByEmail } from '@/data/user';
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 
-export async function login(
-  values: z.infer<typeof LoginSchema>,
-  callbackUrl?: string | null,
-) {
-  const validatedFields = LoginSchema.safeParse(values);
-
-  if (!validatedFields.success) {
-    return { error: 'Invalid fields!' };
-  }
-
-  const { email, password } = validatedFields.data;
+export async function login(form: LoginForm, callbackUrl?: string | null) {
+  const { email, password } = form;
 
   const existingUser = await getUserByEmail(email);
-
   if (!existingUser) {
-    return { error: 'No user with that email!' };
+    throw new Error('User not found!');
   }
 
   try {
@@ -36,9 +25,9 @@ export async function login(
     if (error instanceof AuthError) {
       switch (error.type) {
         case 'CredentialsSignin':
-          return { error: 'Invalid credentials!' };
+          throw new Error('Invalid password!');
         default:
-          return { error: 'Something went wrong!' };
+          throw new Error('An error occurred');
       }
     }
 

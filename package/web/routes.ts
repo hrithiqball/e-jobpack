@@ -11,8 +11,7 @@ export const publicRoutes: string[] = ['/'];
  * @type {string[]}
  */
 export const authRoutes: string[] = [
-  '/auth/login',
-  '/auth/register',
+  '/auth',
   '/auth/error',
   '/auth/reset',
   '/auth/new-password',

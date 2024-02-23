@@ -1,8 +1,8 @@
-import bcrypt from 'bcryptjs';
+import { compare } from 'bcryptjs';
 import type { NextAuthConfig } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 
-import { LoginSchema } from '@/lib/schemas';
+import { LoginSchema } from '@/lib/schemas/auth';
 import { getUserByEmail } from '@/data/user';
 
 export default {
@@ -17,10 +17,7 @@ export default {
             const user = await getUserByEmail(email);
             if (!user || !user.password) return null;
 
-            const passwordsMatch = await bcrypt.compare(
-              password,
-              user.password,
-            );
+            const passwordsMatch = await compare(password, user.password);
 
             if (passwordsMatch)
               return {
@@ -34,7 +31,8 @@ export default {
 
             return null;
           }
-        } catch (error: any) {
+        } catch (error: unknown) {
+          console.error(error);
           return null;
         }
         return null;

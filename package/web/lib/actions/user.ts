@@ -8,6 +8,7 @@ import {
   ResultSchema,
   ServerResponseSchema,
 } from '@/lib/schemas/server-response';
+import { RegisterForm } from '../schemas/auth';
 
 const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
 
@@ -24,6 +25,26 @@ export async function createUser(
         name,
         email,
         password,
+        phone: '',
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function registerUser(registerForm: RegisterForm) {
+  try {
+    const { password, email, phone, name } = registerForm;
+    const hashedPassword = await hash(password, 10);
+
+    return await db.user.create({
+      data: {
+        email,
+        name,
+        phone,
+        password: hashedPassword,
       },
     });
   } catch (error) {
