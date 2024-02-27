@@ -65,6 +65,8 @@ import {
 } from '@/components/ui/hover-card';
 import TaskTypeHelper from '@/components/helper/TaskTypeHelper';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { useChecklistLibStore } from '@/hooks/use-checklist-lib.store';
+import ChecklistLibraryDetails from './checklist-library-details';
 
 const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
 
@@ -80,6 +82,9 @@ export default function ChecklistLibraryTable({
   const user = useCurrentUser();
   const router = useRouter();
 
+  const { setCurrentChecklistLibrary } = useChecklistLibStore();
+
+  const [openChecklistLibDetails, setOpenChecklistLibDetails] = useState(false);
   const [filterBy, setFilterBy] = useState('title');
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -251,7 +256,8 @@ export default function ChecklistLibraryTable({
       enableSorting: false,
       enableHiding: false,
       cell: ({ row }) => {
-        function handleDelete() {
+        function handleDelete(event: React.MouseEvent) {
+          event.stopPropagation();
           startTransition(() => {
             if (!user || user.id === undefined) {
               toast.error('Session expired!');
@@ -269,13 +275,15 @@ export default function ChecklistLibraryTable({
           });
         }
 
-        function handleEdit() {
+        function handleEdit(event: React.MouseEvent) {
+          event.stopPropagation();
           router.push(
             `/maintenance?tab=checklist&checklistLibId=${row.original.id}&details=true`,
           );
         }
 
-        function handleDuplicate() {
+        function handleDuplicate(event: React.MouseEvent) {
+          event.stopPropagation();
           toast.info('Duplicate library feature coming soon!');
         }
 
@@ -339,8 +347,17 @@ export default function ChecklistLibraryTable({
     },
   });
 
+  function handleOpenChecklistLibDetails(row: ChecklistLibraryItem) {
+    setCurrentChecklistLibrary(row);
+    setOpenChecklistLibDetails(true);
+  }
+
   function handleCreateLibraryRoute() {
     router.push('/maintenance?tab=checklist&isCreate=true');
+  }
+
+  function handleCloseChecklistLibDetails() {
+    setOpenChecklistLibDetails(false);
   }
 
   return (
@@ -462,7 +479,11 @@ export default function ChecklistLibraryTable({
         </TableHeader>
         <TableBody>
           {table.getRowModel().rows.map(row => (
-            <TableRow key={row.id}>
+            <TableRow
+              key={row.id}
+              onClick={() => handleOpenChecklistLibDetails(row.original)}
+              className="cursor-pointer"
+            >
               {row.getVisibleCells().map(cell => (
                 <TableCell key={cell.id}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -472,6 +493,10 @@ export default function ChecklistLibraryTable({
           ))}
         </TableBody>
       </Table>
+      <ChecklistLibraryDetails
+        open={openChecklistLibDetails}
+        onClose={handleCloseChecklistLibDetails}
+      />
     </div>
   );
 }

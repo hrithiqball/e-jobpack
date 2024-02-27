@@ -260,7 +260,8 @@ export default function MaintenanceLibraryTable({
           toast.info('Duplicate action coming soon');
         }
 
-        function handleEdit() {
+        function handleEdit(event: React.MouseEvent) {
+          event.stopPropagation();
           if (!maintenanceLibraryItem) {
             toast.error('Maintenance library not found');
             return;

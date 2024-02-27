@@ -55,7 +55,7 @@ export default function ChecklistChoiceCell({
     <DropdownMenu open={open} onOpenChange={handleCloseMenu}>
       <DropdownMenuTrigger>
         <Tooltip content={selectedChecklist?.title || 'Default'}>
-          <Button size="sm" onClick={handleOpenMenu}>
+          <Button variant="outline" size="sm" onClick={handleOpenMenu}>
             {selectedChecklist ? (
               <span>
                 {selectedChecklist.title.length > 10

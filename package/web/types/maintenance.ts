@@ -7,6 +7,7 @@ import {
 import { fetchMaintenanceLibraryList } from '@/lib/actions/maintenance-library';
 
 export type Maintenance = Awaited<ReturnType<typeof fetchMaintenanceItem>>;
+export type Checklist = Maintenance['checklist'][0];
 export type MaintenanceList = Awaited<ReturnType<typeof fetchMaintenanceList>>;
 export type MaintenanceChecklist = {
   assetId: string;

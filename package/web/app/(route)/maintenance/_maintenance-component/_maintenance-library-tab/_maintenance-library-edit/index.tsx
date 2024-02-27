@@ -105,8 +105,8 @@ export default function MaintenanceLibraryEdit({
       <Card shadow="none" className="space-y-4 p-4 dark:bg-card lg:w-3/4">
         <div className="flex items-center justify-between ">
           <span className="text-lg font-bold">Checklist</span>
-          <Button variant="outline">
-            <FilePlus2 size={18} />
+          <Button variant="outline" size="withIcon">
+            <FilePlus2 size={16} />
             <span>Add Checklist</span>
           </Button>
         </div>
@@ -156,9 +156,9 @@ export default function MaintenanceLibraryEdit({
         <div className="flex flex-col space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-medium font-bold">Task Library</span>
-            <Button variant="outline">
+            <Button variant="outline" size="withIcon">
               <ListPlus size={18} />
-              Add New
+              <span>Add New</span>
             </Button>
           </div>
           <div className="flex flex-col space-y-1">

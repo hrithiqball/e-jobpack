@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User } from '@prisma/client';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import dayjs from 'dayjs';
 
@@ -59,11 +60,14 @@ import { stopPropagation } from '@/lib/function/stopPropagation';
 
 import emptyIcon from '@/public/image/empty.svg';
 
-import MaintenanceDetails from './MaintenanceDetails';
+import MaintenancePreview from './maintenance-preview';
 import MaintenanceCreate from './_maintenance-create';
 import MaintenanceRecreate from './_maintenance-recreate';
 
 import MaintenanceStatusHelper from '@/components/helper/MaintenanceStatusHelper';
+import MaintenanceEdit from './maintenance-edit';
+import Wrapper from '@/components/ui/wrapper';
+import MaintenanceDetails from './maintenance-details';
 
 const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
 
@@ -71,16 +75,21 @@ type MaintenanceAllTabProps = {
   maintenanceList: MaintenanceList;
 };
 
-export default function MaintenanceAllTab({
+export default function MaintenanceTab({
   maintenanceList,
 }: MaintenanceAllTabProps) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const isEdit = searchParams.get('isEdit') === 'true' || false;
+  const details = searchParams.get('details') === 'true' || false;
 
   const { setMaintenance } = useMaintenanceStore();
 
   const [openCreateMaintenance, setOpenCreateMaintenance] = useState(false);
   const [openRecreateMaintenance, setOpenRecreateMaintenance] = useState(false);
-  const [openMaintenanceDetails, setOpenMaintenanceDetails] = useState(false);
+  const [openMaintenancePreview, setOpenMaintenancePreview] = useState(false);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const [filterBy, setFilterBy] = useState('id');
@@ -219,13 +228,16 @@ export default function MaintenanceAllTab({
       id: 'actions',
       header: () => null,
       cell: ({ row }) => {
-        function handleRecreate() {
+        function handleRecreate(event: React.MouseEvent) {
+          stopPropagation(event);
           setMaintenance(row.original);
           setOpenRecreateMaintenance(true);
         }
 
-        function handleEdit() {
-          console.log('Edit Maintenance', row.original);
+        function handleEdit(event: React.MouseEvent) {
+          stopPropagation(event);
+          setMaintenance(row.original);
+          router.push('/maintenance?tab=maintenance&isEdit=true');
         }
 
         return (
@@ -280,9 +292,8 @@ export default function MaintenanceAllTab({
   });
 
   function handleOpenRowInfo(maintenance: MaintenanceItem) {
-    console.log('Open Maintenance Info', maintenance);
     setMaintenance(maintenance);
-    setOpenMaintenanceDetails(true);
+    setOpenMaintenancePreview(true);
   }
 
   function handleCreateMaintenance() {
@@ -297,8 +308,23 @@ export default function MaintenanceAllTab({
     setOpenRecreateMaintenance(false);
   }
 
-  function handleCloseMaintenanceDetails() {
-    setOpenMaintenanceDetails(false);
+  function handleCloseMaintenancePreview() {
+    setOpenMaintenancePreview(false);
+  }
+
+  if (isEdit)
+    return (
+      <Wrapper>
+        <MaintenanceEdit />
+      </Wrapper>
+    );
+
+  if (details) {
+    return (
+      <Wrapper>
+        <MaintenanceDetails />
+      </Wrapper>
+    );
   }
 
   return (
@@ -451,9 +477,9 @@ export default function MaintenanceAllTab({
         open={openCreateMaintenance}
         onClose={handleCloseCreateMaintenance}
       />
-      <MaintenanceDetails
-        open={openMaintenanceDetails}
-        onClose={handleCloseMaintenanceDetails}
+      <MaintenancePreview
+        open={openMaintenancePreview}
+        onClose={handleCloseMaintenancePreview}
       />
       <MaintenanceRecreate
         open={openRecreateMaintenance}

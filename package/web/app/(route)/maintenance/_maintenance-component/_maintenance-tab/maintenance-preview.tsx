@@ -8,16 +8,18 @@ import {
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 
 import TaskTypeHelper from '@/components/helper/TaskTypeHelper';
+import { ExternalLink } from 'lucide-react';
+import Link from 'next/link';
 
-type MaintenanceDetailsProps = {
+type MaintenancePreviewProps = {
   open: boolean;
   onClose: () => void;
 };
 
-export default function MaintenanceDetails({
+export default function MaintenancePreview({
   open,
   onClose,
-}: MaintenanceDetailsProps) {
+}: MaintenancePreviewProps) {
   const { maintenance } = useMaintenanceStore();
 
   function handleClose() {
@@ -28,8 +30,17 @@ export default function MaintenanceDetails({
     maintenance && (
       <Sheet open={open} onOpenChange={handleClose}>
         <SheetContent>
-          <SheetHeader>
-            <SheetTitle>Maintenance {maintenance.id}</SheetTitle>
+          <SheetHeader className="space-y-4">
+            <SheetTitle>
+              <Link
+                href="/maintenance/?tab=maintenance&details=true"
+                className="flex items-center space-x-2 hover:text-blue-500 hover:underline"
+              >
+                <ExternalLink size={18} />
+                <span>Maintenance {maintenance.id}</span>
+              </Link>
+            </SheetTitle>
+            <hr />
           </SheetHeader>
           <div className="my-4 flex flex-col space-y-4">
             {maintenance.checklist.map(checklist => (
@@ -37,7 +48,7 @@ export default function MaintenanceDetails({
                 key={checklist.id}
                 className="flex flex-col space-y-2 rounded-md bg-timberwolf px-3 py-4 dark:bg-gray-800"
               >
-                <p className="mx-4 text-lg font-medium">
+                <p className="mx-4 text-medium font-medium">
                   {checklist.asset.name}
                 </p>
                 <hr />

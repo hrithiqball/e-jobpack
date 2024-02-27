@@ -43,7 +43,7 @@ export default function AssetChoiceCell({ checklist }: AssetChoiceCellProps) {
   return (
     <DropdownMenu open={open} onOpenChange={handleCloseMenu}>
       <DropdownMenuTrigger>
-        <Button size="sm" onClick={handleOpenMenu}>
+        <Button variant="outline" size="sm" onClick={handleOpenMenu}>
           {selectedAsset ? (
             selectedAsset.name
           ) : (

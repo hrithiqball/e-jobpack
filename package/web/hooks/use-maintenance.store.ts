@@ -1,4 +1,4 @@
-import { Maintenance } from '@/types/maintenance';
+import { Checklist, Maintenance } from '@/types/maintenance';
 import { create } from 'zustand';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -13,6 +13,8 @@ export type ChecklistStore = {
 type MaintenanceStore = {
   maintenance: Maintenance | null;
   setMaintenance: (maintenanceAndAssetOptions: Maintenance) => void;
+  currentChecklist: Checklist | null;
+  setCurrentChecklist: (checklist: Checklist) => void;
   checklistSelected: ChecklistStore[];
   clearChecklistSelected: () => void;
   addChecklistSelected: () => void;
@@ -33,6 +35,10 @@ export const useMaintenanceStore = create<MaintenanceStore>(set => ({
   maintenance: null,
   setMaintenance: maintenance => {
     set({ maintenance });
+  },
+  currentChecklist: null,
+  setCurrentChecklist: checklist => {
+    set({ currentChecklist: checklist });
   },
   checklistSelected: [],
   clearChecklistSelected: () => {

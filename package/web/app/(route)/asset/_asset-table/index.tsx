@@ -63,7 +63,7 @@ import { updateAsset } from '@/lib/actions/asset';
 import emptyIcon from '@/public/image/empty.svg';
 
 import DeleteAssetModal from './DeleteAssetModal';
-import AddAssetModal from './AddAssetModal';
+import AddAssetModal from './AddAsset';
 import AddMaintenanceModal from '@/components/asset/AddMaintenance';
 
 const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
@@ -817,8 +817,8 @@ export default function AssetTable({
             (isDesktop ? (
               <Button
                 variant="outline"
+                size="withIcon"
                 onClick={() => setOpenAddAssetModal(!openAddAssetModal)}
-                className="space-x-2 px-3"
               >
                 <PackagePlus size={18} />
                 <span>Add Asset</span>

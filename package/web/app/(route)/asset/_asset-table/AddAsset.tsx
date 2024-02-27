@@ -1,8 +1,9 @@
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { AssetStatus, AssetType, User } from '@prisma/client';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import Image from 'next/image';
 
 import {
   Form,
@@ -23,6 +24,7 @@ import {
   SheetContent,
   SheetFooter,
   SheetHeader,
+  SheetTitle,
 } from '@/components/ui/sheet';
 import {
   Select,
@@ -45,7 +47,9 @@ import {
   CreateAssetSchema,
 } from '@/lib/schemas/asset';
 
-type AddAssetModalProps = {
+const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
+
+type AddAssetProps = {
   open: boolean;
   onClose: () => void;
   userList: User[];
@@ -59,7 +63,7 @@ export default function AddAssetModal({
   userList,
   assetStatusList,
   assetTypeList,
-}: AddAssetModalProps) {
+}: AddAssetProps) {
   const [transitioning, startTransition] = useTransition();
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const router = useRouter();
@@ -114,7 +118,9 @@ export default function AddAssetModal({
   return isDesktop ? (
     <Sheet open={open} onOpenChange={handleClose}>
       <SheetContent>
-        <SheetHeader> Create Asset </SheetHeader>
+        <SheetHeader>
+          <SheetTitle>Create Asset</SheetTitle>
+        </SheetHeader>
         <div className="my-4 space-y-4">
           <Form {...form}>
             <form id="create-asset-form" onSubmit={form.handleSubmit(onSubmit)}>
@@ -203,7 +209,24 @@ export default function AddAssetModal({
                             )
                             .map(user => (
                               <SelectItem key={user.id} value={user.id}>
-                                {user.name}
+                                <div className="flex items-center space-x-2">
+                                  {user.image ? (
+                                    <Image
+                                      src={`${baseServerUrl}/user/${user.image}`}
+                                      alt={user.name}
+                                      width={20}
+                                      height={20}
+                                      className="size-5 rounded-full"
+                                    />
+                                  ) : (
+                                    <div className="flex size-5 items-center justify-center rounded-full bg-gray-500">
+                                      <span className="text-xs text-white">
+                                        {user.name.substring(0, 1)}
+                                      </span>
+                                    </div>
+                                  )}
+                                  <span>{user.name}</span>
+                                </div>
                               </SelectItem>
                             ))}
                         </SelectContent>
@@ -269,20 +292,10 @@ export default function AddAssetModal({
         </div>
         <SheetFooter>
           <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={transitioning}
-            onClick={handleClose}
-          >
-            Close
-          </Button>
-          <Button
             type="submit"
             form="create-asset-form"
             variant="outline"
-            size="sm"
-            color="primary"
+            disabled={transitioning}
           >
             Save
           </Button>

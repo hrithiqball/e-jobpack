@@ -33,7 +33,7 @@ const PopoverItem = ({
   startContent,
   children,
 }: {
-  onClick: () => void;
+  onClick?: (e: React.MouseEvent) => void;
   startContent?: React.ReactNode;
   children: React.ReactNode;
 }) => {
@@ -41,7 +41,7 @@ const PopoverItem = ({
     <Button
       variant="ghost"
       onClick={onClick}
-      className="group flex w-full justify-start space-x-2 px-2 hover:text-teal-500"
+      className="group flex w-full justify-start space-x-2 px-2 hover:bg-gray-50 hover:text-teal-500"
     >
       <span className="group-hover:text-teal-500">{startContent}</span>
       <span className="pr-2 group-hover:text-teal-500">{children}</span>
@@ -54,7 +54,7 @@ const PopoverItemDestructive = ({
   startContent,
   children,
 }: {
-  onClick: () => void;
+  onClick: (e: React.MouseEvent) => void;
   startContent?: React.ReactNode;
   children: React.ReactNode;
 }) => {
