@@ -66,6 +66,7 @@ import { createMaintenance } from '@/lib/actions/maintenance';
 
 import AssetChoiceCell from './MaintenanceCreateAssetCell';
 import ChecklistChoiceCell from './MaintenanceCreateChecklistCell';
+import { useAssetStore } from '@/hooks/use-asset.store';
 
 type MaintenanceCreateProps = {
   open: boolean;
@@ -88,6 +89,7 @@ export default function MaintenanceCreate({
     clearChecklistSelected,
     removeChecklistSelected,
   } = useMaintenanceStore();
+  const { assetList } = useAssetStore();
 
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: new Date(),
@@ -99,6 +101,11 @@ export default function MaintenanceCreate({
   });
 
   function onSubmit(data: CreateMaintenanceForm) {
+    if (checklistSelected.some(checklist => checklist.assetId === 'default')) {
+      toast.error('Asset is required for checklist. Remove if not needed');
+      return;
+    }
+
     startTransition(() => {
       if (!user) {
         toast.error('Session expired');
@@ -267,7 +274,7 @@ export default function MaintenanceCreate({
                     <AssetChoiceCell checklist={checklist} />
                   </TableCell>
                   <TableCell>
-                    {checklist.assetId && (
+                    {checklist.assetId && checklist.assetId !== 'default' && (
                       <ChecklistChoiceCell checklist={checklist} />
                     )}
                   </TableCell>
@@ -282,25 +289,27 @@ export default function MaintenanceCreate({
                   </TableCell>
                 </TableRow>
               ))}
-              <TableRow>
-                <TableCell colSpan={3}>
-                  <Button
-                    size="sm"
-                    onClick={addChecklistSelected}
-                    className="w-full"
-                  >
-                    Add
-                  </Button>
-                </TableCell>
-              </TableRow>
+              {checklistSelected.length !== assetList.length && (
+                <TableRow>
+                  <TableCell colSpan={3}>
+                    <Button
+                      size="sm"
+                      onClick={addChecklistSelected}
+                      className="w-full"
+                    >
+                      Add
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </div>
         <SheetFooter>
           <Button
+            variant="outline"
             type="submit"
             form="create-maintenance-sheet-form"
-            size="sm"
             disabled={transitioning}
           >
             Create

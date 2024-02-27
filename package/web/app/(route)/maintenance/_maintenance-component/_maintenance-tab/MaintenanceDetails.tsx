@@ -4,7 +4,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-import { Divider } from '@nextui-org/react';
 
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 
@@ -32,7 +31,7 @@ export default function MaintenanceDetails({
           <SheetHeader>
             <SheetTitle>Maintenance {maintenance.id}</SheetTitle>
           </SheetHeader>
-          <div className="my-4 flex flex-col">
+          <div className="my-4 flex flex-col space-y-4">
             {maintenance.checklist.map(checklist => (
               <div
                 key={checklist.id}
@@ -41,18 +40,22 @@ export default function MaintenanceDetails({
                 <p className="mx-4 text-lg font-medium">
                   {checklist.asset.name}
                 </p>
-                <Divider />
-                <div className="">
-                  {checklist.task.map(task => (
-                    <div key={task.id} className="flex flex-col px-2">
-                      <div className="flex items-center space-x-2">
-                        <TaskTypeHelper size={18} taskType={task.taskType} />
-                        <span className="text-sm font-medium">
-                          {task.taskActivity}
-                        </span>
+                <hr />
+                <div>
+                  {checklist.task.length > 0 ? (
+                    checklist.task.map(task => (
+                      <div key={task.id} className="flex flex-col px-2">
+                        <div className="flex items-center space-x-2">
+                          <TaskTypeHelper size={18} taskType={task.taskType} />
+                          <span className="text-sm font-medium">
+                            {task.taskActivity}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))
+                  ) : (
+                    <p className="text-center">No task found</p>
+                  )}
                 </div>
               </div>
             ))}

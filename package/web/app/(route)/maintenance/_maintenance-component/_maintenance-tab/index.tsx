@@ -45,6 +45,7 @@ import {
   FilePlus2,
   Filter,
   MoreHorizontal,
+  PenLine,
   RotateCw,
   Search,
 } from 'lucide-react';
@@ -223,6 +224,10 @@ export default function MaintenanceAllTab({
           setOpenRecreateMaintenance(true);
         }
 
+        function handleEdit() {
+          console.log('Edit Maintenance', row.original);
+        }
+
         return (
           <div className="text-right">
             <Popover>
@@ -232,6 +237,12 @@ export default function MaintenanceAllTab({
                 </Button>
               </PopoverTrigger>
               <PopoverContent align="end" className="w-56 rounded-lg p-2">
+                <PopoverItem
+                  onClick={handleEdit}
+                  startContent={<PenLine size={18} />}
+                >
+                  Edit
+                </PopoverItem>
                 <PopoverItem
                   onClick={handleRecreate}
                   startContent={<RotateCw size={18} />}

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-import { Button } from '@nextui-org/react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,6 +7,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 
 import { useAssetStore } from '@/hooks/use-asset.store';
 import {
@@ -21,7 +21,7 @@ type AssetChoiceCellProps = {
 
 export default function AssetChoiceCell({ checklist }: AssetChoiceCellProps) {
   const { assetList } = useAssetStore();
-  const { updateAsset } = useMaintenanceStore();
+  const { checklistSelected, updateAsset } = useMaintenanceStore();
 
   const [open, setOpen] = useState(false);
   const [assetValue, setAssetValue] = useState('default');
@@ -43,8 +43,14 @@ export default function AssetChoiceCell({ checklist }: AssetChoiceCellProps) {
   return (
     <DropdownMenu open={open} onOpenChange={handleCloseMenu}>
       <DropdownMenuTrigger>
-        <Button variant="faded" size="sm" onClick={handleOpenMenu}>
-          {selectedAsset ? selectedAsset.name : 'Choose Asset'}
+        <Button size="sm" onClick={handleOpenMenu}>
+          {selectedAsset ? (
+            selectedAsset.name
+          ) : (
+            <p>
+              Choose Asset <sup className="text-red-500">*</sup>
+            </p>
+          )}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
@@ -52,12 +58,20 @@ export default function AssetChoiceCell({ checklist }: AssetChoiceCellProps) {
           value={assetValue}
           onValueChange={handleValueChange}
         >
-          <DropdownMenuRadioItem value="default">Choose</DropdownMenuRadioItem>
-          {assetList.map(asset => (
-            <DropdownMenuRadioItem key={asset.id} value={asset.id}>
-              {asset.name}
-            </DropdownMenuRadioItem>
-          ))}
+          <DropdownMenuRadioItem value="default">
+            <p>
+              Choose Asset <sup className="text-red-500">*</sup>
+            </p>
+          </DropdownMenuRadioItem>
+          {assetList
+            .filter(
+              asset => !checklistSelected.some(cl => cl.assetId === asset.id),
+            )
+            .map(asset => (
+              <DropdownMenuRadioItem key={asset.id} value={asset.id}>
+                {asset.name}
+              </DropdownMenuRadioItem>
+            ))}
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>

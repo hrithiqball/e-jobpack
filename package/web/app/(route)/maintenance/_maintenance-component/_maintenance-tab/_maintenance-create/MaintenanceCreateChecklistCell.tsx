@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-import { Button } from '@nextui-org/react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,6 +7,8 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
+import { Tooltip } from '@nextui-org/react';
 
 import {
   ChecklistStore,
@@ -53,9 +54,19 @@ export default function ChecklistChoiceCell({
   return (
     <DropdownMenu open={open} onOpenChange={handleCloseMenu}>
       <DropdownMenuTrigger>
-        <Button variant="faded" size="sm" onClick={handleOpenMenu}>
-          {selectedChecklist ? selectedChecklist.title : 'Default'}
-        </Button>
+        <Tooltip content={selectedChecklist?.title || 'Default'}>
+          <Button size="sm" onClick={handleOpenMenu}>
+            {selectedChecklist ? (
+              <span>
+                {selectedChecklist.title.length > 10
+                  ? `${selectedChecklist.title.slice(0, 10)}...`
+                  : selectedChecklist.title}
+              </span>
+            ) : (
+              'Default'
+            )}
+          </Button>
+        </Tooltip>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuRadioGroup

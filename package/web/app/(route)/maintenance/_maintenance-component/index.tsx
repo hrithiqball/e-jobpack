@@ -46,12 +46,22 @@ export default function MaintenanceComponent({
     setUserList(userList);
   }, [assetList, userList, setAssetList, setUserList]);
 
-  const tab = searchParams.get('tab') ?? 'all';
+  const tab = searchParams.get('tab') ?? 'maintenance';
 
   function handleTabChange(key: Key) {
-    router.push(
-      `${pathname}?tab=${key}${key === 'library' ? '&create=false' : ''}`,
-    );
+    switch (key) {
+      case 'library':
+        router.push(`${pathname}?tab=library&create=false`);
+        break;
+
+      case 'checklist':
+        router.push(`${pathname}?tab=checklist`);
+        break;
+
+      case 'maintenance':
+        router.push(`${pathname}?tab=maintenance`);
+        break;
+    }
   }
 
   return (
@@ -63,7 +73,11 @@ export default function MaintenanceComponent({
         selectedKey={tab}
         onSelectionChange={handleTabChange}
       >
-        <Tab key="all" title="Maintenance" className="flex flex-1 flex-col">
+        <Tab
+          key="maintenance"
+          title="Maintenance"
+          className="flex flex-1 flex-col"
+        >
           <MaintenanceTab maintenanceList={maintenanceList} />
         </Tab>
         <Tab

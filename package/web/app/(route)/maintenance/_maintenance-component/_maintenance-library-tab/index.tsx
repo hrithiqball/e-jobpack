@@ -57,11 +57,7 @@ export default function MaintenanceLibraryTab({
     </div>
   ) : (
     <div className="flex flex-1 flex-col">
-      <div
-        className={cn('flex flex-1 flex-col', {
-          'py-4': maintenanceLibraryList.length > 0,
-        })}
-      >
+      <div className={cn('flex flex-1 flex-col')}>
         {isCreate ? (
           <MaintenanceLibraryCreate
             maintenanceLibraryList={maintenanceLibraryList}

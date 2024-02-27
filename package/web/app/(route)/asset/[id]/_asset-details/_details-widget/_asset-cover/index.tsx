@@ -149,9 +149,6 @@ export default function AssetCover({ open, onClose }: AssetCoverProps) {
           )}
         </div>
         <SheetFooter>
-          <Button variant="destructive" onClick={handleClose}>
-            Close
-          </Button>
           <Button
             disabled={transitioning || assetCover === ''}
             variant="outline"
