@@ -19,7 +19,14 @@ export const TaskSchema = z.object({
   taskOrder: z.number(),
 });
 
-export const CreateTask = z.object({
+export const AddTaskFormSchema = z.object({
+  taskActivity: z
+    .string({ required_error: 'Task activity is required' })
+    .min(1, { message: 'Task activity is required' }),
+  description: z.string().optional(),
+});
+
+export const CreateTaskSchema = z.object({
   taskActivity: z.string().min(1, {
     message: 'Task Activity is required',
   }),
@@ -74,6 +81,8 @@ export const UpdateTaskLibrarySchema = z.object({
   taskOrder: z.number().optional(),
 });
 
+export type CreateTask = z.infer<typeof CreateTaskSchema>;
+export type AddTaskForm = z.infer<typeof AddTaskFormSchema>;
 export type UpdateTask = z.infer<typeof UpdateTaskSchema>;
 export type UpdateTaskForm = z.infer<typeof UpdateTaskFormSchema>;
 export type TaskSchemaType = z.infer<typeof TaskSchema>;

@@ -1,13 +1,10 @@
-import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { TaskType } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+
 import {
   Select,
   SelectContent,
@@ -22,26 +19,28 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
-import { selectionChoices } from '@/public/utils/task-type-options';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { TaskType } from '@prisma/client';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { z } from 'zod';
-import { v4 as uuidv4 } from 'uuid';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+
 import { Trash } from 'lucide-react';
+import { toast } from 'sonner';
 
-const AddTaskFormSchema = z.object({
-  taskActivity: z
-    .string({ required_error: 'Task activity is required' })
-    .min(1, { message: 'Task activity is required' }),
-  description: z.string().optional(),
-  taskType: z.nativeEnum(TaskType).optional(),
-});
+import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 
-type AddTaskForm = z.infer<typeof AddTaskFormSchema>;
+import { AddTaskForm, AddTaskFormSchema, CreateTask } from '@/lib/schemas/task';
+import { createTask } from '@/lib/actions/task';
+import { cn } from '@/lib/utils';
+
+import { selectionChoices } from '@/public/utils/task-type-options';
 
 type ChecklistAddTaskProps = {
   open: boolean;
@@ -52,13 +51,18 @@ export default function ChecklistAddTask({
   open,
   onClose,
 }: ChecklistAddTaskProps) {
-  const { maintenance, currentChecklist } = useMaintenanceStore();
+  const router = useRouter();
+
+  const { maintenance, currentChecklist, addTaskToChecklist } =
+    useMaintenanceStore();
 
   const [showListChoice, setShowListChoice] = useState(false);
   const [listChoice, setListChoice] = useState([
     { id: uuidv4(), value: 'Choice 1' },
     { id: uuidv4(), value: 'Choice 2' },
   ]);
+  const [taskType, setTaskType] = useState('');
+  const [taskTypeError, setTaskTypeError] = useState(false);
 
   const form = useForm<AddTaskForm>({
     resolver: zodResolver(AddTaskFormSchema),
@@ -75,21 +79,40 @@ export default function ChecklistAddTask({
       return;
     }
 
+    if (!taskType) {
+      setTaskTypeError(true);
+      return;
+    }
+
     if (
-      (data.taskType === 'MULTIPLE_SELECT' ||
-        data.taskType === 'SINGLE_SELECT') &&
+      (taskType === 'MULTIPLE_SELECT' || taskType === 'SINGLE_SELECT') &&
       listChoice.length < 2
     ) {
       toast.error('At least 2 choices are required');
       return;
     }
 
-    console.log(currentChecklist.id);
-    console.log(data);
+    const newTask: CreateTask = {
+      checklistId: currentChecklist.id,
+      ...data,
+    };
+
+    toast.promise(createTask(newTask, taskType as TaskType), {
+      loading: 'Adding task...',
+      success: res => {
+        router.refresh();
+        const lol = { ...res, subtask: [] };
+        addTaskToChecklist(currentChecklist.id, lol);
+        return 'Task successfully added';
+      },
+      error: 'Failed to add task',
+    });
   }
 
-  function handleTaskTypeChange(event: string) {
-    const taskType = event as TaskType;
+  function handleTaskTypeChange(choice: string) {
+    const taskType = choice as TaskType;
+    setTaskType(taskType);
+    setTaskTypeError(false);
     setShowListChoice(
       taskType === 'MULTIPLE_SELECT' || taskType === 'SINGLE_SELECT',
     );
@@ -135,36 +158,30 @@ export default function ChecklistAddTask({
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="taskType"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Task Type</FormLabel>
-                    <Select
-                      onValueChange={val => {
-                        handleTaskTypeChange(val);
-                        field.onChange();
-                      }}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Choose" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent className="space-x-4">
-                        {selectionChoices.map(choice => (
-                          <SelectItem key={choice.key} value={choice.key}>
-                            {choice.value}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <Label
+                className={cn('font-semibold', {
+                  'text-red-500': taskTypeError,
+                })}
+              >
+                Task Type
+              </Label>
+              <Select value={taskType} onValueChange={handleTaskTypeChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Choose" />
+                </SelectTrigger>
+                <SelectContent>
+                  {selectionChoices.map(choice => (
+                    <SelectItem key={choice.key} value={choice.key}>
+                      {choice.value}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {taskTypeError && (
+                <p className="text-sm font-medium text-red-500">
+                  Task type is required
+                </p>
+              )}
               {showListChoice && (
                 <div className="flex flex-col space-y-2">
                   {listChoice.map(choice => (

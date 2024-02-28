@@ -22,8 +22,8 @@ import { Trash2 } from 'lucide-react';
 
 import { Maintenance } from '@/types/maintenance';
 
+import { CreateTaskSchema } from '@/lib/schemas/task';
 import { createTask } from '@/lib/actions/task';
-import { CreateTask } from '@/lib/schemas/task';
 
 import { selectionChoices } from '@/public/utils/task-type-options';
 
@@ -79,7 +79,7 @@ export default function TaskAdd({ checklist, open, onClose }: TaskAddProps) {
   }
 
   function addTaskClient() {
-    const validatedFields = CreateTask.safeParse({
+    const validatedFields = CreateTaskSchema.safeParse({
       checklistId: checklist.id,
       taskActivity: taskActivity,
       description: taskDescription,

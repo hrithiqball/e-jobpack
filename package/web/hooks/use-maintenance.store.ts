@@ -2,6 +2,8 @@ import { Checklist, Maintenance } from '@/types/maintenance';
 import { create } from 'zustand';
 import { v4 as uuidv4 } from 'uuid';
 
+type Task = Checklist['task'][0];
+
 export type ChecklistStore = {
   id: string;
   assetId: string | null;
@@ -16,6 +18,7 @@ type MaintenanceStore = {
   currentChecklist: Checklist | null;
   setCurrentChecklist: (checklist: Checklist) => void;
   checklistSelected: ChecklistStore[];
+  addTaskToChecklist: (checklistId: string, task: Task) => void;
   clearChecklistSelected: () => void;
   addChecklistSelected: () => void;
   removeChecklistSelected: (id: string) => void;
@@ -41,6 +44,27 @@ export const useMaintenanceStore = create<MaintenanceStore>(set => ({
     set({ currentChecklist: checklist });
   },
   checklistSelected: [],
+  addTaskToChecklist(checklistId, task) {
+    set(state => {
+      if (!state.maintenance) return state;
+
+      const updatedChecklist = state.maintenance.checklist.map(c =>
+        c.id === checklistId
+          ? {
+              ...c,
+              task: [...c.task, task],
+            }
+          : c,
+      );
+
+      const updateMaintenance = {
+        ...state.maintenance,
+        checklist: updatedChecklist,
+      };
+
+      return { ...state, maintenance: updateMaintenance };
+    });
+  },
   clearChecklistSelected: () => {
     set({ checklistSelected: [] });
   },

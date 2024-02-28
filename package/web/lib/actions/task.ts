@@ -2,18 +2,14 @@
 
 import { Prisma, Task, TaskType } from '@prisma/client';
 import dayjs from 'dayjs';
-import { z } from 'zod';
 
 import { db } from '@/lib/db';
 import { CreateTask, UpdateTask } from '@/lib/schemas/task';
 
-export async function createTask(
-  value: z.infer<typeof CreateTask>,
-  taskType: TaskType,
-) {
+export async function createTask(createTask: CreateTask, taskType: TaskType) {
   try {
     const filters: Prisma.TaskWhereInput[] = [
-      { checklistId: value.checklistId },
+      { checklistId: createTask.checklistId },
     ];
 
     const orderBy: Prisma.TaskOrderByWithRelationInput[] = [
@@ -40,7 +36,7 @@ export async function createTask(
         id: `TSK-${dayjs().format('YYMMDDHHmmssSSS')}`,
         taskOrder,
         taskType,
-        ...value,
+        ...createTask,
       },
     });
   } catch (error) {
