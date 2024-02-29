@@ -1,12 +1,12 @@
 import { PropsWithChildren } from 'react';
 
-import Navigation from '@/components/NavBar';
+import NavigationBar from '@/components/navigation-bar';
 import CardLayout from '@/components/ui/card';
 
 export default async function Layout({ children }: PropsWithChildren) {
   return (
     <div className="flex flex-1 flex-col">
-      <Navigation />
+      <NavigationBar />
       <main className="flex flex-1 flex-col">
         <CardLayout>{children}</CardLayout>
       </main>

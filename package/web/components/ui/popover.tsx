@@ -54,7 +54,7 @@ const PopoverItemDestructive = ({
   startContent,
   children,
 }: {
-  onClick: (e: React.MouseEvent) => void;
+  onClick?: (e: React.MouseEvent) => void;
   startContent?: React.ReactNode;
   children: React.ReactNode;
 }) => {

@@ -1,6 +1,6 @@
 import { fetchMaintenanceList } from '@/lib/actions/maintenance';
 
-import TaskComponent from './_task-component';
+import TaskComponent from './_component';
 
 export default async function TaskPage() {
   const maintenanceList = await fetchMaintenanceList();

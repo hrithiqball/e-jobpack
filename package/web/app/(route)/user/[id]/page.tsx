@@ -1,6 +1,6 @@
 import { fetchUser } from '@/app/(route)/user/_actions/user';
 
-import UserAvatar from './UserAvatar';
+import UserAvatar from './user-avatar';
 
 type UserItemPage = {
   params: { id: string };

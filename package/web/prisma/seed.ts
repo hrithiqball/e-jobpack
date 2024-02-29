@@ -1,10 +1,10 @@
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcryptjs';
+import { hash } from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  let hashedPassword = await bcrypt.hash('password', 10);
+  let hashedPassword = await hash('password', 10);
 
   await prisma.user.upsert({
     where: { id: '-99' },
@@ -18,7 +18,7 @@ async function main() {
     },
   });
 
-  hashedPassword = await bcrypt.hash('password', 10);
+  hashedPassword = await hash('password', 10);
 
   await prisma.user.upsert({
     where: { id: '-98' },
@@ -32,7 +32,7 @@ async function main() {
     },
   });
 
-  hashedPassword = await bcrypt.hash('password', 10);
+  hashedPassword = await hash('password', 10);
 
   await prisma.user.upsert({
     where: { id: '-97' },
@@ -73,12 +73,6 @@ async function main() {
         createdById: '-99',
         updatedById: '-99',
       },
-      {
-        title: 'Manage Type',
-        description: 'Add, update or remove type',
-        createdById: '-99',
-        updatedById: '-99',
-      },
     ],
   });
 
@@ -88,7 +82,6 @@ async function main() {
       { id: '-1', title: 'Operating', color: '#58b368' },
       { id: '-2', title: 'Under Maintenance', color: '#dad873' },
       { id: '-3', title: 'Non-operating', color: '#f87979' },
-      { id: 'manage-status', title: 'Manage Status', color: '#f87979' },
     ],
   });
 }

@@ -1,7 +1,13 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { Prisma, TaskType } from '@prisma/client';
+import {
+  ChecklistLibrary,
+  Prisma,
+  SubtaskLibrary,
+  TaskLibrary,
+  TaskType,
+} from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import dayjs from 'dayjs';
@@ -16,6 +22,14 @@ import {
   UpdateMaintenanceSchema,
 } from '@/lib/schemas/maintenance';
 import { ServerResponseSchema } from '@/lib/schemas/server-response';
+
+type ExtendedTaskLibrary = TaskLibrary & {
+  subtaskLibrary: SubtaskLibrary[];
+};
+
+type ExtendedChecklistLibrary = ChecklistLibrary & {
+  taskLibrary: ExtendedTaskLibrary[];
+};
 
 const baseUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
 
@@ -116,7 +130,7 @@ export async function createMaintenance(
       })
       .then(async res => {
         newMaintenance.checklist.forEach(async checklist => {
-          let targetChecklist = null;
+          let targetChecklist: ExtendedChecklistLibrary | null = null;
 
           if (checklist.checklistId) {
             targetChecklist = await db.checklistLibrary.findUnique({

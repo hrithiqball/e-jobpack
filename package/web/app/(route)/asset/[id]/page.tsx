@@ -5,7 +5,7 @@ import { fetchAssetStatusList } from '@/lib/actions/asset-status';
 import { fetchAssetTypeList } from '@/lib/actions/asset-type';
 import { fetchChecklistLibraryList } from '@/lib/actions/checklist-library';
 
-import AssetItemComponent from './AssetItemComponent';
+import AssetItemComponent from './_component';
 
 type AssetItemPageProps = {
   params: { id: string };

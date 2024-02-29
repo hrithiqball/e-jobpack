@@ -1,6 +1,6 @@
-import RecentActivity from './RecentActivity';
-import GraphWidget from './GraphWidget';
-import MaintenanceRequestWidget from './MaintenanceRequestWidget';
+import RecentActivity from './recent-activity';
+import GraphWidget from './analytical';
+import MaintenanceRequestWidget from './maintenance-request';
 
 export default function Overview() {
   return (
