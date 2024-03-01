@@ -17,6 +17,8 @@ export const authRoutes: string[] = [
   '/auth/new-password',
 ];
 
+export const adminRoutes: string[] = ['/admin'];
+
 /**
  * The prefix for API authentication routes
  * Routes that start with this prefix are used for API authentication purposes

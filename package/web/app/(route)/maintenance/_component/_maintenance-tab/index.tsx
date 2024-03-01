@@ -39,6 +39,7 @@ import {
 } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Wrapper } from '@/components/ui/wrapper';
 import { Checkbox } from '@nextui-org/react';
 
 import {
@@ -60,14 +61,12 @@ import { stopPropagation } from '@/lib/function/stopPropagation';
 
 import emptyIcon from '@/public/image/empty.svg';
 
-import MaintenancePreview from './maintenance-preview';
-import MaintenanceCreate from './_create';
-import MaintenanceRecreate from './_recreate';
-
 import MaintenanceStatusHelper from '@/components/helper/MaintenanceStatusHelper';
-import MaintenanceEdit from './maintenance-edit';
-import Wrapper from '@/components/ui/wrapper';
-import MaintenanceDetails from './maintenance-details';
+import MaintenanceRecreate from './_recreate';
+import MaintenanceCreate from './_create';
+import MaintenancePreview from './preview';
+import MaintenanceDetails from './details';
+import MaintenanceEdit from './edit';
 
 const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
 
@@ -140,7 +139,23 @@ export default function MaintenanceTab({
       enableSorting: false,
       enableHiding: false,
     },
-    { accessorKey: 'id', header: 'ID' },
+    {
+      accessorKey: 'id',
+      header: 'ID',
+      cell: ({ row }) => {
+        function handleOpenMaintenanceInfo(event: React.MouseEvent) {
+          event.stopPropagation();
+          setMaintenance(row.original);
+          router.push('/maintenance?tab=maintenance&details=true');
+        }
+
+        return (
+          <Button variant="link" onClick={handleOpenMaintenanceInfo}>
+            {row.original.id}
+          </Button>
+        );
+      },
+    },
     {
       accessorKey: 'maintenanceStatus',
       header: 'Status',

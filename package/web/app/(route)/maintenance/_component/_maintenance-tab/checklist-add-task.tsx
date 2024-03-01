@@ -101,8 +101,9 @@ export default function ChecklistAddTask({
       loading: 'Adding task...',
       success: res => {
         router.refresh();
-        const lol = { ...res, subtask: [] };
-        addTaskToChecklist(currentChecklist.id, lol);
+        const mappedTask = { ...res, subtask: [] };
+        addTaskToChecklist(currentChecklist.id, mappedTask);
+        handleClose();
         return 'Task successfully added';
       },
       error: 'Failed to add task',
@@ -119,6 +120,7 @@ export default function ChecklistAddTask({
   }
 
   function handleClose() {
+    form.reset();
     onClose();
   }
 

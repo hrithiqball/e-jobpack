@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 
+import { Wrapper } from '@/components/ui/wrapper';
+
 import { ChecklistLibraryList } from '@/types/checklist';
 import { useChecklistLibStore } from '@/hooks/use-checklist-lib.store';
 
@@ -8,7 +10,6 @@ import ChecklistLibraryEdit from './edit';
 import ChecklistLibraryTable from './table';
 import ChecklistLibraryEmpty from './empty';
 import ChecklistLibraryCreate from './create';
-import Wrapper from '@/components/ui/wrapper';
 
 type MaintenanceChecklistTabProps = {
   checklistLibraryList: ChecklistLibraryList;

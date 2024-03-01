@@ -25,9 +25,12 @@ import {
 } from 'lucide-react';
 
 import { Checklist } from '@/types/maintenance';
-
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
+import { cn } from '@/lib/utils';
+
 import ChecklistAddTask from './checklist-add-task';
+import MaintenanceStatusHelper from '@/components/helper/MaintenanceStatusHelper';
+import TaskTypeHelper from '@/components/helper/TaskTypeHelper';
 
 const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
 
@@ -35,6 +38,10 @@ export default function MaintenanceDetails() {
   const router = useRouter();
 
   const { maintenance, setCurrentChecklist } = useMaintenanceStore();
+
+  const isEditable =
+    maintenance?.maintenanceStatus === 'OPENED' ||
+    maintenance?.maintenanceStatus === 'REQUESTED';
 
   const [openAddChecklist, setOpenAddChecklist] = useState(false);
 
@@ -81,13 +88,21 @@ export default function MaintenanceDetails() {
       </div>
       <Table>
         <TableRow>
-          <TableCell className="font-medium">Start Date</TableCell>
+          <TableCell className="font-semibold">Status</TableCell>
+          <TableCell>
+            <MaintenanceStatusHelper
+              maintenanceStatus={maintenance.maintenanceStatus}
+            />
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell className="font-semibold">Start Date</TableCell>
           <TableCell>
             {dayjs(maintenance.startDate).format('DD/MM/YYYY')}
           </TableCell>
         </TableRow>
         <TableRow>
-          <TableCell className="font-medium">Deadline</TableCell>
+          <TableCell className="font-semibold">Deadline</TableCell>
           <TableCell>
             {maintenance.deadline
               ? dayjs(maintenance.deadline).format('DD/MM/YYYY')
@@ -95,7 +110,7 @@ export default function MaintenanceDetails() {
           </TableCell>
         </TableRow>
         <TableRow>
-          <TableCell className="font-medium">Person In Charge</TableCell>
+          <TableCell className="font-semibold">Person In Charge</TableCell>
           <TableCell>
             {maintenance.approvedBy ? (
               <PersonInCharge personInCharge={maintenance.approvedBy} />
@@ -115,7 +130,12 @@ export default function MaintenanceDetails() {
             <h2 className="text-medium font-medium">{checklist.asset.name}</h2>
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="ghost" size="icon">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  disabled={!isEditable}
+                  className={cn({ hidden: !isEditable })}
+                >
                   <MoreVertical size={18} />
                 </Button>
               </PopoverTrigger>
@@ -148,9 +168,21 @@ export default function MaintenanceDetails() {
             </Popover>
           </div>
           {checklist.task.length > 0 ? (
-            <div className="flex flex-col">
+            <div className="flex flex-col space-y-2 divide-y-2 divide-gray-400">
               {checklist.task.map(task => (
-                <div key={task.id}>{task.taskActivity}</div>
+                <div key={task.id} className="flex">
+                  <div className="flex flex-col">
+                    <div className="flex items-center space-x-4">
+                      <TaskTypeHelper size={18} taskType={task.taskType} />
+                      <p>{task.taskActivity}</p>
+                    </div>
+                    <p className="text-sm text-gray-400">
+                      {task.description === '' || !task.description
+                        ? 'No description provided'
+                        : task.description}
+                    </p>
+                  </div>
+                </div>
               ))}
             </div>
           ) : (

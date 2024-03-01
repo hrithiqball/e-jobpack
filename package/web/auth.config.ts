@@ -1,9 +1,10 @@
-import { compare } from 'bcryptjs';
-import type { NextAuthConfig } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
+import { compare } from 'bcryptjs';
 
 import { LoginSchema } from '@/lib/schemas/auth';
 import { getUserByEmail } from '@/data/user';
+
+import type { NextAuthConfig } from 'next-auth';
 
 export default {
   providers: [
@@ -26,7 +27,7 @@ export default {
                 emailVerified: user.emailVerified,
                 name: user.name,
                 image: user.image,
-                role: user.role!,
+                role: user.role,
               };
 
             return null;
