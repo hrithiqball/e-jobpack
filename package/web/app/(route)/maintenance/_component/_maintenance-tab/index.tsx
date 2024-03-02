@@ -65,7 +65,7 @@ import MaintenanceStatusHelper from '@/components/helper/MaintenanceStatusHelper
 import MaintenanceRecreate from './_recreate';
 import MaintenanceCreate from './_create';
 import MaintenancePreview from './preview';
-import MaintenanceDetails from './details';
+import MaintenanceDetails from './_details';
 import MaintenanceEdit from './edit';
 
 const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;

@@ -258,6 +258,7 @@ export async function fetchMaintenanceItem(id: string) {
             task: {
               orderBy: { taskOrder: 'asc' },
               include: {
+                taskAssignee: { include: { user: true } },
                 subtask: {
                   orderBy: { taskOrder: 'asc' },
                 },
@@ -292,6 +293,7 @@ export async function fetchMaintenanceList() {
             task: {
               orderBy: { taskOrder: 'asc' },
               include: {
+                taskAssignee: { include: { user: true } },
                 subtask: {
                   orderBy: { taskOrder: 'asc' },
                 },

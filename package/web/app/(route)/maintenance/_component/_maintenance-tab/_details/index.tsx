@@ -28,9 +28,9 @@ import { Checklist } from '@/types/maintenance';
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 import { cn } from '@/lib/utils';
 
-import ChecklistAddTask from './checklist-add-task';
+import ChecklistAddTask from '../checklist-add-task';
 import MaintenanceStatusHelper from '@/components/helper/MaintenanceStatusHelper';
-import TaskTypeHelper from '@/components/helper/TaskTypeHelper';
+import DetailsTaskTable from './task-table';
 
 const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
 
@@ -124,7 +124,7 @@ export default function MaintenanceDetails() {
       {maintenance.checklist.map(checklist => (
         <div
           key={checklist.id}
-          className="flex flex-col rounded-md bg-white p-4 dark:bg-card"
+          className="flex flex-col space-y-4 rounded-md bg-white p-4 dark:bg-card"
         >
           <div className="flex items-center justify-between">
             <h2 className="text-medium font-medium">{checklist.asset.name}</h2>
@@ -168,23 +168,7 @@ export default function MaintenanceDetails() {
             </Popover>
           </div>
           {checklist.task.length > 0 ? (
-            <div className="flex flex-col space-y-2 divide-y-2 divide-gray-400">
-              {checklist.task.map(task => (
-                <div key={task.id} className="flex">
-                  <div className="flex flex-col">
-                    <div className="flex items-center space-x-4">
-                      <TaskTypeHelper size={18} taskType={task.taskType} />
-                      <p>{task.taskActivity}</p>
-                    </div>
-                    <p className="text-sm text-gray-400">
-                      {task.description === '' || !task.description
-                        ? 'No description provided'
-                        : task.description}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <DetailsTaskTable taskList={checklist.task} />
           ) : (
             <div className="flex items-center justify-center py-4">
               <div className="flex items-center space-x-2 text-gray-500">
