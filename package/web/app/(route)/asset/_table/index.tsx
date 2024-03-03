@@ -1,9 +1,9 @@
 'use client';
 
 import { Fragment, Key, useState, useTransition, useEffect } from 'react';
+import { Asset, AssetStatus, AssetType, User } from '@prisma/client';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Asset, AssetStatus, AssetType, User } from '@prisma/client';
 
 import {
   ColumnDef,
@@ -37,6 +37,7 @@ import {
 } from '@nextui-org/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+
 import {
   Archive,
   ArrowDown,
@@ -55,11 +56,14 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { AssetList, AssetItem } from '@/types/asset';
+
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useCurrentRole } from '@/hooks/use-current-role';
-import { AssetList, AssetItem } from '@/types/asset';
+
 import { updateAsset } from '@/lib/actions/asset';
+
 import emptyIcon from '@/public/image/empty.svg';
 
 import DeleteAssetModal from './delete-asset';

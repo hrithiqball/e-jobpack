@@ -94,6 +94,7 @@ export default function ChecklistAddTask({
 
     const newTask: CreateTask = {
       checklistId: currentChecklist.id,
+      listChoice: listChoice.map(c => c.value),
       ...data,
     };
 
@@ -101,7 +102,7 @@ export default function ChecklistAddTask({
       loading: 'Adding task...',
       success: res => {
         router.refresh();
-        const mappedTask = { ...res, subtask: [] };
+        const mappedTask = { ...res, subtask: [], taskAssignee: [] };
         addTaskToChecklist(currentChecklist.id, mappedTask);
         handleClose();
         return 'Task successfully added';

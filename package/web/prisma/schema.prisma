@@ -243,7 +243,7 @@ model Task {
   haveSubtask   Boolean        @default(false) @map("have_subtask")
   taskType      TaskType       @default(CHECK) @map("task_type")
   listChoice    String[]       @default([]) @map("list_choice")
-  taskBool      Boolean?       @default(false) @map("task_bool")
+  taskBool      Boolean?       @map("task_bool")
   taskSelected  String[]       @default([]) @map("task_selected")
   taskNumberVal Int?           @map("task_number_val") @db.SmallInt
   taskCheck     Boolean?       @default(false) @map("task_check")
