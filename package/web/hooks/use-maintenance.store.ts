@@ -20,6 +20,7 @@ type MaintenanceStore = {
   checklistSelected: ChecklistStore[];
   updateTaskInChecklist: (checklistId: string, task: Task) => void;
   addTaskToChecklist: (checklistId: string, task: Task) => void;
+  removeTaskFromChecklist: (checklistId: string, taskId: string) => void;
   clearChecklistSelected: () => void;
   addChecklistSelected: () => void;
   removeChecklistSelected: (id: string) => void;
@@ -85,6 +86,27 @@ export const useMaintenanceStore = create<MaintenanceStore>(set => ({
       };
 
       return { ...state, maintenance: updateMaintenance };
+    });
+  },
+  removeTaskFromChecklist: (checklistId, taskId) => {
+    set(state => {
+      if (!state.maintenance) return state;
+
+      const updatedChecklist = state.maintenance.checklist.map(c =>
+        c.id === checklistId
+          ? {
+              ...c,
+              task: c.task.filter(t => t.id !== taskId),
+            }
+          : c,
+      );
+
+      const updatedMaintenance = {
+        ...state.maintenance,
+        checklist: updatedChecklist,
+      };
+
+      return { ...state, maintenance: updatedMaintenance };
     });
   },
   clearChecklistSelected: () => {

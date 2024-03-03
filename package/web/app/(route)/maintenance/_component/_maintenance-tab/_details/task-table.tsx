@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 
 import {
   ColumnDef,
@@ -39,6 +39,10 @@ import TaskTypeHelper from '@/components/helper/TaskTypeHelper';
 import { isNullOrEmpty } from '@/lib/function/string';
 import { cn } from '@/lib/utils';
 import EditTask from './edit-task';
+import { toast } from 'sonner';
+import { useCurrentUser } from '@/hooks/use-current-user';
+import { deleteTask } from '@/lib/actions/task';
+import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 
 type Task = Checklist['task'][0];
 
@@ -48,10 +52,13 @@ type TaskTableProps = {
 };
 
 export default function TaskTable({ checklistId, taskList }: TaskTableProps) {
+  const [transitioning, startTransition] = useTransition();
   const isDesktop = useMediaQuery('(min-width: 768px)');
+  const user = useCurrentUser();
   const role = useCurrentRole();
 
   const { setCurrentTask } = useTaskStore();
+  const { removeTaskFromChecklist } = useMaintenanceStore();
 
   const [openEditTask, setOpenEditTask] = useState(false);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
@@ -148,14 +155,28 @@ export default function TaskTable({ checklistId, taskList }: TaskTableProps) {
         }
 
         function handleDelete() {
-          console.log('delete', row.original);
+          startTransition(() => {
+            if (!user || !user.id) {
+              toast.error('Session expired');
+              return;
+            }
+
+            toast.promise(deleteTask(user.id, row.original.id), {
+              loading: 'Deleting task...',
+              success: () => {
+                removeTaskFromChecklist(checklistId, row.original.id);
+                return 'Task successfully deleted!';
+              },
+              error: 'Failed to delete task',
+            });
+          });
         }
 
         return (
           <div className="text-right">
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" disabled={transitioning}>
                   <MoreVertical size={18} />
                 </Button>
               </PopoverTrigger>
