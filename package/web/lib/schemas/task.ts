@@ -63,6 +63,13 @@ export const UpdateTaskFormSchema = z.object({
   taskType: z.nativeEnum(TaskType),
 });
 
+export const UpdateTaskDetailsFormSchema = z.object({
+  taskActivity: z
+    .string({ required_error: 'Task activity is required' })
+    .min(1, { message: 'Task activity is required' }),
+  description: z.string(),
+});
+
 export const CreateTaskLibrarySchema = z.object({
   taskActivity: z.string().min(1, { message: 'Task Activity is required' }),
   checklistLibraryId: z.string().optional().nullable(),
@@ -85,6 +92,8 @@ export type CreateTask = z.infer<typeof CreateTaskSchema>;
 export type AddTaskForm = z.infer<typeof AddTaskFormSchema>;
 export type UpdateTask = z.infer<typeof UpdateTaskSchema>;
 export type UpdateTaskForm = z.infer<typeof UpdateTaskFormSchema>;
+export type UpdateTaskDetailsForm = z.infer<typeof UpdateTaskDetailsFormSchema>;
+
 export type TaskSchemaType = z.infer<typeof TaskSchema>;
 export type CreateTaskLibrary = z.infer<typeof CreateTaskLibrarySchema>;
 export type UpdateTaskLibrary = z.infer<typeof UpdateTaskLibrarySchema>;

@@ -4,7 +4,7 @@ import { hash } from 'bcryptjs';
 import { z } from 'zod';
 
 import { RegisterSchema } from '@/lib/schemas/auth';
-import { getUserByEmail } from '@/data/user';
+import { getUserByEmail } from '@/data/user.auth';
 import { db } from '@/lib/db';
 
 export async function register(values: z.infer<typeof RegisterSchema>) {

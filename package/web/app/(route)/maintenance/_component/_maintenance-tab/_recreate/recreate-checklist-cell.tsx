@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 
-import { useGetChecklistLibraryList } from '@/data/checklist-library';
+import { useGetChecklistLibraryList } from '@/data/checklist-library.query';
 
 type MaintenanceRecreateChecklistCellProps = {
   asset: { assetId: string; library: string | null };

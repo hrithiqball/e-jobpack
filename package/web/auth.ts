@@ -4,7 +4,7 @@ import { Role } from '@prisma/client';
 
 import { db } from '@/lib/db';
 import authConfig from '@/auth.config';
-import { getUserById } from '@/data/user';
+import { getUserById } from '@/data/user.auth';
 
 export const {
   handlers: { GET, POST },

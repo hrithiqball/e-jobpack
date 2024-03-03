@@ -28,7 +28,7 @@ import { Checklist } from '@/types/maintenance';
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 import { cn } from '@/lib/utils';
 
-import ChecklistAddTask from '../checklist-add-task';
+import ChecklistAddTask from './checklist-add-task';
 import MaintenanceStatusHelper from '@/components/helper/MaintenanceStatusHelper';
 import DetailsTaskTable from './task-table';
 
@@ -168,7 +168,10 @@ export default function MaintenanceDetails() {
             </Popover>
           </div>
           {checklist.task.length > 0 ? (
-            <DetailsTaskTable taskList={checklist.task} />
+            <DetailsTaskTable
+              checklistId={checklist.id}
+              taskList={checklist.task}
+            />
           ) : (
             <div className="flex items-center justify-center py-4">
               <div className="flex items-center space-x-2 text-gray-500">

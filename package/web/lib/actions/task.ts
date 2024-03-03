@@ -4,7 +4,11 @@ import { Prisma, Task, TaskType } from '@prisma/client';
 import dayjs from 'dayjs';
 
 import { db } from '@/lib/db';
-import { CreateTask, UpdateTask } from '@/lib/schemas/task';
+import {
+  CreateTask,
+  UpdateTask,
+  UpdateTaskDetailsForm,
+} from '@/lib/schemas/task';
 
 export async function createTask(createTask: CreateTask, taskType: TaskType) {
   try {
@@ -87,6 +91,53 @@ export async function updateTask(
       where: { id },
       data: {
         ...updateTask,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function updateTaskDetails(
+  id: string,
+  data: UpdateTaskDetailsForm,
+  taskType: TaskType,
+  listChoice: string[],
+  typeChanges: boolean,
+) {
+  try {
+    if (!typeChanges) {
+      await db.task.update({
+        where: { id },
+        data: {
+          taskActivity: data.taskActivity,
+          description: data.description,
+          taskType,
+          listChoice,
+        },
+      });
+    } else {
+      await db.task.update({
+        where: { id },
+        data: {
+          taskActivity: data.taskActivity,
+          description: data.description,
+          taskType,
+          listChoice,
+          taskBool: null,
+          taskSelected: [],
+          taskNumberVal: null,
+          taskCheck: null,
+        },
+      });
+    }
+
+    return await db.task.findUniqueOrThrow({
+      where: { id },
+      include: {
+        taskAssignee: { include: { user: true } },
+        subtask: true,
       },
     });
   } catch (error) {

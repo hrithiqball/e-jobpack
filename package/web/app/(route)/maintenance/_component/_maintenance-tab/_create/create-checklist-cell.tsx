@@ -14,7 +14,7 @@ import {
   ChecklistStore,
   useMaintenanceStore,
 } from '@/hooks/use-maintenance.store';
-import { useGetChecklistLibraryList } from '@/data/checklist-library';
+import { useGetChecklistLibraryList } from '@/data/checklist-library.query';
 
 type ChecklistChoiceCellProps = {
   checklist: ChecklistStore;

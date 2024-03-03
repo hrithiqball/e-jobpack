@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import {
   ColumnDef,
   VisibilityState,
@@ -5,33 +7,53 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import {
+  Popover,
+  PopoverContent,
+  PopoverItem,
+  PopoverItemDestructive,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
-
-import { Checklist } from '@/types/maintenance';
-
-import TaskTypeHelper from '@/components/helper/TaskTypeHelper';
-import TableAssigneeCell from './assignee-cell';
-import TableTaskCompleteCell from './task-complete-cell';
 import { Button } from '@/components/ui/button';
+
 import {
   Contact2,
   MessageCircleMore,
   MessageCircleWarning,
+  MoreVertical,
+  PencilLine,
+  Trash2,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+
+import { Checklist } from '@/types/maintenance';
+
+import { useMediaQuery } from '@/hooks/use-media-query';
+import { useCurrentRole } from '@/hooks/use-current-role';
+import { useTaskStore } from '@/hooks/use-task.store';
+
+import TableTaskCompleteCell from './task-complete-cell';
+import TableAssigneeCell from './assignee-cell';
+import TaskTypeHelper from '@/components/helper/TaskTypeHelper';
+
 import { isNullOrEmpty } from '@/lib/function/string';
 import { cn } from '@/lib/utils';
-import { useMediaQuery } from '@/hooks/use-media-query';
+import EditTask from './edit-task';
 
 type Task = Checklist['task'][0];
 
 type TaskTableProps = {
+  checklistId: string;
   taskList: Task[];
 };
 
-export default function TaskTable({ taskList }: TaskTableProps) {
+export default function TaskTable({ checklistId, taskList }: TaskTableProps) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
+  const role = useCurrentRole();
 
+  const { setCurrentTask } = useTaskStore();
+
+  const [openEditTask, setOpenEditTask] = useState(false);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
     issue: false,
     remarks: false,
@@ -45,6 +67,7 @@ export default function TaskTable({ taskList }: TaskTableProps) {
     });
   }, [isDesktop]);
 
+  // https://tanstack.com/table/v8/docs/framework/react/examples/sub-components
   const columns: ColumnDef<Task>[] = [
     {
       accessorKey: 'taskActivity',
@@ -115,6 +138,48 @@ export default function TaskTable({ taskList }: TaskTableProps) {
     },
   ];
 
+  if (role === 'ADMIN' || role === 'SUPERVISOR') {
+    columns.push({
+      id: 'action',
+      cell: ({ row }) => {
+        function handleEdit() {
+          setCurrentTask(row.original);
+          setOpenEditTask(true);
+        }
+
+        function handleDelete() {
+          console.log('delete', row.original);
+        }
+
+        return (
+          <div className="text-right">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <MoreVertical size={18} />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-56 rounded-xl p-2">
+                <PopoverItem
+                  onClick={handleEdit}
+                  startContent={<PencilLine size={18} />}
+                >
+                  Edit
+                </PopoverItem>
+                <PopoverItemDestructive
+                  onClick={handleDelete}
+                  startContent={<Trash2 size={18} />}
+                >
+                  Delete
+                </PopoverItemDestructive>
+              </PopoverContent>
+            </Popover>
+          </div>
+        );
+      },
+    });
+  }
+
   const table = useReactTable({
     data: taskList,
     columns,
@@ -144,6 +209,10 @@ export default function TaskTable({ taskList }: TaskTableProps) {
       ...prev,
       taskAssignee: !prev.taskAssignee,
     }));
+  }
+
+  function handleCloseEditTask() {
+    setOpenEditTask(false);
   }
 
   return (
@@ -206,6 +275,11 @@ export default function TaskTable({ taskList }: TaskTableProps) {
           ))}
         </TableBody>
       </Table>
+      <EditTask
+        checklistId={checklistId}
+        open={openEditTask}
+        onClose={handleCloseEditTask}
+      />
     </div>
   );
 }

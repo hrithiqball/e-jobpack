@@ -18,6 +18,7 @@ type MaintenanceStore = {
   currentChecklist: Checklist | null;
   setCurrentChecklist: (checklist: Checklist) => void;
   checklistSelected: ChecklistStore[];
+  updateTaskInChecklist: (checklistId: string, task: Task) => void;
   addTaskToChecklist: (checklistId: string, task: Task) => void;
   clearChecklistSelected: () => void;
   addChecklistSelected: () => void;
@@ -44,6 +45,27 @@ export const useMaintenanceStore = create<MaintenanceStore>(set => ({
     set({ currentChecklist: checklist });
   },
   checklistSelected: [],
+  updateTaskInChecklist: (checklistId, task) => {
+    set(state => {
+      if (!state.maintenance) return state;
+
+      const updatedChecklist = state.maintenance.checklist.map(c =>
+        c.id === checklistId
+          ? {
+              ...c,
+              task: c.task.map(t => (t.id === task.id ? { ...t, ...task } : t)),
+            }
+          : c,
+      );
+
+      const updatedMaintenance = {
+        ...state.maintenance,
+        checklist: updatedChecklist,
+      };
+
+      return { ...state, maintenance: updatedMaintenance };
+    });
+  },
   addTaskToChecklist(checklistId, task) {
     set(state => {
       if (!state.maintenance) return state;

@@ -4,7 +4,7 @@ import { AuthError } from 'next-auth';
 
 import { signIn } from '@/auth';
 import { LoginForm } from '@/lib/schemas/auth';
-import { getUserByEmail } from '@/data/user';
+import { getUserByEmail } from '@/data/user.auth';
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 
 export async function login(form: LoginForm, callbackUrl?: string | null) {
