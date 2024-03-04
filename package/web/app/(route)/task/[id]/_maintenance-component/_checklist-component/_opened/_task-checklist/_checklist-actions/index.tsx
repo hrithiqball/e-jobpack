@@ -28,9 +28,9 @@ import { useCurrentUser } from '@/hooks/use-current-user';
 
 import { updateChecklist } from '@/lib/actions/checklist';
 
-import TaskAdd from './TaskAdd';
-import ChecklistExportModal from './ChecklistExportModal';
-import ChecklistImport from './ChecklistImport';
+import TaskAdd from './add-task';
+import ChecklistExportModal from './export';
+import ChecklistImport from './import';
 
 type AssetActionsProps = {
   checklist: Maintenance['checklist'][0];

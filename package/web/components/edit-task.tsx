@@ -44,9 +44,10 @@ import {
 import TaskTypeHelper from '@/components/helper/TaskTypeHelper';
 import { updateTaskDetails } from '@/lib/actions/task';
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
+import { useRouter } from 'next/navigation';
 
 type EditTaskProps = {
-  checklistId: string;
+  checklistId?: string;
   open: boolean;
   onClose: () => void;
 };
@@ -58,6 +59,7 @@ export default function EditTask({
 }: EditTaskProps) {
   const [transitioning, startTransition] = useTransition();
   const user = useCurrentUser();
+  const router = useRouter();
 
   const { updateTaskInChecklist } = useMaintenanceStore();
   const { currentTask } = useTaskStore();
@@ -129,7 +131,11 @@ export default function EditTask({
         {
           loading: 'Updating task...',
           success: res => {
-            updateTaskInChecklist(checklistId, res);
+            if (checklistId) {
+              updateTaskInChecklist(checklistId, res);
+            } else {
+              router.refresh();
+            }
             return 'Task successfully updated!';
           },
           error: 'Failed to update task',

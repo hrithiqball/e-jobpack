@@ -70,6 +70,7 @@ export async function fetchTaskList(checklistId?: string) {
         AND: filters,
       },
       include: {
+        taskAssignee: { include: { user: true } },
         subtask: true,
       },
     });

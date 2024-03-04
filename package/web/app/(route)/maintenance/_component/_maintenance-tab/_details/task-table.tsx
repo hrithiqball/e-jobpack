@@ -38,7 +38,7 @@ import TaskTypeHelper from '@/components/helper/TaskTypeHelper';
 
 import { isNullOrEmpty } from '@/lib/function/string';
 import { cn } from '@/lib/utils';
-import EditTask from './edit-task';
+import EditTask from '../../../../../../components/edit-task';
 import { toast } from 'sonner';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { deleteTask } from '@/lib/actions/task';
