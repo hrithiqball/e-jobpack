@@ -25,24 +25,22 @@ import {
   PencilLine,
   Trash2,
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { Checklist } from '@/types/maintenance';
-
+import { useCurrentUser } from '@/hooks/use-current-user';
+import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useCurrentRole } from '@/hooks/use-current-role';
 import { useTaskStore } from '@/hooks/use-task.store';
+import { isNullOrEmpty } from '@/lib/function/string';
+import { deleteTask } from '@/lib/actions/task';
+import { cn } from '@/lib/utils';
 
 import TableTaskCompleteCell from './task-complete-cell';
 import TableAssigneeCell from './assignee-cell';
 import TaskTypeHelper from '@/components/helper/TaskTypeHelper';
-
-import { isNullOrEmpty } from '@/lib/function/string';
-import { cn } from '@/lib/utils';
-import EditTask from '../../../../../../components/edit-task';
-import { toast } from 'sonner';
-import { useCurrentUser } from '@/hooks/use-current-user';
-import { deleteTask } from '@/lib/actions/task';
-import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
+import EditTask from '@/components/edit-task';
 
 type Task = Checklist['task'][0];
 

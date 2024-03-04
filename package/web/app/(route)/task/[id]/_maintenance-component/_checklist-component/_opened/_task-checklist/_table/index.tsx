@@ -13,12 +13,20 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import {
+  Popover,
+  PopoverContent,
+  PopoverItem,
+  PopoverItemDestructive,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import {
   ColumnDef,
   VisibilityState,
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import { Button } from '@/components/ui/button';
 
 import {
   Edit,
@@ -32,29 +40,22 @@ import {
 import { toast } from 'sonner';
 
 import { TaskList, TaskItem } from '@/types/task';
-
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { useMediaQuery } from '@/hooks/use-media-query';
-
+import { useTaskStore } from '@/hooks/use-task.store';
 import { createTaskLibrary } from '@/lib/actions/task-library';
 import { CreateTaskLibrary } from '@/lib/schemas/task';
+import { isNullOrEmpty } from '@/lib/function/string';
 import { deleteTask } from '@/lib/actions/task';
 
-import TaskValue from './value';
+// import TaskValue from './value';
 import TaskIssue from './issue';
 import TaskRemark from './remarks';
 import TaskTypeHelper from '@/components/helper/TaskTypeHelper';
-import { isNullOrEmpty } from '@/lib/function/string';
-import {
-  Popover,
-  PopoverContent,
-  PopoverItem,
-  PopoverItemDestructive,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { Button } from '@/components/ui/button';
-import { useTaskStore } from '@/hooks/use-task.store';
 import EditTask from '@/components/edit-task';
+import TableTaskCompleteCell from '@/app/(route)/maintenance/_component/_maintenance-tab/_details/task-complete-cell';
+import ChecklistTaskDetails from './task-details';
+import { stopPropagation } from '@/lib/function/stopPropagation';
 
 type TaskTableProps = {
   taskList: TaskList;
@@ -69,6 +70,7 @@ export default function TaskTable({ taskList }: TaskTableProps) {
   const { setCurrentTask } = useTaskStore();
 
   const [openEditTask, setOpenEditTask] = useState(false);
+  const [openTaskDetails, setOpenTaskDetails] = useState(false);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
     issue: false,
     remarks: false,
@@ -106,8 +108,8 @@ export default function TaskTable({ taskList }: TaskTableProps) {
       header: () => null,
       cell: ({ row }) => {
         return (
-          <div className="min-w-20 text-center">
-            <TaskValue task={row.original} />
+          <div>
+            <TableTaskCompleteCell task={row.original} />
           </div>
         );
       },
@@ -117,7 +119,9 @@ export default function TaskTable({ taskList }: TaskTableProps) {
       header: 'Issue',
       cell: ({ row }) => {
         return (
-          <TaskIssue taskId={row.original.id} issue={row.original.issue} />
+          <div onClick={stopPropagation}>
+            <TaskIssue task={row.original} />
+          </div>
         );
       },
     },
@@ -126,7 +130,9 @@ export default function TaskTable({ taskList }: TaskTableProps) {
       header: 'Remark',
       cell: ({ row }) => {
         return (
-          <TaskRemark taskId={row.original.id} remarks={row.original.remarks} />
+          <div onClick={stopPropagation}>
+            <TaskRemark task={row.original} />
+          </div>
         );
       },
     },
@@ -199,7 +205,12 @@ export default function TaskTable({ taskList }: TaskTableProps) {
           <div className="text-right">
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="ghost" size="icon" disabled={transitioning}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  disabled={transitioning}
+                  onClick={e => e.stopPropagation()}
+                >
                   <MoreVertical size={18} />
                 </Button>
               </PopoverTrigger>
@@ -266,6 +277,15 @@ export default function TaskTable({ taskList }: TaskTableProps) {
     setOpenEditTask(false);
   }
 
+  function handleOpenTaskDetails(task: TaskItem) {
+    setCurrentTask(task);
+    setOpenTaskDetails(true);
+  }
+
+  function handleCloseTaskDetails() {
+    setOpenTaskDetails(false);
+  }
+
   return (
     <div>
       {taskList.length > 0 ? (
@@ -286,7 +306,11 @@ export default function TaskTable({ taskList }: TaskTableProps) {
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows.map(row => (
-              <TableRow key={row.id} noHover>
+              <TableRow
+                key={row.id}
+                noHover
+                onClick={() => handleOpenTaskDetails(row.original)}
+              >
                 {row.getVisibleCells().map(cell => (
                   <TableCell key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -302,6 +326,10 @@ export default function TaskTable({ taskList }: TaskTableProps) {
         </div>
       )}
       <EditTask open={openEditTask} onClose={handleCloseEditTask} />
+      <ChecklistTaskDetails
+        open={openTaskDetails}
+        onClose={handleCloseTaskDetails}
+      />
     </div>
   );
 }

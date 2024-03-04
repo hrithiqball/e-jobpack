@@ -7,22 +7,21 @@ import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { TaskItem } from '@/types/task';
 import { useCurrentUser } from '@/hooks/use-current-user';
-
 import { updateTask } from '@/lib/actions/task';
 import { cn } from '@/lib/utils';
 
 type TaskIssueProps = {
-  taskId: string;
-  issue: string | null;
+  task: TaskItem;
 };
 
-export default function TaskIssue({ issue, taskId }: TaskIssueProps) {
+export default function TaskIssue({ task }: TaskIssueProps) {
   const [transitioning, startTransition] = useTransition();
   const user = useCurrentUser();
 
-  const [observableValue, setObservableValue] = useState(issue || '');
-  const [issueVal, setIssueVal] = useState(issue || '');
+  const [observableValue, setObservableValue] = useState(task.issue || '');
+  const [issueVal, setIssueVal] = useState(task.issue || '');
   const [debouncedIssue] = useDebounce(issueVal, 2000);
 
   useEffect(() => {
@@ -36,7 +35,7 @@ export default function TaskIssue({ issue, taskId }: TaskIssueProps) {
         return;
       }
 
-      toast.promise(updateTask(taskId, user.id, { issue: debouncedIssue }), {
+      toast.promise(updateTask(task.id, user.id, { issue: debouncedIssue }), {
         loading: 'Updating issue',
         success: () => {
           return 'Issue updated';
@@ -44,7 +43,7 @@ export default function TaskIssue({ issue, taskId }: TaskIssueProps) {
         error: 'Failed to update issue',
       });
     });
-  }, [debouncedIssue, observableValue, taskId, user]);
+  }, [debouncedIssue, observableValue, task.id, user]);
 
   function onChange(event: ChangeEvent<HTMLInputElement>) {
     setIssueVal(event.target.value);

@@ -1,7 +1,6 @@
 import { Tooltip } from '@nextui-org/react';
 
 import { TaskItem } from '@/types/task';
-import { Button } from '@/components/ui/button';
 
 type TableTaskCompleteCellProps = {
   task: TaskItem;
@@ -42,7 +41,7 @@ export default function TableTaskCompleteCell({
     case 'MULTIPLE_SELECT':
       return (
         <Tooltip placement="right" content={<ListChoiceTooltip />}>
-          <Button variant="ghost">
+          <div>
             {task.taskSelected.length > 0 ? (
               <div className="flex items-center">
                 {task.taskSelected.map(choice => (
@@ -52,20 +51,20 @@ export default function TableTaskCompleteCell({
             ) : (
               <Incomplete />
             )}
-          </Button>
+          </div>
         </Tooltip>
       );
 
     case 'SINGLE_SELECT':
       return (
         <Tooltip placement="right" content={<ListChoiceTooltip />}>
-          <Button variant="ghost">
+          <div>
             {task.taskSelected.length > 0 ? (
               <span>complete single</span>
             ) : (
               <Incomplete />
             )}
-          </Button>
+          </div>
         </Tooltip>
       );
 

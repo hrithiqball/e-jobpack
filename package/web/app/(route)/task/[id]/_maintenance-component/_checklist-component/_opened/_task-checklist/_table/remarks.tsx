@@ -11,17 +11,17 @@ import { useCurrentUser } from '@/hooks/use-current-user';
 
 import { updateTask } from '@/lib/actions/task';
 import { cn } from '@/lib/utils';
+import { TaskItem } from '@/types/task';
 type TaskRemarkProps = {
-  remarks: string | null;
-  taskId: string;
+  task: TaskItem;
 };
 
-export default function TaskRemark({ remarks, taskId }: TaskRemarkProps) {
+export default function TaskRemark({ task }: TaskRemarkProps) {
   const [transitioning, startTransition] = useTransition();
   const user = useCurrentUser();
 
-  const [observableValue, setObservableValue] = useState(remarks || '');
-  const [remarksVal, setRemarksVal] = useState(remarks || '');
+  const [observableValue, setObservableValue] = useState(task.remarks || '');
+  const [remarksVal, setRemarksVal] = useState(task.remarks || '');
   const [debouncedRemarks] = useDebounce(remarksVal, 2000);
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function TaskRemark({ remarks, taskId }: TaskRemarkProps) {
       }
 
       toast.promise(
-        updateTask(taskId, user.id, { remarks: debouncedRemarks }),
+        updateTask(task.id, user.id, { remarks: debouncedRemarks }),
         {
           loading: 'Updating remarks',
           success: () => {
@@ -46,7 +46,7 @@ export default function TaskRemark({ remarks, taskId }: TaskRemarkProps) {
         },
       );
     });
-  }, [debouncedRemarks, observableValue, taskId, user]);
+  }, [debouncedRemarks, observableValue, task.id, user]);
 
   function onChange(event: ChangeEvent<HTMLInputElement>) {
     setRemarksVal(event.target.value);
