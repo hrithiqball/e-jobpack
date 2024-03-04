@@ -25,7 +25,7 @@ import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 import { uploadMaintenanceImage } from '@/lib/actions/maintenance';
 import { cn } from '@/lib/utils';
 
-import MaintenanceAddAttachmentDialog from './MaintenanceAddAttachmentDialog';
+import MaintenanceAddAttachmentDialog from './add-attachment-dialog';
 
 const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
 

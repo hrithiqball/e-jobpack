@@ -1,4 +1,4 @@
-import { Fragment, useState, useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import { User } from '@prisma/client';
 import Image from 'next/image';
 
@@ -93,51 +93,49 @@ export default function TableAssigneeCell({
   return (
     <DropdownMenu onOpenChange={handleClose}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" disabled={transitioning}>
+        <Button size="sm" variant="ghost" disabled={transitioning}>
           {assigneeList.length > 0 ? (
             <div className="flex items-center space-x-2">
-              <div className="flex items-center space-x-1">
-                {assigneeList.length === 1 ? (
-                  <Fragment>
-                    <div className="flex size-6 items-center justify-center rounded-full bg-gray-400">
-                      {assigneeList[0]!.image ? (
+              {assigneeList.length === 1 ? (
+                <div className="flex items-center space-x-1">
+                  <div className="flex size-6 items-center justify-center rounded-full bg-gray-400">
+                    {assigneeList[0]!.image ? (
+                      <Image
+                        src={`${baseServerUrl}/user/${assigneeList[0]!.image}`}
+                        alt={assigneeList[0]!.name}
+                        width={6}
+                        height={6}
+                        className="size-6 rounded-full"
+                      />
+                    ) : (
+                      <p className="text-xs">
+                        {assigneeList[0]!.name.substring(0, 1)}
+                      </p>
+                    )}
+                  </div>
+                  {assigneeList.length === 1 && <p>{assigneeList[0]!.name}</p>}
+                </div>
+              ) : (
+                <div className="flex -space-x-2 overflow-hidden p-2">
+                  {assigneeList.slice(0, 2).map(user => (
+                    <Tooltip key={user.id} content={user.name}>
+                      {user.image ? (
                         <Image
-                          src={`${baseServerUrl}/user/${assigneeList[0]!.image}`}
-                          alt={assigneeList[0]!.name}
+                          src={`${baseServerUrl}/user/${user.image}`}
+                          alt={user.name}
                           width={6}
                           height={6}
-                          className="size-6 rounded-full"
+                          className="inline-block size-6 rounded-full ring-1 ring-white"
                         />
                       ) : (
-                        <p className="text-xs">
-                          {assigneeList[0]!.name.substring(0, 1)}
-                        </p>
-                      )}
-                    </div>
-                    {assigneeList.length === 1 && (
-                      <p>{assigneeList[0]!.name}</p>
-                    )}
-                  </Fragment>
-                ) : (
-                  assigneeList.slice(0, 2).map(user => (
-                    <Tooltip key={user.id} content={user.name}>
-                      <div className="flex size-6 items-center justify-center rounded-full bg-gray-400">
-                        {user.image ? (
-                          <Image
-                            src={`${baseServerUrl}/user/${user.image}`}
-                            alt={user.name}
-                            width={6}
-                            height={6}
-                            className="size-6 rounded-full"
-                          />
-                        ) : (
+                        <div className="flex size-6 items-center justify-center rounded-full bg-gray-400 ring-1 ring-white">
                           <p className="text-xs">{user.name.substring(0, 1)}</p>
-                        )}
-                      </div>
+                        </div>
+                      )}
                     </Tooltip>
-                  ))
-                )}
-              </div>
+                  ))}
+                </div>
+              )}
               {assigneeList.length > 2 && (
                 <p className="text-small font-medium text-foreground">
                   +{assigneeList.length - 2} others

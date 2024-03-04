@@ -28,14 +28,14 @@ import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 
 import { updateMaintenance } from '@/lib/actions/maintenance';
 
-import MaintenanceRejectConfirmation from './MaintenanceRejectConfirmation';
-import MaintenanceAddChecklistModal from './MaintenanceAddChecklistModal';
-import MaintenanceTableInfo from './MaintenanceTableInfo';
-import MaintenanceRequestForm from './MaintenanceRequestForm';
-import MaintenanceExport from './MaintenanceExport';
-import MaintenanceAddAttachment from './MaintenanceAddAttachment';
-import ChecklistComponent from '../_checklist-component';
-import MaintenanceDropdown from './MaintenanceDropdown';
+import MaintenanceRejectConfirmation from './reject-confirmation';
+import MaintenanceAddChecklistModal from './add-checklist';
+import MaintenanceTableInfo from './info-table';
+import MaintenanceRequestForm from './request-form';
+import MaintenanceExport from './export';
+import MaintenanceAddAttachment from './add-attachment';
+import ChecklistComponent from './_checklist-component';
+import MaintenanceDropdown from './dropdown';
 
 type MaintenanceComponentProps = {
   maintenance: MaintenanceItem;

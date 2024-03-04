@@ -1,7 +1,7 @@
 import { Maintenance } from '@/types/maintenance';
 
-import MaintenanceChecklist from './_maintenance-checklist';
-import ClosedChecklist from './_closed-checklist';
+import MaintenanceChecklist from './_opened';
+import ClosedChecklist from './_closed';
 
 type ChecklistComponentProps = {
   checklistList: Maintenance['checklist'];

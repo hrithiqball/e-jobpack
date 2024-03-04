@@ -10,6 +10,7 @@ import {
   SheetContent,
   SheetFooter,
   SheetHeader,
+  SheetTitle,
 } from '@/components/ui/sheet';
 import {
   Drawer,
@@ -153,7 +154,7 @@ export default function MaintenanceCreate({
     <Sheet open={open} onOpenChange={handleClose}>
       <SheetContent>
         <SheetHeader className="text-medium font-medium">
-          Create New Maintenance
+          <SheetTitle>Create New Maintenance</SheetTitle>
         </SheetHeader>
         <div className="my-4 space-y-4">
           <Form {...form}>
