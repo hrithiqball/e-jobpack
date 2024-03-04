@@ -1,16 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useTransition } from 'react';
-
-import { Checkbox, Input, Select, SelectItem, Switch } from '@nextui-org/react';
 
 import { toast } from 'sonner';
 
 import { TaskItem } from '@/types/task';
-
 import { useCurrentUser } from '@/hooks/use-current-user';
-
 import { UpdateTask, UpdateTaskSchema } from '@/lib/schemas/task';
 import { updateTask } from '@/lib/actions/task';
+import { Switch } from '@/components/ui/switch';
 
 type TaskValueProps = {
   task: TaskItem;
@@ -42,40 +38,40 @@ export default function TaskValue({ task }: TaskValueProps) {
     });
   }
 
-  function handleSelectionChange(val: any) {
-    const changedValue = [val.currentKey as string];
+  // function handleSelectionChange(val: any) {
+  //   const changedValue = [val.currentKey as string];
 
-    if (
-      changedValue.length !== taskSelected.length &&
-      changedValue.every((value, index) => value === taskSelected[index])
-    ) {
-      setTaskSelected(changedValue);
-      const validatedFields = UpdateTaskSchema.safeParse({
-        taskSelected: changedValue,
-      });
+  //   if (
+  //     changedValue.length !== taskSelected.length &&
+  //     changedValue.every((value, index) => value === taskSelected[index])
+  //   ) {
+  //     setTaskSelected(changedValue);
+  //     const validatedFields = UpdateTaskSchema.safeParse({
+  //       taskSelected: changedValue,
+  //     });
 
-      if (!validatedFields.success) {
-        toast.error(validatedFields.error?.issues[0]?.message);
-        return;
-      }
+  //     if (!validatedFields.success) {
+  //       toast.error(validatedFields.error?.issues[0]?.message);
+  //       return;
+  //     }
 
-      startTransition(() => {
-        if (user === undefined || user.id === undefined) {
-          toast.error('Session expired');
-          return;
-        }
+  //     startTransition(() => {
+  //       if (user === undefined || user.id === undefined) {
+  //         toast.error('Session expired');
+  //         return;
+  //       }
 
-        toast.promise(
-          updateTask(task.id, user.id, { ...validatedFields.data }),
-          {
-            loading: 'Updating task...',
-            success: 'Task updated',
-            error: 'Failed to update task',
-          },
-        );
-      });
-    }
-  }
+  //       toast.promise(
+  //         updateTask(task.id, user.id, { ...validatedFields.data }),
+  //         {
+  //           loading: 'Updating task...',
+  //           success: 'Task updated',
+  //           error: 'Failed to update task',
+  //         },
+  //       );
+  //     });
+  //   }
+  // }
 
   switch (task.taskType) {
     case 'CHECK':
