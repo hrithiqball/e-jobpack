@@ -55,6 +55,7 @@ export const UpdateTaskSchema = z.object({
   taskBool: z.boolean().optional(),
   taskNumberVal: z.number().optional(),
   taskType: z.nativeEnum(TaskType).optional(),
+  taskCheck: z.boolean().optional(),
 });
 
 export const UpdateTaskFormSchema = z.object({

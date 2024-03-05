@@ -1,6 +1,6 @@
 'use client';
 
-import React, { PropsWithChildren } from 'react';
+import { PropsWithChildren } from 'react';
 
 import { Card, CardBody } from '@nextui-org/react';
 
