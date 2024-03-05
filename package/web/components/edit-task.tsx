@@ -1,7 +1,8 @@
 import { useState, useEffect, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
+import { TaskType } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { TaskType } from '@prisma/client';
 import { useForm } from 'react-hook-form';
 
 import {
@@ -11,6 +12,13 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from '@/components/ui/drawer';
 import {
   Form,
   FormControl,
@@ -26,16 +34,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Trash2, AlertCircle } from 'lucide-react';
 import { Tooltip } from '@nextui-org/react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Trash2, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { TaskTypeEnum } from '@/types/enum';
 import { useCurrentUser } from '@/hooks/use-current-user';
+import { useMediaQuery } from '@/hooks/use-media-query';
 import { useTaskStore } from '@/hooks/use-task.store';
+import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 import {
   UpdateTaskDetailsForm,
   UpdateTaskDetailsFormSchema,
@@ -43,8 +53,6 @@ import {
 
 import TaskTypeHelper from '@/components/helper/TaskTypeHelper';
 import { updateTaskDetails } from '@/lib/actions/task';
-import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
-import { useRouter } from 'next/navigation';
 
 type EditTaskProps = {
   checklistId?: string;
@@ -58,6 +66,7 @@ export default function EditTask({
   onClose,
 }: EditTaskProps) {
   const [transitioning, startTransition] = useTransition();
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const user = useCurrentUser();
   const router = useRouter();
 
@@ -164,7 +173,7 @@ export default function EditTask({
     onClose();
   }
 
-  return (
+  return isDesktop ? (
     <Sheet open={open} onOpenChange={handleClose}>
       <SheetContent className="space-y-4">
         <SheetHeader>
@@ -293,5 +302,17 @@ export default function EditTask({
         </SheetFooter>
       </SheetContent>
     </Sheet>
+  ) : (
+    <Drawer open={open} onClose={handleClose}>
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>Edit Form</DrawerTitle>
+        </DrawerHeader>
+        Mobile Support Coming Soon
+        <DrawerFooter>
+          <Button>Update</Button>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
   );
 }

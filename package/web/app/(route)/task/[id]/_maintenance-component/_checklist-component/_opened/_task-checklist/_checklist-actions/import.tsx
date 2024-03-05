@@ -30,7 +30,6 @@ type ChecklistImportProps = {
   onClose: () => void;
   onUpdate: () => void;
   checklistId: string;
-  checklistLibraryList: ChecklistLibraryList;
 };
 
 export default function ChecklistImport({
@@ -38,11 +37,12 @@ export default function ChecklistImport({
   onClose,
   onUpdate,
   checklistId,
-  checklistLibraryList,
 }: ChecklistImportProps) {
   const [transitioning, startTransition] = useTransition();
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const user = useCurrentUser();
+
+  const checklistLibraryList: ChecklistLibraryList = [];
 
   const [selectedChecklistLibrary, setSelectedChecklistLibrary] =
     useState<ChecklistLibraryItem | null>();

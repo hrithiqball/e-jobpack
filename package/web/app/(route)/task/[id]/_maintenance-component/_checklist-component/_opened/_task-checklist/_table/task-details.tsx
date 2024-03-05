@@ -1,15 +1,12 @@
-// import { zodResolver } from '@hookform/resolvers/zod';
-// import { useForm } from 'react-hook-form';
+import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
-import { Button } from '@/components/ui/button';
 import {
   Drawer,
   DrawerContent,
   DrawerDescription,
   DrawerFooter,
   DrawerHeader,
-  DrawerTitle,
 } from '@/components/ui/drawer';
 import {
   Sheet,
@@ -19,14 +16,13 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-// import { Form } from '@/components/ui/form';
+import { Button } from '@/components/ui/button';
 
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useTaskStore } from '@/hooks/use-task.store';
 import { isNullOrEmpty } from '@/lib/function/string';
 import { TaskItem } from '@/types/task';
 import { Checkbox, Radio, RadioGroup } from '@nextui-org/react';
-import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import {
   DropdownMenu,
@@ -36,11 +32,6 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-
-// import { z } from 'zod';
-// export const UpdateTaskValueFormSchema = z.object({
-
-// })
 
 type ChecklistTaskDetailsProps = {
   open: boolean;
@@ -58,10 +49,6 @@ export default function ChecklistTaskDetails({
   if (!currentTask) {
     return null;
   }
-
-  // const form = useForm<UpdateTaskValueForm>({
-  //   resolver: zodResolver(UpdateTaskValueFormSchema),
-  // });
 
   function handleClose() {
     onClose();
@@ -86,11 +73,13 @@ export default function ChecklistTaskDetails({
     <Drawer open={open} onClose={handleClose}>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>{currentTask.taskActivity}</DrawerTitle>
           <DrawerDescription>
             {isNullOrEmpty(currentTask.description) ?? 'No description'}
           </DrawerDescription>
         </DrawerHeader>
+        <div className="px-4">
+          <UpdateTaskValueFormComponent task={currentTask} />
+        </div>
         <DrawerFooter>
           <Button>Update</Button>
         </DrawerFooter>

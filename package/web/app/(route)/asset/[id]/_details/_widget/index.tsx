@@ -58,7 +58,7 @@ export default function DetailsWidget() {
                       onMouseEnter={handleCoverHoverEnter}
                       onMouseLeave={handleCoverHoverLeave}
                     >
-                      {hoverCoverImage && asset.assetCover && (
+                      {hoverCoverImage && (
                         <Button
                           size="sm"
                           variant="faded"

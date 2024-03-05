@@ -188,3 +188,14 @@ export async function uploadChecklistImage(
     throw error;
   }
 }
+
+export async function deleteChecklist(id: string) {
+  try {
+    return await db.checklist.delete({
+      where: { id },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}

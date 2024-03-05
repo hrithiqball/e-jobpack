@@ -139,16 +139,23 @@ export default function TaskTable({ taskList }: TaskTableProps) {
     {
       id: 'actions',
       cell: ({ row }) => {
-        function handleEdit() {
+        function handleEdit(event: React.MouseEvent<Element, MouseEvent>) {
+          event.stopPropagation();
           setCurrentTask(row.original);
           setOpenEditTask(true);
         }
 
-        function handleAddSubtask() {
+        function handleAddSubtask(
+          event: React.MouseEvent<Element, MouseEvent>,
+        ) {
+          event.stopPropagation();
           console.log(row.original);
         }
 
-        function handleSaveAsLibrary() {
+        function handleSaveAsLibrary(
+          event: React.MouseEvent<Element, MouseEvent>,
+        ) {
+          event.stopPropagation();
           startTransition(() => {
             if (user === undefined || user.id === undefined) {
               toast.error('User session expired');
@@ -175,7 +182,10 @@ export default function TaskTable({ taskList }: TaskTableProps) {
           });
         }
 
-        function handleRemoveTask() {
+        function handleRemoveTask(
+          event: React.MouseEvent<Element, MouseEvent>,
+        ) {
+          event.stopPropagation();
           startTransition(() => {
             if (user === undefined || user.id === undefined) {
               toast.error('User session expired');
@@ -193,11 +203,15 @@ export default function TaskTable({ taskList }: TaskTableProps) {
           });
         }
 
-        function handleAddIssue() {
+        function handleAddIssue(event: React.MouseEvent<Element, MouseEvent>) {
+          event.stopPropagation();
           console.log(row.original);
         }
 
-        function handleAddRemarks() {
+        function handleAddRemarks(
+          event: React.MouseEvent<Element, MouseEvent>,
+        ) {
+          event.stopPropagation();
           console.log(row.original);
         }
 
@@ -209,7 +223,7 @@ export default function TaskTable({ taskList }: TaskTableProps) {
                   variant="ghost"
                   size="icon"
                   disabled={transitioning}
-                  onClick={e => e.stopPropagation()}
+                  onClick={stopPropagation}
                 >
                   <MoreVertical size={18} />
                 </Button>

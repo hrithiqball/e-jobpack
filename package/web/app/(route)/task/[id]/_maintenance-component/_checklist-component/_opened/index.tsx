@@ -9,7 +9,5 @@ type MaintenanceChecklistProps = {
 export default function MaintenanceChecklist({
   checklist,
 }: MaintenanceChecklistProps) {
-  return (
-    <TaskMaintenanceChecklist checklist={checklist} checklistLibraryList={[]} />
-  );
+  return <TaskMaintenanceChecklist checklist={checklist} />;
 }

@@ -1,203 +1,186 @@
-import { Key, useState, useTransition } from 'react';
+import { Fragment, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-
-import {
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-} from '@nextui-org/react';
-import { Button } from '@/components/ui/button';
 
 import {
   FileBox,
   FilePlus2,
-  FileSymlink,
   ImagePlus,
+  LibraryBig,
   MoreVertical,
   PackageCheck,
   PackageMinus,
 } from 'lucide-react';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  PopoverItem,
+  PopoverItemDestructive,
+} from '@/components/ui/popover';
+import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
 import { Maintenance } from '@/types/maintenance';
-import { ChecklistLibraryList } from '@/types/checklist';
-
 import { useCurrentRole } from '@/hooks/use-current-role';
 import { useCurrentUser } from '@/hooks/use-current-user';
+import { deleteChecklist, updateChecklist } from '@/lib/actions/checklist';
 
-import { updateChecklist } from '@/lib/actions/checklist';
-
-import TaskAdd from './add-task';
-import ChecklistExportModal from './export';
+import AddTask from './add-task';
+import ChecklistExport from './export';
 import ChecklistImport from './import';
 
 type AssetActionsProps = {
   checklist: Maintenance['checklist'][0];
-  checklistLibraryList: ChecklistLibraryList;
 };
 
-export default function ChecklistActions({
-  checklist,
-  checklistLibraryList,
-}: AssetActionsProps) {
+export default function ChecklistActions({ checklist }: AssetActionsProps) {
   const [transitioning, startTransition] = useTransition();
   const router = useRouter();
   const role = useCurrentRole();
   const user = useCurrentUser();
 
-  const [isTaskAddOpenModal, setIsTaskAddOpenModal] = useState(false);
-  const [isChecklistImportOpen, setIsChecklistImportOpen] = useState(false);
-  const [isChecklistExportModalOpen, setIsChecklistExportModalOpen] =
-    useState(false);
-
-  function handleAction(key: Key) {
-    switch (key) {
-      case 'add-task':
-        setIsTaskAddOpenModal(true);
-        break;
-
-      case 'delete-asset':
-        break;
-
-      case 'close-checklist':
-        startTransition(() => {
-          if (user === undefined || user.id === undefined) {
-            toast.error('Session expired');
-            return;
-          }
-
-          toast.promise(
-            updateChecklist(checklist.id, {
-              updatedById: user.id,
-              isClose: true,
-            }),
-            {
-              loading: 'Closing checklist...',
-              success: res => {
-                return `${res.assetId} is closed!`;
-              },
-              error: 'Failed to close checklist 😥',
-            },
-          );
-          if (!transitioning) {
-            console.log('success');
-          }
-        });
-        break;
-
-      case 'import-checklist':
-        setIsChecklistImportOpen(true);
-        break;
-
-      case 'export-checklist':
-        setIsChecklistExportModalOpen(true);
-        break;
-    }
-  }
+  const [openAddTask, setOpenAddTask] = useState(false);
+  const [openImportChecklist, setOpenImportChecklist] = useState(false);
+  const [openExportChecklist, setExportChecklist] = useState(false);
 
   function handleCloseTaskAddModal() {
-    setIsTaskAddOpenModal(false);
+    setOpenAddTask(false);
   }
 
   function handleCloseChecklistExportModal() {
-    setIsChecklistExportModalOpen(false);
+    setExportChecklist(false);
   }
 
   function handleCloseChecklistImport() {
-    setIsChecklistImportOpen(false);
+    setOpenImportChecklist(false);
+  }
+
+  function handleCloseChecklist() {
+    startTransition(() => {
+      if (!user || !user.id) {
+        toast.error('Session expired');
+        return;
+      }
+
+      toast.promise(
+        updateChecklist(checklist.id, {
+          updatedById: user.id,
+          isClose: true,
+        }),
+        {
+          loading: 'Closing checklist...',
+          success: res => {
+            return `${res.assetId} is closed!`;
+          },
+          error: 'Failed to close checklist 😥',
+        },
+      );
+      if (!transitioning) {
+        console.log('success');
+      }
+    });
+  }
+
+  function handleRemoveChecklist() {
+    startTransition(() => {
+      if (!user || !user.id) {
+        toast.error('Session expired');
+        return;
+      }
+
+      toast.promise(deleteChecklist(checklist.id), {
+        loading: 'Removing checklist...',
+        success: () => {
+          return 'Checklist removed!';
+        },
+        error: 'Failed to remove checklist 😥',
+      });
+    });
   }
 
   function handleChecklistUpdate() {
-    setIsChecklistImportOpen(false);
+    setOpenImportChecklist(false);
     router.refresh();
   }
 
+  function handleOpenAddTask() {
+    setOpenAddTask(true);
+  }
+
+  function handleOpenChecklistImport() {
+    setOpenImportChecklist(true);
+  }
+
+  function handleOpenSaveAsLibrary() {
+    setExportChecklist(true);
+  }
+
   return (
-    <div>
-      <Dropdown>
-        <DropdownTrigger>
+    <Fragment>
+      <Popover>
+        <PopoverTrigger asChild>
           <Button size="icon" variant="ghost">
             <MoreVertical size={18} />
           </Button>
-        </DropdownTrigger>
-        <DropdownMenu
-          aria-label="Actions"
-          color="primary"
-          disabledKeys={
-            role === 'ADMIN' || role === 'SUPERVISOR'
-              ? []
-              : [
-                  'import-checklist',
-                  'export-checklist',
-                  'delete-asset',
-                  'close-checklist',
-                ]
-          }
-          onAction={handleAction}
-        >
-          <DropdownItem
-            key="add-task"
-            variant="faded"
-            startContent={<FilePlus2 size={18} />}
-          >
-            Add Task
-          </DropdownItem>
-          <DropdownItem
-            key="add-attachment"
-            variant="faded"
-            startContent={<ImagePlus size={18} />}
-          >
+        </PopoverTrigger>
+        <PopoverContent align="end" className="w-56 rounded-lg p-2">
+          <PopoverItem startContent={<ImagePlus size={18} />}>
             Add Attachment
-          </DropdownItem>
-          <DropdownItem
-            key="import-checklist"
-            variant="faded"
-            startContent={<FileBox size={18} />}
-          >
-            Import checklist
-          </DropdownItem>
-          <DropdownItem
-            key="export-checklist"
-            variant="faded"
-            startContent={<FileSymlink size={18} />}
-          >
-            Export Checklist
-          </DropdownItem>
-          <DropdownItem
-            key="close-checklist"
-            variant="faded"
+          </PopoverItem>
+          {role !== 'TECHNICIAN' && (
+            <Fragment>
+              <PopoverItem
+                onClick={handleOpenAddTask}
+                startContent={<FilePlus2 size={18} />}
+              >
+                Add Task
+              </PopoverItem>
+              <PopoverItem
+                onClick={handleOpenChecklistImport}
+                startContent={<FileBox size={18} />}
+              >
+                Import Checklist
+              </PopoverItem>
+              <PopoverItem
+                onClick={handleOpenSaveAsLibrary}
+                startContent={<LibraryBig size={18} />}
+              >
+                Save As Library
+              </PopoverItem>
+            </Fragment>
+          )}
+          <PopoverItem
+            onClick={handleCloseChecklist}
             startContent={<PackageCheck size={18} />}
           >
-            Mark as Close
-          </DropdownItem>
-          <DropdownItem
-            key="delete-asset"
-            variant="faded"
-            color="danger"
-            startContent={<PackageMinus size={18} />}
-          >
-            Remove Asset
-          </DropdownItem>
-        </DropdownMenu>
-      </Dropdown>
-      <TaskAdd
-        open={isTaskAddOpenModal}
+            Mark As Close
+          </PopoverItem>
+          {role !== 'TECHNICIAN' && (
+            <PopoverItemDestructive
+              onClick={handleRemoveChecklist}
+              startContent={<PackageMinus size={18} />}
+            >
+              Remove Checklist
+            </PopoverItemDestructive>
+          )}
+        </PopoverContent>
+      </Popover>
+      <AddTask
+        open={openAddTask}
         onClose={handleCloseTaskAddModal}
         checklist={checklist}
       />
-      <ChecklistExportModal
-        open={isChecklistExportModalOpen}
+      <ChecklistExport
+        open={openExportChecklist}
         onClose={handleCloseChecklistExportModal}
         checklist={checklist}
       />
       <ChecklistImport
-        open={isChecklistImportOpen}
+        open={openImportChecklist}
         onClose={handleCloseChecklistImport}
         onUpdate={handleChecklistUpdate}
         checklistId={checklist.id}
-        checklistLibraryList={checklistLibraryList}
       />
-    </div>
+    </Fragment>
   );
 }

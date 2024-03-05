@@ -30,17 +30,14 @@ import {
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-
 import { Trash } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { selectionChoices } from '@/public/utils/task-type-options';
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
-
 import { AddTaskForm, AddTaskFormSchema, CreateTask } from '@/lib/schemas/task';
 import { createTask } from '@/lib/actions/task';
 import { cn } from '@/lib/utils';
-
-import { selectionChoices } from '@/public/utils/task-type-options';
 
 type ChecklistAddTaskProps = {
   open: boolean;

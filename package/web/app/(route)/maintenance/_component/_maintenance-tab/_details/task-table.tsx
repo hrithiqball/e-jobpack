@@ -1,6 +1,14 @@
 import { useEffect, useState, useTransition } from 'react';
 
 import {
+  Contact2,
+  MessageCircleMore,
+  MessageCircleWarning,
+  MoreVertical,
+  PencilLine,
+  Trash2,
+} from 'lucide-react';
+import {
   ColumnDef,
   VisibilityState,
   flexRender,
@@ -16,15 +24,6 @@ import {
 } from '@/components/ui/popover';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-
-import {
-  Contact2,
-  MessageCircleMore,
-  MessageCircleWarning,
-  MoreVertical,
-  PencilLine,
-  Trash2,
-} from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Checklist } from '@/types/maintenance';
