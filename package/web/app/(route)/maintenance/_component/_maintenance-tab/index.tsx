@@ -471,7 +471,7 @@ export default function MaintenanceTab({
             <TableRow
               key={row.id}
               onClick={() => handleOpenRowInfo(row.original)}
-              className="hover:cursor-pointer"
+              className="cursor-pointer"
             >
               {row.getVisibleCells().map(cell => (
                 <TableCell key={cell.id}>

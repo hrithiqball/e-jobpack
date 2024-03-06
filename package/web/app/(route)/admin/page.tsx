@@ -1,5 +1,14 @@
-'use client';
+import { Wrapper } from '@/components/ui/wrapper';
 
-export default function AdminPage() {
-  return <div>AdminPage</div>;
+import AdminComponent from './_component';
+import { fetchUserList } from '@/lib/actions/user';
+
+export default async function AdminPage() {
+  const userList = await fetchUserList();
+
+  return (
+    <Wrapper>
+      <AdminComponent userList={userList} />
+    </Wrapper>
+  );
 }
