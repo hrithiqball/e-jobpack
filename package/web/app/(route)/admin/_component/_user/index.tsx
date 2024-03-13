@@ -33,14 +33,23 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import emptyIcon from '@/public/image/empty.svg';
+import { useUserStore } from '@/hooks/use-user.store';
+import UserPreview from './user-preview';
+import { isNullOrEmpty } from '@/lib/function/string';
+import { convertToTitleCase } from '@/lib/function/convertToWord';
+import CreateUser from './create-user';
 
 type UserTabProps = {
   userList: User[];
 };
 
 export default function UserTab({ userList }: UserTabProps) {
+  const { setCurrentUser } = useUserStore();
+
   const data = userList.filter(user => user.id !== '-99');
 
+  const [openUserPreview, setOpenUserPreview] = useState(false);
+  const [openCreateUser, setOpenCreateUser] = useState(false);
   const [filterBy, setFilterBy] = useState('name');
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -56,10 +65,30 @@ export default function UserTab({ userList }: UserTabProps) {
       },
     },
     {
+      accessorKey: 'role',
+      header: 'Role',
+      cell: ({ row }) => {
+        if (!row.original.role) return <p>-</p>;
+
+        const role = convertToTitleCase(row.original.role);
+        return <p>{role}</p>;
+      },
+    },
+    {
       accessorKey: 'department',
       header: 'Department',
       cell: ({ row }) => {
-        return <p>{row.original.department}</p>;
+        if (!row.original.department) return <p>-</p>;
+
+        const department = convertToTitleCase(row.original.department);
+        return <p>{department}</p>;
+      },
+    },
+    {
+      accessorKey: 'phone',
+      header: 'Phone',
+      cell: ({ row }) => {
+        return <p>{isNullOrEmpty(row.original.phone) || '-'}</p>;
       },
     },
   ];
@@ -85,7 +114,20 @@ export default function UserTab({ userList }: UserTabProps) {
   });
 
   function handleOpenUserPreview(user: User) {
-    console.log(user);
+    setCurrentUser(user);
+    setOpenUserPreview(true);
+  }
+
+  function handleOpenCreateUser() {
+    setOpenCreateUser(true);
+  }
+
+  function handleCloseUserPreview() {
+    setOpenUserPreview(false);
+  }
+
+  function handleCloseCreateUser() {
+    setOpenCreateUser(false);
   }
 
   return (
@@ -168,7 +210,11 @@ export default function UserTab({ userList }: UserTabProps) {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <Button variant="outline" size="withIcon">
+        <Button
+          variant="outline"
+          size="withIcon"
+          onClick={handleOpenCreateUser}
+        >
           <UserPlus size={18} />
           <p>Create User</p>
         </Button>
@@ -218,6 +264,8 @@ export default function UserTab({ userList }: UserTabProps) {
           </div>
         )}
       </div>
+      <UserPreview open={openUserPreview} onClose={handleCloseUserPreview} />
+      <CreateUser open={openCreateUser} onClose={handleCloseCreateUser} />
     </div>
   );
 }
