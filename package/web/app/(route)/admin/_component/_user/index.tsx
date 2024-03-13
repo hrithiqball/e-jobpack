@@ -3,7 +3,14 @@ import Image from 'next/image';
 
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Columns2, Filter, Search, UserPlus } from 'lucide-react';
+import {
+  Columns2,
+  Filter,
+  Search,
+  UserPlus,
+  UserRoundCheck,
+  UserRoundPlus,
+} from 'lucide-react';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -39,18 +46,19 @@ import UserPreview from './user-preview';
 import { isNullOrEmpty } from '@/lib/function/string';
 import { convertToTitleCase } from '@/lib/function/convertToWord';
 import CreateUser from './create-user';
+import ApproveUser from './approve-user';
 
-type UserTabProps = {
-  userList: User[];
-};
-
-export default function UserTab({ userList }: UserTabProps) {
-  const { setCurrentUser } = useUserStore();
+export default function UserTab() {
+  const { userList, setCurrentUser } = useUserStore();
 
   const data = userList.filter(user => user.id !== '-99');
+  const unverifiedUsers = userList.filter(
+    user => user.emailVerified === null,
+  ).length;
 
   const [openUserPreview, setOpenUserPreview] = useState(false);
   const [openCreateUser, setOpenCreateUser] = useState(false);
+  const [openApproveUser, setOpenApproveUser] = useState(false);
   const [filterBy, setFilterBy] = useState('name');
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -122,6 +130,14 @@ export default function UserTab({ userList }: UserTabProps) {
 
   function handleOpenCreateUser() {
     setOpenCreateUser(true);
+  }
+
+  function handleOpenApproveUser() {
+    setOpenApproveUser(true);
+  }
+
+  function handleCloseApproveUser() {
+    setOpenApproveUser(false);
   }
 
   function handleCloseUserPreview() {
@@ -212,14 +228,29 @@ export default function UserTab({ userList }: UserTabProps) {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <Button
-          variant="outline"
-          size="withIcon"
-          onClick={handleOpenCreateUser}
-        >
-          <UserPlus size={18} />
-          <p>Create User</p>
-        </Button>
+        <div className="flex items-center space-x-4">
+          <Button
+            variant="outline"
+            size="withIcon"
+            onClick={handleOpenApproveUser}
+          >
+            <UserRoundCheck size={18} />
+            <p>
+              Approve User
+              {unverifiedUsers > 0 && (
+                <span className="text-red-500"> ({unverifiedUsers})</span>
+              )}
+            </p>
+          </Button>
+          <Button
+            variant="outline"
+            size="withIcon"
+            onClick={handleOpenCreateUser}
+          >
+            <UserRoundPlus size={18} />
+            <p>Create User</p>
+          </Button>
+        </div>
       </div>
       {/* rnd */}
       {/* <div className="flex items-center justify-between">
@@ -355,6 +386,7 @@ export default function UserTab({ userList }: UserTabProps) {
       </div>
       <UserPreview open={openUserPreview} onClose={handleCloseUserPreview} />*/}
       <CreateUser open={openCreateUser} onClose={handleCloseCreateUser} />
+      <ApproveUser open={openApproveUser} onClose={handleCloseApproveUser} />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { Key } from 'react';
+import { Key, useEffect } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { User } from '@prisma/client';
 
@@ -10,6 +10,7 @@ import UserTab from './_user';
 import ContractorTab from './_contractor';
 import KpiTab from './_kpi';
 import AssetTab from './_asset';
+import { useUserStore } from '@/hooks/use-user.store';
 
 type AdminComponentProps = {
   userList: User[];
@@ -21,6 +22,12 @@ export default function AdminComponent({ userList }: AdminComponentProps) {
   const router = useRouter();
 
   const tab = searchParams.get('tab') ?? 'user';
+
+  const { setUserList } = useUserStore();
+
+  useEffect(() => {
+    setUserList(userList);
+  }, [userList, setUserList]);
 
   function handleTabChange(key: Key) {
     router.push(`${pathname}?tab=${key}`);
@@ -35,7 +42,7 @@ export default function AdminComponent({ userList }: AdminComponentProps) {
       onSelectionChange={handleTabChange}
     >
       <Tab key="user" title="User" className="flex flex-1 flex-col">
-        <UserTab userList={userList} />
+        <UserTab />
       </Tab>
       <Tab key="contractor" title="Contractor" className="flex flex-1 flex-col">
         <ContractorTab />

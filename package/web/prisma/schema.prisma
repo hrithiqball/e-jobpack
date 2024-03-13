@@ -308,9 +308,11 @@ model User {
   name                                                        String
   createdAt                                                   DateTime             @default(now()) @map("created_at")
   updatedAt                                                   DateTime             @default(now()) @map("updated_at")
-  department                                                  Department?          @default(MANAGEMENT)
+  department                                                  Department           @default(MANAGEMENT)
   role                                                        Role                 @default(ADMIN)
   email                                                       String               @unique
+  isRejected                                                  Boolean              @default(false) @map("is_rejected")
+  isBlocked                                                   Boolean              @default(false) @map("is_blocked")
   password                                                    String
   emailVerified                                               DateTime?            @map("email_verified")
   image                                                       String?

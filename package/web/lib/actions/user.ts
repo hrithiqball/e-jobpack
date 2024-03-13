@@ -61,6 +61,46 @@ export async function adminCreateUser(
   }
 }
 
+export async function adminApproveUser(id: string) {
+  try {
+    return await db.user.update({
+      where: { id },
+      data: { emailVerified: new Date() },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function adminRejectUser(id: string) {
+  try {
+    return await db.user.update({
+      where: { id },
+      data: {
+        isRejected: true,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function adminBlockUser(id: string) {
+  try {
+    return await db.user.update({
+      where: { id },
+      data: {
+        isBlocked: true,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 export async function registerUser(registerForm: RegisterForm) {
   try {
     const { password, email, phone, name } = registerForm;
