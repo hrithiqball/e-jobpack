@@ -36,7 +36,7 @@ export default function RecentActivity() {
                   </TableCell>
                   <TableCell>Created a new maintenance request</TableCell>
                 </TableRow>
-                <TableRow key="1">
+                <TableRow key="2">
                   <TableCell>
                     <Avatar name="Harith" />
                   </TableCell>
@@ -51,7 +51,7 @@ export default function RecentActivity() {
                     </Link>
                   </TableCell>
                 </TableRow>
-                <TableRow key="1">
+                <TableRow key="3">
                   <TableCell>
                     <Avatar src="https://i.pravatar.cc/150?u=a042581f4e29026704d" />
                   </TableCell>

@@ -12,6 +12,7 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
@@ -99,6 +100,7 @@ export default function UserTab({ userList }: UserTabProps) {
     enableRowSelection: true,
     enableMultiRowSelection: true,
     getCoreRowModel: getCoreRowModel<User>(),
+    getPaginationRowModel: getPaginationRowModel<User>(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
@@ -130,6 +132,7 @@ export default function UserTab({ userList }: UserTabProps) {
     setOpenCreateUser(false);
   }
 
+  //https://tanstack.com/table/v8/docs/framework/react/examples/filters
   return (
     <div className="flex flex-1 flex-col space-y-4">
       <div className="flex items-center justify-between">
@@ -138,7 +141,93 @@ export default function UserTab({ userList }: UserTabProps) {
             size={18}
             className="relative left-7 top-2 -translate-y-1/2"
           />
-          {/* https://tanstack.com/table/v8/docs/framework/react/examples/filters */}
+          <Input
+            placeholder="Search"
+            type="search"
+            aria-label="Search maintenance library"
+            value={table.getColumn(filterBy)?.getFilterValue() as string}
+            onChange={event =>
+              table.getColumn(filterBy)?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm pl-8"
+          />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button size="icon" variant="outline">
+                <Filter size={18} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuRadioGroup
+                value={filterBy}
+                onValueChange={setFilterBy}
+              >
+                {table
+                  .getVisibleFlatColumns()
+                  .filter(column => column.getCanFilter())
+                  .map(column => (
+                    <DropdownMenuRadioItem
+                      key={column.id}
+                      value={column.id}
+                      className="w-full"
+                    >
+                      {column.id
+                        .replace(/([a-z])([A-Z])/g, '$1 $2')
+                        .replace(/\bw/g, c => c.toUpperCase())}
+                    </DropdownMenuRadioItem>
+                  ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button size="icon" variant="outline">
+                <Columns2 size={18} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              {table
+                .getAllColumns()
+                .filter(column => column.getCanHide())
+                .map(column => (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    checked={column.getIsVisible()}
+                    onCheckedChange={value =>
+                      column.toggleVisibility(Boolean(value))
+                    }
+                    className="w-full"
+                  >
+                    {column.id === 'id' ? (
+                      'ID'
+                    ) : (
+                      <span>
+                        {column.id
+                          .replace(/([a-z])([A-Z])/g, '$1 $2')
+                          .replace(/\b\w/g, c => c.toUpperCase())}
+                      </span>
+                    )}
+                  </DropdownMenuCheckboxItem>
+                ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        <Button
+          variant="outline"
+          size="withIcon"
+          onClick={handleOpenCreateUser}
+        >
+          <UserPlus size={18} />
+          <p>Create User</p>
+        </Button>
+      </div>
+      {/* rnd */}
+      {/* <div className="flex items-center justify-between">
+        <div className="flex items-center">
+          <Search
+            size={18}
+            className="relative left-7 top-2 -translate-y-1/2"
+          />
           <Input
             placeholder="Search"
             type="search"
@@ -264,7 +353,7 @@ export default function UserTab({ userList }: UserTabProps) {
           </div>
         )}
       </div>
-      <UserPreview open={openUserPreview} onClose={handleCloseUserPreview} />
+      <UserPreview open={openUserPreview} onClose={handleCloseUserPreview} />*/}
       <CreateUser open={openCreateUser} onClose={handleCloseCreateUser} />
     </div>
   );

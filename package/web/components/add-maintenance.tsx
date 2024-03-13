@@ -100,9 +100,7 @@ export default function AddMaintenanceModal({
   return (
     <Modal isOpen={isOpen} backdrop="blur" hideCloseButton>
       <ModalContent>
-        <ModalHeader>
-          <h2>Add Maintenance</h2>
-        </ModalHeader>
+        <ModalHeader>Add Maintenance</ModalHeader>
         <ModalBody>
           <Input
             isRequired

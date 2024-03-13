@@ -32,7 +32,7 @@ export default function MaintenanceRequestWidget() {
                 <TableColumn>DATE</TableColumn>
               </TableHeader>
               <TableBody className="overflow-auto">
-                <TableRow key="1">
+                <TableRow key="192">
                   <TableCell>
                     <Link href="/asset">
                       <div className="flex items-center space-x-2 hover:text-blue-500 hover:underline">

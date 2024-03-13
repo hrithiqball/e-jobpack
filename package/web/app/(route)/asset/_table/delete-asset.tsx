@@ -67,9 +67,7 @@ export default function DeleteAssetModal({
   return (
     <Modal isOpen={isOpen} hideCloseButton backdrop="blur">
       <ModalContent>
-        <ModalHeader>
-          <h2>Delete Asset</h2>
-        </ModalHeader>
+        <ModalHeader>Delete Asset</ModalHeader>
         <ModalBody>
           <p>
             Are you sure you want to delete this asset? Once you delete this

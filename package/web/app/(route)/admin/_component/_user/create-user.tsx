@@ -8,6 +8,7 @@ import {
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
@@ -16,10 +17,9 @@ import { Button } from '@/components/ui/button';
 
 import { useMediaQuery } from '@/hooks/use-media-query';
 
-import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { toast } from 'sonner';
 import {
@@ -31,18 +31,18 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-
-export const CreateUserAdminSchema = z.object({
-  name: z
-    .string({ required_error: 'Name is required' })
-    .min(1, { message: 'Name is required' }),
-  email: z.string({ required_error: 'Email is required' }).email(),
-  password: z
-    .string({ required_error: 'Password is required' })
-    .min(6, { message: 'Password must be at least 6 characters' }),
-});
-
-export type CreateUserAdminForm = z.infer<typeof CreateUserAdminSchema>;
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { DepartmentEnum, RoleEnum } from '@/types/enum';
+import { Label } from '@/components/ui/label';
+import { CreateUserAdminForm, CreateUserAdminSchema } from '@/lib/schemas/user';
+import { adminCreateUser } from '@/lib/actions/user';
+import { Department, Role } from '@prisma/client';
 
 type CreateUserProps = {
   open: boolean;
@@ -53,6 +53,11 @@ export default function CreateUser({ open, onClose }: CreateUserProps) {
   const [transitioning, startTransition] = useTransition();
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const user = useCurrentUser();
+
+  const [userRole, setUserRole] = useState('');
+  const [userDepartment, setUserDepartment] = useState('');
+  const [roleErrMessage, setRoleErrMessage] = useState(false);
+  const [departmentErrMessage, setDepartmentErrMessage] = useState(false);
 
   const form = useForm<CreateUserAdminForm>({
     resolver: zodResolver(CreateUserAdminSchema),
@@ -65,8 +70,35 @@ export default function CreateUser({ open, onClose }: CreateUserProps) {
         return;
       }
 
-      toast.success(`User created ${data.name}`);
+      if (!userRole) {
+        setRoleErrMessage(true);
+        return;
+      }
+
+      if (!userDepartment) {
+        setDepartmentErrMessage(true);
+        return;
+      }
+
+      toast.promise(
+        adminCreateUser(data, userRole as Role, userDepartment as Department),
+        {
+          loading: 'Creating user...',
+          success: 'User created',
+          error: 'Failed to create user',
+        },
+      );
     });
+  }
+
+  function handleRoleChange(value: string) {
+    setUserRole(value);
+    setRoleErrMessage(false);
+  }
+
+  function handleDepartmentChange(value: string) {
+    setUserDepartment(value);
+    setDepartmentErrMessage(false);
   }
 
   function handleClose() {
@@ -77,9 +109,10 @@ export default function CreateUser({ open, onClose }: CreateUserProps) {
     <Sheet open={open} onOpenChange={handleClose}>
       <SheetContent className="space-y-4">
         <SheetHeader>
-          <SheetTitle>
-            <h2>Create User</h2>
-          </SheetTitle>
+          <SheetTitle>Create User</SheetTitle>
+          <SheetDescription>
+            Created user&apos;s email will automatically be approved
+          </SheetDescription>
         </SheetHeader>
         <Form {...form}>
           <form
@@ -119,6 +152,19 @@ export default function CreateUser({ open, onClose }: CreateUserProps) {
               />
               <FormField
                 control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone</FormLabel>
+                    <FormControl>
+                      <Input type="text" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="password"
                 render={({ field }) => (
                   <FormItem>
@@ -132,6 +178,45 @@ export default function CreateUser({ open, onClose }: CreateUserProps) {
                   </FormItem>
                 )}
               />
+              <div className="flex flex-col space-y-4">
+                <Label className="font-semibold">Role</Label>
+                <Select value={userRole} onValueChange={handleRoleChange}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {RoleEnum.map(role => (
+                      <SelectItem key={role.value} value={role.value}>
+                        {role.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {roleErrMessage && (
+                  <span className="text-red-500">Role is required</span>
+                )}
+              </div>
+              <div className="flex flex-col space-y-4">
+                <Label className="font-semibold">Department</Label>
+                <Select
+                  value={userDepartment}
+                  onValueChange={handleDepartmentChange}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {DepartmentEnum.map(role => (
+                      <SelectItem key={role.value} value={role.value}>
+                        {role.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {departmentErrMessage && (
+                  <span className="text-red-500">Department is required</span>
+                )}
+              </div>
             </div>
           </form>
         </Form>
@@ -139,6 +224,7 @@ export default function CreateUser({ open, onClose }: CreateUserProps) {
           <Button
             form="admin-create-user-form"
             type="submit"
+            variant="outline"
             disabled={transitioning}
           >
             Create
@@ -150,9 +236,7 @@ export default function CreateUser({ open, onClose }: CreateUserProps) {
     <Drawer open={open} onClose={handleClose}>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>
-            <h2>Create User</h2>
-          </DrawerTitle>
+          <DrawerTitle>Create User</DrawerTitle>
         </DrawerHeader>
         <DrawerFooter>
           <Button>Create</Button>

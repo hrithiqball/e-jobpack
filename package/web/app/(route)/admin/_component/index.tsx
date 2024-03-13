@@ -9,6 +9,7 @@ import { Tab, Tabs } from '@nextui-org/react';
 import UserTab from './_user';
 import ContractorTab from './_contractor';
 import KpiTab from './_kpi';
+import AssetTab from './_asset';
 
 type AdminComponentProps = {
   userList: User[];
@@ -41,6 +42,9 @@ export default function AdminComponent({ userList }: AdminComponentProps) {
       </Tab>
       <Tab key="kpi" title="KPI" className="flex flex-1 flex-col">
         <KpiTab />
+      </Tab>
+      <Tab key="asset" title="Asset" className="flex flex-1 flex-col">
+        <AssetTab />
       </Tab>
     </Tabs>
   );
