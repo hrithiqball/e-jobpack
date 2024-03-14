@@ -2,7 +2,7 @@
 
 import { Key, useEffect } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-import { User } from '@prisma/client';
+import { AssetType, User } from '@prisma/client';
 
 import { Tab, Tabs } from '@nextui-org/react';
 
@@ -11,12 +11,17 @@ import ContractorTab from './_contractor';
 import KpiTab from './_kpi';
 import AssetTab from './_asset';
 import { useUserStore } from '@/hooks/use-user.store';
+import { useAssetTypeStore } from '@/hooks/use-asset-type.store';
 
 type AdminComponentProps = {
   userList: User[];
+  assetTypeList: AssetType[];
 };
 
-export default function AdminComponent({ userList }: AdminComponentProps) {
+export default function AdminComponent({
+  userList,
+  assetTypeList,
+}: AdminComponentProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -24,10 +29,12 @@ export default function AdminComponent({ userList }: AdminComponentProps) {
   const tab = searchParams.get('tab') ?? 'user';
 
   const { setUserList } = useUserStore();
+  const { setAssetTypeList } = useAssetTypeStore();
 
   useEffect(() => {
     setUserList(userList);
-  }, [userList, setUserList]);
+    setAssetTypeList(assetTypeList);
+  }, [userList, setUserList, assetTypeList, setAssetTypeList]);
 
   function handleTabChange(key: Key) {
     router.push(`${pathname}?tab=${key}`);

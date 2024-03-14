@@ -1,14 +1,30 @@
 'use server';
 
-import { AssetType } from '@prisma/client';
-
 import { db } from '@/lib/db';
 
-export async function fetchAssetTypeList(): Promise<AssetType[]> {
+export async function createAssetType(userId: string, title: string) {
+  try {
+    return await db.assetType.create({
+      data: {
+        createdById: userId,
+        updatedById: userId,
+        title,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function fetchAssetTypeList() {
   try {
     return await db.assetType.findMany({
       orderBy: {
-        updatedOn: 'desc',
+        title: 'asc',
+      },
+      include: {
+        asset: true,
       },
     });
   } catch (error) {
