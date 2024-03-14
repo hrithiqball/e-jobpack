@@ -2,7 +2,7 @@
 
 import { Key, useEffect } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-import { AssetType, User } from '@prisma/client';
+import { User } from '@prisma/client';
 
 import { Tab, Tabs } from '@nextui-org/react';
 
@@ -12,6 +12,7 @@ import KpiTab from './_kpi';
 import AssetTab from './_asset';
 import { useUserStore } from '@/hooks/use-user.store';
 import { useAssetTypeStore } from '@/hooks/use-asset-type.store';
+import { AssetType } from '@/types/asset';
 
 type AdminComponentProps = {
   userList: User[];

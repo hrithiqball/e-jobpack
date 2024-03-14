@@ -17,32 +17,8 @@ import { toast } from 'sonner';
 import { createAssetType } from '@/lib/actions/asset-type';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { DonutChart, Legend } from '@tremor/react';
-
-const sales = [
-  {
-    name: 'New York',
-    sales: 980,
-  },
-  {
-    name: 'London',
-    sales: 456,
-  },
-  {
-    name: 'Hong Kong',
-    sales: 390,
-  },
-  {
-    name: 'San Francisco',
-    sales: 240,
-  },
-  {
-    name: 'Singapore',
-    sales: 190,
-  },
-];
-
-const valueFormatter = (number: number) =>
-  `$ ${Intl.NumberFormat('us').format(number).toString()}`;
+import { colors } from '@/public/utils/colors';
+import { valueFormatter } from '@/lib/function/valueFormatter';
 
 const cards: Card[] = [
   {
@@ -60,29 +36,7 @@ const cards: Card[] = [
     title: 'Asset Type',
     description: 'Manage asset type to easily filter the type of status',
     icon: <Package />,
-    meta: (
-      <div className="flex flex-col items-center justify-center space-y-4">
-        <DonutChart
-          data={sales}
-          category="sales"
-          index="name"
-          valueFormatter={valueFormatter}
-          colors={['blue', 'cyan', 'indigo', 'violet', 'fuchsia']}
-          className="w-40"
-        />
-        <Legend
-          categories={[
-            'New York',
-            'London',
-            'Hong Kong',
-            'San Francisco',
-            'Singapore',
-          ]}
-          colors={['blue', 'cyan', 'indigo', 'violet', 'fuchsia']}
-          className="max-w-xs"
-        />
-      </div>
-    ),
+    meta: <AssetTypeGraph />,
   },
   {
     id: 3,
@@ -129,7 +83,7 @@ function AssetType() {
       toast.promise(createAssetType(user.id, title), {
         loading: 'Adding asset type...',
         success: res => {
-          setAssetTypeList([...assetTypeList, res]);
+          setAssetTypeList([...assetTypeList, { ...res, asset: [] }]);
           return 'Asset type added';
         },
         error: 'Failed to add asset type',
@@ -186,6 +140,34 @@ function AssetType() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function AssetTypeGraph() {
+  const { assetTypeList } = useAssetTypeStore();
+
+  const assetCount = assetTypeList.map(assetType => ({
+    title: assetType.title,
+    count: assetType.asset.length,
+  }));
+
+  return (
+    <div className="flex flex-col items-center justify-center space-y-4">
+      <DonutChart
+        data={assetCount}
+        variant="pie"
+        category="count"
+        index="title"
+        valueFormatter={n => valueFormatter(n, '', 'asset used')}
+        colors={colors}
+        className="w-40"
+      />
+      <Legend
+        categories={assetCount.map(a => a.title)}
+        colors={colors}
+        className="max-w-xs"
+      />
     </div>
   );
 }

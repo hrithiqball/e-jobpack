@@ -1,4 +1,4 @@
-import { AssetType } from '@prisma/client';
+import { AssetType } from '@/types/asset';
 import { create } from 'zustand';
 
 type useAssetTypeStore = {

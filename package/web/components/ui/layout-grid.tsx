@@ -51,7 +51,9 @@ export const LayoutGrid = ({ cards }: { cards: Card[] }) => {
                 {card.icon}
               </div>
               <h5 className="text-sm text-gray-600">{card.description}</h5>
-              {card.meta}
+              <div className="flex flex-1 items-center justify-center">
+                {card.meta}
+              </div>
             </div>
           </motion.div>
         </div>
