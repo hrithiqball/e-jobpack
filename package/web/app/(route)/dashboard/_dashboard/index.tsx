@@ -23,10 +23,9 @@ export default function Dashboard() {
   return (
     <div className="flex flex-1 flex-col space-y-4">
       <Tabs
-        size="sm"
-        radius="md"
         color="primary"
         aria-label="Tabs for Dashboard components"
+        variant="underlined"
         selectedKey={tab}
         onSelectionChange={handleTabChange}
       >

@@ -1,102 +1,87 @@
-import { Bar, Doughnut } from 'react-chartjs-2';
-import { defaults } from 'chart.js/auto';
+import { BarChart, DonutChart } from '@tremor/react';
+import { valueFormatter } from '@/lib/function/valueFormatter';
 
-import { useTheme } from 'next-themes';
-import { Card } from '@nextui-org/react';
-
-import { AssetStatus, MaintenanceCompleted } from '@/public/utils/dummy-data';
-import { useMounted } from '@/hooks/use-mounted';
-
-defaults.maintainAspectRatio = false;
-defaults.responsive = true;
-
-defaults.plugins.title.display = true;
-defaults.plugins.title.align = 'start';
+const chartdata = [
+  {
+    name: 'Amphibians',
+    'Number of threatened species': 2488,
+  },
+  {
+    name: 'Birds',
+    'Number of threatened species': 1445,
+  },
+  {
+    name: 'Crustaceans',
+    'Number of threatened species': 743,
+  },
+  {
+    name: 'Ferns',
+    'Number of threatened species': 281,
+  },
+  {
+    name: 'Arachnids',
+    'Number of threatened species': 251,
+  },
+  {
+    name: 'Corals',
+    'Number of threatened species': 232,
+  },
+  {
+    name: 'Algae',
+    'Number of threatened species': 98,
+  },
+];
+const datahero = [
+  {
+    name: 'Noche Holding AG',
+    value: 9800,
+  },
+  {
+    name: 'Rain Drop AG',
+    value: 4567,
+  },
+  {
+    name: 'Push Rail AG',
+    value: 3908,
+  },
+  {
+    name: 'Flow Steal AG',
+    value: 2400,
+  },
+  {
+    name: 'Tiny Loop Inc.',
+    value: 2174,
+  },
+  {
+    name: 'Anton Resorts Holding',
+    value: 1398,
+  },
+];
 
 export default function GraphWidget() {
-  const { theme } = useTheme();
-  const mounted = useMounted();
-
-  if (!mounted) return null;
-
   return (
     <div className="flex grow flex-col">
-      <Card shadow="none" className="flex flex-1 p-4 dark:bg-card">
-        <div className="flex flex-1">
-          <div className="h-80 w-1/2">
-            <Bar
-              data={{
-                labels: MaintenanceCompleted.map(data => data.label),
-                datasets: [
-                  {
-                    label: 'Count',
-                    data: MaintenanceCompleted.map(data => data.value),
-                    backgroundColor: [
-                      'rgba(43, 63, 229, 0.8)',
-                      'rgba(250, 192, 19, 0.8)',
-                      'rgba(253, 135, 135, 0.8)',
-                    ],
-                    borderRadius: 5,
-                  },
-                ],
-              }}
-              options={{
-                plugins: {
-                  title: {
-                    font: { size: 16, weight: 'normal' },
-                    text: 'Maintenance Completed',
-                    color: theme === 'dark' ? 'rgb(255,255,255)' : 'rgb(0,0,0)',
-                  },
-                  legend: {
-                    labels: {
-                      color:
-                        theme === 'dark' ? 'rgb(255,255,255)' : 'rgb(0,0,0)',
-                    },
-                  },
-                },
-              }}
-            />
-          </div>
-          <div className="h-80 w-1/2">
-            <Doughnut
-              data={{
-                labels: AssetStatus.map(data => data.label),
-                datasets: [
-                  {
-                    label: 'Count',
-                    data: AssetStatus.map(data => data.value),
-                    backgroundColor: [
-                      'rgba(43, 63, 229, 0.8)',
-                      'rgba(250, 192, 19, 0.8)',
-                      'rgba(253, 135, 135, 0.8)',
-                    ],
-                    borderColor: [
-                      'rgba(43, 63, 229, 0.8)',
-                      'rgba(250, 192, 19, 0.8)',
-                      'rgba(253, 135, 135, 0.8)',
-                    ],
-                  },
-                ],
-              }}
-              options={{
-                plugins: {
-                  title: {
-                    text: 'Asset Status',
-                    font: { size: 16, weight: 'normal' },
-                    color: theme === 'dark' ? 'rgb(255,255,255)' : 'rgb(0,0,0)',
-                  },
-                  legend: {
-                    labels: {
-                      color:
-                        theme === 'dark' ? 'rgb(255,255,255)' : 'rgb(0,0,0)',
-                    },
-                  },
-                },
-              }}
-            />
-          </div>
+      <div className="flex flex-1">
+        <div className="h-80 w-1/2">
+          <BarChart
+            data={chartdata}
+            index="name"
+            categories={['Number of threatened species']}
+            colors={['teal']}
+            valueFormatter={valueFormatter}
+            yAxisWidth={48}
+            onValueChange={v => console.log(v)}
+          />
         </div>
-      </Card>
+        <div className="h-80 w-1/2">
+          <DonutChart
+            data={datahero}
+            variant="pie"
+            valueFormatter={valueFormatter}
+            onValueChange={v => console.log(v)}
+          />
+        </div>
+      </div>
     </div>
   );
 }
