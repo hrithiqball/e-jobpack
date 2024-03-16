@@ -2,7 +2,7 @@
 
 import { Key, useEffect } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-import { AssetStatus, AssetType, Maintenance, User } from '@prisma/client';
+import { AssetStatus, Maintenance, User } from '@prisma/client';
 
 import {
   Button,
@@ -17,7 +17,7 @@ import {
 } from '@nextui-org/react';
 import { ChevronLeft } from 'lucide-react';
 
-import { AssetItem } from '@/types/asset';
+import { AssetItem, AssetType } from '@/types/asset';
 import { ChecklistLibraryList } from '@/types/checklist';
 
 import { useMediaQuery } from '@/hooks/use-media-query';

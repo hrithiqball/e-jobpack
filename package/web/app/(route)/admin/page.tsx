@@ -3,6 +3,8 @@ import { Wrapper } from '@/components/ui/wrapper';
 import AdminComponent from './_component';
 import { fetchUserList } from '@/lib/actions/user';
 import { fetchAssetTypeList } from '@/lib/actions/asset-type';
+import { Suspense } from 'react';
+import Loader from '@/components/ui/loader';
 
 export default async function AdminPage() {
   const userList = await fetchUserList();
@@ -10,7 +12,9 @@ export default async function AdminPage() {
 
   return (
     <Wrapper>
-      <AdminComponent userList={userList} assetTypeList={assetTypeList} />
+      <Suspense fallback={<Loader />}>
+        <AdminComponent userList={userList} assetTypeList={assetTypeList} />
+      </Suspense>
     </Wrapper>
   );
 }

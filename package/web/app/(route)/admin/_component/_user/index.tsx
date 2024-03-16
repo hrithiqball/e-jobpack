@@ -1,5 +1,4 @@
 import { User } from '@prisma/client';
-import Image from 'next/image';
 
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -7,7 +6,6 @@ import {
   Columns2,
   Filter,
   Search,
-  UserPlus,
   UserRoundCheck,
   UserRoundPlus,
 } from 'lucide-react';
@@ -16,21 +14,20 @@ import {
   ColumnFiltersState,
   SortingState,
   VisibilityState,
-  flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+// import {
+//   Table,
+//   TableBody,
+//   TableCell,
+//   TableHead,
+//   TableHeader,
+//   TableRow,
+// } from '@/components/ui/table';
 import { useState } from 'react';
 import {
   DropdownMenu,
@@ -40,23 +37,23 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import emptyIcon from '@/public/image/empty.svg';
+// import emptyIcon from '@/public/image/empty.svg';
 import { useUserStore } from '@/hooks/use-user.store';
-import UserPreview from './user-preview';
+// import UserPreview from './user-preview';
 import { isNullOrEmpty } from '@/lib/function/string';
 import { convertToTitleCase } from '@/lib/function/convertToWord';
 import CreateUser from './create-user';
 import ApproveUser from './approve-user';
 
 export default function UserTab() {
-  const { userList, setCurrentUser } = useUserStore();
+  const { userList } = useUserStore();
 
   const data = userList.filter(user => user.id !== '-99');
   const unverifiedUsers = userList.filter(
     user => user.emailVerified === null,
   ).length;
 
-  const [openUserPreview, setOpenUserPreview] = useState(false);
+  // const [openUserPreview, setOpenUserPreview] = useState(false);
   const [openCreateUser, setOpenCreateUser] = useState(false);
   const [openApproveUser, setOpenApproveUser] = useState(false);
   const [filterBy, setFilterBy] = useState('name');
@@ -123,10 +120,10 @@ export default function UserTab() {
     },
   });
 
-  function handleOpenUserPreview(user: User) {
-    setCurrentUser(user);
-    setOpenUserPreview(true);
-  }
+  // function handleOpenUserPreview(user: User) {
+  //   setCurrentUser(user);
+  //   setOpenUserPreview(true);
+  // }
 
   function handleOpenCreateUser() {
     setOpenCreateUser(true);
@@ -140,9 +137,9 @@ export default function UserTab() {
     setOpenApproveUser(false);
   }
 
-  function handleCloseUserPreview() {
-    setOpenUserPreview(false);
-  }
+  // function handleCloseUserPreview() {
+  //   setOpenUserPreview(false);
+  // }
 
   function handleCloseCreateUser() {
     setOpenCreateUser(false);
