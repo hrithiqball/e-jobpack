@@ -2,7 +2,6 @@ import { fetchAssetList } from '@/lib/actions/asset';
 import { fetchChecklistLibraryList } from '@/lib/actions/checklist-library';
 import { fetchMaintenanceItem } from '@/lib/actions/maintenance';
 
-import ChecklistComponent from './_checklist-component';
 import MaintenanceComponent from './_maintenance-component';
 
 type TaskItemPageProps = {
@@ -20,9 +19,7 @@ export default async function TaskItemPage({ params }: TaskItemPageProps) {
         maintenance={maintenance}
         checklistLibraryList={checklistLibrary}
         assetList={assetList}
-      >
-        <ChecklistComponent checklistList={maintenance.checklist} />
-      </MaintenanceComponent>
+      />
     </div>
   );
 }

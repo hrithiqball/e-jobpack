@@ -3,11 +3,14 @@
 import { hash } from 'bcryptjs';
 import { revalidatePath } from 'next/cache';
 import { db } from '@/lib/db';
+import { CreateUserAdminForm } from '@/lib/schemas/user';
 
 import {
   ResultSchema,
   ServerResponseSchema,
 } from '@/lib/schemas/server-response';
+import { RegisterForm } from '../schemas/auth';
+import { Department, Role } from '@prisma/client';
 
 const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
 
@@ -24,6 +27,91 @@ export async function createUser(
         name,
         email,
         password,
+        phone: '',
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function adminCreateUser(
+  createUser: CreateUserAdminForm,
+  role: Role,
+  department: Department,
+) {
+  try {
+    const password = await hash(createUser.password, 10);
+
+    return await db.user.create({
+      data: {
+        name: createUser.name,
+        email: createUser.email,
+        phone: createUser.phone,
+        password,
+        department,
+        role,
+        emailVerified: new Date(),
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function adminApproveUser(id: string) {
+  try {
+    return await db.user.update({
+      where: { id },
+      data: { emailVerified: new Date() },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function adminRejectUser(id: string) {
+  try {
+    return await db.user.update({
+      where: { id },
+      data: {
+        isRejected: true,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function adminBlockUser(id: string) {
+  try {
+    return await db.user.update({
+      where: { id },
+      data: {
+        isBlocked: true,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function registerUser(registerForm: RegisterForm) {
+  try {
+    const { password, email, phone, name } = registerForm;
+    const hashedPassword = await hash(password, 10);
+
+    return await db.user.create({
+      data: {
+        email,
+        name,
+        phone,
+        password: hashedPassword,
       },
     });
   } catch (error) {

@@ -1,9 +1,10 @@
-import bcrypt from 'bcryptjs';
-import type { NextAuthConfig } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
+import { compare } from 'bcryptjs';
 
-import { LoginSchema } from '@/lib/schemas';
-import { getUserByEmail } from '@/data/user';
+import { LoginSchema } from '@/lib/schemas/auth';
+import { getUserByEmail } from '@/data/user.auth';
+
+import type { NextAuthConfig } from 'next-auth';
 
 export default {
   providers: [
@@ -17,10 +18,7 @@ export default {
             const user = await getUserByEmail(email);
             if (!user || !user.password) return null;
 
-            const passwordsMatch = await bcrypt.compare(
-              password,
-              user.password,
-            );
+            const passwordsMatch = await compare(password, user.password);
 
             if (passwordsMatch)
               return {
@@ -29,12 +27,13 @@ export default {
                 emailVerified: user.emailVerified,
                 name: user.name,
                 image: user.image,
-                role: user.role!,
+                role: user.role,
               };
 
             return null;
           }
-        } catch (error: any) {
+        } catch (error: unknown) {
+          console.error(error);
           return null;
         }
         return null;

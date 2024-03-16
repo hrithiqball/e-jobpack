@@ -5,7 +5,7 @@ import { fetchChecklistLibraryList } from '@/lib/actions/checklist-library';
 import { fetchUserList } from '@/lib/actions/user';
 import { fetchAssetList } from '@/lib/actions/asset';
 
-import MaintenanceComponent from './_maintenance-component';
+import MaintenanceComponent from './_component';
 
 export default async function MaintenancePage() {
   const maintenanceLibraryList = await fetchMaintenanceLibraryList();

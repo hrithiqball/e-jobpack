@@ -1,71 +1,61 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import {
-  useState,
-  useTransition,
-  ReactNode,
-  Key,
-  useRef,
-  ChangeEvent,
-} from 'react';
+import { useState, useTransition, useEffect, Key } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-
 import { Asset, ChecklistLibrary } from '@prisma/client';
+import dayjs from 'dayjs';
 
-import { Button, ButtonGroup, Divider } from '@nextui-org/react';
-import { ChevronLeft, FileUp, FolderSync } from 'lucide-react';
-import { Workbook } from 'exceljs';
+import { Button } from '@/components/ui/button';
+import { Table2 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { SimplifiedTask } from '@/types/simplified-task';
 import { MaintenanceItem } from '@/types/maintenance';
-import { useMediaQuery } from '@/hooks/use-media-query';
 import { useCurrentUser } from '@/hooks/use-current-user';
+import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 import { updateMaintenance } from '@/lib/actions/maintenance';
 
-import MaintenanceRejectConfirmation from './MaintenanceRejectConfirmation';
-import MaintenanceAddChecklistModal from './MaintenanceAddChecklistModal';
-import MaintenanceTableInfo from './MaintenanceTableInfo';
-import MaintenanceAction from './MaintenanceAction';
-import MaintenanceRequestForm from './MaintenanceRequestForm';
-import MaintenanceExport from './MaintenanceExport';
-import MaintenanceAddAttachment from './MaintenanceAddAttachment';
-import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
+import MaintenanceRejectConfirmation from './reject-confirmation';
+import MaintenanceAddChecklistModal from './add-checklist';
+import MaintenanceTableInfo from './info-table';
+import MaintenanceRequestForm from './request-form';
+import MaintenanceExport from './export';
+import MaintenanceAddAttachment from './add-attachment';
+import MaintenanceDropdown from './dropdown';
+import ChecklistComponent from './_checklist-component';
+import MaintenanceUploadExcel from './upload-excel';
 
 type MaintenanceComponentProps = {
   maintenance: MaintenanceItem;
   checklistLibraryList: ChecklistLibrary[];
   assetList: Asset[];
-  children: ReactNode;
 };
 
 export default function MaintenanceComponent({
   maintenance,
   checklistLibraryList,
   assetList,
-  children,
 }: MaintenanceComponentProps) {
   const [transitioning, startTransition] = useTransition();
   const user = useCurrentUser();
   const router = useRouter();
-  const isDesktop = useMediaQuery('(min-width: 768px)');
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  useMaintenanceStore.setState({ maintenance });
+  const { setMaintenance } = useMaintenanceStore();
 
   const [openAddChecklist, setOpenAddChecklist] = useState(false);
   const [openRejectConfirmation, setOpenRejectConfirmation] = useState(false);
   const [openExportMaintenance, setOpenExportMaintenance] = useState(false);
   const [openAddAttachment, setOpenAddAttachment] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [openExcel, setOpenExcel] = useState(false);
+
+  useEffect(() => {
+    setMaintenance(maintenance);
+  }, [setMaintenance, maintenance]);
 
   const selectedSaveOptionCurrent = Array.from(new Set(['saveOnly']))[0];
 
   function handleAction(key: Key) {
     switch (key) {
-      case 'add-asset':
+      case 'add-checklist':
         setOpenAddChecklist(!openAddChecklist);
         break;
 
@@ -79,6 +69,9 @@ export default function MaintenanceComponent({
       case 'download-pdf':
         break;
 
+      case 'reopen-maintenance':
+        break;
+
       case 'mark-complete':
         handleMarkMaintenanceComplete();
         break;
@@ -90,7 +83,36 @@ export default function MaintenanceComponent({
       case 'add-attachment':
         setOpenAddAttachment(!openAddAttachment);
         break;
+
+      case 'approve-completion':
+        handleApproveCompletionMaintenance();
+        break;
     }
+  }
+
+  function handleApproveCompletionMaintenance() {
+    if (!user || !user.id) {
+      console.error('session expired');
+      return;
+    }
+
+    startTransition(() => {
+      toast.promise(
+        updateMaintenance(maintenance.id, {
+          approvedById: user.id,
+          maintenanceStatus: 'APPROVED',
+          approvedOn: dayjs().toDate(),
+        }),
+        {
+          loading: 'Approving maintenance...',
+          success: () => {
+            router.refresh();
+            return 'Maintenance approved!';
+          },
+          error: 'Failed to approve maintenance 😥',
+        },
+      );
+    });
   }
 
   function handleCloseExportMaintenance() {
@@ -110,12 +132,12 @@ export default function MaintenanceComponent({
           closedOn: new Date(),
           isClose: true,
           closedById: user.id,
+          maintenanceStatus: 'CLOSED',
         }),
         {
           loading: 'Closing maintenance...',
-          success: res => {
+          success: () => {
             router.refresh();
-            console.log(res);
             return 'Maintenance closed!';
           },
           error: 'Failed to close maintenance 😥',
@@ -149,6 +171,10 @@ export default function MaintenanceComponent({
     });
   }
 
+  function handleOpenExcel() {
+    setOpenExcel(true);
+  }
+
   function handleCloseAddChecklist() {
     setOpenAddChecklist(false);
     router.refresh();
@@ -162,113 +188,29 @@ export default function MaintenanceComponent({
     setOpenRejectConfirmation(true);
   }
 
+  function handleCloseExcel() {
+    setOpenExcel(false);
+  }
+
   function handleCloseRejectConfirmation() {
     setOpenRejectConfirmation(false);
     router.refresh();
-  }
-
-  function handleUploadExcel() {
-    return (event: ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files;
-      if (file !== null) {
-        if (file[0] !== undefined) {
-          setSelectedFile(file[0]);
-        }
-      }
-    };
-  }
-
-  async function handleSyncExcel() {
-    if (selectedFile) {
-      const workbook = new Workbook();
-      const reader = new FileReader();
-
-      reader.onload = async (event: any) => {
-        const buffer = event.target.result;
-        await workbook.xlsx.load(buffer);
-        //const worksheet = workbook.getWorksheet(1);
-        const worksheet = workbook.worksheets[0];
-        if (worksheet === undefined) {
-          toast.error('Invalid excel file!');
-          return;
-        }
-
-        const simplifiedTask: SimplifiedTask[] = [];
-
-        for (let index = 9; index <= worksheet.rowCount; index++) {
-          const row = worksheet.getRow(index);
-
-          const task: SimplifiedTask = {
-            no: row.getCell(1).value as number,
-            uid: row.getCell(2).value as string,
-            taskActivity: 'Monkey',
-            remarks: 'remarks',
-            isComplete: '/',
-          };
-
-          simplifiedTask.push(task);
-        }
-
-        console.log(simplifiedTask);
-
-        setTimeout(() => {
-          //loading false
-        }, 3000);
-
-        reader.readAsArrayBuffer(selectedFile);
-        setSelectedFile(null);
-      };
-    } else {
-      console.log('other value');
-    }
   }
 
   return (
     <div className="flex-grow rounded-md">
       <div className="flex flex-row items-center justify-between">
         <div className="flex items-center space-x-4">
-          <Button
-            className="max-w-min"
-            as={Link}
-            href="/task"
-            startContent={<ChevronLeft size={18} />}
-            variant="faded"
-            size="sm"
-          >
-            Back
-          </Button>
           <h2 className="text-medium font-semibold sm:text-xl">
             {maintenance.id}
           </h2>
         </div>
         <div className="space-x-2 sm:space-x-4">
-          {isDesktop && !maintenance.isRequested && (
-            <ButtonGroup>
-              <Button
-                size="sm"
-                variant="faded"
-                startContent={<FileUp size={18} />}
-              >
-                Upload Excel
-              </Button>
-              <input
-                type="file"
-                ref={fileInputRef}
-                className="hidden"
-                accept=".xlsx, .xls"
-                onChange={handleUploadExcel}
-              />
-              <Button
-                size="sm"
-                variant="faded"
-                isIconOnly
-                onClick={handleSyncExcel}
-              >
-                <FolderSync size={18} />
-              </Button>
-            </ButtonGroup>
-          )}
-          <MaintenanceAction handleAction={handleAction} />
+          <Button variant="outline" size="withIcon" onClick={handleOpenExcel}>
+            <Table2 size={18} />
+            <p>Excel</p>
+          </Button>
+          <MaintenanceDropdown handleAction={handleAction} />
         </div>
       </div>
       {maintenance.isRequested && (
@@ -294,10 +236,12 @@ export default function MaintenanceComponent({
           />
         </div>
       </div>
-      <Divider />
+      <hr />
       <div className="mt-4 rounded-md">
         <div className="flex h-full flex-col overflow-y-auto">
-          <div className="w-full flex-shrink-0 rounded-2xl p-1">{children}</div>
+          <div className="w-full flex-shrink-0 rounded-2xl p-1">
+            <ChecklistComponent checklistList={maintenance.checklist} />
+          </div>
         </div>
       </div>
       <MaintenanceRejectConfirmation
@@ -312,6 +256,7 @@ export default function MaintenanceComponent({
         open={openAddAttachment}
         onClose={handleCloseAddAttachment}
       />
+      <MaintenanceUploadExcel open={openExcel} onClose={handleCloseExcel} />
     </div>
   );
 }

@@ -87,13 +87,13 @@ model Checklist {
   updatedOn      DateTime    @default(now()) @map("updated_on")
   updatedById    String      @map("updated_by_id")
   isClose        Boolean     @default(false) @map("is_close")
-  attachmentPath String[]    @default([]) @map("attachment_path")
   description    String?
   color          String?
   icon           String?
   assetId        String      @map("asset_id")
   id             String      @id
   maintenanceId  String      @map("maintenance_id")
+  attachmentPath String[]    @default([]) @map("attachment_path")
   asset          Asset       @relation(fields: [assetId], references: [id], onDelete: Cascade, map: "checklist_asset_fk")
   createdBy      User        @relation("checklist_created_byTouser", fields: [createdById], references: [id], onDelete: Cascade)
   maintenance    Maintenance @relation(fields: [maintenanceId], references: [id], onDelete: Cascade)
@@ -138,35 +138,36 @@ model History {
 }
 
 model Maintenance {
-  date              DateTime          @default(now())
-  maintainee        String?
-  attachmentPath    String[]          @default([]) @map("attachment_path")
-  approvedById      String            @map("approved_by_id")
-  approvedOn        DateTime?         @map("approved_on")
-  assetIds          String[]          @map("asset_ids")
-  startDate         DateTime          @default(now()) @map("start_date")
-  deadline          DateTime?
-  id                String            @id @default(cuid())
-  isClose           Boolean           @default(false) @map("is_close")
-  closedById        String?           @map("closed_by_id")
-  closedOn          DateTime?         @map("closed_on")
-  isOpen            Boolean           @default(false) @map("is_open")
-  requestedById     String?           @map("requested_by_id")
-  requestedOn       DateTime?         @default(now()) @map("requested_on")
-  isRejected        Boolean           @default(false) @map("is_rejected")
-  rejectedById      String?           @map("rejected_by_id")
-  isRequested       Boolean           @default(false) @map("is_requested")
-  rejectedOn        DateTime?         @map("rejected_on")
-  acceptedById      String?           @map("accepted_by_id")
-  acceptedOn        DateTime?         @map("accepted_on")
-  maintenanceStatus MaintenanceStatus @default(REQUESTED) @map("maintenance_status")
-  rejectedReason    String?           @map("rejected_reason")
-  checklist         Checklist[]
-  acceptedBy        User?             @relation("maintenance_accepted_by_idTouser", fields: [acceptedById], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  approvedBy        User              @relation("maintenance_approved_byTouser", fields: [approvedById], references: [id], onDelete: Cascade)
-  closedBy          User?             @relation("maintenance_closed_byTouser", fields: [closedById], references: [id], onDelete: Cascade)
-  rejectedBy        User?             @relation("maintenance_reject_byTouser", fields: [rejectedById], references: [id], onDelete: Cascade)
-  requestedBy       User?             @relation("maintenance_requested_byTouser", fields: [requestedById], references: [id], onDelete: Cascade)
+  date               DateTime            @default(now())
+  maintainee         String?
+  approvedById       String              @map("approved_by_id")
+  approvedOn         DateTime?           @map("approved_on")
+  assetIds           String[]            @map("asset_ids")
+  startDate          DateTime            @default(now()) @map("start_date")
+  deadline           DateTime?
+  id                 String              @id @default(cuid())
+  isClose            Boolean             @default(false) @map("is_close")
+  closedById         String?             @map("closed_by_id")
+  closedOn           DateTime?           @map("closed_on")
+  isOpen             Boolean             @default(false) @map("is_open")
+  requestedById      String?             @map("requested_by_id")
+  requestedOn        DateTime?           @default(now()) @map("requested_on")
+  isRejected         Boolean             @default(false) @map("is_rejected")
+  rejectedById       String?             @map("rejected_by_id")
+  isRequested        Boolean             @default(false) @map("is_requested")
+  rejectedOn         DateTime?           @map("rejected_on")
+  acceptedById       String?             @map("accepted_by_id")
+  acceptedOn         DateTime?           @map("accepted_on")
+  maintenanceStatus  MaintenanceStatus   @default(REQUESTED) @map("maintenance_status")
+  rejectedReason     String?             @map("rejected_reason")
+  attachmentPath     String[]            @default([]) @map("attachment_path")
+  checklist          Checklist[]
+  acceptedBy         User?               @relation("maintenance_accepted_by_idTouser", fields: [acceptedById], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  approvedBy         User                @relation("maintenance_approved_byTouser", fields: [approvedById], references: [id], onDelete: Cascade)
+  closedBy           User?               @relation("maintenance_closed_byTouser", fields: [closedById], references: [id], onDelete: Cascade)
+  rejectedBy         User?               @relation("maintenance_reject_byTouser", fields: [rejectedById], references: [id], onDelete: Cascade)
+  requestedBy        User?               @relation("maintenance_requested_byTouser", fields: [requestedById], references: [id], onDelete: Cascade)
+  maintenance_member MaintenanceMember[]
 
   @@map("maintenance")
   @@schema("public")
@@ -232,25 +233,26 @@ model SubtaskLibrary {
 }
 
 model Task {
-  taskActivity  String    @map("task_activity")
+  taskActivity  String         @map("task_activity")
   description   String?
-  isComplete    Boolean   @default(false) @map("is_complete")
+  isComplete    Boolean        @default(false) @map("is_complete")
   remarks       String?
   issue         String?
   deadline      DateTime?
-  completedBy   String?   @map("completed_by")
-  taskOrder     Int       @map("task_order") @db.SmallInt
-  haveSubtask   Boolean   @default(false) @map("have_subtask")
-  taskType      TaskType  @default(CHECK) @map("task_type")
-  listChoice    String[]  @default([]) @map("list_choice")
-  taskBool      Boolean?  @default(false) @map("task_bool")
-  taskSelected  String[]  @default([]) @map("task_selected")
-  taskNumberVal Int?      @map("task_number_val") @db.SmallInt
-  taskCheck     Boolean?  @default(false) @map("task_check")
-  checklistId   String    @map("checklist_id")
-  id            String    @id(map: "task2_pkey")
+  completedBy   String?        @map("completed_by")
+  taskOrder     Int            @map("task_order") @db.SmallInt
+  haveSubtask   Boolean        @default(false) @map("have_subtask")
+  taskType      TaskType       @default(CHECK) @map("task_type")
+  listChoice    String[]       @default([]) @map("list_choice")
+  taskBool      Boolean?       @map("task_bool")
+  taskSelected  String[]       @default([]) @map("task_selected")
+  taskNumberVal Int?           @map("task_number_val") @db.SmallInt
+  taskCheck     Boolean?       @default(false) @map("task_check")
+  checklistId   String         @map("checklist_id")
+  id            String         @id(map: "task2_pkey")
   subtask       Subtask[]
-  checklist     Checklist @relation(fields: [checklistId], references: [id], onDelete: Cascade)
+  checklist     Checklist      @relation(fields: [checklistId], references: [id], onDelete: Cascade)
+  taskAssignee  TaskAssignee[]
 
   @@map("task")
   @@schema("public")
@@ -306,9 +308,11 @@ model User {
   name                                                        String
   createdAt                                                   DateTime             @default(now()) @map("created_at")
   updatedAt                                                   DateTime             @default(now()) @map("updated_at")
-  department                                                  Department?          @default(MANAGEMENT)
-  role                                                        Role?                @default(ADMIN)
+  department                                                  Department           @default(MANAGEMENT)
+  role                                                        Role                 @default(ADMIN)
   email                                                       String               @unique
+  isRejected                                                  Boolean              @default(false) @map("is_rejected")
+  isBlocked                                                   Boolean              @default(false) @map("is_blocked")
   password                                                    String
   emailVerified                                               DateTime?            @map("email_verified")
   image                                                       String?
@@ -331,12 +335,36 @@ model User {
   maintenance_maintenance_requested_byTouser                  Maintenance[]        @relation("maintenance_requested_byTouser")
   maintenance_library_maintenance_library_created_by_idTouser MaintenanceLibrary[] @relation("maintenance_library_created_by_idTouser")
   maintenance_library_maintenance_library_updated_by_idTouser MaintenanceLibrary[] @relation("maintenance_library_updated_by_idTouser")
+  maintenanceMember                                           MaintenanceMember[]
   subtask_library_subtask_library_created_byTouser            SubtaskLibrary[]     @relation("subtask_library_created_byTouser")
   subtask_library_subtask_library_updated_byTouser            SubtaskLibrary[]     @relation("subtask_library_updated_byTouser")
+  taskAssignee                                                TaskAssignee[]
   task_library_task_library_created_byTouser                  TaskLibrary[]        @relation("task_library_created_byTouser")
   task_library_task_library_updated_byTouser                  TaskLibrary[]        @relation("task_library_updated_byTouser")
 
   @@map("user")
+  @@schema("public")
+}
+
+model TaskAssignee {
+  taskId String @map("task_id")
+  userId String @map("user_id")
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade, map: "public_task_assignee_task_id_fkey")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, map: "public_task_assignee_user_id_fkey")
+
+  @@id([taskId, userId])
+  @@map("task_assignee")
+  @@schema("public")
+}
+
+model MaintenanceMember {
+  maintenanceId String
+  userId        String
+  maintenance   Maintenance @relation(fields: [maintenanceId], references: [id], onDelete: Cascade, map: "public_maintenance_member_maintenance_id_fkey")
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade, map: "public_maintenance_member_user_id_fkey")
+
+  @@id([maintenanceId, userId])
+  @@map("maintenance_member")
   @@schema("public")
 }
 

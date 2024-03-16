@@ -1,7 +1,13 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { Prisma, TaskType } from '@prisma/client';
+import {
+  ChecklistLibrary,
+  Prisma,
+  SubtaskLibrary,
+  TaskLibrary,
+  TaskType,
+} from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import dayjs from 'dayjs';
@@ -11,9 +17,19 @@ import { MaintenanceItem } from '@/types/maintenance';
 import { ExtendedUser } from '@/types/next-auth';
 import {
   CreateMaintenance,
+  CreateMaintenanceType,
   UpdateMaintenance,
+  UpdateMaintenanceSchema,
 } from '@/lib/schemas/maintenance';
 import { ServerResponseSchema } from '@/lib/schemas/server-response';
+
+type ExtendedTaskLibrary = TaskLibrary & {
+  subtaskLibrary: SubtaskLibrary[];
+};
+
+type ExtendedChecklistLibrary = ChecklistLibrary & {
+  taskLibrary: ExtendedTaskLibrary[];
+};
 
 const baseUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
 
@@ -44,7 +60,7 @@ type RecreateMaintenanceChecklist = {
   checklistLibraryId: string | null;
 };
 
-export async function createMaintenance(
+export async function createMaintenance2(
   user: ExtendedUser,
   newMaintenance: CreateMaintenance,
 ) {
@@ -89,6 +105,91 @@ export async function createMaintenance(
       });
 
     return maintenance;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function createMaintenance(
+  user: ExtendedUser,
+  newMaintenance: CreateMaintenanceType,
+) {
+  try {
+    return await db.maintenance
+      .create({
+        data: {
+          requestedById: user.id,
+          id: newMaintenance.id,
+          maintenanceStatus:
+            user.role === 'TECHNICIAN' ? 'REQUESTED' : 'OPENED',
+          approvedById: newMaintenance.approvedById,
+          startDate: newMaintenance.startDate,
+          deadline: newMaintenance.deadline,
+        },
+      })
+      .then(async res => {
+        newMaintenance.checklist.forEach(async checklist => {
+          let targetChecklist: ExtendedChecklistLibrary | null = null;
+
+          if (checklist.checklistId) {
+            targetChecklist = await db.checklistLibrary.findUnique({
+              where: { id: checklist.checklistId },
+              include: {
+                taskLibrary: {
+                  include: {
+                    subtaskLibrary: true,
+                  },
+                },
+              },
+            });
+          }
+
+          await db.checklist
+            .create({
+              data: {
+                id: uuidv4(),
+                assetId: checklist.assetId,
+                maintenanceId: res.id,
+                createdById: user.id,
+                updatedById: user.id,
+              },
+            })
+            .then(async checklistRes => {
+              if (targetChecklist) {
+                targetChecklist.taskLibrary.forEach(async task => {
+                  await db.task
+                    .create({
+                      data: {
+                        id: uuidv4(),
+                        taskActivity: task.taskActivity,
+                        taskType: task.taskType,
+                        listChoice: task.listChoice,
+                        taskOrder: task.taskOrder,
+                        description: task.description,
+                        checklistId: checklistRes.id,
+                      },
+                    })
+                    .then(async taskRes => {
+                      if (task.subtaskLibrary) {
+                        await db.subtask.createMany({
+                          data: task.subtaskLibrary.map(subtask => ({
+                            id: uuidv4(),
+                            taskId: taskRes.id,
+                            taskOrder: subtask.taskOrder,
+                            taskActivity: subtask.taskActivity,
+                            taskType: subtask.taskType,
+                            listChoice: subtask.listChoice,
+                            description: subtask.description,
+                          })),
+                        });
+                      }
+                    });
+                });
+              }
+            });
+        });
+      });
   } catch (error) {
     console.error(error);
     throw error;
@@ -157,6 +258,7 @@ export async function fetchMaintenanceItem(id: string) {
             task: {
               orderBy: { taskOrder: 'asc' },
               include: {
+                taskAssignee: { include: { user: true } },
                 subtask: {
                   orderBy: { taskOrder: 'asc' },
                 },
@@ -191,6 +293,7 @@ export async function fetchMaintenanceList() {
             task: {
               orderBy: { taskOrder: 'asc' },
               include: {
+                taskAssignee: { include: { user: true } },
                 subtask: {
                   orderBy: { taskOrder: 'asc' },
                 },
@@ -206,12 +309,9 @@ export async function fetchMaintenanceList() {
   }
 }
 
-export async function updateMaintenance(
-  id: string,
-  values: z.infer<typeof UpdateMaintenance>,
-) {
+export async function updateMaintenance(id: string, values: UpdateMaintenance) {
   try {
-    const validatedFields = UpdateMaintenance.safeParse(values);
+    const validatedFields = UpdateMaintenanceSchema.safeParse(values);
 
     if (!validatedFields.success) {
       console.error(validatedFields.error);

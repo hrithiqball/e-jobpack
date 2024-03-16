@@ -3,7 +3,7 @@ import { fetchAssetTypeList } from '@/lib/actions/asset-type';
 import { fetchAssetList } from '@/lib/actions/asset';
 import { fetchUserList } from '@/lib/actions/user';
 
-import AssetTable from './_asset-table';
+import AssetTable from './_table';
 
 export default async function AssetPage() {
   const userList = await fetchUserList();
