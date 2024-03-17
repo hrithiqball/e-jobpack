@@ -1,6 +1,6 @@
-import { fetchAssetList } from '@/lib/actions/asset';
-import { fetchChecklistLibraryList } from '@/lib/actions/checklist-library';
-import { fetchMaintenanceItem } from '@/lib/actions/maintenance';
+import { fetchAssetList } from '@/data/asset.action';
+import { fetchChecklistLibraryList } from '@/data/checklist-library.action';
+import { fetchMaintenanceItem } from '@/data/maintenance.action';
 
 import MaintenanceComponent from './_maintenance-component';
 

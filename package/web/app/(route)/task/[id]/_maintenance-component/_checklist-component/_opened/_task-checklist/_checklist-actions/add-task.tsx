@@ -23,7 +23,7 @@ import { Trash2 } from 'lucide-react';
 import { Maintenance } from '@/types/maintenance';
 
 import { CreateTaskSchema } from '@/lib/schemas/task';
-import { createTask } from '@/lib/actions/task';
+import { createTask } from '@/data/task.action';
 
 import { selectionChoices } from '@/public/utils/task-type-options';
 

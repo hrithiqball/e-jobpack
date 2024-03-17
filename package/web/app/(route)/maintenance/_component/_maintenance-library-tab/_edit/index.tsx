@@ -18,7 +18,7 @@ import { useCurrentUser } from '@/hooks/use-current-user';
 import {
   createTaskLibrary,
   deleteTaskLibrary,
-} from '@/lib/actions/task-library';
+} from '@/data/task-library.action';
 
 import { CreateTaskLibrary } from '@/lib/schemas/task';
 

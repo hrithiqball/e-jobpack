@@ -63,7 +63,7 @@ export const UpdateMaintenanceSchema = z.object({
 });
 
 export const UpdateMaintenanceFormSchema = z.object({
-  assetId: z
+  id: z
     .string()
     .min(1, { message: 'ID must contain one character at least' })
     .optional(),

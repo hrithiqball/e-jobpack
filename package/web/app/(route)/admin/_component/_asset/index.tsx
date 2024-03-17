@@ -14,11 +14,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
-import { createAssetType } from '@/lib/actions/asset-type';
+import { createAssetType } from '@/data/asset-type.action';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { DonutChart, Legend } from '@tremor/react';
 import { colors } from '@/public/utils/colors';
-import { valueFormatter } from '@/lib/function/valueFormatter';
+import { valueFormatter } from '@/lib/function/value-formatter';
 
 const cards: Card[] = [
   {

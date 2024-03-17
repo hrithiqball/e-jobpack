@@ -57,7 +57,7 @@ import { MaintenanceItem, MaintenanceList } from '@/types/maintenance';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 
-import { stopPropagation } from '@/lib/function/stopPropagation';
+import { stopPropagation } from '@/lib/function/event';
 
 import emptyIcon from '@/public/image/empty.svg';
 

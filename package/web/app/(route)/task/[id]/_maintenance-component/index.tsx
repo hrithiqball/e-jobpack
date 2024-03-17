@@ -12,7 +12,7 @@ import { toast } from 'sonner';
 import { MaintenanceItem } from '@/types/maintenance';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
-import { updateMaintenance } from '@/lib/actions/maintenance';
+import { updateMaintenance } from '@/data/maintenance.action';
 
 import MaintenanceRejectConfirmation from './reject-confirmation';
 import MaintenanceAddChecklistModal from './add-checklist';

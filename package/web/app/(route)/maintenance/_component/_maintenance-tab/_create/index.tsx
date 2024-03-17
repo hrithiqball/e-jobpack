@@ -63,7 +63,7 @@ import {
   CreateMaintenanceFormSchema,
   CreateMaintenanceType,
 } from '@/lib/schemas/maintenance';
-import { createMaintenance } from '@/lib/actions/maintenance';
+import { createMaintenance } from '@/data/maintenance.action';
 
 import AssetChoiceCell from './create-asset-cell';
 import ChecklistChoiceCell from './create-checklist-cell';

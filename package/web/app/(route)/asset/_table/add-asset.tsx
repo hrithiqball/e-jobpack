@@ -39,7 +39,7 @@ import { toast } from 'sonner';
 
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { useMediaQuery } from '@/hooks/use-media-query';
-import { createAsset } from '@/lib/actions/asset';
+import { createAsset } from '@/data/asset.action';
 import {
   CreateAsset,
   CreateAssetForm,

@@ -27,7 +27,7 @@ import { useAssetStore } from '@/hooks/use-asset.store';
 import { useCurrentRole } from '@/hooks/use-current-role';
 import { useCurrentUser } from '@/hooks/use-current-user';
 
-import { updateAsset } from '@/lib/actions/asset';
+import { updateAsset } from '@/data/asset.action';
 import { isNullOrEmpty } from '@/lib/function/string';
 
 type AssetDetailsStaticProps = {

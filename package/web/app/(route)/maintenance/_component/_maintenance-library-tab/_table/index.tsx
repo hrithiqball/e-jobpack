@@ -68,7 +68,7 @@ import {
 
 import { useMediaQuery } from '@/hooks/use-media-query';
 
-import { stopPropagation } from '@/lib/function/stopPropagation';
+import { stopPropagation } from '@/lib/function/event';
 
 import emptyIcon from '@/public/image/empty.svg';
 

@@ -9,7 +9,7 @@ import {
   ResultSchema,
   ServerResponseSchema,
 } from '@/lib/schemas/server-response';
-import { RegisterForm } from '../schemas/auth';
+import { RegisterForm } from '../lib/schemas/auth';
 import { Department, Role } from '@prisma/client';
 
 const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;

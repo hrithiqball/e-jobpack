@@ -25,7 +25,7 @@ import { toast } from 'sonner';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 
-import { createChecklist } from '@/lib/actions/checklist';
+import { createChecklist } from '@/data/checklist.action';
 
 import { descriptionsMap, labelsMap } from '@/public/utils/labels';
 

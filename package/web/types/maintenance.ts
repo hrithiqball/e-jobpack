@@ -3,8 +3,8 @@ import { TaskType } from '@prisma/client';
 import {
   fetchMaintenanceItem,
   fetchMaintenanceList,
-} from '@/lib/actions/maintenance';
-import { fetchMaintenanceLibraryList } from '@/lib/actions/maintenance-library';
+} from '@/data/maintenance.action';
+import { fetchMaintenanceLibraryList } from '@/data/maintenance-library.action';
 
 export type Maintenance = Awaited<ReturnType<typeof fetchMaintenanceItem>>;
 export type Checklist = Maintenance['checklist'][0];

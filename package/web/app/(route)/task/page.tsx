@@ -1,4 +1,4 @@
-import { fetchMaintenanceList } from '@/lib/actions/maintenance';
+import { fetchMaintenanceList } from '@/data/maintenance.action';
 
 import TaskComponent from './_component';
 

@@ -23,7 +23,7 @@ import { cn } from '@/lib/utils';
 import { useAssetStore } from '@/hooks/use-asset.store';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { updateAsset } from '@/lib/actions/asset';
+import { updateAsset } from '@/data/asset.action';
 import { UpdateAsset } from '@/lib/schemas/asset';
 
 const baseUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;

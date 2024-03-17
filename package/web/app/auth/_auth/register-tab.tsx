@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
 import { RegisterForm, RegisterFormSchema } from '@/lib/schemas/auth';
-import { registerUser } from '@/lib/actions/user';
+import { registerUser } from '@/data/user.action';
 
 export default function RegisterTab() {
   const [transitioning, startTransition] = useTransition();

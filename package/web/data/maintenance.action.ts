@@ -19,9 +19,11 @@ import {
   CreateMaintenance,
   CreateMaintenanceType,
   UpdateMaintenance,
+  UpdateMaintenanceForm,
   UpdateMaintenanceSchema,
 } from '@/lib/schemas/maintenance';
 import { ServerResponseSchema } from '@/lib/schemas/server-response';
+import { DateRange } from 'react-day-picker';
 
 type ExtendedTaskLibrary = TaskLibrary & {
   subtaskLibrary: SubtaskLibrary[];
@@ -332,6 +334,40 @@ export async function updateMaintenance(id: string, values: UpdateMaintenance) {
     } else {
       console.error(error);
     }
+    throw error;
+  }
+}
+
+export async function updateMaintenanceDetails(
+  id: string,
+  data: UpdateMaintenanceForm,
+  dateRange: DateRange,
+  memberList: string[],
+) {
+  try {
+    // refer task-assignee.ts for the implementation of this function
+    const removeOperations = memberList.map(userId =>
+      db.maintenanceMember.delete({
+        where: { maintenanceId_userId: { maintenanceId: id, userId } },
+      }),
+    );
+
+    console.log(data, dateRange);
+
+    const operations = [...removeOperations];
+    await Promise.all(operations);
+
+    // return await db.maintenance.update({
+    //   where: { id },
+    //   data: {
+    //     id: data.id,
+    //     approvedById: data.approvedById,
+    //     startDate: dateRange.from,
+    //     deadline: dateRange.to || null,
+    //   },
+    // });
+  } catch (error) {
+    console.error(error);
     throw error;
   }
 }

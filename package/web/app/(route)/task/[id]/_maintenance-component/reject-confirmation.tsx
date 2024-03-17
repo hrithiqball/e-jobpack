@@ -23,7 +23,7 @@ import { useMediaQuery } from '@/hooks/use-media-query';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 
-import { updateMaintenance } from '@/lib/actions/maintenance';
+import { updateMaintenance } from '@/data/maintenance.action';
 
 type MaintenanceRejectConfirmationProps = {
   open: boolean;

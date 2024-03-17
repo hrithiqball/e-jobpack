@@ -1,5 +1,5 @@
 import { BarChart, DonutChart } from '@tremor/react';
-import { valueFormatter } from '@/lib/function/valueFormatter';
+import { valueFormatter } from '@/lib/function/value-formatter';
 
 const chartdata = [
   {

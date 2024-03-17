@@ -16,8 +16,8 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
-import { uploadChecklistImage } from '@/lib/actions/checklist';
-import { uploadMaintenanceImage } from '@/lib/actions/maintenance';
+import { uploadChecklistImage } from '@/data/checklist.action';
+import { uploadMaintenanceImage } from '@/data/maintenance.action';
 
 type MaintenanceAddAttachmentDialogProps = {
   checklistId: string | null;

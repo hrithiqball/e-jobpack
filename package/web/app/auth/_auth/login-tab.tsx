@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
 import { LoginForm, LoginFormSchema } from '@/lib/schemas/auth';
-import { login } from '@/lib/actions/login';
+import { login } from '@/data/login.action';
 
 export default function LoginTab() {
   const [transitioning, startTransition] = useTransition();

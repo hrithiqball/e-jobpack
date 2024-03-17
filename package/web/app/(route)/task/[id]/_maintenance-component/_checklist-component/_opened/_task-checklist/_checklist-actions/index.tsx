@@ -23,7 +23,7 @@ import { toast } from 'sonner';
 import { Maintenance } from '@/types/maintenance';
 import { useCurrentRole } from '@/hooks/use-current-role';
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { deleteChecklist, updateChecklist } from '@/lib/actions/checklist';
+import { deleteChecklist, updateChecklist } from '@/data/checklist.action';
 
 import AddTask from './add-task';
 import ChecklistExport from './export';

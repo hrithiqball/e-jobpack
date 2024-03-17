@@ -20,7 +20,7 @@ import { useMediaQuery } from '@/hooks/use-media-query';
 import { useCurrentUser } from '@/hooks/use-current-user';
 
 import { UpdateChecklist } from '@/lib/schemas/checklist';
-import { updateChecklist } from '@/lib/actions/checklist';
+import { updateChecklist } from '@/data/checklist.action';
 import { cn } from '@/lib/utils';
 
 import TaskTypeHelper from '@/components/helper/TaskTypeHelper';

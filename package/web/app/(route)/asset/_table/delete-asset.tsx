@@ -12,7 +12,7 @@ import { Archive } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { deleteAsset, updateAsset } from '@/lib/actions/asset';
+import { deleteAsset, updateAsset } from '@/data/asset.action';
 
 type DeleteAssetModalProps = {
   isOpen: boolean;

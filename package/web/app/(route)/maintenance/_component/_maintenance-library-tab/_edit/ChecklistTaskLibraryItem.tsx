@@ -29,8 +29,8 @@ import { TaskLibraryItem } from '@/types/task';
 
 import { useCurrentUser } from '@/hooks/use-current-user';
 
-import { updateTaskLibrary } from '@/lib/actions/task-library';
-import { convertToTaskTypeEnum } from '@/lib/function/convertToEnum';
+import { updateTaskLibrary } from '@/data/task-library.action';
+import { convertToTaskTypeEnum } from '@/lib/function/enum-socket';
 import { UpdateTaskLibrary } from '@/lib/schemas/task';
 
 type ChecklistTaskLibraryItemProps = {

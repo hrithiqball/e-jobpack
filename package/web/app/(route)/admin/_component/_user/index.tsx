@@ -41,7 +41,7 @@ import {
 import { useUserStore } from '@/hooks/use-user.store';
 // import UserPreview from './user-preview';
 import { isNullOrEmpty } from '@/lib/function/string';
-import { convertToTitleCase } from '@/lib/function/convertToWord';
+import { convertToTitleCase } from '@/lib/function/string';
 import CreateUser from './create-user';
 import ApproveUser from './approve-user';
 

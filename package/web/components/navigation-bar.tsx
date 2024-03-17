@@ -31,7 +31,7 @@ import { useCurrentUser } from '@/hooks/use-current-user';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useMounted } from '@/hooks/use-mounted';
 
-import { logout } from '@/lib/actions/logout';
+import { logout } from '@/data/logout.action';
 import clientIcon from '@/public/image/client-icon.svg';
 
 import NavigationBarSkeleton from './navigation-bar-skeleton';

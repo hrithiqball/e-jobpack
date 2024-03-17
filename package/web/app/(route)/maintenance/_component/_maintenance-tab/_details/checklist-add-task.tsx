@@ -36,7 +36,7 @@ import { toast } from 'sonner';
 import { selectionChoices } from '@/public/utils/task-type-options';
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 import { AddTaskForm, AddTaskFormSchema, CreateTask } from '@/lib/schemas/task';
-import { createTask } from '@/lib/actions/task';
+import { createTask } from '@/data/task.action';
 import { cn } from '@/lib/utils';
 
 type ChecklistAddTaskProps = {

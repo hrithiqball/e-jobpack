@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { AssetItem } from '@/types/asset';
 import { db } from '@/lib/db';
 import { join } from 'path';
-import { ServerResponseSchema } from '../schemas/server-response';
+import { ServerResponseSchema } from '../lib/schemas/server-response';
 
 export async function uploadUserImage(id: string, data: FormData) {
   try {

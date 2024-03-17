@@ -58,6 +58,8 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { updateMaintenanceDetails } from '@/data/maintenance.action';
+import { useCurrentUser } from '@/hooks/use-current-user';
 
 const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
 
@@ -72,6 +74,7 @@ export default function EditMaintenance({
 }: EditMaintenanceProps) {
   const [transitioning, startTransition] = useTransition();
   const isDesktop = useMediaQuery('(min-width: 768px)');
+  const user = useCurrentUser();
 
   const { maintenance } = useMaintenanceStore();
   const { userList } = useUserStore();
@@ -94,7 +97,7 @@ export default function EditMaintenance({
   const form = useForm<UpdateMaintenanceForm>({
     resolver: zodResolver(UpdateMaintenanceFormSchema),
     defaultValues: {
-      assetId: maintenance?.id || '',
+      id: maintenance?.id || '',
       approvedById: maintenance?.approvedById || '',
     },
   });
@@ -109,12 +112,33 @@ export default function EditMaintenance({
 
   function onSubmit(data: UpdateMaintenanceForm) {
     startTransition(() => {
+      if (!maintenance) {
+        toast.error('Maintenance not found');
+        return;
+      }
+
+      if (!user || !user.id) {
+        toast.error('Session expired');
+        return;
+      }
+
+      if (!dateRange) {
+        toast.error('Date is required');
+        return;
+      }
+
       const memberList = maintenanceMemberValue
         .filter(user => user.checked)
         .map(user => user.id);
 
-      console.log('Member List', memberList);
-      toast.success(`Maintenance updated ${data}`);
+      toast.promise(
+        updateMaintenanceDetails(maintenance.id, data, dateRange, memberList),
+        {
+          loading: 'Updating maintenance...',
+          success: 'Maintenance updated',
+          error: 'Failed to update maintenance',
+        },
+      );
     });
   }
 
@@ -139,7 +163,7 @@ export default function EditMaintenance({
               <div className="flex flex-col space-y-4">
                 <FormField
                   control={form.control}
-                  name="assetId"
+                  name="id"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>ID</FormLabel>

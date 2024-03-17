@@ -6,7 +6,7 @@ import { Trash } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useAssetStore } from '@/hooks/use-asset.store';
-import { deleteAssetImage } from '@/lib/actions/asset';
+import { deleteAssetImage } from '@/data/asset.action';
 
 import DeleteConfirmation from '@/components/delete-confirmation';
 

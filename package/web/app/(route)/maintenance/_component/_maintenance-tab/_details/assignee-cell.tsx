@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
 import { useUserStore } from '@/hooks/use-user.store';
-import { assignTask } from '@/lib/actions/task-assignee';
+import { assignTask } from '@/data/task-assignee.action';
 
 const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
 

@@ -41,7 +41,7 @@ import {
 import { DepartmentEnum, RoleEnum } from '@/types/enum';
 import { Label } from '@/components/ui/label';
 import { CreateUserAdminForm, CreateUserAdminSchema } from '@/lib/schemas/user';
-import { adminCreateUser } from '@/lib/actions/user';
+import { adminCreateUser } from '@/data/user.action';
 import { Department, Role } from '@prisma/client';
 
 type CreateUserProps = {

@@ -24,7 +24,7 @@ import { CalendarIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { createMaintenance2 } from '@/lib/actions/maintenance';
+import { createMaintenance2 } from '@/data/maintenance.action';
 import { CreateMaintenance } from '@/lib/schemas/maintenance';
 
 type AddMaintenanceModalProps = {

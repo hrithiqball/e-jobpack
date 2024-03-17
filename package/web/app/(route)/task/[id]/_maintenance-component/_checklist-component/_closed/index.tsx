@@ -34,7 +34,7 @@ import { Maintenance } from '@/types/maintenance';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { useMediaQuery } from '@/hooks/use-media-query';
 
-import { updateChecklist } from '@/lib/actions/checklist';
+import { updateChecklist } from '@/data/checklist.action';
 import { complete } from '@/lib/color';
 
 type CloseChecklistProps = {

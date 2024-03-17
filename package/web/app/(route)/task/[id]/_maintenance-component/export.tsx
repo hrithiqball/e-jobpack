@@ -29,7 +29,7 @@ import { useCurrentUser } from '@/hooks/use-current-user';
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 
 import { ChecklistSchema } from '@/lib/schemas/checklist';
-import { createMaintenanceLibrary } from '@/lib/actions/maintenance-library';
+import { createMaintenanceLibrary } from '@/data/maintenance-library.action';
 import {
   CreateMaintenanceLibrary,
   CreateMaintenanceLibraryForm,

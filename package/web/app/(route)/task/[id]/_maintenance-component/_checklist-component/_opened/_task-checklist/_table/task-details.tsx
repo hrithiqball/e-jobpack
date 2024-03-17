@@ -22,7 +22,7 @@ import { toast } from 'sonner';
 import { useTaskStore } from '@/hooks/use-task.store';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { updateTask } from '@/lib/actions/task';
+import { updateTask } from '@/data/task.action';
 import { UpdateTask } from '@/lib/schemas/task';
 import { isNullOrEmpty } from '@/lib/function/string';
 

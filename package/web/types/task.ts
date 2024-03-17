@@ -1,5 +1,5 @@
-import { fetchTaskList } from '@/lib/actions/task';
-import { fetchTaskLibraryList } from '@/lib/actions/task-library';
+import { fetchTaskList } from '@/data/task.action';
+import { fetchTaskLibraryList } from '@/data/task-library.action';
 
 export type TaskList = Awaited<ReturnType<typeof fetchTaskList>>;
 export type TaskItem = Awaited<ReturnType<typeof fetchTaskList>>[0];

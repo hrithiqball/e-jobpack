@@ -1,4 +1,4 @@
-import { fetchChecklistLibraryList } from '@/lib/actions/checklist-library';
+import { fetchChecklistLibraryList } from '@/data/checklist-library.action';
 import { useQuery } from '@tanstack/react-query';
 
 export function useGetChecklistLibraryList(assetId?: string) {

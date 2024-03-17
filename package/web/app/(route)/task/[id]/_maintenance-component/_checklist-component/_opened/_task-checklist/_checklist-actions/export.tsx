@@ -17,7 +17,7 @@ import { Maintenance } from '@/types/maintenance';
 import { useCurrentUser } from '@/hooks/use-current-user';
 
 import { CreateTaskLibrary, CreateTaskLibrarySchema } from '@/lib/schemas/task';
-import { createChecklistLibrary } from '@/lib/actions/checklist-library';
+import { createChecklistLibrary } from '@/data/checklist-library.action';
 import {
   CreateChecklistLibrary,
   CreateChecklistLibrarySchema,

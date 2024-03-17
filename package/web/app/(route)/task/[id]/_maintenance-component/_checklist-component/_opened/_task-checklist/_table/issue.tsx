@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 
 import { TaskItem } from '@/types/task';
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { updateTask } from '@/lib/actions/task';
+import { updateTask } from '@/data/task.action';
 import { cn } from '@/lib/utils';
 
 type TaskIssueProps = {

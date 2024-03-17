@@ -16,7 +16,7 @@ import { toast } from 'sonner';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useAssetStore } from '@/hooks/use-asset.store';
 
-import { uploadAssetImage } from '@/lib/actions/upload';
+import { uploadAssetImage } from '@/data/upload.action';
 import { cn } from '@/lib/utils';
 
 type AddImageProps = {
