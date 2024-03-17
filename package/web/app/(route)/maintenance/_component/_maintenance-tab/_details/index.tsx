@@ -34,6 +34,7 @@ import ChecklistAddTask from './checklist-add-task';
 import MaintenanceStatusHelper from '@/components/helper/MaintenanceStatusHelper';
 import DetailsTaskTable from './task-table';
 import EditMaintenance from './edit-maintenance';
+import AddChecklist from './add-checklist';
 
 const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
 
@@ -63,6 +64,10 @@ export default function MaintenanceDetails() {
     setOpenEditMaintenance(true);
   }
 
+  function handleOpenAddChecklist() {
+    setOpenAddChecklist(true);
+  }
+
   function handleCloseEditMaintenance() {
     setOpenEditMaintenance(false);
   }
@@ -79,8 +84,12 @@ export default function MaintenanceDetails() {
     console.log('Remove Checklist', checklistId);
   }
 
-  function handleCloseAddChecklist() {
+  function handleCloseAddTask() {
     setOpenAddTask(false);
+  }
+
+  function handleCloseAddChecklist() {
+    setOpenAddChecklist(false);
   }
 
   if (!maintenance) {
@@ -108,7 +117,10 @@ export default function MaintenanceDetails() {
             >
               Edit Maintenance
             </PopoverItem>
-            <PopoverItem startContent={<PackagePlus size={18} />}>
+            <PopoverItem
+              onClick={handleOpenAddChecklist}
+              startContent={<PackagePlus size={18} />}
+            >
               Add Checklist
             </PopoverItem>
           </PopoverContent>
@@ -214,7 +226,8 @@ export default function MaintenanceDetails() {
         open={openEditMaintenance}
         onClose={handleCloseEditMaintenance}
       />
-      <ChecklistAddTask open={openAddTask} onClose={handleCloseAddChecklist} />
+      <ChecklistAddTask open={openAddTask} onClose={handleCloseAddTask} />
+      <AddChecklist open={openAddChecklist} onClose={handleCloseAddChecklist} />
     </Fragment>
   );
 }
