@@ -250,6 +250,7 @@ export async function fetchMaintenanceItem(id: string) {
         closedBy: true,
         rejectedBy: true,
         requestedBy: true,
+        maintenanceMember: true,
         checklist: {
           include: {
             asset: true,
@@ -285,6 +286,7 @@ export async function fetchMaintenanceList() {
         closedBy: true,
         rejectedBy: true,
         requestedBy: true,
+        maintenanceMember: true,
         checklist: {
           include: {
             asset: true,

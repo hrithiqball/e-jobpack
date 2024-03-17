@@ -16,12 +16,14 @@ import { Button } from '@/components/ui/button';
 
 import {
   ClipboardX,
+  Edit,
   FileBox,
   FilePlus2,
   FileSymlink,
   Loader2,
   MoreVertical,
   PackageMinus,
+  PackagePlus,
 } from 'lucide-react';
 
 import { Checklist } from '@/types/maintenance';
@@ -31,6 +33,7 @@ import { cn } from '@/lib/utils';
 import ChecklistAddTask from './checklist-add-task';
 import MaintenanceStatusHelper from '@/components/helper/MaintenanceStatusHelper';
 import DetailsTaskTable from './task-table';
+import EditMaintenance from './edit-maintenance';
 
 const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
 
@@ -43,7 +46,9 @@ export default function MaintenanceDetails() {
     maintenance?.maintenanceStatus === 'OPENED' ||
     maintenance?.maintenanceStatus === 'REQUESTED';
 
+  const [openAddTask, setOpenAddTask] = useState(false);
   const [openAddChecklist, setOpenAddChecklist] = useState(false);
+  const [openEditMaintenance, setOpenEditMaintenance] = useState(false);
 
   useEffect(() => {
     if (!maintenance) router.push('/maintenance?tab=maintenance');
@@ -51,7 +56,15 @@ export default function MaintenanceDetails() {
 
   function handleAddTask(checklist: Checklist) {
     setCurrentChecklist(checklist);
-    setOpenAddChecklist(true);
+    setOpenAddTask(true);
+  }
+
+  function handleOpenEditMaintenance() {
+    setOpenEditMaintenance(true);
+  }
+
+  function handleCloseEditMaintenance() {
+    setOpenEditMaintenance(false);
   }
 
   function handleImportChecklist(checklist: Checklist) {
@@ -67,7 +80,7 @@ export default function MaintenanceDetails() {
   }
 
   function handleCloseAddChecklist() {
-    setOpenAddChecklist(false);
+    setOpenAddTask(false);
   }
 
   if (!maintenance) {
@@ -82,9 +95,24 @@ export default function MaintenanceDetails() {
     <Fragment>
       <div className="flex items-center justify-between">
         <h1 className="pl-2 text-lg font-medium">{maintenance.id}</h1>
-        <Button variant="ghost" size="icon">
-          <MoreVertical size={18} />
-        </Button>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <MoreVertical size={18} />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent align="end" className="w-56 rounded-lg p-2">
+            <PopoverItem
+              onClick={handleOpenEditMaintenance}
+              startContent={<Edit size={18} />}
+            >
+              Edit Maintenance
+            </PopoverItem>
+            <PopoverItem startContent={<PackagePlus size={18} />}>
+              Add Checklist
+            </PopoverItem>
+          </PopoverContent>
+        </Popover>
       </div>
       <Table>
         <TableRow>
@@ -182,10 +210,11 @@ export default function MaintenanceDetails() {
           )}
         </div>
       ))}
-      <ChecklistAddTask
-        open={openAddChecklist}
-        onClose={handleCloseAddChecklist}
+      <EditMaintenance
+        open={openEditMaintenance}
+        onClose={handleCloseEditMaintenance}
       />
+      <ChecklistAddTask open={openAddTask} onClose={handleCloseAddChecklist} />
     </Fragment>
   );
 }
