@@ -80,8 +80,8 @@ export default function EditMaintenance({
   const { userList } = useUserStore();
 
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
-    from: new Date(),
-    to: new Date(),
+    from: maintenance ? new Date(maintenance.startDate) : new Date(),
+    to: maintenance?.deadline ? new Date(maintenance.deadline) : undefined,
   });
   const [maintenanceMemberValue, setMaintenanceMemberValue] = useState(
     userList
@@ -127,9 +127,10 @@ export default function EditMaintenance({
         return;
       }
 
-      const memberList = maintenanceMemberValue
-        .filter(user => user.checked)
-        .map(user => user.id);
+      const memberList = maintenanceMemberValue.map(user => ({
+        userId: user.id,
+        checked: user.checked!,
+      }));
 
       toast.promise(
         updateMaintenanceDetails(maintenance.id, data, dateRange, memberList),

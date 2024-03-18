@@ -339,33 +339,56 @@ export async function updateMaintenance(id: string, values: UpdateMaintenance) {
 }
 
 export async function updateMaintenanceDetails(
-  id: string,
+  maintenanceId: string,
   data: UpdateMaintenanceForm,
   dateRange: DateRange,
-  memberList: string[],
+  memberList: { userId: string; checked: boolean }[],
 ) {
   try {
-    // refer task-assignee.ts for the implementation of this function
-    const removeOperations = memberList.map(userId =>
+    const deleteTarget: string[] = [];
+
+    for (const ml of memberList.filter(ml => !ml.checked)) {
+      const record = await db.maintenanceMember.findUnique({
+        where: {
+          maintenanceId_userId: { maintenanceId, userId: ml.userId },
+        },
+      });
+
+      if (record) {
+        deleteTarget.push(record.userId);
+      }
+    }
+
+    const removeOperations = deleteTarget.map(userId =>
       db.maintenanceMember.delete({
-        where: { maintenanceId_userId: { maintenanceId: id, userId } },
+        where: { maintenanceId_userId: { maintenanceId, userId } },
       }),
     );
 
-    console.log(data, dateRange);
+    const upsertOperations = memberList
+      .filter(ml => ml.checked)
+      .map(ml =>
+        db.maintenanceMember.upsert({
+          where: {
+            maintenanceId_userId: { maintenanceId, userId: ml.userId },
+          },
+          update: { userId: ml.userId },
+          create: { maintenanceId, userId: ml.userId },
+        }),
+      );
 
-    const operations = [...removeOperations];
+    const operations = [...removeOperations, ...upsertOperations];
     await Promise.all(operations);
 
-    // return await db.maintenance.update({
-    //   where: { id },
-    //   data: {
-    //     id: data.id,
-    //     approvedById: data.approvedById,
-    //     startDate: dateRange.from,
-    //     deadline: dateRange.to || null,
-    //   },
-    // });
+    return await db.maintenance.update({
+      where: { id: maintenanceId },
+      data: {
+        id: data.id,
+        approvedById: data.approvedById,
+        startDate: dateRange.from,
+        deadline: dateRange.to || null,
+      },
+    });
   } catch (error) {
     console.error(error);
     throw error;
