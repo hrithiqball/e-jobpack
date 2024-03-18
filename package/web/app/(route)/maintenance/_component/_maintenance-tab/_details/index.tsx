@@ -35,6 +35,7 @@ import MaintenanceStatusHelper from '@/components/helper/MaintenanceStatusHelper
 import DetailsTaskTable from './task-table';
 import EditMaintenance from './edit-maintenance';
 import AddChecklist from './add-checklist';
+import ExportMaintenance from './export-maintenance';
 
 const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
 
@@ -50,6 +51,7 @@ export default function MaintenanceDetails() {
   const [openAddTask, setOpenAddTask] = useState(false);
   const [openAddChecklist, setOpenAddChecklist] = useState(false);
   const [openEditMaintenance, setOpenEditMaintenance] = useState(false);
+  const [openExportMaintenance, setOpenExportMaintenance] = useState(false);
 
   useEffect(() => {
     if (!maintenance) router.push('/maintenance?tab=maintenance');
@@ -66,6 +68,14 @@ export default function MaintenanceDetails() {
 
   function handleOpenAddChecklist() {
     setOpenAddChecklist(true);
+  }
+
+  function handleOpenExportMaintenance() {
+    setOpenExportMaintenance(true);
+  }
+
+  function handleCloseExportMaintenance() {
+    setOpenExportMaintenance(false);
   }
 
   function handleCloseEditMaintenance() {
@@ -122,6 +132,12 @@ export default function MaintenanceDetails() {
               startContent={<PackagePlus size={18} />}
             >
               Add Checklist
+            </PopoverItem>
+            <PopoverItem
+              onClick={handleOpenExportMaintenance}
+              startContent={<FileSymlink size={18} />}
+            >
+              Export Maintenance
             </PopoverItem>
           </PopoverContent>
         </Popover>
@@ -240,6 +256,10 @@ export default function MaintenanceDetails() {
       />
       <ChecklistAddTask open={openAddTask} onClose={handleCloseAddTask} />
       <AddChecklist open={openAddChecklist} onClose={handleCloseAddChecklist} />
+      <ExportMaintenance
+        open={openExportMaintenance}
+        onClose={handleCloseExportMaintenance}
+      />
     </Fragment>
   );
 }

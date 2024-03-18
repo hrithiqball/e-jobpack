@@ -77,7 +77,7 @@ export default function MaintenanceComponent({
         break;
 
       case 'export-maintenance':
-        setOpenExportMaintenance(!openExportMaintenance);
+        setOpenExportMaintenance(true);
         break;
 
       case 'add-attachment':
