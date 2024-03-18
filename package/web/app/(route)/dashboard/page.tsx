@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 
 import Dashboard from './_dashboard';
-import Loader from '@/components/ui/loader';
+import { Loader } from '@/components/ui/loader';
 
 export default async function DashboardPage() {
   return (

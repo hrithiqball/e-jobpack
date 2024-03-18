@@ -4,7 +4,7 @@ import AdminComponent from './_component';
 import { fetchUserList } from '@/data/user.action';
 import { fetchAssetTypeList } from '@/data/asset-type.action';
 import { Suspense } from 'react';
-import Loader from '@/components/ui/loader';
+import { Loader } from '@/components/ui/loader';
 
 export default async function AdminPage() {
   const userList = await fetchUserList();

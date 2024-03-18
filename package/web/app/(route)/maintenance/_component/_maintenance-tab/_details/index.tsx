@@ -159,6 +159,18 @@ export default function MaintenanceDetails() {
             )}
           </TableCell>
         </TableRow>
+        <TableRow>
+          <TableCell className="font-semibold">Maintenance Members</TableCell>
+          <TableCell>
+            {maintenance.maintenanceMember.length > 0 ? (
+              <MaintenanceMember
+                members={maintenance.maintenanceMember.map(u => u.user)}
+              />
+            ) : (
+              <div className="">No team member chosen</div>
+            )}
+          </TableCell>
+        </TableRow>
       </Table>
       <hr />
       {maintenance.checklist.map(checklist => (
@@ -249,6 +261,29 @@ function PersonInCharge({ personInCharge }: { personInCharge: User }) {
         </div>
       )}
       <p>{personInCharge.name}</p>
+    </div>
+  );
+}
+
+function MaintenanceMember({ members }: { members: User[] }) {
+  return (
+    <div className="flex items-center -space-x-3 overflow-hidden">
+      {members.map(member => (
+        <div key={member.id} className="size-5">
+          {member.image ? (
+            <Image
+              src={`${baseServerUrl}/user/${member.image}`}
+              alt={member.name}
+              width={20}
+              height={20}
+            />
+          ) : (
+            <div className="flex size-5 items-center justify-center rounded-full bg-gray-400">
+              <p className="text-xs">{member.name.substring(0, 1)}</p>
+            </div>
+          )}
+        </div>
+      ))}
     </div>
   );
 }

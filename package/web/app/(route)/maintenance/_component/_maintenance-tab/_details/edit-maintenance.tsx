@@ -1,5 +1,10 @@
-import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
+import { useState, useTransition } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { DateRange } from 'react-day-picker';
+import { useForm } from 'react-hook-form';
+import Image from 'next/image';
+import dayjs from 'dayjs';
+
 import {
   Drawer,
   DrawerContent,
@@ -14,9 +19,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import Loader from '@/components/ui/loader';
 import {
   Popover,
   PopoverContent,
@@ -36,7 +38,23 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Loader } from '@/components/ui/loader';
+import { CalendarIcon } from 'lucide-react';
+import { toast } from 'sonner';
+
+import { updateMaintenanceDetails } from '@/data/maintenance.action';
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
+import { useCurrentUser } from '@/hooks/use-current-user';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useUserStore } from '@/hooks/use-user.store';
 import {
@@ -44,24 +62,7 @@ import {
   UpdateMaintenanceFormSchema,
 } from '@/lib/schemas/maintenance';
 import { cn } from '@/lib/utils';
-import { zodResolver } from '@hookform/resolvers/zod';
-import dayjs from 'dayjs';
-import { CalendarIcon } from 'lucide-react';
-import { useState, useTransition } from 'react';
-import { DateRange } from 'react-day-picker';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import Image from 'next/image';
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { updateMaintenanceDetails } from '@/data/maintenance.action';
-import { useCurrentUser } from '@/hooks/use-current-user';
-
-const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
+import { baseServerUrl } from '@/public/constant/url';
 
 type EditMaintenanceProps = {
   open: boolean;

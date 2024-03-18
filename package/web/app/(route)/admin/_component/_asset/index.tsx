@@ -17,7 +17,7 @@ import { toast } from 'sonner';
 import { createAssetType } from '@/data/asset-type.action';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { DonutChart, Legend } from '@tremor/react';
-import { colors } from '@/public/utils/colors';
+import { colors } from '@/public/constant/colors';
 import { valueFormatter } from '@/lib/function/value-formatter';
 
 const cards: Card[] = [
