@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { User } from '@prisma/client';
 import Image from 'next/image';
@@ -36,13 +36,17 @@ import DetailsTaskTable from './task-table';
 import EditMaintenance from './edit-maintenance';
 import AddChecklist from './add-checklist';
 import ExportMaintenance from './export-maintenance';
+import { toast } from 'sonner';
+import { deleteChecklist } from '@/data/checklist.action';
 
 const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
 
 export default function MaintenanceDetails() {
+  const [transitioning, startTransition] = useTransition();
   const router = useRouter();
 
-  const { maintenance, setCurrentChecklist } = useMaintenanceStore();
+  const { maintenance, setCurrentChecklist, removeChecklistFromMaintenance } =
+    useMaintenanceStore();
 
   const isEditable =
     maintenance?.maintenanceStatus === 'OPENED' ||
@@ -91,7 +95,16 @@ export default function MaintenanceDetails() {
   }
 
   function handleRemoveChecklist(checklistId: string) {
-    console.log('Remove Checklist', checklistId);
+    startTransition(() => {
+      toast.promise(deleteChecklist(checklistId), {
+        loading: 'Removing checklist...',
+        success: () => {
+          removeChecklistFromMaintenance(checklistId);
+          return 'Checklist removed';
+        },
+        error: 'Failed to remove checklist',
+      });
+    });
   }
 
   function handleCloseAddTask() {
@@ -201,7 +214,7 @@ export default function MaintenanceDetails() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  disabled={!isEditable}
+                  disabled={!isEditable || transitioning}
                   className={cn({ hidden: !isEditable })}
                 >
                   <MoreVertical size={18} />
