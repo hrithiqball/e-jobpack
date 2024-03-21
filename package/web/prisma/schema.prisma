@@ -91,7 +91,7 @@ model Checklist {
   color          String?
   icon           String?
   assetId        String      @map("asset_id")
-  id             String      @id
+  id             String      @id @default(cuid())
   maintenanceId  String      @map("maintenance_id")
   attachmentPath String[]    @default([]) @map("attachment_path")
   asset          Asset       @relation(fields: [assetId], references: [id], onDelete: Cascade, map: "checklist_asset_fk")

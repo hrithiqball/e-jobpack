@@ -2,9 +2,8 @@
 
 import { revalidatePath } from 'next/cache';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { Prisma } from '@prisma/client';
+import { Checklist, Prisma, Task } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
-import dayjs from 'dayjs';
 
 import { Maintenance } from '@/types/maintenance';
 import { CreateChecklist, UpdateChecklist } from '@/lib/schemas/checklist';
@@ -13,14 +12,88 @@ import { db } from '@/lib/db';
 
 const baseUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
 
+type ExtendedChecklist = Checklist & {
+  task: Task[];
+};
+
 export async function createChecklist(checklist: CreateChecklist) {
   try {
     const newChecklist = await db.checklist.create({
       data: {
-        id: `CL-${dayjs().format('YYMMDDHHmmssSSS')}`,
         updatedById: checklist.createdById,
         ...checklist,
       },
+    });
+
+    return newChecklist;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function createChecklists(
+  checklists: {
+    assetId: string;
+    checklistLibId: string | undefined;
+  }[],
+  userId: string,
+  maintenanceId: string,
+) {
+  try {
+    const newChecklist: ExtendedChecklist[] = [];
+
+    checklists.forEach(async checklist => {
+      if (!checklist.checklistLibId) {
+        const checklistCreated = await db.checklist.create({
+          data: {
+            assetId: checklist.assetId,
+            maintenanceId,
+            createdById: userId,
+            updatedById: userId,
+          },
+          include: {
+            task: true,
+          },
+        });
+
+        newChecklist.push(checklistCreated);
+      } else {
+        const checklistLibrary = await db.checklistLibrary.findUniqueOrThrow({
+          where: {
+            id: checklist.checklistLibId,
+          },
+          include: {
+            taskLibrary: true,
+          },
+        });
+
+        const checklistCreated = await db.checklist.create({
+          data: {
+            assetId: checklist.assetId,
+            maintenanceId,
+            createdById: userId,
+            updatedById: userId,
+            task: {
+              createMany: {
+                data: checklistLibrary.taskLibrary.map(task => ({
+                  id: uuidv4(),
+                  taskOrder: task.taskOrder,
+                  taskActivity: task.taskActivity,
+                  description: task.description,
+                  listChoice: task.listChoice,
+                  taskType: task.taskType,
+                })),
+              },
+            },
+          },
+          include: {
+            task: true,
+          },
+        });
+
+        newChecklist.push(checklistCreated);
+      }
     });
 
     return newChecklist;
@@ -65,6 +138,24 @@ export async function fetchChecklistList(maintenanceId?: string) {
             checklist: true,
           },
         },
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function fetchChecklist(id: string) {
+  try {
+    return await db.checklist.findUniqueOrThrow({
+      where: { id },
+      include: {
+        maintenance: true,
+        updatedBy: true,
+        createdBy: true,
+        asset: true,
+        task: true,
       },
     });
   } catch (error) {

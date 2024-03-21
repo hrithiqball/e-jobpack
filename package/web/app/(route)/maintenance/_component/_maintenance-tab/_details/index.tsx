@@ -268,7 +268,11 @@ export default function MaintenanceDetails() {
         onClose={handleCloseEditMaintenance}
       />
       <ChecklistAddTask open={openAddTask} onClose={handleCloseAddTask} />
-      <AddChecklist open={openAddChecklist} onClose={handleCloseAddChecklist} />
+      <AddChecklist
+        open={openAddChecklist}
+        onClose={handleCloseAddChecklist}
+        assets={maintenance.checklist.map(c => c.assetId)}
+      />
       <ExportMaintenance
         open={openExportMaintenance}
         onClose={handleCloseExportMaintenance}
