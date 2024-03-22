@@ -20,6 +20,7 @@ import {
   FileBox,
   FilePlus2,
   FileSymlink,
+  FileX2,
   Loader2,
   MoreVertical,
   PackageMinus,
@@ -38,12 +39,28 @@ import AddChecklist from './add-checklist';
 import ExportMaintenance from './export-maintenance';
 import { toast } from 'sonner';
 import { deleteChecklist } from '@/data/checklist.action';
+import { useCurrentRole } from '@/hooks/use-current-role';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { useCurrentUser } from '@/hooks/use-current-user';
+import { deleteMaintenance } from '@/data/maintenance.action';
 
 const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
 
 export default function MaintenanceDetails() {
   const [transitioning, startTransition] = useTransition();
   const router = useRouter();
+  const role = useCurrentRole();
+  const user = useCurrentUser();
 
   const { maintenance, setCurrentChecklist, removeChecklistFromMaintenance } =
     useMaintenanceStore();
@@ -115,6 +132,30 @@ export default function MaintenanceDetails() {
     setOpenAddChecklist(false);
   }
 
+  function handleDelete() {
+    startTransition(() => {
+      if (!user || !user.id) {
+        toast.error('Session expired');
+        return;
+      }
+
+      if (!maintenance) {
+        toast.error('Maintenance not found');
+        return;
+      }
+
+      toast.promise(deleteMaintenance(maintenance.id, user.id), {
+        loading: 'Deleting maintenance...',
+        success: () => {
+          router.push('/maintenance?tab=maintenance');
+          router.refresh();
+          return 'Maintenance deleted';
+        },
+        error: 'Failed to delete maintenance',
+      });
+    });
+  }
+
   if (!maintenance) {
     return (
       <div className="flex flex-1 items-center justify-center">
@@ -152,6 +193,33 @@ export default function MaintenanceDetails() {
             >
               Export Maintenance
             </PopoverItem>
+            {role === 'ADMIN' ||
+              (role === 'SUPERVISOR' && (
+                <AlertDialog>
+                  <AlertDialogTrigger>
+                    <PopoverItemDestructive startContent={<FileX2 size={18} />}>
+                      Delete Maintenance
+                    </PopoverItemDestructive>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Are you absolutely sure?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently
+                        delete maintenance and all its data!
+                      </AlertDialogDescription>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleDelete}>
+                          Confirm
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogHeader>
+                  </AlertDialogContent>
+                </AlertDialog>
+              ))}
           </PopoverContent>
         </Popover>
       </div>

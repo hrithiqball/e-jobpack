@@ -430,3 +430,22 @@ export async function uploadMaintenanceImage(
     throw error;
   }
 }
+
+export async function deleteMaintenance(id: string, userId: string) {
+  try {
+    await db.history.create({
+      data: {
+        actionBy: userId,
+        activity: `Deleted maintenance ${id}`,
+        historyMeta: 'MAINTENANCE',
+      },
+    });
+
+    return await db.maintenance.delete({
+      where: { id },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
