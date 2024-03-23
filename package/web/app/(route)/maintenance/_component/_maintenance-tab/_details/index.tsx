@@ -27,7 +27,7 @@ import { Checklist } from '@/types/maintenance';
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 import { cn } from '@/lib/utils';
 
-import ChecklistAddTask from './checklist-add-task';
+import ChecklistAddTask from '@/components/helper/checklist-add-task';
 import DetailsTaskTable from './task-table';
 import EditMaintenance from './edit-maintenance';
 import AddChecklist from '@/components/helper/add-checklist';

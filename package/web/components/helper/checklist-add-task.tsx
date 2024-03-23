@@ -118,7 +118,9 @@ export default function ChecklistAddTask({
   }
 
   function handleClose() {
+    setShowListChoice(false);
     form.reset();
+    setTaskType('');
     onClose();
   }
 
