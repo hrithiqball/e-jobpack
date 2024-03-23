@@ -142,7 +142,7 @@ export default function TaskTable({ checklistId, taskList }: TaskTableProps) {
     },
   ];
 
-  if (role === 'ADMIN' || role === 'SUPERVISOR') {
+  if (role !== 'TECHNICIAN') {
     columns.push({
       id: 'action',
       cell: ({ row }) => {

@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useEffect, Key } from 'react';
 import { useRouter } from 'next/navigation';
-import { Asset, ChecklistLibrary } from '@prisma/client';
+import { ChecklistLibrary, User } from '@prisma/client';
 import dayjs from 'dayjs';
 
 import { Button } from '@/components/ui/button';
@@ -15,43 +15,58 @@ import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 import { updateMaintenance } from '@/data/maintenance.action';
 
 import MaintenanceRejectConfirmation from './reject-confirmation';
-import MaintenanceAddChecklistModal from './add-checklist';
-import MaintenanceTableInfo from './info-table';
 import MaintenanceRequestForm from './request-form';
 import MaintenanceExport from './export';
 import MaintenanceAddAttachment from './add-attachment';
 import MaintenanceDropdown from './dropdown';
 import ChecklistComponent from './_checklist-component';
 import MaintenanceUploadExcel from './upload-excel';
+import EditMaintenance from './edit-maintenance';
+import { useUserStore } from '@/hooks/use-user.store';
+import InfoTable from '@/components/helper/info-table';
+import { useAssetStore } from '@/hooks/use-asset.store';
+import { AssetList } from '@/types/asset';
+import AddChecklist from '@/components/helper/add-checklist';
 
 type MaintenanceComponentProps = {
   maintenance: MaintenanceItem;
   checklistLibraryList: ChecklistLibrary[];
-  assetList: Asset[];
+  assetList: AssetList;
+  userList: User[];
 };
 
 export default function MaintenanceComponent({
   maintenance,
-  checklistLibraryList,
   assetList,
+  userList,
 }: MaintenanceComponentProps) {
   const [transitioning, startTransition] = useTransition();
   const user = useCurrentUser();
   const router = useRouter();
 
   const { setMaintenance } = useMaintenanceStore();
+  const { setUserList } = useUserStore();
+  const { setAssetList } = useAssetStore();
 
   const [openAddChecklist, setOpenAddChecklist] = useState(false);
   const [openRejectConfirmation, setOpenRejectConfirmation] = useState(false);
   const [openExportMaintenance, setOpenExportMaintenance] = useState(false);
   const [openAddAttachment, setOpenAddAttachment] = useState(false);
+  const [openEditMaintenance, setOpenEditMaintenance] = useState(false);
   const [openExcel, setOpenExcel] = useState(false);
 
   useEffect(() => {
     setMaintenance(maintenance);
-  }, [setMaintenance, maintenance]);
-
-  const selectedSaveOptionCurrent = Array.from(new Set(['saveOnly']))[0];
+    setUserList(userList);
+    setAssetList(assetList);
+  }, [
+    setMaintenance,
+    maintenance,
+    setUserList,
+    userList,
+    setAssetList,
+    assetList,
+  ]);
 
   function handleAction(key: Key) {
     switch (key) {
@@ -61,6 +76,10 @@ export default function MaintenanceComponent({
 
       case 'download-excel':
         // handleDownloadExcel();
+        break;
+
+      case 'edit-maintenance':
+        setOpenEditMaintenance(true);
         break;
 
       case 'upload-excel':
@@ -175,11 +194,6 @@ export default function MaintenanceComponent({
     setOpenExcel(true);
   }
 
-  function handleCloseAddChecklist() {
-    setOpenAddChecklist(false);
-    router.refresh();
-  }
-
   function handleCloseAddAttachment() {
     setOpenAddAttachment(false);
   }
@@ -192,13 +206,21 @@ export default function MaintenanceComponent({
     setOpenExcel(false);
   }
 
+  function handleCloseEditMaintenance() {
+    setOpenEditMaintenance(false);
+  }
+
+  function handleCloseAddChecklist() {
+    setOpenAddChecklist(false);
+  }
+
   function handleCloseRejectConfirmation() {
     setOpenRejectConfirmation(false);
     router.refresh();
   }
 
   return (
-    <div className="flex-grow rounded-md">
+    <div className="flex-grow space-y-4 rounded-md">
       <div className="flex flex-row items-center justify-between">
         <div className="flex items-center space-x-4">
           <h2 className="text-medium font-semibold sm:text-xl">
@@ -220,22 +242,7 @@ export default function MaintenanceComponent({
           transitioning={transitioning}
         />
       )}
-      <div className="my-4 flex flex-col ">
-        <MaintenanceTableInfo />
-        <div className="flex flex-row space-x-1">
-          <MaintenanceAddChecklistModal
-            open={openAddChecklist}
-            onClose={handleCloseAddChecklist}
-            assetList={assetList.filter(
-              asset =>
-                !asset.isArchive &&
-                !maintenance.checklist.some(c => c.assetId === asset.id),
-            )}
-            checklistLibraryList={checklistLibraryList}
-            selectedSaveOptionCurrent={selectedSaveOptionCurrent ?? ''}
-          />
-        </div>
-      </div>
+      <InfoTable />
       <hr />
       <div className="mt-4 rounded-md">
         <div className="flex h-full flex-col overflow-y-auto">
@@ -244,6 +251,15 @@ export default function MaintenanceComponent({
           </div>
         </div>
       </div>
+      <EditMaintenance
+        open={openEditMaintenance}
+        onClose={handleCloseEditMaintenance}
+      />
+      <AddChecklist
+        open={openAddChecklist}
+        onClose={handleCloseAddChecklist}
+        assets={maintenance.checklist.map(c => c.assetId)}
+      />
       <MaintenanceRejectConfirmation
         open={openRejectConfirmation}
         onClose={handleCloseRejectConfirmation}

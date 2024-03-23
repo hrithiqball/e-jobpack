@@ -65,8 +65,8 @@ export default function AddMaintenanceModal({
         id: maintenanceId,
         maintainee: Array.from(maintainee),
         startDate: startDate || dayjs().toDate(),
-        isOpen: user.role === 'ADMIN' || user.role === 'SUPERVISOR',
-        isRequested: user.role !== 'ADMIN' && user.role !== 'SUPERVISOR',
+        isOpen: user.role !== 'TECHNICIAN',
+        isRequested: user.role === 'TECHNICIAN',
         approvedById: Array.from(approvedBy)[0] || '',
       };
 
@@ -124,7 +124,7 @@ export default function AddMaintenanceModal({
             onSelectionChange={(e: any) => setApprovedBy(e)}
           >
             {userList
-              .filter(user => user.id !== '-99' && user.role !== 'TECHNICIAN')
+              .filter(user => user.role !== 'TECHNICIAN')
               .map(user => (
                 <SelectItem key={user.id} value={user.id}>
                   {user.name}
@@ -139,13 +139,11 @@ export default function AddMaintenanceModal({
             selectedKeys={maintainee}
             onSelectionChange={(e: any) => setMaintainee(e)}
           >
-            {userList
-              .filter(user => user.id !== '-99')
-              .map(user => (
-                <SelectItem key={user.id} value={user.id}>
-                  {user.name}
-                </SelectItem>
-              ))}
+            {userList.map(user => (
+              <SelectItem key={user.id} value={user.id}>
+                {user.name}
+              </SelectItem>
+            ))}
           </Select>
           <Popover>
             <PopoverTrigger>

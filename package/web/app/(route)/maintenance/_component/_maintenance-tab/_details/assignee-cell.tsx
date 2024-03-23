@@ -33,12 +33,10 @@ export default function TableAssigneeCell({
 
   const [assigneeList, setAssigneeList] = useState(assignee);
   const [userListValue, setUserListValue] = useState(
-    userList
-      .filter(user => user.id !== '-99')
-      .map(user => ({
-        ...user,
-        checked: assignee.some(au => au.id === user.id),
-      })),
+    userList.map(user => ({
+      ...user,
+      checked: assignee.some(au => au.id === user.id),
+    })),
   );
 
   function handleCheckChange(userId: string) {

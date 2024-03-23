@@ -92,7 +92,7 @@ export default function MaintenanceWidget({
             variant="faded"
             className="my-4"
           >
-            {user?.role === 'ADMIN' || user?.role === 'SUPERVISOR'
+            {user?.role !== 'TECHNICIAN'
               ? 'Create New Maintenance'
               : 'Create Maintenance Request'}
           </Button>

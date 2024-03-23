@@ -197,12 +197,7 @@ export default function MaintenanceCreate({
                         </FormControl>
                         <SelectContent className="space-x-4">
                           {userList
-                            .filter(
-                              user =>
-                                user.id !== '-99' &&
-                                (user.role === 'ADMIN' ||
-                                  user.role === 'SUPERVISOR'),
-                            )
+                            .filter(user => user.role !== 'TECHNICIAN')
                             .map(user => (
                               <SelectItem key={user.id} value={user.id}>
                                 {user.name}

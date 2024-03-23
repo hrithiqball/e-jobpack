@@ -558,7 +558,7 @@ export default function AssetTable({
     },
   ];
 
-  if (role === 'ADMIN' || role === 'SUPERVISOR') {
+  if (role !== 'TECHNICIAN') {
     columns.push({
       id: 'actions',
       header: () => null,

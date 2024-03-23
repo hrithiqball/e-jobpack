@@ -1,8 +1,5 @@
 import { Fragment, useEffect, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { User } from '@prisma/client';
-import Image from 'next/image';
-import dayjs from 'dayjs';
 
 import {
   Popover,
@@ -11,7 +8,6 @@ import {
   PopoverItemDestructive,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Table, TableCell, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 
 import {
@@ -32,10 +28,9 @@ import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 import { cn } from '@/lib/utils';
 
 import ChecklistAddTask from './checklist-add-task';
-import MaintenanceStatusHelper from '@/components/helper/MaintenanceStatusHelper';
 import DetailsTaskTable from './task-table';
 import EditMaintenance from './edit-maintenance';
-import AddChecklist from './add-checklist';
+import AddChecklist from '@/components/helper/add-checklist';
 import ExportMaintenance from './export-maintenance';
 import { toast } from 'sonner';
 import { deleteChecklist } from '@/data/checklist.action';
@@ -53,8 +48,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { deleteMaintenance } from '@/data/maintenance.action';
-
-const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
+import InfoTable from '../../../../../../components/helper/info-table';
 
 export default function MaintenanceDetails() {
   const [transitioning, startTransition] = useTransition();
@@ -193,82 +187,36 @@ export default function MaintenanceDetails() {
             >
               Export Maintenance
             </PopoverItem>
-            {role === 'ADMIN' ||
-              (role === 'SUPERVISOR' && (
-                <AlertDialog>
-                  <AlertDialogTrigger>
-                    <PopoverItemDestructive startContent={<FileX2 size={18} />}>
-                      Delete Maintenance
-                    </PopoverItemDestructive>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        Are you absolutely sure?
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This action cannot be undone. This will permanently
-                        delete maintenance and all its data!
-                      </AlertDialogDescription>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleDelete}>
-                          Confirm
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogHeader>
-                  </AlertDialogContent>
-                </AlertDialog>
-              ))}
+            {role !== 'TECHNICIAN' && (
+              <AlertDialog>
+                <AlertDialogTrigger>
+                  <PopoverItemDestructive startContent={<FileX2 size={18} />}>
+                    Delete Maintenance
+                  </PopoverItemDestructive>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Are you absolutely sure?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete
+                      maintenance and all its data!
+                    </AlertDialogDescription>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleDelete}>
+                        Confirm
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogHeader>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
           </PopoverContent>
         </Popover>
       </div>
-      <Table>
-        <TableRow>
-          <TableCell className="font-semibold">Status</TableCell>
-          <TableCell>
-            <MaintenanceStatusHelper
-              maintenanceStatus={maintenance.maintenanceStatus}
-            />
-          </TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell className="font-semibold">Start Date</TableCell>
-          <TableCell>
-            {dayjs(maintenance.startDate).format('DD/MM/YYYY')}
-          </TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell className="font-semibold">Deadline</TableCell>
-          <TableCell>
-            {maintenance.deadline
-              ? dayjs(maintenance.deadline).format('DD/MM/YYYY')
-              : 'Not Specified'}
-          </TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell className="font-semibold">Person In Charge</TableCell>
-          <TableCell>
-            {maintenance.approvedBy ? (
-              <PersonInCharge personInCharge={maintenance.approvedBy} />
-            ) : (
-              'Not Specified'
-            )}
-          </TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell className="font-semibold">Maintenance Members</TableCell>
-          <TableCell>
-            {maintenance.maintenanceMember.length > 0 ? (
-              <MaintenanceMember
-                members={maintenance.maintenanceMember.map(u => u.user)}
-              />
-            ) : (
-              <div className="">No team member chosen</div>
-            )}
-          </TableCell>
-        </TableRow>
-      </Table>
+      <InfoTable />
       <hr />
       {maintenance.checklist.map(checklist => (
         <div
@@ -346,49 +294,5 @@ export default function MaintenanceDetails() {
         onClose={handleCloseExportMaintenance}
       />
     </Fragment>
-  );
-}
-
-function PersonInCharge({ personInCharge }: { personInCharge: User }) {
-  return (
-    <div className="flex items-center space-x-2">
-      {personInCharge.image ? (
-        <Image
-          src={`${baseServerUrl}/user/${personInCharge.image}`}
-          alt={personInCharge.name}
-          width={20}
-          height={20}
-          className="size-5 rounded-full"
-        />
-      ) : (
-        <div className="size-5 rounded-full">
-          <span>{personInCharge.name.substring(0, 3)}</span>
-        </div>
-      )}
-      <p>{personInCharge.name}</p>
-    </div>
-  );
-}
-
-function MaintenanceMember({ members }: { members: User[] }) {
-  return (
-    <div className="flex items-center -space-x-3 overflow-hidden">
-      {members.map(member => (
-        <div key={member.id} className="size-5">
-          {member.image ? (
-            <Image
-              src={`${baseServerUrl}/user/${member.image}`}
-              alt={member.name}
-              width={20}
-              height={20}
-            />
-          ) : (
-            <div className="flex size-5 items-center justify-center rounded-full bg-gray-400">
-              <p className="text-xs">{member.name.substring(0, 1)}</p>
-            </div>
-          )}
-        </div>
-      ))}
-    </div>
   );
 }

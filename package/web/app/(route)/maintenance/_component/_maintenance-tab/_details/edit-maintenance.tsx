@@ -195,10 +195,7 @@ export default function EditMaintenance({
                         </FormControl>
                         <SelectContent className="space-x-4">
                           {userList
-                            .filter(
-                              user =>
-                                user.role !== 'TECHNICIAN' && user.id !== '-99',
-                            )
+                            .filter(user => user.role === 'SUPERVISOR')
                             .map(user => (
                               <SelectItem key={user.id} value={user.id}>
                                 <div className="flex items-center space-x-2">

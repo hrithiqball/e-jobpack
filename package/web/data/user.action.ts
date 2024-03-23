@@ -126,6 +126,14 @@ export async function fetchUserList() {
       orderBy: {
         name: 'asc',
       },
+      where: {
+        id: {
+          not: '-99',
+        },
+        role: {
+          not: 'ADMIN',
+        },
+      },
     });
   } catch (error) {
     console.error(error);

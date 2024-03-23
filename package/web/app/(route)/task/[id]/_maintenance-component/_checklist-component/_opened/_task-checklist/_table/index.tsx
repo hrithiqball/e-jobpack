@@ -29,6 +29,7 @@ import {
 import { Button } from '@/components/ui/button';
 
 import {
+  ClipboardX,
   Edit,
   FileQuestion,
   FileWarning,
@@ -335,8 +336,11 @@ export default function TaskTable({ taskList }: TaskTableProps) {
           </TableBody>
         </Table>
       ) : (
-        <div className="flex items-center justify-center">
-          <span className="text-gray-400">No task found</span>
+        <div className="flex items-center justify-center py-4">
+          <div className="flex items-center space-x-2 text-gray-500">
+            <ClipboardX size={18} />
+            <p>No Task Assigned</p>
+          </div>
         </div>
       )}
       <EditTask open={openEditTask} onClose={handleCloseEditTask} />
