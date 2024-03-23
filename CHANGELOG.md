@@ -1,3 +1,14 @@
+# [3.2.0](https://github.com/hrithiqball/e-jobpack/compare/v3.1.0...v3.2.0) (2024-03-23)
+
+
+### Features
+
+* able to export maintenance from maintenance main ([91974b8](https://github.com/hrithiqball/e-jobpack/commit/91974b8f2ca5ad5869d99f0212dfc095dc05b69a))
+* able to update maintenance from maintenance route ([9935847](https://github.com/hrithiqball/e-jobpack/commit/9935847d7f5bf0989121fa75a8cf197717e3fb66))
+* admin or supervisor can delete maintenance ([6781d50](https://github.com/hrithiqball/e-jobpack/commit/6781d50711c4e58bccc69097dedb3e1bb7b69f09))
+* can add new checklist from maintenance main ([3e3dd5c](https://github.com/hrithiqball/e-jobpack/commit/3e3dd5c37f6c915d2a13e02c1a239be06913913b))
+* remove checklist from maintenance main ([ce733aa](https://github.com/hrithiqball/e-jobpack/commit/ce733aa191d7f8e6d857ced798f62088bb818abb))
+
 # [3.1.0](https://github.com/hrithiqball/e-jobpack/compare/v3.0.0...v3.1.0) (2024-03-16)
 
 
