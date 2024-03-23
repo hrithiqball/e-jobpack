@@ -39,7 +39,7 @@ import { toast } from 'sonner';
 
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { useMediaQuery } from '@/hooks/use-media-query';
-import { createAsset } from '@/lib/actions/asset';
+import { createAsset } from '@/data/asset.action';
 import {
   CreateAsset,
   CreateAssetForm,
@@ -203,10 +203,7 @@ export default function AddAssetModal({
                         </FormControl>
                         <SelectContent className="space-x-4">
                           {userList
-                            .filter(
-                              user =>
-                                user.role !== 'TECHNICIAN' && user.id !== '-99',
-                            )
+                            .filter(user => user.role !== 'TECHNICIAN')
                             .map(user => (
                               <SelectItem key={user.id} value={user.id}>
                                 <div className="flex items-center space-x-2">

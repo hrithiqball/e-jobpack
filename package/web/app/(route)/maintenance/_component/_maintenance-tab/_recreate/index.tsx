@@ -56,7 +56,7 @@ import { useMediaQuery } from '@/hooks/use-media-query';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 import { useUserStore } from '@/hooks/use-user.store';
-import { recreateMaintenance } from '@/lib/actions/maintenance';
+import { recreateMaintenance } from '@/data/maintenance.action';
 
 import MaintenanceRecreateAssetCell from './recreate-asset-cell';
 import MaintenanceRecreateChecklistCell from './recreate-checklist-cell';

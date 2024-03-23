@@ -1,9 +1,9 @@
-import { fetchMaintenanceList } from '@/lib/actions/maintenance';
-import { fetchMaintenanceLibraryList } from '@/lib/actions/maintenance-library';
-import { fetchTaskLibraryList } from '@/lib/actions/task-library';
-import { fetchChecklistLibraryList } from '@/lib/actions/checklist-library';
-import { fetchUserList } from '@/lib/actions/user';
-import { fetchAssetList } from '@/lib/actions/asset';
+import { fetchMaintenanceList } from '@/data/maintenance.action';
+import { fetchMaintenanceLibraryList } from '@/data/maintenance-library.action';
+import { fetchTaskLibraryList } from '@/data/task-library.action';
+import { fetchChecklistLibraryList } from '@/data/checklist-library.action';
+import { fetchUserList } from '@/data/user.action';
+import { fetchAssetList } from '@/data/asset.action';
 
 import MaintenanceComponent from './_component';
 

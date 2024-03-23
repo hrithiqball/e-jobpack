@@ -52,7 +52,7 @@ import {
 } from '@/lib/schemas/task';
 
 import TaskTypeHelper from '@/components/helper/TaskTypeHelper';
-import { updateTaskDetails } from '@/lib/actions/task';
+import { updateTaskDetails } from '@/data/task.action';
 
 type EditTaskProps = {
   checklistId?: string;

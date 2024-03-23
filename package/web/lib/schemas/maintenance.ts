@@ -62,6 +62,14 @@ export const UpdateMaintenanceSchema = z.object({
   maintenanceStatus: z.nativeEnum(MaintenanceStatus).optional(),
 });
 
+export const UpdateMaintenanceFormSchema = z.object({
+  id: z
+    .string()
+    .min(1, { message: 'ID must contain one character at least' })
+    .optional(),
+  approvedById: z.string().optional(),
+});
+
 export const CreateMaintenanceLibrarySchema = z.object({
   title: z.string().min(1, { message: 'Missing title' }),
   description: z.string().optional(),
@@ -75,6 +83,7 @@ export const CreateMaintenanceLibraryFormSchema = z.object({
   description: z.string().optional(),
 });
 export type UpdateMaintenance = z.infer<typeof UpdateMaintenanceSchema>;
+export type UpdateMaintenanceForm = z.infer<typeof UpdateMaintenanceFormSchema>;
 export type CreateMaintenance = z.infer<typeof CreateMaintenanceSchema2>;
 export type CreateMaintenanceForm = z.infer<typeof CreateMaintenanceFormSchema>;
 export type CreateMaintenanceLibrary = z.infer<

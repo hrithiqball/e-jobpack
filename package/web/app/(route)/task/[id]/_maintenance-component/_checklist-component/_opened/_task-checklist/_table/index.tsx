@@ -29,6 +29,7 @@ import {
 import { Button } from '@/components/ui/button';
 
 import {
+  ClipboardX,
   Edit,
   FileQuestion,
   FileWarning,
@@ -43,10 +44,10 @@ import { TaskList, TaskItem } from '@/types/task';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useTaskStore } from '@/hooks/use-task.store';
-import { createTaskLibrary } from '@/lib/actions/task-library';
+import { createTaskLibrary } from '@/data/task-library.action';
 import { CreateTaskLibrary } from '@/lib/schemas/task';
 import { isNullOrEmpty } from '@/lib/function/string';
-import { deleteTask } from '@/lib/actions/task';
+import { deleteTask } from '@/data/task.action';
 
 // import TaskValue from './value';
 import TaskIssue from './issue';
@@ -55,7 +56,7 @@ import TaskTypeHelper from '@/components/helper/TaskTypeHelper';
 import EditTask from '@/components/edit-task';
 import TableTaskCompleteCell from '@/app/(route)/maintenance/_component/_maintenance-tab/_details/task-complete-cell';
 import ChecklistTaskDetails from './task-details';
-import { stopPropagation } from '@/lib/function/stopPropagation';
+import { stopPropagation } from '@/lib/function/event';
 
 type TaskTableProps = {
   taskList: TaskList;
@@ -335,8 +336,11 @@ export default function TaskTable({ taskList }: TaskTableProps) {
           </TableBody>
         </Table>
       ) : (
-        <div className="flex items-center justify-center">
-          <span className="text-gray-400">No task found</span>
+        <div className="flex items-center justify-center py-4">
+          <div className="flex items-center space-x-2 text-gray-500">
+            <ClipboardX size={18} />
+            <p>No Task Assigned</p>
+          </div>
         </div>
       )}
       <EditTask open={openEditTask} onClose={handleCloseEditTask} />

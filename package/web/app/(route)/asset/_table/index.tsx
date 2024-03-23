@@ -62,7 +62,7 @@ import { useCurrentUser } from '@/hooks/use-current-user';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useCurrentRole } from '@/hooks/use-current-role';
 
-import { updateAsset } from '@/lib/actions/asset';
+import { updateAsset } from '@/data/asset.action';
 
 import emptyIcon from '@/public/image/empty.svg';
 
@@ -558,7 +558,7 @@ export default function AssetTable({
     },
   ];
 
-  if (role === 'ADMIN' || role === 'SUPERVISOR') {
+  if (role !== 'TECHNICIAN') {
     columns.push({
       id: 'actions',
       header: () => null,

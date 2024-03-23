@@ -1,9 +1,9 @@
-import { fetchMaintenanceList } from '@/lib/actions/maintenance';
-import { fetchAssetItem } from '@/lib/actions/asset';
-import { fetchUserList } from '@/lib/actions/user';
-import { fetchAssetStatusList } from '@/lib/actions/asset-status';
-import { fetchAssetTypeList } from '@/lib/actions/asset-type';
-import { fetchChecklistLibraryList } from '@/lib/actions/checklist-library';
+import { fetchMaintenanceList } from '@/data/maintenance.action';
+import { fetchAssetItem } from '@/data/asset.action';
+import { fetchUserList } from '@/data/user.action';
+import { fetchAssetStatusList } from '@/data/asset-status.action';
+import { fetchAssetTypeList } from '@/data/asset-type.action';
+import { fetchChecklistLibraryList } from '@/data/checklist-library.action';
 
 import AssetItemComponent from './_component';
 

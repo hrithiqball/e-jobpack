@@ -1,4 +1,4 @@
-import { convertToTitleCase } from '@/lib/function/convertToWord';
+import { convertToTitleCase } from '@/lib/function/string';
 import { Department, Role, TaskType } from '@prisma/client';
 
 export const TaskTypeEnum = Object.values(TaskType).map(value => ({

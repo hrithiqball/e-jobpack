@@ -1,13 +1,7 @@
-import { useState, useTransition, useEffect } from 'react';
-import { z } from 'zod';
-import { v4 as uuidv4 } from 'uuid';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-
+import { Button } from '@/components/ui/button';
 import {
   Drawer,
   DrawerContent,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer';
@@ -19,38 +13,48 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Checkbox } from '@nextui-org/react';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-
-import { toast } from 'sonner';
-
+import {
+  Sheet,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
-
+import { useMediaQuery } from '@/hooks/use-media-query';
 import { ChecklistSchema } from '@/lib/schemas/checklist';
-import { createMaintenanceLibrary } from '@/data/maintenance-library.action';
 import {
   CreateMaintenanceLibrary,
   CreateMaintenanceLibraryForm,
   CreateMaintenanceLibraryFormSchema,
 } from '@/lib/schemas/maintenance';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Checkbox } from '@nextui-org/react';
+import { useEffect, useState, useTransition } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
+import { v4 as uuidv4 } from 'uuid';
+import { createMaintenanceLibrary } from '@/data/maintenance-library.action';
 
 type MaintenanceExportProps = {
   open: boolean;
   onClose: () => void;
 };
 
-export default function MaintenanceExport({
+export default function ExportMaintenance({
   open,
   onClose,
 }: MaintenanceExportProps) {
   const [transitioning, startTransition] = useTransition();
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const user = useCurrentUser();
 
   const { maintenance } = useMaintenanceStore();
 
-  const [selectedChecklists, setSelectedChecklists] = useState(
+  const [selectedChecklist, setSelectedChecklist] = useState(
     maintenance?.checklist.map(checklist => ({
       id: checklist.id,
       asset: checklist.asset,
@@ -67,7 +71,7 @@ export default function MaintenanceExport({
   useEffect(() => {
     if (!maintenance) return;
 
-    setSelectedChecklists(
+    setSelectedChecklist(
       maintenance.checklist.map(checklist => ({
         id: checklist.id,
         asset: checklist.asset,
@@ -84,39 +88,28 @@ export default function MaintenanceExport({
 
   const form = useForm<CreateMaintenanceLibraryForm>({
     resolver: zodResolver(CreateMaintenanceLibraryFormSchema),
-    defaultValues: {
-      description: '  ',
-    },
+    defaultValues: {},
   });
 
-  function toggleChecklist(checklistId: string) {
-    setSelectedChecklists(checklists =>
-      checklists?.map(checklist =>
-        checklist.id === checklistId
-          ? {
-              ...checklist,
-              isSelected: !checklist.isSelected,
-            }
-          : checklist,
-      ),
-    );
+  function handleClose() {
+    onClose();
   }
 
   function onSubmit(data: CreateMaintenanceLibraryForm) {
     startTransition(() => {
-      if (user === undefined || user.id === undefined) {
-        toast.error('User session is expired');
+      if (!user || !user.id) {
+        toast.error('Session expired');
         return;
       }
 
-      if (selectedChecklists === undefined) {
+      if (selectedChecklist === undefined) {
         toast.error('No checklist selected');
         return;
       }
 
       const checklistLibraries: z.infer<typeof ChecklistSchema>[] = [];
 
-      selectedChecklists
+      selectedChecklist
         .filter(checklist => checklist.isSelected)
         .forEach(checklist => {
           const checklistId = uuidv4();
@@ -124,7 +117,7 @@ export default function MaintenanceExport({
           const checklistLibrary = {
             id: checklistId,
             title: checklist.asset.name,
-            description: checklist.asset.description,
+            description: checklist.asset.description || '',
             assetId: checklist.asset.id,
             createdById: user.id,
             updatedById: user.id,
@@ -179,99 +172,113 @@ export default function MaintenanceExport({
 
       const newMaintenanceLibrary: CreateMaintenanceLibrary = {
         title: data.title,
-        description: data.description,
+        description: data.description || '',
         createdById: user.id,
         updatedById: user.id,
         checklistLibrary: checklistLibraries,
       };
 
       toast.promise(createMaintenanceLibrary(newMaintenanceLibrary), {
-        loading: 'Creating maintenance library...',
+        loading: 'Exporting maintenance...',
         success: res => {
           onClose();
-          return `Maintenance ${res.title} library successfully created!`;
+          return `Maintenance ${res.title} have successfully exported`;
         },
-        error: 'Failed to create maintenance library 😢',
+        error: 'Failed to export maintenance 😥',
       });
     });
   }
 
-  function handleClose() {
-    onClose();
+  function toggleChecklist(checklistId: string) {
+    setSelectedChecklist(checklists =>
+      checklists?.map(checklist =>
+        checklist.id === checklistId
+          ? {
+              ...checklist,
+              isSelected: !checklist.isSelected,
+            }
+          : checklist,
+      ),
+    );
   }
 
-  return (
-    maintenance && (
-      <Drawer open={open} onClose={handleClose}>
-        <DrawerContent>
-          <DrawerHeader>
-            <DrawerTitle>Export Maintenance</DrawerTitle>
-          </DrawerHeader>
-          <div className="space-y-4 p-4">
-            <Form {...form}>
-              <form
-                id="create-maintenance-lib"
-                onSubmit={form.handleSubmit(onSubmit)}
+  return maintenance && isDesktop ? (
+    <Sheet open={open} onOpenChange={handleClose}>
+      <SheetContent className="space-y-4">
+        <SheetHeader>
+          <SheetTitle>Export</SheetTitle>
+        </SheetHeader>
+        <Form {...form}>
+          <form
+            id="export-maintenance-main"
+            onSubmit={form.handleSubmit(onSubmit)}
+          >
+            <div className="flex flex-col space-y-4">
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Title <sup className="text-red-500">*</sup>
+                    </FormLabel>
+                    <FormControl>
+                      <Input type="text" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Input type="text" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </form>
+        </Form>
+        <div className="flex flex-col">
+          {selectedChecklist &&
+            maintenance.checklist.map(checklist => (
+              <Checkbox
+                key={checklist.id}
+                isSelected={
+                  selectedChecklist.find(
+                    selectedChecklist => selectedChecklist.id === checklist.id,
+                  )?.isSelected
+                }
+                onValueChange={() => toggleChecklist(checklist.id)}
               >
-                <div className="flex flex-col space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          Title <sup className="text-red-500">*</sup>
-                        </FormLabel>
-                        <FormControl>
-                          <Input type="text" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="description"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Description</FormLabel>
-                        <FormControl>
-                          <Input type="text" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </form>
-            </Form>
-            {selectedChecklists !== undefined &&
-              maintenance.checklist.map(checklist => (
-                <Checkbox
-                  key={checklist.id}
-                  isSelected={
-                    selectedChecklists.find(
-                      selectedChecklist =>
-                        selectedChecklist.id === checklist.id,
-                    )?.isSelected
-                  }
-                  onValueChange={() => toggleChecklist(checklist.id)}
-                >
-                  {checklist.asset.name}
-                </Checkbox>
-              ))}
-          </div>
-          <DrawerFooter>
-            <Button
-              type="submit"
-              form="create-maintenance-lib"
-              disabled={transitioning}
-            >
-              Export
-            </Button>
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
-    )
+                {checklist.asset.name}
+              </Checkbox>
+            ))}
+        </div>
+        <SheetFooter>
+          <Button
+            type="submit"
+            form="export-maintenance-main"
+            disabled={transitioning}
+          >
+            Export
+          </Button>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
+  ) : (
+    <Drawer open={open} onClose={handleClose}>
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>Export</DrawerTitle>
+        </DrawerHeader>
+      </DrawerContent>
+    </Drawer>
   );
 }

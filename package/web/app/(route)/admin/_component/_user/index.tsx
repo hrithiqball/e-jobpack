@@ -40,15 +40,13 @@ import {
 // import emptyIcon from '@/public/image/empty.svg';
 import { useUserStore } from '@/hooks/use-user.store';
 // import UserPreview from './user-preview';
-import { isNullOrEmpty } from '@/lib/function/string';
-import { convertToTitleCase } from '@/lib/function/convertToWord';
+import { isNullOrEmpty, convertToTitleCase } from '@/lib/function/string';
 import CreateUser from './create-user';
 import ApproveUser from './approve-user';
 
 export default function UserTab() {
   const { userList } = useUserStore();
 
-  const data = userList.filter(user => user.id !== '-99');
   const unverifiedUsers = userList.filter(
     user => user.emailVerified === null,
   ).length;
@@ -100,7 +98,7 @@ export default function UserTab() {
   ];
 
   const table = useReactTable({
-    data,
+    data: userList,
     columns,
     enableRowSelection: true,
     enableMultiRowSelection: true,

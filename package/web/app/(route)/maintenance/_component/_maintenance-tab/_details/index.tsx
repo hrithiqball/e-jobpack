@@ -1,8 +1,5 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { User } from '@prisma/client';
-import Image from 'next/image';
-import dayjs from 'dayjs';
 
 import {
   Popover,
@@ -11,39 +8,65 @@ import {
   PopoverItemDestructive,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Table, TableCell, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 
 import {
   ClipboardX,
+  Edit,
   FileBox,
   FilePlus2,
   FileSymlink,
+  FileX2,
   Loader2,
   MoreVertical,
   PackageMinus,
+  PackagePlus,
 } from 'lucide-react';
 
 import { Checklist } from '@/types/maintenance';
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 import { cn } from '@/lib/utils';
 
-import ChecklistAddTask from './checklist-add-task';
-import MaintenanceStatusHelper from '@/components/helper/MaintenanceStatusHelper';
+import ChecklistAddTask from '@/components/helper/checklist-add-task';
 import DetailsTaskTable from './task-table';
-
-const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
+import EditMaintenance from './edit-maintenance';
+import AddChecklist from '@/components/helper/add-checklist';
+import ExportMaintenance from './export-maintenance';
+import { toast } from 'sonner';
+import { deleteChecklist } from '@/data/checklist.action';
+import { useCurrentRole } from '@/hooks/use-current-role';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { useCurrentUser } from '@/hooks/use-current-user';
+import { deleteMaintenance } from '@/data/maintenance.action';
+import InfoTable from '../../../../../../components/helper/info-table';
 
 export default function MaintenanceDetails() {
+  const [transitioning, startTransition] = useTransition();
   const router = useRouter();
+  const role = useCurrentRole();
+  const user = useCurrentUser();
 
-  const { maintenance, setCurrentChecklist } = useMaintenanceStore();
+  const { maintenance, setCurrentChecklist, removeChecklistFromMaintenance } =
+    useMaintenanceStore();
 
   const isEditable =
     maintenance?.maintenanceStatus === 'OPENED' ||
     maintenance?.maintenanceStatus === 'REQUESTED';
 
+  const [openAddTask, setOpenAddTask] = useState(false);
   const [openAddChecklist, setOpenAddChecklist] = useState(false);
+  const [openEditMaintenance, setOpenEditMaintenance] = useState(false);
+  const [openExportMaintenance, setOpenExportMaintenance] = useState(false);
 
   useEffect(() => {
     if (!maintenance) router.push('/maintenance?tab=maintenance');
@@ -51,7 +74,27 @@ export default function MaintenanceDetails() {
 
   function handleAddTask(checklist: Checklist) {
     setCurrentChecklist(checklist);
+    setOpenAddTask(true);
+  }
+
+  function handleOpenEditMaintenance() {
+    setOpenEditMaintenance(true);
+  }
+
+  function handleOpenAddChecklist() {
     setOpenAddChecklist(true);
+  }
+
+  function handleOpenExportMaintenance() {
+    setOpenExportMaintenance(true);
+  }
+
+  function handleCloseExportMaintenance() {
+    setOpenExportMaintenance(false);
+  }
+
+  function handleCloseEditMaintenance() {
+    setOpenEditMaintenance(false);
   }
 
   function handleImportChecklist(checklist: Checklist) {
@@ -63,11 +106,48 @@ export default function MaintenanceDetails() {
   }
 
   function handleRemoveChecklist(checklistId: string) {
-    console.log('Remove Checklist', checklistId);
+    startTransition(() => {
+      toast.promise(deleteChecklist(checklistId), {
+        loading: 'Removing checklist...',
+        success: () => {
+          removeChecklistFromMaintenance(checklistId);
+          return 'Checklist removed';
+        },
+        error: 'Failed to remove checklist',
+      });
+    });
+  }
+
+  function handleCloseAddTask() {
+    setOpenAddTask(false);
   }
 
   function handleCloseAddChecklist() {
     setOpenAddChecklist(false);
+  }
+
+  function handleDelete() {
+    startTransition(() => {
+      if (!user || !user.id) {
+        toast.error('Session expired');
+        return;
+      }
+
+      if (!maintenance) {
+        toast.error('Maintenance not found');
+        return;
+      }
+
+      toast.promise(deleteMaintenance(maintenance.id, user.id), {
+        loading: 'Deleting maintenance...',
+        success: () => {
+          router.push('/maintenance?tab=maintenance');
+          router.refresh();
+          return 'Maintenance deleted';
+        },
+        error: 'Failed to delete maintenance',
+      });
+    });
   }
 
   if (!maintenance) {
@@ -82,44 +162,61 @@ export default function MaintenanceDetails() {
     <Fragment>
       <div className="flex items-center justify-between">
         <h1 className="pl-2 text-lg font-medium">{maintenance.id}</h1>
-        <Button variant="ghost" size="icon">
-          <MoreVertical size={18} />
-        </Button>
-      </div>
-      <Table>
-        <TableRow>
-          <TableCell className="font-semibold">Status</TableCell>
-          <TableCell>
-            <MaintenanceStatusHelper
-              maintenanceStatus={maintenance.maintenanceStatus}
-            />
-          </TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell className="font-semibold">Start Date</TableCell>
-          <TableCell>
-            {dayjs(maintenance.startDate).format('DD/MM/YYYY')}
-          </TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell className="font-semibold">Deadline</TableCell>
-          <TableCell>
-            {maintenance.deadline
-              ? dayjs(maintenance.deadline).format('DD/MM/YYYY')
-              : 'Not Specified'}
-          </TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell className="font-semibold">Person In Charge</TableCell>
-          <TableCell>
-            {maintenance.approvedBy ? (
-              <PersonInCharge personInCharge={maintenance.approvedBy} />
-            ) : (
-              'Not Specified'
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <MoreVertical size={18} />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent align="end" className="w-56 rounded-lg p-2">
+            <PopoverItem
+              onClick={handleOpenEditMaintenance}
+              startContent={<Edit size={18} />}
+            >
+              Edit Maintenance
+            </PopoverItem>
+            <PopoverItem
+              onClick={handleOpenAddChecklist}
+              startContent={<PackagePlus size={18} />}
+            >
+              Add Checklist
+            </PopoverItem>
+            <PopoverItem
+              onClick={handleOpenExportMaintenance}
+              startContent={<FileSymlink size={18} />}
+            >
+              Export Maintenance
+            </PopoverItem>
+            {role !== 'TECHNICIAN' && (
+              <AlertDialog>
+                <AlertDialogTrigger>
+                  <PopoverItemDestructive startContent={<FileX2 size={18} />}>
+                    Delete Maintenance
+                  </PopoverItemDestructive>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Are you absolutely sure?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete
+                      maintenance and all its data!
+                    </AlertDialogDescription>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleDelete}>
+                        Confirm
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogHeader>
+                </AlertDialogContent>
+              </AlertDialog>
             )}
-          </TableCell>
-        </TableRow>
-      </Table>
+          </PopoverContent>
+        </Popover>
+      </div>
+      <InfoTable />
       <hr />
       {maintenance.checklist.map(checklist => (
         <div
@@ -133,7 +230,7 @@ export default function MaintenanceDetails() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  disabled={!isEditable}
+                  disabled={!isEditable || transitioning}
                   className={cn({ hidden: !isEditable })}
                 >
                   <MoreVertical size={18} />
@@ -182,31 +279,20 @@ export default function MaintenanceDetails() {
           )}
         </div>
       ))}
-      <ChecklistAddTask
+      <EditMaintenance
+        open={openEditMaintenance}
+        onClose={handleCloseEditMaintenance}
+      />
+      <ChecklistAddTask open={openAddTask} onClose={handleCloseAddTask} />
+      <AddChecklist
         open={openAddChecklist}
         onClose={handleCloseAddChecklist}
+        assets={maintenance.checklist.map(c => c.assetId)}
+      />
+      <ExportMaintenance
+        open={openExportMaintenance}
+        onClose={handleCloseExportMaintenance}
       />
     </Fragment>
-  );
-}
-
-function PersonInCharge({ personInCharge }: { personInCharge: User }) {
-  return (
-    <div className="flex items-center space-x-2">
-      {personInCharge.image ? (
-        <Image
-          src={`${baseServerUrl}/user/${personInCharge.image}`}
-          alt={personInCharge.name}
-          width={20}
-          height={20}
-          className="size-5 rounded-full"
-        />
-      ) : (
-        <div className="size-5 rounded-full">
-          <span>{personInCharge.name.substring(0, 3)}</span>
-        </div>
-      )}
-      <p>{personInCharge.name}</p>
-    </div>
   );
 }

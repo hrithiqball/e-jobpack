@@ -22,7 +22,7 @@ import {
   UpdateAssetForm,
   UpdateAssetFormSchema,
 } from '@/lib/schemas/asset';
-import { updateAsset } from '@/lib/actions/asset';
+import { updateAsset } from '@/data/asset.action';
 
 type AssetDetailsFormProps = {
   onClose: () => void;

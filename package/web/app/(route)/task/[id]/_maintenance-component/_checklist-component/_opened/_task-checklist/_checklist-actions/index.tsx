@@ -23,11 +23,12 @@ import { toast } from 'sonner';
 import { Maintenance } from '@/types/maintenance';
 import { useCurrentRole } from '@/hooks/use-current-role';
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { deleteChecklist, updateChecklist } from '@/lib/actions/checklist';
+import { deleteChecklist, updateChecklist } from '@/data/checklist.action';
 
-import AddTask from './add-task';
 import ChecklistExport from './export';
 import ChecklistImport from './import';
+import ChecklistAddTask from '@/components/helper/checklist-add-task';
+import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 
 type AssetActionsProps = {
   checklist: Maintenance['checklist'][0];
@@ -39,11 +40,13 @@ export default function ChecklistActions({ checklist }: AssetActionsProps) {
   const role = useCurrentRole();
   const user = useCurrentUser();
 
+  const { setCurrentChecklist } = useMaintenanceStore();
+
   const [openAddTask, setOpenAddTask] = useState(false);
   const [openImportChecklist, setOpenImportChecklist] = useState(false);
   const [openExportChecklist, setExportChecklist] = useState(false);
 
-  function handleCloseTaskAddModal() {
+  function handleCloseAddTask() {
     setOpenAddTask(false);
   }
 
@@ -104,6 +107,7 @@ export default function ChecklistActions({ checklist }: AssetActionsProps) {
   }
 
   function handleOpenAddTask() {
+    setCurrentChecklist(checklist);
     setOpenAddTask(true);
   }
 
@@ -165,11 +169,12 @@ export default function ChecklistActions({ checklist }: AssetActionsProps) {
           )}
         </PopoverContent>
       </Popover>
-      <AddTask
+      {/* <AddTask
         open={openAddTask}
         onClose={handleCloseTaskAddModal}
         checklist={checklist}
-      />
+      /> */}
+      <ChecklistAddTask open={openAddTask} onClose={handleCloseAddTask} />
       <ChecklistExport
         open={openExportChecklist}
         onClose={handleCloseChecklistExportModal}

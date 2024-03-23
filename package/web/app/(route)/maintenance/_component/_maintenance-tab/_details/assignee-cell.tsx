@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
 import { useUserStore } from '@/hooks/use-user.store';
-import { assignTask } from '@/lib/actions/task-assignee';
+import { assignTask } from '@/data/task-assignee.action';
 
 const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
 
@@ -33,12 +33,10 @@ export default function TableAssigneeCell({
 
   const [assigneeList, setAssigneeList] = useState(assignee);
   const [userListValue, setUserListValue] = useState(
-    userList
-      .filter(user => user.id !== '-99')
-      .map(user => ({
-        ...user,
-        checked: assignee.some(au => au.id === user.id),
-      })),
+    userList.map(user => ({
+      ...user,
+      checked: assignee.some(au => au.id === user.id),
+    })),
   );
 
   function handleCheckChange(userId: string) {

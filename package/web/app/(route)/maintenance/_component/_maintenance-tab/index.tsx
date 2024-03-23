@@ -57,9 +57,9 @@ import { MaintenanceItem, MaintenanceList } from '@/types/maintenance';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 
-import { stopPropagation } from '@/lib/function/stopPropagation';
+import { stopPropagation } from '@/lib/function/event';
 
-import emptyIcon from '@/public/image/empty.svg';
+import empty from '@/public/image/empty.gif';
 
 import MaintenanceStatusHelper from '@/components/helper/MaintenanceStatusHelper';
 import MaintenanceRecreate from './_recreate';
@@ -485,7 +485,7 @@ export default function MaintenanceTab({
       {table.getPaginationRowModel().rows.length === 0 && (
         <div className="flex flex-1 items-center justify-center">
           <div className="flex flex-col items-center justify-center space-y-4">
-            <Image priority src={emptyIcon} alt="Empty list" width={70} />
+            <Image priority src={empty} alt="Empty list" width={100} />
             <span className="ml-2">No assets found</span>
           </div>
         </div>

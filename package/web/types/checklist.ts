@@ -1,5 +1,5 @@
-import { fetchChecklistList } from '@/lib/actions/checklist';
-import { fetchChecklistLibraryList } from '@/lib/actions/checklist-library';
+import { fetchChecklistList } from '@/data/checklist.action';
+import { fetchChecklistLibraryList } from '@/data/checklist-library.action';
 
 export type ChecklistList = Awaited<ReturnType<typeof fetchChecklistList>>;
 export type ChecklistLibraryList = Awaited<

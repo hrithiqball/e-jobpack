@@ -1,7 +1,7 @@
-import { fetchAssetStatusList } from '@/lib/actions/asset-status';
-import { fetchAssetTypeList } from '@/lib/actions/asset-type';
-import { fetchAssetList } from '@/lib/actions/asset';
-import { fetchUserList } from '@/lib/actions/user';
+import { fetchAssetStatusList } from '@/data/asset-status.action';
+import { fetchAssetTypeList } from '@/data/asset-type.action';
+import { fetchAssetList } from '@/data/asset.action';
+import { fetchUserList } from '@/data/user.action';
 
 import AssetTable from './_table';
 

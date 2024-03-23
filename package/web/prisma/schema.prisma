@@ -91,7 +91,7 @@ model Checklist {
   color          String?
   icon           String?
   assetId        String      @map("asset_id")
-  id             String      @id
+  id             String      @id @default(cuid())
   maintenanceId  String      @map("maintenance_id")
   attachmentPath String[]    @default([]) @map("attachment_path")
   asset          Asset       @relation(fields: [assetId], references: [id], onDelete: Cascade, map: "checklist_asset_fk")
@@ -138,36 +138,36 @@ model History {
 }
 
 model Maintenance {
-  date               DateTime            @default(now())
-  maintainee         String?
-  approvedById       String              @map("approved_by_id")
-  approvedOn         DateTime?           @map("approved_on")
-  assetIds           String[]            @map("asset_ids")
-  startDate          DateTime            @default(now()) @map("start_date")
-  deadline           DateTime?
-  id                 String              @id @default(cuid())
-  isClose            Boolean             @default(false) @map("is_close")
-  closedById         String?             @map("closed_by_id")
-  closedOn           DateTime?           @map("closed_on")
-  isOpen             Boolean             @default(false) @map("is_open")
-  requestedById      String?             @map("requested_by_id")
-  requestedOn        DateTime?           @default(now()) @map("requested_on")
-  isRejected         Boolean             @default(false) @map("is_rejected")
-  rejectedById       String?             @map("rejected_by_id")
-  isRequested        Boolean             @default(false) @map("is_requested")
-  rejectedOn         DateTime?           @map("rejected_on")
-  acceptedById       String?             @map("accepted_by_id")
-  acceptedOn         DateTime?           @map("accepted_on")
-  maintenanceStatus  MaintenanceStatus   @default(REQUESTED) @map("maintenance_status")
-  rejectedReason     String?             @map("rejected_reason")
-  attachmentPath     String[]            @default([]) @map("attachment_path")
-  checklist          Checklist[]
-  acceptedBy         User?               @relation("maintenance_accepted_by_idTouser", fields: [acceptedById], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  approvedBy         User                @relation("maintenance_approved_byTouser", fields: [approvedById], references: [id], onDelete: Cascade)
-  closedBy           User?               @relation("maintenance_closed_byTouser", fields: [closedById], references: [id], onDelete: Cascade)
-  rejectedBy         User?               @relation("maintenance_reject_byTouser", fields: [rejectedById], references: [id], onDelete: Cascade)
-  requestedBy        User?               @relation("maintenance_requested_byTouser", fields: [requestedById], references: [id], onDelete: Cascade)
-  maintenance_member MaintenanceMember[]
+  date              DateTime            @default(now())
+  maintainee        String?
+  approvedById      String              @map("approved_by_id")
+  approvedOn        DateTime?           @map("approved_on")
+  assetIds          String[]            @map("asset_ids")
+  startDate         DateTime            @default(now()) @map("start_date")
+  deadline          DateTime?
+  id                String              @id @default(cuid())
+  isClose           Boolean             @default(false) @map("is_close")
+  closedById        String?             @map("closed_by_id")
+  closedOn          DateTime?           @map("closed_on")
+  isOpen            Boolean             @default(false) @map("is_open")
+  requestedById     String?             @map("requested_by_id")
+  requestedOn       DateTime?           @default(now()) @map("requested_on")
+  isRejected        Boolean             @default(false) @map("is_rejected")
+  rejectedById      String?             @map("rejected_by_id")
+  isRequested       Boolean             @default(false) @map("is_requested")
+  rejectedOn        DateTime?           @map("rejected_on")
+  acceptedById      String?             @map("accepted_by_id")
+  acceptedOn        DateTime?           @map("accepted_on")
+  maintenanceStatus MaintenanceStatus   @default(REQUESTED) @map("maintenance_status")
+  rejectedReason    String?             @map("rejected_reason")
+  attachmentPath    String[]            @default([]) @map("attachment_path")
+  checklist         Checklist[]
+  acceptedBy        User?               @relation("maintenance_accepted_by_idTouser", fields: [acceptedById], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  approvedBy        User                @relation("maintenance_approved_byTouser", fields: [approvedById], references: [id], onDelete: Cascade)
+  closedBy          User?               @relation("maintenance_closed_byTouser", fields: [closedById], references: [id], onDelete: Cascade)
+  rejectedBy        User?               @relation("maintenance_reject_byTouser", fields: [rejectedById], references: [id], onDelete: Cascade)
+  requestedBy       User?               @relation("maintenance_requested_byTouser", fields: [requestedById], references: [id], onDelete: Cascade)
+  maintenanceMember MaintenanceMember[]
 
   @@map("maintenance")
   @@schema("public")
@@ -309,7 +309,7 @@ model User {
   createdAt                                                   DateTime             @default(now()) @map("created_at")
   updatedAt                                                   DateTime             @default(now()) @map("updated_at")
   department                                                  Department           @default(MANAGEMENT)
-  role                                                        Role                 @default(ADMIN)
+  role                                                        Role                 @default(TECHNICIAN)
   email                                                       String               @unique
   isRejected                                                  Boolean              @default(false) @map("is_rejected")
   isBlocked                                                   Boolean              @default(false) @map("is_blocked")

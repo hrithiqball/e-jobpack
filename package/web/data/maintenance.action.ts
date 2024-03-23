@@ -19,9 +19,11 @@ import {
   CreateMaintenance,
   CreateMaintenanceType,
   UpdateMaintenance,
+  UpdateMaintenanceForm,
   UpdateMaintenanceSchema,
 } from '@/lib/schemas/maintenance';
 import { ServerResponseSchema } from '@/lib/schemas/server-response';
+import { DateRange } from 'react-day-picker';
 
 type ExtendedTaskLibrary = TaskLibrary & {
   subtaskLibrary: SubtaskLibrary[];
@@ -250,6 +252,7 @@ export async function fetchMaintenanceItem(id: string) {
         closedBy: true,
         rejectedBy: true,
         requestedBy: true,
+        maintenanceMember: { include: { user: true } },
         checklist: {
           include: {
             asset: true,
@@ -285,6 +288,7 @@ export async function fetchMaintenanceList() {
         closedBy: true,
         rejectedBy: true,
         requestedBy: true,
+        maintenanceMember: { include: { user: true } },
         checklist: {
           include: {
             asset: true,
@@ -334,6 +338,63 @@ export async function updateMaintenance(id: string, values: UpdateMaintenance) {
   }
 }
 
+export async function updateMaintenanceDetails(
+  maintenanceId: string,
+  data: UpdateMaintenanceForm,
+  dateRange: DateRange,
+  memberList: { userId: string; checked: boolean }[],
+) {
+  try {
+    const deleteTarget: string[] = [];
+
+    for (const ml of memberList.filter(ml => !ml.checked)) {
+      const record = await db.maintenanceMember.findUnique({
+        where: {
+          maintenanceId_userId: { maintenanceId, userId: ml.userId },
+        },
+      });
+
+      if (record) {
+        deleteTarget.push(record.userId);
+      }
+    }
+
+    const removeOperations = deleteTarget.map(userId =>
+      db.maintenanceMember.delete({
+        where: { maintenanceId_userId: { maintenanceId, userId } },
+      }),
+    );
+
+    const upsertOperations = memberList
+      .filter(ml => ml.checked)
+      .map(ml =>
+        db.maintenanceMember.upsert({
+          where: {
+            maintenanceId_userId: { maintenanceId, userId: ml.userId },
+          },
+          update: { userId: ml.userId },
+          create: { maintenanceId, userId: ml.userId },
+        }),
+      );
+
+    const operations = [...removeOperations, ...upsertOperations];
+    await Promise.all(operations);
+
+    return await db.maintenance.update({
+      where: { id: maintenanceId },
+      data: {
+        id: data.id,
+        approvedById: data.approvedById,
+        startDate: dateRange.from,
+        deadline: dateRange.to || null,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 export async function uploadMaintenanceImage(
   maintenance: MaintenanceItem,
   formData: FormData,
@@ -364,6 +425,25 @@ export async function uploadMaintenanceImage(
 
     revalidatePath(`/maintenance/${maintenance.id}`);
     return updatedMaintenance;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function deleteMaintenance(id: string, userId: string) {
+  try {
+    await db.history.create({
+      data: {
+        actionBy: userId,
+        activity: `Deleted maintenance ${id}`,
+        historyMeta: 'MAINTENANCE',
+      },
+    });
+
+    return await db.maintenance.delete({
+      where: { id },
+    });
   } catch (error) {
     console.error(error);
     throw error;

@@ -14,8 +14,8 @@ import {
 import { Table, TableCell, TableRow } from '@/components/ui/table';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useUserStore } from '@/hooks/use-user.store';
-import { adminApproveUser, adminRejectUser } from '@/lib/actions/user';
-import { convertToTitleCase } from '@/lib/function/convertToWord';
+import { adminApproveUser, adminRejectUser } from '@/data/user.action';
+import { convertToTitleCase } from '@/lib/function/string';
 import { User } from '@prisma/client';
 import { Check, X } from 'lucide-react';
 import { useState, useTransition } from 'react';

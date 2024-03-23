@@ -22,7 +22,7 @@ import { toast } from 'sonner';
 
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 
-import { uploadMaintenanceImage } from '@/lib/actions/maintenance';
+import { uploadMaintenanceImage } from '@/data/maintenance.action';
 import { cn } from '@/lib/utils';
 
 import MaintenanceAddAttachmentDialog from './add-attachment-dialog';

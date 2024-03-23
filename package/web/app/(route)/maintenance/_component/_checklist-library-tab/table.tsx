@@ -39,7 +39,7 @@ import { toast } from 'sonner';
 
 import { ChecklistLibraryItem, ChecklistLibraryList } from '@/types/checklist';
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { deleteChecklistLibrary } from '@/lib/actions/checklist-library';
+import { deleteChecklistLibrary } from '@/data/checklist-library.action';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import {
@@ -57,7 +57,7 @@ import {
   PopoverItemDestructive,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { stopPropagation } from '@/lib/function/stopPropagation';
+import { stopPropagation } from '@/lib/function/event';
 import {
   HoverCard,
   HoverCardContent,

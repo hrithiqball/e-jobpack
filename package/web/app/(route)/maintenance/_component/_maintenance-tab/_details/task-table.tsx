@@ -33,7 +33,7 @@ import { useMediaQuery } from '@/hooks/use-media-query';
 import { useCurrentRole } from '@/hooks/use-current-role';
 import { useTaskStore } from '@/hooks/use-task.store';
 import { isNullOrEmpty } from '@/lib/function/string';
-import { deleteTask } from '@/lib/actions/task';
+import { deleteTask } from '@/data/task.action';
 import { cn } from '@/lib/utils';
 
 import TableTaskCompleteCell from './task-complete-cell';
@@ -142,7 +142,7 @@ export default function TaskTable({ checklistId, taskList }: TaskTableProps) {
     },
   ];
 
-  if (role === 'ADMIN' || role === 'SUPERVISOR') {
+  if (role !== 'TECHNICIAN') {
     columns.push({
       id: 'action',
       cell: ({ row }) => {

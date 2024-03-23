@@ -18,7 +18,7 @@ import { Avatar } from '@nextui-org/react';
 import { ImagePlus, Replace } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { deleteUserImage, uploadUserImage } from '@/lib/actions/user';
+import { deleteUserImage, uploadUserImage } from '@/data/user.action';
 import { cn } from '@/lib/utils';
 
 type UserAvatarProps = {
