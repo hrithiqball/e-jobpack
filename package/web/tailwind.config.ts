@@ -25,9 +25,7 @@ const config: Config = {
         },
       },
       colors: {
-        silver: 'var(--silver)',
         timberwolf: 'var(--timberwolf)',
-        lightPrimary: 'var(--primary-light)',
         card: 'var(--card)',
         tremor: {
           brand: {
