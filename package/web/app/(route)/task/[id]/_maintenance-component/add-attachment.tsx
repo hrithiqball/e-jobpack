@@ -26,8 +26,7 @@ import { uploadMaintenanceImage } from '@/data/maintenance.action';
 import { cn } from '@/lib/utils';
 
 import MaintenanceAddAttachmentDialog from './add-attachment-dialog';
-
-const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
+import { baseServerUrl } from '@/public/constant/url';
 
 type MaintenanceAddAttachmentProps = {
   open: boolean;

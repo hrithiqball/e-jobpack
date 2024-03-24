@@ -73,8 +73,7 @@ import { stopPropagation } from '@/lib/function/event';
 import emptyIcon from '@/public/image/empty.svg';
 
 import MaintenanceLibraryInfo from './library-info';
-
-const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
+import { baseServerUrl } from '@/public/constant/url';
 
 type MaintenanceLibraryTableProps = {
   maintenanceLibraryList: MaintenanceLibraryList;

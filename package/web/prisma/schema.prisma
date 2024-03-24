@@ -162,7 +162,7 @@ model Maintenance {
   rejectedReason    String?             @map("rejected_reason")
   attachmentPath    String[]            @default([]) @map("attachment_path")
   checklist         Checklist[]
-  acceptedBy        User?               @relation("maintenance_accepted_by_idTouser", fields: [acceptedById], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  acceptedBy        User?               @relation("maintenance_accepted_by_idTouser", fields: [acceptedById], references: [id], onDelete: Cascade)
   approvedBy        User                @relation("maintenance_approved_byTouser", fields: [approvedById], references: [id], onDelete: Cascade)
   closedBy          User?               @relation("maintenance_closed_byTouser", fields: [closedById], references: [id], onDelete: Cascade)
   rejectedBy        User?               @relation("maintenance_reject_byTouser", fields: [rejectedById], references: [id], onDelete: Cascade)
@@ -311,12 +311,13 @@ model User {
   department                                                  Department           @default(MANAGEMENT)
   role                                                        Role                 @default(TECHNICIAN)
   email                                                       String               @unique
-  isRejected                                                  Boolean              @default(false) @map("is_rejected")
-  isBlocked                                                   Boolean              @default(false) @map("is_blocked")
   password                                                    String
   emailVerified                                               DateTime?            @map("email_verified")
   image                                                       String?
   phone                                                       String?
+  isBlocked                                                   Boolean              @default(false) @map("is_blocked")
+  isRejected                                                  Boolean              @default(false) @map("is_rejected")
+  departmentId                                                String?              @map("department_id")
   account                                                     Account[]
   asset_asset_created_byTouser                                Asset[]              @relation("asset_created_byTouser")
   asset_asset_person_in_chargeTouser                          Asset[]              @relation("asset_person_in_chargeTouser")
@@ -341,6 +342,7 @@ model User {
   taskAssignee                                                TaskAssignee[]
   task_library_task_library_created_byTouser                  TaskLibrary[]        @relation("task_library_created_byTouser")
   task_library_task_library_updated_byTouser                  TaskLibrary[]        @relation("task_library_updated_byTouser")
+  department_enum                                             DepartmentEnum?      @relation(fields: [departmentId], references: [id], map: "public_user_department_id_fkey")
 
   @@map("user")
   @@schema("public")
@@ -365,6 +367,15 @@ model MaintenanceMember {
 
   @@id([maintenanceId, userId])
   @@map("maintenance_member")
+  @@schema("public")
+}
+
+model DepartmentEnum {
+  id    String @id @default(cuid())
+  value String
+  user  User[]
+
+  @@map("department_enum")
   @@schema("public")
 }
 

@@ -67,8 +67,7 @@ import TaskTypeHelper from '@/components/helper/TaskTypeHelper';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useChecklistLibStore } from '@/hooks/use-checklist-lib.store';
 import ChecklistLibraryDetails from './details';
-
-const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
+import { baseServerUrl } from '@/public/constant/url';
 
 type ChecklistLibraryTableProps = {
   checklistLibraryList: ChecklistLibraryList;

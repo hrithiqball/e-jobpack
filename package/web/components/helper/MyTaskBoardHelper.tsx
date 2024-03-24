@@ -12,8 +12,7 @@ import {
 import { Maintenance } from '@/types/maintenance';
 import { monthShort } from '@/lib/datetime';
 import { useCurrentRole } from '@/hooks/use-current-role';
-
-const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
+import { baseServerUrl } from '@/public/constant/url';
 
 type MyTaskBoardHelperProps = {
   maintenance: Maintenance;

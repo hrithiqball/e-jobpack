@@ -33,12 +33,12 @@ export default function ApproveUser({ open, onClose }: ApproveUserProps) {
   const { userList } = useUserStore();
 
   const [unverifiedUsers, setUnverifiedUsers] = useState(
-    userList.filter(user => user.emailVerified === null),
+    userList?.filter(user => user.emailVerified === null),
   );
 
   function handleApprove(user: User) {
     console.log('Approve');
-    setUnverifiedUsers(unverifiedUsers.filter(u => u.id !== user.id));
+    setUnverifiedUsers(unverifiedUsers?.filter(u => u.id !== user.id));
     startTransition(() => {
       toast.promise(adminApproveUser(user.id), {
         loading: 'Approving user...',
@@ -57,7 +57,7 @@ export default function ApproveUser({ open, onClose }: ApproveUserProps) {
         error: 'Failed to reject user',
       });
     });
-    setUnverifiedUsers(unverifiedUsers.filter(u => u.id !== user.id));
+    setUnverifiedUsers(unverifiedUsers?.filter(u => u.id !== user.id));
   }
 
   function handleClose() {
@@ -71,7 +71,7 @@ export default function ApproveUser({ open, onClose }: ApproveUserProps) {
           <SheetTitle>Approve User</SheetTitle>
         </SheetHeader>
         <Table>
-          {unverifiedUsers.map(user => (
+          {unverifiedUsers?.map(user => (
             <TableRow key={user.id}>
               <TableCell>
                 <div className="flex flex-col">

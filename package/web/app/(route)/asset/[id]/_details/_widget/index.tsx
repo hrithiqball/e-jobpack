@@ -10,8 +10,7 @@ import AssetDetailsInfo from './_info';
 import AssetImageCarousel from './_image-carousel';
 import AssetAddImage from './add-image';
 import AssetCover from './_cover';
-
-const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
+import { baseServerUrl } from '@/public/constant/url';
 
 export default function DetailsWidget() {
   const { asset, assetImageSidebar } = useAssetStore();

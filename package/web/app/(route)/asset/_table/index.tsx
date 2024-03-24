@@ -69,8 +69,7 @@ import emptyIcon from '@/public/image/empty.svg';
 import DeleteAssetModal from './delete-asset';
 import AddAssetModal from './add-asset';
 import AddMaintenanceModal from '@/components/add-maintenance';
-
-const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
+import { baseServerUrl } from '@/public/constant/url';
 
 type AssetTableProps = {
   assetList: AssetList;

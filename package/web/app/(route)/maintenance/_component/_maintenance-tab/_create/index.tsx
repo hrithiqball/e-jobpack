@@ -68,6 +68,7 @@ import { createMaintenance } from '@/data/maintenance.action';
 import AssetChoiceCell from './create-asset-cell';
 import ChecklistChoiceCell from './create-checklist-cell';
 import { useAssetStore } from '@/hooks/use-asset.store';
+import { Loader } from '@/components/ui/loader';
 
 type MaintenanceCreateProps = {
   open: boolean;
@@ -149,6 +150,8 @@ export default function MaintenanceCreate({
     clearChecklistSelected();
     onClose();
   }
+
+  if (!userList) return <Loader />;
 
   return isDesktop ? (
     <Sheet open={open} onOpenChange={handleClose}>

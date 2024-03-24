@@ -3,7 +3,7 @@
 import { hash } from 'bcryptjs';
 import { revalidatePath } from 'next/cache';
 import { db } from '@/lib/db';
-import { CreateUserAdminForm } from '@/lib/schemas/user';
+import { AdminUpdateUser, CreateUserAdminForm } from '@/lib/schemas/user';
 
 import {
   ResultSchema,
@@ -11,8 +11,7 @@ import {
 } from '@/lib/schemas/server-response';
 import { RegisterForm } from '../lib/schemas/auth';
 import { Department, Role } from '@prisma/client';
-
-const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
+import { baseServerUrl } from '@/public/constant/url';
 
 export async function createUser(
   name: string,
@@ -93,6 +92,24 @@ export async function adminBlockUser(id: string) {
       where: { id },
       data: {
         isBlocked: true,
+        emailVerified: undefined,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function adminUpdateUser(data: AdminUpdateUser) {
+  try {
+    const { id, departmentId, role } = data;
+
+    return await db.user.update({
+      where: { id },
+      data: {
+        departmentId,
+        role,
       },
     });
   } catch (error) {

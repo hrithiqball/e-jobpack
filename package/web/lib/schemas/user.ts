@@ -1,3 +1,4 @@
+import { Role } from '@prisma/client';
 import { z } from 'zod';
 
 export const CreateUserAdminSchema = z.object({
@@ -12,3 +13,9 @@ export const CreateUserAdminSchema = z.object({
 });
 
 export type CreateUserAdminForm = z.infer<typeof CreateUserAdminSchema>;
+
+export type AdminUpdateUser = {
+  id: string;
+  role: Role;
+  departmentId: string;
+};

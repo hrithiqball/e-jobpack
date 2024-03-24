@@ -67,8 +67,7 @@ import MaintenanceCreate from './_create';
 import MaintenancePreview from './preview';
 import MaintenanceDetails from './_details';
 import MaintenanceEdit from './edit';
-
-const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
+import { baseServerUrl } from '@/public/constant/url';
 
 type MaintenanceAllTabProps = {
   maintenanceList: MaintenanceList;

@@ -14,8 +14,7 @@ import {
   ResultSchema,
   ServerResponseSchema,
 } from '@/lib/schemas/server-response';
-
-const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
+import { baseServerUrl } from '@/public/constant/url';
 
 export async function createAsset(values: CreateAsset): Promise<Asset> {
   try {
