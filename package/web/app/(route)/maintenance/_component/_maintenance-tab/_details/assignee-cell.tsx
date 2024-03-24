@@ -33,14 +33,14 @@ export default function TableAssigneeCell({
 
   const [assigneeList, setAssigneeList] = useState(assignee);
   const [userListValue, setUserListValue] = useState(
-    userList.map(user => ({
+    userList?.map(user => ({
       ...user,
       checked: assignee.some(au => au.id === user.id),
     })),
   );
 
   function handleCheckChange(userId: string) {
-    const updatedUserList = userListValue.map(user =>
+    const updatedUserList = userListValue?.map(user =>
       user.id === userId ? { ...user, checked: !user.checked } : user,
     );
 
@@ -48,6 +48,8 @@ export default function TableAssigneeCell({
   }
 
   function updateAssignee() {
+    if (!userListValue) return;
+
     const updateAssigneeList = userListValue
       .filter(user => user.checked)
       .map(
@@ -63,11 +65,13 @@ export default function TableAssigneeCell({
   function handleClose(opened: boolean) {
     if (opened) return;
 
-    const checkedCount = userListValue.filter(user => user.checked).length;
+    const checkedCount = userListValue?.filter(user => user.checked).length;
 
     if (checkedCount === assigneeList.length) return;
 
     startTransition(() => {
+      if (!userListValue) return;
+
       toast.promise(
         assignTask(
           taskId,
@@ -146,7 +150,7 @@ export default function TableAssigneeCell({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="center" className="w-56 rounded-lg p-2">
-        {userListValue.map(user => (
+        {userListValue?.map(user => (
           <DropdownMenuCheckboxItem
             key={user.id}
             checked={user.checked}
