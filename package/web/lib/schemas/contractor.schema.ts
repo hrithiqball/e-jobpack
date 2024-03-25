@@ -6,7 +6,6 @@ export const CreateContractorFormSchema = z.object({
     .min(1, { message: 'Contractor name cannot be empty' }),
   contact: z.string().optional(),
   company: z.string().optional(),
-  icon: z.string().optional(),
   color: z.string().optional(),
   contractorTypeId: z.string().optional(),
 });

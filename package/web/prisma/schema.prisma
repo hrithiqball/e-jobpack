@@ -401,6 +401,7 @@ model ContractorType {
   createdOn   DateTime?    @default(now()) @map("created_on")
   createdById String       @map("created_by_id")
   updatedById String       @map("updated_by_id")
+  title       String
   contractor  Contractor[]
   createdBy   User         @relation("contractor_type_created_by_idTouser", fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "public_contractor_type_created_by_id_fkey")
   updatedBy   User         @relation("contractor_type_updated_by_idTouser", fields: [updatedById], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "public_contractor_type_updated_by_id_fkey")
