@@ -328,6 +328,8 @@ model User {
   checklist_checklist_updated_byTouser                        Checklist[]          @relation("checklist_updated_byTouser")
   checklist_library_checklist_library_created_byTouser        ChecklistLibrary[]   @relation("checklist_library_created_byTouser")
   checklist_library_checklist_library_updated_byTouser        ChecklistLibrary[]   @relation("checklist_library_updated_byTouser")
+  contractor_type_contractor_type_created_by_idTouser         ContractorType[]     @relation("contractor_type_created_by_idTouser")
+  contractor_type_contractor_type_updated_by_idTouser         ContractorType[]     @relation("contractor_type_updated_by_idTouser")
   history                                                     History[]
   maintenance_maintenance_accepted_by_idTouser                Maintenance[]        @relation("maintenance_accepted_by_idTouser")
   maintenance_maintenance_approved_byTouser                   Maintenance[]        @relation("maintenance_approved_byTouser")
@@ -376,6 +378,34 @@ model DepartmentEnum {
   user  User[]
 
   @@map("department_enum")
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model Contractor {
+  id               String         @id
+  name             String
+  contact          String?
+  company          String?
+  icon             String?
+  color            String?
+  contractorTypeId String         @map("contractor_type_id")
+  contractorType  ContractorType @relation(fields: [contractorTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "public_contractor_contractor_type_id_fkey")
+
+  @@map("contractor")
+  @@schema("public")
+}
+
+model ContractorType {
+  id          String       @id
+  createdOn   DateTime?    @default(now()) @map("created_on")
+  createdById String       @map("created_by_id")
+  updatedById String       @map("updated_by_id")
+  contractor  Contractor[]
+  createdBy   User         @relation("contractor_type_created_by_idTouser", fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "public_contractor_type_created_by_id_fkey")
+  updatedBy   User         @relation("contractor_type_updated_by_idTouser", fields: [updatedById], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "public_contractor_type_updated_by_id_fkey")
+
+  @@map("contractor_type")
   @@schema("public")
 }
 
