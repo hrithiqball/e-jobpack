@@ -60,8 +60,16 @@ export async function adminCreateUser(
   }
 }
 
-export async function adminApproveUser(id: string) {
+export async function adminApproveUser(id: string, adminId: string) {
   try {
+    await db.history.create({
+      data: {
+        actionBy: adminId,
+        activity: `Approved ${id}`,
+        historyMeta: 'USER',
+      },
+    });
+
     return await db.user.update({
       where: { id },
       data: { emailVerified: new Date() },
@@ -72,8 +80,16 @@ export async function adminApproveUser(id: string) {
   }
 }
 
-export async function adminRejectUser(id: string) {
+export async function adminRejectUser(id: string, adminId: string) {
   try {
+    await db.history.create({
+      data: {
+        actionBy: adminId,
+        activity: `Rejected ${id}`,
+        historyMeta: 'USER',
+      },
+    });
+
     return await db.user.update({
       where: { id },
       data: {

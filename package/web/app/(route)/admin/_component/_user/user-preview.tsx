@@ -26,7 +26,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { DepartmentEnum, RoleEnum } from '@/types/enum';
-import { useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { Department, Role } from '@prisma/client';
 import { Label } from '@/components/ui/label';
 import {
@@ -59,6 +59,13 @@ export default function UserPreview({ open, onClose }: UserPreviewProps) {
   const [departmentValue, setDepartmentValue] = useState(
     currentUser?.department,
   );
+
+  useEffect(() => {
+    if (!currentUser) return;
+
+    setRoleValue(currentUser.role);
+    setDepartmentValue(currentUser.department);
+  }, [currentUser, setRoleValue, setDepartmentValue]);
 
   function handleRoleChange(value: string) {
     const role = value as Role;
@@ -206,16 +213,16 @@ export default function UserPreview({ open, onClose }: UserPreviewProps) {
                   Blocking this user will prevent them from accessing the
                   system. You can unblock them later.
                 </AlertDialogDescription>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    disabled={transitioning}
-                    onClick={handleBlockUser}
-                  >
-                    Confirm
-                  </AlertDialogAction>
-                </AlertDialogFooter>
               </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  disabled={transitioning}
+                  onClick={handleBlockUser}
+                >
+                  Confirm
+                </AlertDialogAction>
+              </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
           <Button
