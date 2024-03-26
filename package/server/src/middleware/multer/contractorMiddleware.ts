@@ -12,6 +12,7 @@ const contractorStorage = multer.diskStorage({
     cb: (error: Error | null, destination: string) => void,
   ) => {
     const { contractorId } = req.body;
+    console.log('contractorId', contractorId);
     const dir = path.join(CONTRACTOR_DIR, contractorId);
 
     createDirectories(dir);
