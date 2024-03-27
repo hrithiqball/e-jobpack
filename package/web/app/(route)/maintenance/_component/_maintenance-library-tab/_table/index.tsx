@@ -73,8 +73,7 @@ import { stopPropagation } from '@/lib/function/event';
 import emptyIcon from '@/public/image/empty.svg';
 
 import MaintenanceLibraryInfo from './library-info';
-
-const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
+import { baseServerUrl } from '@/public/constant/url';
 
 type MaintenanceLibraryTableProps = {
   maintenanceLibraryList: MaintenanceLibraryList;
@@ -166,7 +165,7 @@ export default function MaintenanceLibraryTable({
                 alt={user.name}
                 width={28}
                 height={28}
-                className="size-7 rounded-full"
+                className="size-7 rounded-full bg-teal-950 object-contain"
               />
             ) : (
               <div className="flex size-7 items-center justify-center rounded-full bg-gray-500 text-xs">
@@ -193,7 +192,7 @@ export default function MaintenanceLibraryTable({
                 alt={user.name}
                 width={28}
                 height={28}
-                className="size-7 rounded-full"
+                className="size-7 rounded-full bg-teal-950 object-contain"
               />
             ) : (
               <div className="flex size-7 items-center justify-center rounded-full bg-gray-500 text-xs">

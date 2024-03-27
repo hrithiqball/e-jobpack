@@ -13,15 +13,22 @@ import AssetTab from './_asset';
 import { useUserStore } from '@/hooks/use-user.store';
 import { useAssetTypeStore } from '@/hooks/use-asset-type.store';
 import { AssetType } from '@/types/asset';
+import { ContractorTypes, Contractors } from '@/types/contractor.type';
+import { useContractorStore } from '@/hooks/use-contractor.store';
+import { useContractorTypeStore } from '@/hooks/use-contractor-type-store';
 
 type AdminComponentProps = {
   userList: User[];
   assetTypeList: AssetType[];
+  contractors: Contractors;
+  contractorTypes: ContractorTypes;
 };
 
 export default function AdminComponent({
   userList,
   assetTypeList,
+  contractors,
+  contractorTypes,
 }: AdminComponentProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -31,11 +38,24 @@ export default function AdminComponent({
 
   const { setUserList } = useUserStore();
   const { setAssetTypeList } = useAssetTypeStore();
+  const { setContractors } = useContractorStore();
+  const { setContractorTypes } = useContractorTypeStore();
 
   useEffect(() => {
     setUserList(userList);
     setAssetTypeList(assetTypeList);
-  }, [userList, setUserList, assetTypeList, setAssetTypeList]);
+    setContractors(contractors);
+    setContractorTypes(contractorTypes);
+  }, [
+    userList,
+    setUserList,
+    assetTypeList,
+    setAssetTypeList,
+    contractors,
+    setContractors,
+    contractorTypes,
+    setContractorTypes,
+  ]);
 
   function handleTabChange(key: Key) {
     router.push(`${pathname}?tab=${key}`);

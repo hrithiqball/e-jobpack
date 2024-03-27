@@ -24,6 +24,7 @@ export default function RegisterTab() {
   const registerForm = useForm<RegisterForm>({
     resolver: zodResolver(RegisterFormSchema),
   });
+
   function onSubmitRegister(data: RegisterForm) {
     startTransition(() => {
       toast.promise(registerUser(data), {
@@ -34,6 +35,7 @@ export default function RegisterTab() {
       });
     });
   }
+
   return (
     <div className="flex flex-col space-y-4">
       <Form {...registerForm}>

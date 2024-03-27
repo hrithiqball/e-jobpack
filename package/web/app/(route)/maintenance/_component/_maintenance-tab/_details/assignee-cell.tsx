@@ -15,8 +15,7 @@ import { toast } from 'sonner';
 
 import { useUserStore } from '@/hooks/use-user.store';
 import { assignTask } from '@/data/task-assignee.action';
-
-const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
+import { baseServerUrl } from '@/public/constant/url';
 
 type TableAssigneeCellProps = {
   assignee: User[];
@@ -33,14 +32,14 @@ export default function TableAssigneeCell({
 
   const [assigneeList, setAssigneeList] = useState(assignee);
   const [userListValue, setUserListValue] = useState(
-    userList.map(user => ({
+    userList?.map(user => ({
       ...user,
       checked: assignee.some(au => au.id === user.id),
     })),
   );
 
   function handleCheckChange(userId: string) {
-    const updatedUserList = userListValue.map(user =>
+    const updatedUserList = userListValue?.map(user =>
       user.id === userId ? { ...user, checked: !user.checked } : user,
     );
 
@@ -48,6 +47,8 @@ export default function TableAssigneeCell({
   }
 
   function updateAssignee() {
+    if (!userListValue) return;
+
     const updateAssigneeList = userListValue
       .filter(user => user.checked)
       .map(
@@ -63,11 +64,13 @@ export default function TableAssigneeCell({
   function handleClose(opened: boolean) {
     if (opened) return;
 
-    const checkedCount = userListValue.filter(user => user.checked).length;
+    const checkedCount = userListValue?.filter(user => user.checked).length;
 
     if (checkedCount === assigneeList.length) return;
 
     startTransition(() => {
+      if (!userListValue) return;
+
       toast.promise(
         assignTask(
           taskId,
@@ -103,7 +106,7 @@ export default function TableAssigneeCell({
                         alt={assigneeList[0]!.name}
                         width={6}
                         height={6}
-                        className="size-6 rounded-full"
+                        className="size-6 rounded-full bg-teal-950 object-contain"
                       />
                     ) : (
                       <p className="text-xs">
@@ -123,7 +126,7 @@ export default function TableAssigneeCell({
                           alt={user.name}
                           width={6}
                           height={6}
-                          className="inline-block size-6 rounded-full ring-1 ring-white"
+                          className="inline-block size-6 rounded-full bg-teal-950 object-contain ring-1 ring-white"
                         />
                       ) : (
                         <div className="flex size-6 items-center justify-center rounded-full bg-gray-400 ring-1 ring-white">
@@ -146,7 +149,7 @@ export default function TableAssigneeCell({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="center" className="w-56 rounded-lg p-2">
-        {userListValue.map(user => (
+        {userListValue?.map(user => (
           <DropdownMenuCheckboxItem
             key={user.id}
             checked={user.checked}
@@ -163,7 +166,7 @@ export default function TableAssigneeCell({
                   alt={user.name}
                   width={6}
                   height={6}
-                  className="size-5 rounded-full"
+                  className="size-5 rounded-full bg-teal-950 object-contain"
                 />
               ) : (
                 <div className="flex size-5 items-center justify-center rounded-full bg-gray-400">

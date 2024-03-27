@@ -4,7 +4,7 @@ import { hash } from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  let hashedPassword = await hash('password', 10);
+  const hashedPassword = await hash('password', 10);
 
   await prisma.user.upsert({
     where: { id: '-99' },
@@ -18,62 +18,14 @@ async function main() {
     },
   });
 
-  hashedPassword = await hash('password', 10);
-
-  await prisma.user.upsert({
-    where: { id: '-98' },
-    update: {},
-    create: {
-      id: '-98',
-      name: 'Anis Zahidah',
-      email: 'anis@mail.co',
-      password: hashedPassword,
-      role: 'SUPERVISOR',
-    },
-  });
-
-  hashedPassword = await hash('password', 10);
-
-  await prisma.user.upsert({
-    where: { id: '-97' },
-    update: {},
-    create: {
-      id: '-97',
-      name: 'Harith Iqbal',
-      email: 'harith@mail.co',
-      password: hashedPassword,
-      role: 'TECHNICIAN',
-    },
-  });
-
   await prisma.assetType.deleteMany({});
-  await prisma.assetType.createMany({
-    data: [
-      {
-        title: 'Instrument',
-        description: 'Asset used by instrument department',
-        createdById: '-99',
-        updatedById: '-99',
-      },
-      {
-        title: 'Machine',
-        description: 'Machinery asset involving engine and motor',
-        createdById: '-99',
-        updatedById: '-99',
-      },
-      {
-        title: 'General',
-        description: 'General asset used by all department',
-        createdById: '-99',
-        updatedById: '-99',
-      },
-      {
-        title: 'Vehicle',
-        description: 'Vehicle asset used by all department',
-        createdById: '-99',
-        updatedById: '-99',
-      },
-    ],
+  await prisma.assetType.create({
+    data: {
+      title: 'General',
+      description: 'General asset used by all department',
+      createdById: '-99',
+      updatedById: '-99',
+    },
   });
 
   await prisma.assetStatus.deleteMany({});
@@ -83,6 +35,13 @@ async function main() {
       { id: '-2', title: 'Under Maintenance', color: '#dad873' },
       { id: '-3', title: 'Non-operating', color: '#f87979' },
     ],
+  });
+
+  await prisma.departmentEnum.deleteMany({});
+  await prisma.departmentEnum.create({
+    data: {
+      value: 'General',
+    },
   });
 }
 

@@ -80,7 +80,7 @@ export default function EditMaintenance({
   });
   const [maintenanceMemberValue, setMaintenanceMemberValue] = useState(
     userList
-      .filter(user => user.role === 'TECHNICIAN')
+      ?.filter(user => user.role === 'TECHNICIAN')
       .map(user => ({
         ...user,
         checked: maintenance?.maintenanceMember.some(
@@ -102,6 +102,8 @@ export default function EditMaintenance({
   }
 
   function handleCheckChange(userId: string) {
+    if (!maintenanceMemberValue) return;
+
     const updatedMemberList = maintenanceMemberValue.map(user =>
       user.id === userId ? { ...user, checked: !user.checked } : user,
     );
@@ -113,7 +115,7 @@ export default function EditMaintenance({
     onClose();
   }
 
-  if (!maintenance) return <Loader />;
+  if (!maintenance || !userList) return <Loader />;
 
   return isDesktop ? (
     <Sheet open={open} onOpenChange={handleClose}>
@@ -169,7 +171,7 @@ export default function EditMaintenance({
                                     alt={user.name}
                                     width={20}
                                     height={20}
-                                    className="size-5 rounded-full"
+                                    className="size-5 rounded-full bg-teal-950 object-contain"
                                   />
                                 ) : (
                                   <div className="flex size-5 items-center justify-center rounded-full bg-gray-500">
@@ -244,7 +246,7 @@ export default function EditMaintenance({
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    {maintenanceMemberValue.map(user => (
+                    {maintenanceMemberValue?.map(user => (
                       <DropdownMenuCheckboxItem
                         key={user.id}
                         checked={user.checked}
@@ -260,7 +262,7 @@ export default function EditMaintenance({
                               alt={user.name}
                               width={6}
                               height={6}
-                              className="size-5 rounded-full"
+                              className="size-5 rounded-full bg-teal-950 object-contain"
                             />
                           ) : (
                             <div className="flex size-5 items-center justify-center rounded-full bg-gray-400">

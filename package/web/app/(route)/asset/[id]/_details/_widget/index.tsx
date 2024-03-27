@@ -10,8 +10,7 @@ import AssetDetailsInfo from './_info';
 import AssetImageCarousel from './_image-carousel';
 import AssetAddImage from './add-image';
 import AssetCover from './_cover';
-
-const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
+import { baseServerUrl } from '@/public/constant/url';
 
 export default function DetailsWidget() {
   const { asset, assetImageSidebar } = useAssetStore();
@@ -73,7 +72,7 @@ export default function DetailsWidget() {
                       {asset.assetCover ? (
                         <Image
                           alt={`${baseServerUrl}/asset${asset.assetCover}`}
-                          src={`${baseServerUrl}/asset${asset.assetCover}`}
+                          src={asset.name}
                           width={400}
                           height={800}
                           className="flex w-full flex-1 cursor-pointer rounded-md object-cover filter hover:brightness-75"

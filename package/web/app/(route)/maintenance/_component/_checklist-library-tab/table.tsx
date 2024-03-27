@@ -67,8 +67,7 @@ import TaskTypeHelper from '@/components/helper/TaskTypeHelper';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useChecklistLibStore } from '@/hooks/use-checklist-lib.store';
 import ChecklistLibraryDetails from './details';
-
-const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
+import { baseServerUrl } from '@/public/constant/url';
 
 type ChecklistLibraryTableProps = {
   checklistLibraryList: ChecklistLibraryList;
@@ -148,7 +147,7 @@ export default function ChecklistLibraryTable({
                 alt={row.original.createdBy.name}
                 width={28}
                 height={28}
-                className="size-7 rounded-full"
+                className="size-7 rounded-full bg-teal-950 object-contain"
               />
             ) : (
               <div className="flex size-7 items-center justify-center rounded-full bg-gray-500 text-xs">
@@ -172,7 +171,7 @@ export default function ChecklistLibraryTable({
                 alt={row.original.createdBy.name}
                 width={28}
                 height={28}
-                className="size-7 rounded-full"
+                className="size-7 rounded-full bg-teal-950 object-contain"
               />
             ) : (
               <div className="flex size-7 items-center justify-center rounded-full bg-gray-500 text-xs">

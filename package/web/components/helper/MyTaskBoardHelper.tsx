@@ -12,8 +12,7 @@ import {
 import { Maintenance } from '@/types/maintenance';
 import { monthShort } from '@/lib/datetime';
 import { useCurrentRole } from '@/hooks/use-current-role';
-
-const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
+import { baseServerUrl } from '@/public/constant/url';
 
 type MyTaskBoardHelperProps = {
   maintenance: Maintenance;
@@ -89,7 +88,7 @@ export default function MyTaskBoardHelper({
                   alt={`${maintenance.requestedBy?.name}`}
                   width={32}
                   height={32}
-                  className="size-8 rounded-full"
+                  className="size-8 rounded-full bg-teal-950 object-contain"
                 />
               ) : (
                 <div className="flex size-8 items-center justify-center rounded-full bg-gray-200">

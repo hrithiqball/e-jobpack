@@ -3,7 +3,11 @@
 import { hash } from 'bcryptjs';
 import { revalidatePath } from 'next/cache';
 import { db } from '@/lib/db';
-import { CreateUserAdminForm } from '@/lib/schemas/user';
+import {
+  AdminUpdateUser,
+  CreateUserAdminForm,
+  UpdateUserDetailsForm,
+} from '@/lib/schemas/user';
 
 import {
   ResultSchema,
@@ -11,8 +15,7 @@ import {
 } from '@/lib/schemas/server-response';
 import { RegisterForm } from '../lib/schemas/auth';
 import { Department, Role } from '@prisma/client';
-
-const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
+import { baseServerUrl } from '@/public/constant/url';
 
 export async function createUser(
   name: string,
@@ -61,8 +64,16 @@ export async function adminCreateUser(
   }
 }
 
-export async function adminApproveUser(id: string) {
+export async function adminApproveUser(id: string, adminId: string) {
   try {
+    await db.history.create({
+      data: {
+        actionBy: adminId,
+        activity: `Approved ${id}`,
+        historyMeta: 'USER',
+      },
+    });
+
     return await db.user.update({
       where: { id },
       data: { emailVerified: new Date() },
@@ -73,8 +84,16 @@ export async function adminApproveUser(id: string) {
   }
 }
 
-export async function adminRejectUser(id: string) {
+export async function adminRejectUser(id: string, adminId: string) {
   try {
+    await db.history.create({
+      data: {
+        actionBy: adminId,
+        activity: `Rejected ${id}`,
+        historyMeta: 'USER',
+      },
+    });
+
     return await db.user.update({
       where: { id },
       data: {
@@ -93,6 +112,24 @@ export async function adminBlockUser(id: string) {
       where: { id },
       data: {
         isBlocked: true,
+        emailVerified: undefined,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function adminUpdateUser(data: AdminUpdateUser) {
+  try {
+    const { id, departmentId, role } = data;
+
+    return await db.user.update({
+      where: { id },
+      data: {
+        departmentId,
+        role,
       },
     });
   } catch (error) {
@@ -120,6 +157,19 @@ export async function registerUser(registerForm: RegisterForm) {
   }
 }
 
+export async function fetchUser(id: string) {
+  try {
+    return await db.user.findUnique({
+      where: {
+        id,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 export async function fetchUserList() {
   try {
     return await db.user.findMany({
@@ -133,6 +183,39 @@ export async function fetchUserList() {
         role: {
           not: 'ADMIN',
         },
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function updatePassword(id: string, newPassword: string) {
+  try {
+    const password = await hash(newPassword, 10);
+
+    return await db.user.update({
+      where: { id },
+      data: { password },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function updateUserDetails(
+  id: string,
+  data: UpdateUserDetailsForm,
+) {
+  try {
+    return await db.user.update({
+      where: { id },
+      data: {
+        name: data.name,
+        phone: data.phone,
+        departmentId: data.departmentId,
       },
     });
   } catch (error) {

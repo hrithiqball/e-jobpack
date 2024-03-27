@@ -69,8 +69,7 @@ import emptyIcon from '@/public/image/empty.svg';
 import DeleteAssetModal from './delete-asset';
 import AddAssetModal from './add-asset';
 import AddMaintenanceModal from '@/components/add-maintenance';
-
-const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
+import { baseServerUrl } from '@/public/constant/url';
 
 type AssetTableProps = {
   assetList: AssetList;
@@ -453,7 +452,7 @@ export default function AssetTable({
                 width={28}
                 height={28}
                 quality={100}
-                className="size-7 rounded-full"
+                className="size-7 rounded-full bg-teal-950 object-contain"
               />
             ) : (
               <Avatar name={pic.name} size="sm" />
@@ -502,7 +501,7 @@ export default function AssetTable({
                 width={28}
                 height={28}
                 quality={100}
-                className="size-7 rounded-full"
+                className="size-7 rounded-full bg-teal-950 object-contain"
               />
             ) : (
               <div className="size-7 rounded-full bg-gray-500">
@@ -544,7 +543,7 @@ export default function AssetTable({
                 width={28}
                 height={28}
                 quality={100}
-                className="size-7 rounded-full"
+                className="size-7 rounded-full bg-teal-950 object-contain"
               />
             ) : (
               <div className="size-7 rounded-full bg-gray-500">

@@ -60,6 +60,7 @@ import { recreateMaintenance } from '@/data/maintenance.action';
 
 import MaintenanceRecreateAssetCell from './recreate-asset-cell';
 import MaintenanceRecreateChecklistCell from './recreate-checklist-cell';
+import { Loader } from '@/components/ui/loader';
 
 const MaintenanceRecreateFormSchema = z.object({
   id: z
@@ -192,6 +193,8 @@ export default function MaintenanceRecreate({
       });
     });
   }
+
+  if (!userList) return <Loader />;
 
   return maintenance && isDesktop ? (
     <Sheet open={open} onOpenChange={handleClose}>

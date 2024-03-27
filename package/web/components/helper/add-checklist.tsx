@@ -16,7 +16,7 @@ import { useEffect, useState, useTransition } from 'react';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { useAssetStore } from '@/hooks/use-asset.store';
 import { useGetChecklistLibraryList } from '@/data/checklist-library.query';
-import { Table, TableCell, TableRow } from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -129,23 +129,25 @@ export default function AddChecklist({
         </MultiSelect>
         {selected.length > 0 && (
           <Table>
-            <TableRow>
-              <TableCell>Asset</TableCell>
-              <TableCell>Checklist</TableCell>
-            </TableRow>
-            {selected.map(item => (
-              <AssetSelection
-                key={item}
-                assetId={item}
-                checklistValue={checklistValues[item]!}
-                setChecklistValue={(value: string) =>
-                  setChecklistValues(prevState => ({
-                    ...prevState,
-                    [item]: value,
-                  }))
-                }
-              />
-            ))}
+            <TableBody>
+              <TableRow>
+                <TableCell>Asset</TableCell>
+                <TableCell>Checklist</TableCell>
+              </TableRow>
+              {selected.map(item => (
+                <AssetSelection
+                  key={item}
+                  assetId={item}
+                  checklistValue={checklistValues[item]!}
+                  setChecklistValue={(value: string) =>
+                    setChecklistValues(prevState => ({
+                      ...prevState,
+                      [item]: value,
+                    }))
+                  }
+                />
+              ))}
+            </TableBody>
           </Table>
         )}
         <SheetFooter>

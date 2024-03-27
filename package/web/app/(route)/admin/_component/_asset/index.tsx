@@ -5,7 +5,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { LayoutGrid, Card } from '@/components/ui/layout-grid';
-import { Table, TableCell, TableRow } from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { useAssetTypeStore } from '@/hooks/use-asset-type.store';
 import { Activity, Building2, MoreHorizontal, Package } from 'lucide-react';
 import empty from '@/public/image/empty.gif';
@@ -121,16 +121,18 @@ function AssetType() {
       </div>
       {assetTypeList.length > 0 ? (
         <Table>
-          {assetTypeList.map(assetType => (
-            <TableRow key={assetType.id} noHover>
-              <TableCell>{assetType.title}</TableCell>
-              <TableCell className="text-right">
-                <Button size="icon" variant="ghost">
-                  <MoreHorizontal size={18} />
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
+          <TableBody>
+            {assetTypeList.map(assetType => (
+              <TableRow key={assetType.id} noHover>
+                <TableCell>{assetType.title}</TableCell>
+                <TableCell className="text-right">
+                  <Button size="icon" variant="ghost">
+                    <MoreHorizontal size={18} />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
         </Table>
       ) : (
         <div className="flex h-full flex-1 flex-col">
