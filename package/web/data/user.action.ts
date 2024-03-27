@@ -3,7 +3,11 @@
 import { hash } from 'bcryptjs';
 import { revalidatePath } from 'next/cache';
 import { db } from '@/lib/db';
-import { AdminUpdateUser, CreateUserAdminForm } from '@/lib/schemas/user';
+import {
+  AdminUpdateUser,
+  CreateUserAdminForm,
+  UpdateUserDetailsForm,
+} from '@/lib/schemas/user';
 
 import {
   ResultSchema,
@@ -153,6 +157,19 @@ export async function registerUser(registerForm: RegisterForm) {
   }
 }
 
+export async function fetchUser(id: string) {
+  try {
+    return await db.user.findUnique({
+      where: {
+        id,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 export async function fetchUserList() {
   try {
     return await db.user.findMany({
@@ -166,6 +183,39 @@ export async function fetchUserList() {
         role: {
           not: 'ADMIN',
         },
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function updatePassword(id: string, newPassword: string) {
+  try {
+    const password = await hash(newPassword, 10);
+
+    return await db.user.update({
+      where: { id },
+      data: { password },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function updateUserDetails(
+  id: string,
+  data: UpdateUserDetailsForm,
+) {
+  try {
+    return await db.user.update({
+      where: { id },
+      data: {
+        name: data.name,
+        phone: data.phone,
+        departmentId: data.departmentId,
       },
     });
   } catch (error) {

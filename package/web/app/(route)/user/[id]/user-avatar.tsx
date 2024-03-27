@@ -13,13 +13,13 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Avatar } from '@nextui-org/react';
 
 import { ImagePlus, Replace } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { deleteUserImage, uploadUserImage } from '@/data/user.action';
 import { cn } from '@/lib/utils';
+import { baseServerUrl } from '@/public/constant/url';
 
 type UserAvatarProps = {
   user: User;
@@ -111,17 +111,23 @@ export default function UserAvatar({ user }: UserAvatarProps) {
     <div className="flex flex-1 flex-col items-center justify-center">
       <Dialog>
         <DialogTrigger>
-          <Avatar
-            showFallback
-            size="lg"
-            name={user.name}
-            src={
-              user.image
-                ? `${process.env.NEXT_PUBLIC_IMAGE_SERVER_URL}/user/${user.image}`
-                : ''
-            }
-            onClick={resetImage}
-          />
+          <div className="" onClick={resetImage}>
+            {user.image ? (
+              <Image
+                src={`${baseServerUrl}/user/${user.image}`}
+                alt={user.name}
+                height={96}
+                width={96}
+                className="size-24 rounded-full bg-teal-950 object-contain"
+              />
+            ) : (
+              <div className="flex size-24 items-center justify-center rounded-full bg-teal-950 text-teal-800">
+                <p className="text-lg">
+                  {user.name.substring(0, 1).toUpperCase()}
+                </p>
+              </div>
+            )}
+          </div>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>Change Profile Picture</DialogHeader>
