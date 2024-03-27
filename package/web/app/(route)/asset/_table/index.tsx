@@ -452,7 +452,7 @@ export default function AssetTable({
                 width={28}
                 height={28}
                 quality={100}
-                className="size-7 rounded-full"
+                className="size-7 rounded-full bg-teal-950 object-contain"
               />
             ) : (
               <Avatar name={pic.name} size="sm" />
@@ -501,7 +501,7 @@ export default function AssetTable({
                 width={28}
                 height={28}
                 quality={100}
-                className="size-7 rounded-full"
+                className="size-7 rounded-full bg-teal-950 object-contain"
               />
             ) : (
               <div className="size-7 rounded-full bg-gray-500">
@@ -543,7 +543,7 @@ export default function AssetTable({
                 width={28}
                 height={28}
                 quality={100}
-                className="size-7 rounded-full"
+                className="size-7 rounded-full bg-teal-950 object-contain"
               />
             ) : (
               <div className="size-7 rounded-full bg-gray-500">

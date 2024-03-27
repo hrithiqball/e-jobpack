@@ -88,7 +88,7 @@ export default function MyTaskBoardHelper({
                   alt={`${maintenance.requestedBy?.name}`}
                   width={32}
                   height={32}
-                  className="size-8 rounded-full"
+                  className="size-8 rounded-full bg-teal-950 object-contain"
                 />
               ) : (
                 <div className="flex size-8 items-center justify-center rounded-full bg-gray-200">

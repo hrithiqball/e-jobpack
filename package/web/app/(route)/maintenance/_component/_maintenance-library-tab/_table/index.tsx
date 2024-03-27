@@ -165,7 +165,7 @@ export default function MaintenanceLibraryTable({
                 alt={user.name}
                 width={28}
                 height={28}
-                className="size-7 rounded-full"
+                className="size-7 rounded-full bg-teal-950 object-contain"
               />
             ) : (
               <div className="flex size-7 items-center justify-center rounded-full bg-gray-500 text-xs">
@@ -192,7 +192,7 @@ export default function MaintenanceLibraryTable({
                 alt={user.name}
                 width={28}
                 height={28}
-                className="size-7 rounded-full"
+                className="size-7 rounded-full bg-teal-950 object-contain"
               />
             ) : (
               <div className="flex size-7 items-center justify-center rounded-full bg-gray-500 text-xs">

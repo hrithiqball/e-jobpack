@@ -106,7 +106,7 @@ export default function TableAssigneeCell({
                         alt={assigneeList[0]!.name}
                         width={6}
                         height={6}
-                        className="size-6 rounded-full"
+                        className="size-6 rounded-full bg-teal-950 object-contain"
                       />
                     ) : (
                       <p className="text-xs">
@@ -126,7 +126,7 @@ export default function TableAssigneeCell({
                           alt={user.name}
                           width={6}
                           height={6}
-                          className="inline-block size-6 rounded-full ring-1 ring-white"
+                          className="inline-block size-6 rounded-full bg-teal-950 object-contain ring-1 ring-white"
                         />
                       ) : (
                         <div className="flex size-6 items-center justify-center rounded-full bg-gray-400 ring-1 ring-white">
@@ -166,7 +166,7 @@ export default function TableAssigneeCell({
                   alt={user.name}
                   width={6}
                   height={6}
-                  className="size-5 rounded-full"
+                  className="size-5 rounded-full bg-teal-950 object-contain"
                 />
               ) : (
                 <div className="flex size-5 items-center justify-center rounded-full bg-gray-400">

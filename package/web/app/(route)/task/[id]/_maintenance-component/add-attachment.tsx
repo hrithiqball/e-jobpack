@@ -191,7 +191,7 @@ export default function MaintenanceAddAttachment({
                             alt={attachment}
                             width={100}
                             height={100}
-                            className="rounded-md"
+                            className="rounded-md bg-teal-950 object-contain"
                           />
                         </div>
                       </CarouselItem>
@@ -239,7 +239,7 @@ export default function MaintenanceAddAttachment({
                               alt={attachment}
                               width={400}
                               height={200}
-                              className="flex flex-1 rounded-md object-cover"
+                              className="flex flex-1 rounded-md bg-teal-950 object-contain"
                             />
                           </div>
                         </CarouselItem>

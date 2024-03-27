@@ -72,7 +72,7 @@ export default function DetailsWidget() {
                       {asset.assetCover ? (
                         <Image
                           alt={`${baseServerUrl}/asset${asset.assetCover}`}
-                          src={`${baseServerUrl}/asset${asset.assetCover}`}
+                          src={asset.name}
                           width={400}
                           height={800}
                           className="flex w-full flex-1 cursor-pointer rounded-md object-cover filter hover:brightness-75"

@@ -171,7 +171,7 @@ export default function EditMaintenance({
                                     alt={user.name}
                                     width={20}
                                     height={20}
-                                    className="size-5 rounded-full"
+                                    className="size-5 rounded-full bg-teal-950 object-contain"
                                   />
                                 ) : (
                                   <div className="flex size-5 items-center justify-center rounded-full bg-gray-500">
@@ -262,7 +262,7 @@ export default function EditMaintenance({
                               alt={user.name}
                               width={6}
                               height={6}
-                              className="size-5 rounded-full"
+                              className="size-5 rounded-full bg-teal-950 object-contain"
                             />
                           ) : (
                             <div className="flex size-5 items-center justify-center rounded-full bg-gray-400">

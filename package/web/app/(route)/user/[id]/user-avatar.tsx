@@ -150,10 +150,11 @@ export default function UserAvatar({ user }: UserAvatarProps) {
               </form>
               {haveImage ? (
                 <Image
-                  src={`${process.env.NEXT_PUBLIC_IMAGE_SERVER_URL}/user/${user.image}`}
+                  src={`${baseServerUrl}/user/${user.image}`}
                   alt="Preview"
                   height={200}
                   width={500}
+                  className="bg-teal-950 object-contain"
                 />
               ) : userImage ? (
                 <Image
@@ -161,7 +162,7 @@ export default function UserAvatar({ user }: UserAvatarProps) {
                   alt="Preview"
                   height={200}
                   width={500}
-                  className="rounded-md"
+                  className="rounded-md bg-teal-950 object-contain"
                 />
               ) : (
                 <div
