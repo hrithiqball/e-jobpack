@@ -8,7 +8,8 @@
     "release": "semantic-release",
     "web": "cd package/web && npm run dev",
     "server": "cd package/server && npm run dev",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "studio": "cd package/web && npx prisma studio"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",

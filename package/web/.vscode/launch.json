@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Nex.js: debug server-side",
+      "name": "Next.js: debug server-side",
       "type": "node-terminal",
       "request": "launch",
       "command": "npm run dev"
