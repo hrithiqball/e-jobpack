@@ -1,5 +1,5 @@
 import MaintenanceStatusHelper from '@/components/helper/MaintenanceStatusHelper';
-import { Table, TableCell, TableRow } from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 import { baseServerUrl } from '@/public/constant/url';
 import { User } from '@prisma/client';
@@ -13,50 +13,52 @@ export default function InfoTable() {
 
   return (
     <Table>
-      <TableRow>
-        <TableCell className="font-semibold">Status</TableCell>
-        <TableCell>
-          <MaintenanceStatusHelper
-            maintenanceStatus={maintenance.maintenanceStatus}
-          />
-        </TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell className="font-semibold">Start Date</TableCell>
-        <TableCell>
-          {dayjs(maintenance.startDate).format('DD/MM/YYYY')}
-        </TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell className="font-semibold">Deadline</TableCell>
-        <TableCell>
-          {maintenance.deadline
-            ? dayjs(maintenance.deadline).format('DD/MM/YYYY')
-            : 'Not Specified'}
-        </TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell className="font-semibold">Person In Charge</TableCell>
-        <TableCell>
-          {maintenance.approvedBy ? (
-            <PersonInCharge personInCharge={maintenance.approvedBy} />
-          ) : (
-            'Not Specified'
-          )}
-        </TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell className="font-semibold">Maintenance Members</TableCell>
-        <TableCell>
-          {maintenance.maintenanceMember.length > 0 ? (
-            <MaintenanceMember
-              members={maintenance.maintenanceMember.map(u => u.user)}
+      <TableBody>
+        <TableRow>
+          <TableCell className="font-semibold">Status</TableCell>
+          <TableCell>
+            <MaintenanceStatusHelper
+              maintenanceStatus={maintenance.maintenanceStatus}
             />
-          ) : (
-            <div className="">No team member chosen</div>
-          )}
-        </TableCell>
-      </TableRow>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell className="font-semibold">Start Date</TableCell>
+          <TableCell>
+            {dayjs(maintenance.startDate).format('DD/MM/YYYY')}
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell className="font-semibold">Deadline</TableCell>
+          <TableCell>
+            {maintenance.deadline
+              ? dayjs(maintenance.deadline).format('DD/MM/YYYY')
+              : 'Not Specified'}
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell className="font-semibold">Person In Charge</TableCell>
+          <TableCell>
+            {maintenance.approvedBy ? (
+              <PersonInCharge personInCharge={maintenance.approvedBy} />
+            ) : (
+              'Not Specified'
+            )}
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell className="font-semibold">Maintenance Members</TableCell>
+          <TableCell>
+            {maintenance.maintenanceMember.length > 0 ? (
+              <MaintenanceMember
+                members={maintenance.maintenanceMember.map(u => u.user)}
+              />
+            ) : (
+              <div className="">No team member chosen</div>
+            )}
+          </TableCell>
+        </TableRow>
+      </TableBody>
     </Table>
   );
 }
