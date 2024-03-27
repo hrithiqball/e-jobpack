@@ -43,6 +43,7 @@ import {
 } from '@/components/ui/select';
 import { useContractorTypeStore } from '@/hooks/use-contractor-type-store';
 import { Loader } from '@/components/ui/loader';
+import { createContractor } from '@/data/contractor.action';
 
 type AddContractorProps = {
   open: boolean;
@@ -112,9 +113,23 @@ export default function RegisterContractor({
         return;
       }
 
-      console.log(file);
+      if (file) {
+        const formData = new FormData();
+        formData.append('contractorId', user.id);
+        formData.append('image', file);
 
-      console.log(data);
+        toast.promise(createContractor(data, formData), {
+          loading: 'Registering contractor...',
+          success: 'Contractor registered',
+          error: 'Failed to register contractor',
+        });
+      } else {
+        toast.promise(createContractor(data), {
+          loading: 'Registering contractor...',
+          success: 'Contractor registered',
+          error: 'Failed to register contractor',
+        });
+      }
     });
   }
 
@@ -238,7 +253,12 @@ export default function RegisterContractor({
           </form>
         </Form>
         <SheetFooter>
-          <Button variant="outline" disabled={transitioning}>
+          <Button
+            type="submit"
+            form="create-contractor-form"
+            variant="outline"
+            disabled={transitioning}
+          >
             Register
           </Button>
         </SheetFooter>

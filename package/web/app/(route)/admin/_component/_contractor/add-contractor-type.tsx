@@ -9,40 +9,39 @@ import {
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-import { useContractorStore } from '@/hooks/use-contractor.store';
 import { useMediaQuery } from '@/hooks/use-media-query';
 
-type EditContractorProps = {
+type AddContractorTypeProps = {
   open: boolean;
   onClose: () => void;
 };
 
-export default function EditContractor({ open, onClose }: EditContractorProps) {
+export default function AddContractorType({
+  open,
+  onClose,
+}: AddContractorTypeProps) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
-
-  const { contractor } = useContractorStore();
 
   function handleClose() {
     onClose();
-  }
-
-  if (!contractor) {
-    onClose();
-    return;
   }
 
   return isDesktop ? (
     <Sheet open={open} onOpenChange={handleClose}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{contractor.name}</SheetTitle>
+          <SheetTitle>Add Types</SheetTitle>
+          <SheetDescription>
+            Contractor types can be used for filtering and tagging purposes
+          </SheetDescription>
         </SheetHeader>
         <SheetFooter>
-          <Button variant="outline">Update</Button>
+          <Button variant="outline">Add</Button>
         </SheetFooter>
       </SheetContent>
     </Sheet>
@@ -50,10 +49,10 @@ export default function EditContractor({ open, onClose }: EditContractorProps) {
     <Drawer open={open} onClose={handleClose}>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>{contractor.name}</DrawerTitle>
+          <DrawerTitle>Add Types</DrawerTitle>
         </DrawerHeader>
         <DrawerFooter>
-          <Button variant="outline">Update</Button>
+          <Button variant="outline">Add</Button>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

@@ -7,6 +7,7 @@ import RegisterContractor from './register';
 import { Loader } from '@/components/ui/loader';
 import Image from 'next/image';
 import { baseServerUrl } from '@/public/constant/url';
+import { isNullOrEmpty } from '@/lib/function/string';
 
 export default function ContractorComponent() {
   const { contractors } = useContractorStore();
@@ -76,7 +77,7 @@ export default function ContractorComponent() {
                   alt={contractor.name}
                   height={48}
                   width={48}
-                  className="size-12"
+                  className="size-12 object-contain"
                 />
               ) : (
                 <div className="flex size-12 items-center justify-center rounded-full bg-teal-100 text-teal-800">
@@ -87,21 +88,25 @@ export default function ContractorComponent() {
               )}
               <div className="flex flex-col">
                 <div className="truncate">
-                  <p>hello</p>
+                  <p>{contractor.name}</p>
                 </div>
-                <div className="truncate text-sm text-gray-400">hello</div>
+                <div className="truncate text-sm text-gray-400">
+                  {isNullOrEmpty(contractor.company) || 'No info'}
+                </div>
               </div>
             </div>
             <div className="grid grid-cols-2 divide-x divide-tremor-border border-t border-tremor-border dark:divide-dark-tremor-border dark:border-dark-tremor-border">
               <div className="truncate px-3 py-2">
-                <p className="text-xs text-gray-400">Department</p>
+                <p className="text-xs text-gray-400">Company</p>
                 <p className="text-medium">
-                  convertToTitleCase(user.department)
+                  {isNullOrEmpty(contractor.company) || 'No info'}
                 </p>
               </div>
               <div className="truncate px-3 py-2">
-                <p className="text-xs text-gray-400">Role</p>
-                <p className="text-medium">convertToTitleCase(user.role)</p>
+                <p className="text-xs text-gray-400">Contact</p>
+                <p className="text-medium">
+                  {isNullOrEmpty(contractor.contact) || 'No info'}
+                </p>
               </div>
             </div>
           </div>

@@ -27,7 +27,7 @@ export default function General({
                 alt={user.name}
                 height={48}
                 width={48}
-                className="size-12 rounded-full"
+                className="size-12 rounded-full bg-teal-100 object-contain"
               />
             ) : (
               <div className="flex size-12 items-center justify-center rounded-full bg-teal-100 text-teal-800">
