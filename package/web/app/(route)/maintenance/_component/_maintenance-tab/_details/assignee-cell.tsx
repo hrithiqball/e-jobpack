@@ -1,5 +1,4 @@
 import { useState, useTransition } from 'react';
-import { User } from '@prisma/client';
 import Image from 'next/image';
 
 import {
@@ -13,26 +12,26 @@ import { Button } from '@/components/ui/button';
 
 import { toast } from 'sonner';
 
-import { useUserStore } from '@/hooks/use-user.store';
 import { assignTask } from '@/data/task-assignee.action';
 import { baseServerUrl } from '@/public/constant/url';
+import { Users } from '@/types/user';
 
 type TableAssigneeCellProps = {
-  assignee: User[];
+  assignee: Users;
   taskId: string;
+  maintenanceMember: Users;
 };
 
 export default function TableAssigneeCell({
   assignee,
   taskId,
+  maintenanceMember,
 }: TableAssigneeCellProps) {
   const [transitioning, startTransition] = useTransition();
 
-  const { userList } = useUserStore();
-
   const [assigneeList, setAssigneeList] = useState(assignee);
   const [userListValue, setUserListValue] = useState(
-    userList?.map(user => ({
+    maintenanceMember?.map(user => ({
       ...user,
       checked: assignee.some(au => au.id === user.id),
     })),
@@ -99,14 +98,14 @@ export default function TableAssigneeCell({
             <div className="flex items-center space-x-2">
               {assigneeList.length === 1 ? (
                 <div className="flex items-center space-x-1">
-                  <div className="flex size-6 items-center justify-center rounded-full bg-gray-400">
+                  <div className="flex size-5 items-center justify-center rounded-full bg-teal-800 text-white">
                     {assigneeList[0]!.image ? (
                       <Image
                         src={`${baseServerUrl}/user/${assigneeList[0]!.image}`}
                         alt={assigneeList[0]!.name}
-                        width={6}
-                        height={6}
-                        className="size-6 rounded-full bg-teal-950 object-contain"
+                        width={20}
+                        height={20}
+                        className="size-5 rounded-full bg-teal-950 object-contain"
                       />
                     ) : (
                       <p className="text-xs">
@@ -124,12 +123,12 @@ export default function TableAssigneeCell({
                         <Image
                           src={`${baseServerUrl}/user/${user.image}`}
                           alt={user.name}
-                          width={6}
-                          height={6}
-                          className="inline-block size-6 rounded-full bg-teal-950 object-contain ring-1 ring-white"
+                          width={20}
+                          height={20}
+                          className="inline-block size-5 rounded-full bg-teal-950 object-contain"
                         />
                       ) : (
-                        <div className="flex size-6 items-center justify-center rounded-full bg-gray-400 ring-1 ring-white">
+                        <div className="flex size-5 items-center justify-center rounded-full bg-teal-800 text-white">
                           <p className="text-xs">{user.name.substring(0, 1)}</p>
                         </div>
                       )}
@@ -170,7 +169,9 @@ export default function TableAssigneeCell({
                 />
               ) : (
                 <div className="flex size-5 items-center justify-center rounded-full bg-gray-400">
-                  <p className="text-xs">{user.name.substring(0, 1)}</p>
+                  <p className="text-xs text-white">
+                    {user.name.substring(0, 1)}
+                  </p>
                 </div>
               )}
               <span>{user.name}</span>

@@ -2,7 +2,7 @@
 
 import { Key, useEffect } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-import { AssetStatus, Maintenance, User } from '@prisma/client';
+import { AssetStatus, Maintenance } from '@prisma/client';
 
 import {
   Button,
@@ -29,13 +29,14 @@ import { useChecklistLibStore } from '@/hooks/use-checklist-lib.store';
 import AssetDetails from '../_details';
 import AssetMaintenance from '../_maintenance';
 import AssetChecklist from '../_checklist';
+import { Users } from '@/types/user';
 
 type AssetItemComponentProps = {
   asset: AssetItem;
   assetStatusList: AssetStatus[];
   assetTypeList: AssetType[];
   maintenanceList: Maintenance[];
-  userList: User[];
+  userList: Users;
   checklistLibraryList: ChecklistLibraryList;
 };
 

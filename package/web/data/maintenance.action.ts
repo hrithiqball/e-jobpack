@@ -248,20 +248,60 @@ export async function fetchMaintenanceItem(id: string) {
     return await db.maintenance.findUniqueOrThrow({
       where: { id },
       include: {
-        approvedBy: true,
-        closedBy: true,
-        rejectedBy: true,
-        requestedBy: true,
-        maintenanceMember: { include: { user: true } },
+        approvedBy: {
+          include: {
+            department: true,
+          },
+        },
+        closedBy: {
+          include: {
+            department: true,
+          },
+        },
+        rejectedBy: {
+          include: {
+            department: true,
+          },
+        },
+        requestedBy: {
+          include: {
+            department: true,
+          },
+        },
+        maintenanceMember: {
+          include: {
+            user: {
+              include: {
+                department: true,
+              },
+            },
+          },
+        },
         checklist: {
           include: {
             asset: true,
-            createdBy: true,
-            updatedBy: true,
+            createdBy: {
+              include: {
+                department: true,
+              },
+            },
+            updatedBy: {
+              include: {
+                department: true,
+              },
+            },
             task: {
               orderBy: { taskOrder: 'asc' },
               include: {
-                taskAssignee: { include: { user: true } },
+                taskAssignee: {
+                  include: {
+                    user: {
+                      include: {
+                        department: true,
+                      },
+                    },
+                  },
+                },
                 subtask: {
                   orderBy: { taskOrder: 'asc' },
                 },
@@ -284,20 +324,60 @@ export async function fetchMaintenanceList() {
         date: 'desc',
       },
       include: {
-        approvedBy: true,
-        closedBy: true,
-        rejectedBy: true,
-        requestedBy: true,
-        maintenanceMember: { include: { user: true } },
+        approvedBy: {
+          include: {
+            department: true,
+          },
+        },
+        closedBy: {
+          include: {
+            department: true,
+          },
+        },
+        rejectedBy: {
+          include: {
+            department: true,
+          },
+        },
+        requestedBy: {
+          include: {
+            department: true,
+          },
+        },
+        maintenanceMember: {
+          include: {
+            user: {
+              include: {
+                department: true,
+              },
+            },
+          },
+        },
         checklist: {
           include: {
             asset: true,
-            createdBy: true,
-            updatedBy: true,
+            createdBy: {
+              include: {
+                department: true,
+              },
+            },
+            updatedBy: {
+              include: {
+                department: true,
+              },
+            },
             task: {
               orderBy: { taskOrder: 'asc' },
               include: {
-                taskAssignee: { include: { user: true } },
+                taskAssignee: {
+                  include: {
+                    user: {
+                      include: {
+                        department: true,
+                      },
+                    },
+                  },
+                },
                 subtask: {
                   orderBy: { taskOrder: 'asc' },
                 },

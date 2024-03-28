@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { User } from '@prisma/client';
 import dayjs from 'dayjs';
 
 import {
@@ -19,9 +18,10 @@ import { useCurrentUser } from '@/hooks/use-current-user';
 import { useAssetStore } from '@/hooks/use-asset.store';
 
 import AddMaintenanceModal from '@/components/add-maintenance';
+import { Users } from '@/types/user';
 
 type MaintenanceWidgetProps = {
-  userList: User[];
+  userList: Users;
 };
 
 export default function MaintenanceWidget({

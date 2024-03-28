@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { User } from '@prisma/client';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -74,6 +73,7 @@ import emptyIcon from '@/public/image/empty.svg';
 
 import MaintenanceLibraryInfo from './library-info';
 import { baseServerUrl } from '@/public/constant/url';
+import { User } from '@/types/user';
 
 type MaintenanceLibraryTableProps = {
   maintenanceLibraryList: MaintenanceLibraryList;

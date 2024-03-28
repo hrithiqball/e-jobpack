@@ -3,12 +3,12 @@ import { create } from 'zustand';
 
 export type DepartmentTypeStore = {
   departmentTypes: DepartmentTypes | undefined;
-  setDepartments: (departmentTypes: DepartmentTypes) => void;
+  setDepartmentTypes: (departmentTypes: DepartmentTypes) => void;
 };
 
 export const useDepartmentTypeStore = create<DepartmentTypeStore>(set => ({
   departmentTypes: undefined,
-  setDepartments: departmentTypes => {
+  setDepartmentTypes: departmentTypes => {
     set({ departmentTypes });
   },
 }));

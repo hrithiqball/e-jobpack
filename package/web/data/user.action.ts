@@ -14,7 +14,7 @@ import {
   ServerResponseSchema,
 } from '@/lib/schemas/server-response';
 import { RegisterForm } from '../lib/schemas/auth';
-import { Department, Role } from '@prisma/client';
+import { Role } from '@prisma/client';
 import { baseServerUrl } from '@/public/constant/url';
 
 export async function createUser(
@@ -42,7 +42,7 @@ export async function createUser(
 export async function adminCreateUser(
   createUser: CreateUserAdminForm,
   role: Role,
-  department: Department,
+  departmentId: string,
 ) {
   try {
     const password = await hash(createUser.password, 10);
@@ -53,7 +53,7 @@ export async function adminCreateUser(
         email: createUser.email,
         phone: createUser.phone,
         password,
-        department,
+        departmentId,
         role,
         emailVerified: new Date(),
       },
@@ -163,6 +163,9 @@ export async function fetchUser(id: string) {
       where: {
         id,
       },
+      include: {
+        department: true,
+      },
     });
   } catch (error) {
     console.error(error);
@@ -183,6 +186,9 @@ export async function fetchUserList() {
         role: {
           not: 'ADMIN',
         },
+      },
+      include: {
+        department: true,
       },
     });
   } catch (error) {

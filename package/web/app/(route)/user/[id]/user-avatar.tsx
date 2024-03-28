@@ -1,7 +1,6 @@
 'use client';
 
 import { FormEvent, useCallback, useState } from 'react';
-import { User } from '@prisma/client';
 import Image from 'next/image';
 import { useDropzone } from 'react-dropzone';
 
@@ -20,6 +19,8 @@ import { toast } from 'sonner';
 import { deleteUserImage, uploadUserImage } from '@/data/user.action';
 import { cn } from '@/lib/utils';
 import { baseServerUrl } from '@/public/constant/url';
+import { User } from '@/types/user';
+import { Loader } from '@/components/ui/loader';
 
 type UserAvatarProps = {
   user: User;
@@ -27,8 +28,10 @@ type UserAvatarProps = {
 
 export default function UserAvatar({ user }: UserAvatarProps) {
   const [file, setFile] = useState<File | null>(null);
-  const [userImage, setUserImage] = useState<string | null>(user.image);
-  const [haveImage, setHaveImage] = useState(user.image !== null);
+  const [userImage, setUserImage] = useState<string | null | undefined>(
+    user?.image,
+  );
+  const [haveImage, setHaveImage] = useState(user?.image !== null);
   const [isDirty, setIsDirty] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -64,6 +67,7 @@ export default function UserAvatar({ user }: UserAvatarProps) {
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsLoading(true);
+    if (!user) return;
 
     if (file) {
       const formData = new FormData();
@@ -100,12 +104,16 @@ export default function UserAvatar({ user }: UserAvatarProps) {
   }
 
   function resetImage() {
+    if (!user) return;
+
     if (user.image) {
       setIsDirty(false);
       setHaveImage(true);
       setIsLoading(false);
     }
   }
+
+  if (!user) return <Loader />;
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center">

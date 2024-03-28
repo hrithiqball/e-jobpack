@@ -1,12 +1,12 @@
+import { User, Users } from '@/types/user';
 import { create } from 'zustand';
-import { User } from '@prisma/client';
 
 type UserStore = {
   user: User | undefined;
   setUser: (user: User) => void;
-  userList: User[] | undefined;
+  userList: Users | undefined;
   currentUser: User | undefined;
-  setUserList: (userList: User[]) => void;
+  setUserList: (userList: Users) => void;
   setCurrentUser: (user: User) => void;
 };
 

@@ -2,7 +2,6 @@
 
 import { Key, useEffect } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-import { User } from '@prisma/client';
 
 import { Tab, Tabs } from '@nextui-org/react';
 
@@ -16,12 +15,16 @@ import { AssetType } from '@/types/asset';
 import { ContractorTypes, Contractors } from '@/types/contractor.type';
 import { useContractorStore } from '@/hooks/use-contractor.store';
 import { useContractorTypeStore } from '@/hooks/use-contractor-type-store';
+import { useDepartmentTypeStore } from '@/hooks/use-department-type.store';
+import { DepartmentTypes } from '@/types/department-enum';
+import { Users } from '@/types/user';
 
 type AdminComponentProps = {
-  userList: User[];
+  userList: Users;
   assetTypeList: AssetType[];
   contractors: Contractors;
   contractorTypes: ContractorTypes;
+  departmentTypes: DepartmentTypes;
 };
 
 export default function AdminComponent({
@@ -29,6 +32,7 @@ export default function AdminComponent({
   assetTypeList,
   contractors,
   contractorTypes,
+  departmentTypes,
 }: AdminComponentProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -40,12 +44,14 @@ export default function AdminComponent({
   const { setAssetTypeList } = useAssetTypeStore();
   const { setContractors } = useContractorStore();
   const { setContractorTypes } = useContractorTypeStore();
+  const { setDepartmentTypes } = useDepartmentTypeStore();
 
   useEffect(() => {
     setUserList(userList);
     setAssetTypeList(assetTypeList);
     setContractors(contractors);
     setContractorTypes(contractorTypes);
+    setDepartmentTypes(departmentTypes);
   }, [
     userList,
     setUserList,
@@ -55,6 +61,8 @@ export default function AdminComponent({
     setContractors,
     contractorTypes,
     setContractorTypes,
+    departmentTypes,
+    setDepartmentTypes,
   ]);
 
   function handleTabChange(key: Key) {

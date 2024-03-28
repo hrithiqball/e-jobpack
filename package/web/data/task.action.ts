@@ -70,7 +70,15 @@ export async function fetchTaskList(checklistId?: string) {
         AND: filters,
       },
       include: {
-        taskAssignee: { include: { user: true } },
+        taskAssignee: {
+          include: {
+            user: {
+              include: {
+                department: true,
+              },
+            },
+          },
+        },
         subtask: true,
       },
     });
@@ -137,7 +145,15 @@ export async function updateTaskDetails(
     return await db.task.findUniqueOrThrow({
       where: { id },
       include: {
-        taskAssignee: { include: { user: true } },
+        taskAssignee: {
+          include: {
+            user: {
+              include: {
+                department: true,
+              },
+            },
+          },
+        },
         subtask: true,
       },
     });

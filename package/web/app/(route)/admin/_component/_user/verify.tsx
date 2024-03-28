@@ -13,14 +13,14 @@ import { adminApproveUser, adminRejectUser } from '@/data/user.action';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { convertToTitleCase } from '@/lib/function/string';
 import { baseServerUrl } from '@/public/constant/url';
-import { User } from '@prisma/client';
+import { User, Users } from '@/types/user';
 import { Edit } from 'lucide-react';
 import Image from 'next/image';
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
 type UserPreviewProps = {
-  unverifiedUsers: User[];
+  unverifiedUsers: Users;
   handleOpenUserPreview: (user: User) => void;
 };
 
@@ -35,7 +35,7 @@ export default function Verify({
 
   function handleApprove(approvedUser: User) {
     startTransition(() => {
-      if (!user || !user.id) {
+      if (!user || !user.id || !approvedUser) {
         toast.error('Session expired');
         return;
       }
@@ -52,7 +52,7 @@ export default function Verify({
 
   function handleReject(rejectedUser: User) {
     startTransition(() => {
-      if (!user || !user.id) {
+      if (!user || !user.id || !rejectedUser) {
         toast.error('Session expired');
         return;
       }
@@ -119,7 +119,7 @@ export default function Verify({
           <div className="grid grid-cols-2 divide-x divide-tremor-border border-t border-tremor-border dark:divide-dark-tremor-border dark:border-dark-tremor-border">
             <div className="truncate px-3 py-2">
               <p className="text-xs text-gray-400">Department</p>
-              <p className="text-sm">{convertToTitleCase(user.department)}</p>
+              <p className="text-sm">{user.departmentId}</p>
             </div>
             <div className="truncate px-3 py-2">
               <p className="text-xs text-gray-400">Role</p>

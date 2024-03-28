@@ -308,7 +308,6 @@ model User {
   name                                                        String
   createdAt                                                   DateTime             @default(now()) @map("created_at")
   updatedAt                                                   DateTime             @default(now()) @map("updated_at")
-  department                                                  Department           @default(MANAGEMENT)
   role                                                        Role                 @default(TECHNICIAN)
   email                                                       String               @unique
   password                                                    String
@@ -344,7 +343,7 @@ model User {
   taskAssignee                                                TaskAssignee[]
   task_library_task_library_created_byTouser                  TaskLibrary[]        @relation("task_library_created_byTouser")
   task_library_task_library_updated_byTouser                  TaskLibrary[]        @relation("task_library_updated_byTouser")
-  department_enum                                             DepartmentEnum?      @relation(fields: [departmentId], references: [id], map: "public_user_department_id_fkey")
+  department                                                  DepartmentEnum?      @relation(fields: [departmentId], references: [id], map: "public_user_department_id_fkey")
 
   @@map("user")
   @@schema("public")
@@ -406,15 +405,6 @@ model ContractorType {
   updatedBy   User         @relation("contractor_type_updated_by_idTouser", fields: [updatedById], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "public_contractor_type_updated_by_id_fkey")
 
   @@map("contractor_type")
-  @@schema("public")
-}
-
-enum Department {
-  INSTRUMENT
-  ELECTRICAL
-  MECHANICAL
-  MANAGEMENT
-
   @@schema("public")
 }
 

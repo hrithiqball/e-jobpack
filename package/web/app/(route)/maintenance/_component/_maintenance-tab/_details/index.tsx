@@ -44,7 +44,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { deleteMaintenance } from '@/data/maintenance.action';
@@ -67,6 +66,7 @@ export default function MaintenanceDetails() {
   const [openAddChecklist, setOpenAddChecklist] = useState(false);
   const [openEditMaintenance, setOpenEditMaintenance] = useState(false);
   const [openExportMaintenance, setOpenExportMaintenance] = useState(false);
+  const [openAlert, setOpenAlert] = useState(false);
 
   useEffect(() => {
     if (!maintenance) router.push('/maintenance?tab=maintenance');
@@ -124,6 +124,14 @@ export default function MaintenanceDetails() {
 
   function handleCloseAddChecklist() {
     setOpenAddChecklist(false);
+  }
+
+  function handleOpenAlert() {
+    setOpenAlert(true);
+  }
+
+  function handleCloseAlert() {
+    setOpenAlert(false);
   }
 
   function handleDelete() {
@@ -188,30 +196,12 @@ export default function MaintenanceDetails() {
               Export Maintenance
             </PopoverItem>
             {role !== 'TECHNICIAN' && (
-              <AlertDialog>
-                <AlertDialogTrigger>
-                  <PopoverItemDestructive startContent={<FileX2 size={18} />}>
-                    Delete Maintenance
-                  </PopoverItemDestructive>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      Are you absolutely sure?
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete
-                      maintenance and all its data!
-                    </AlertDialogDescription>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={handleDelete}>
-                        Confirm
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogHeader>
-                </AlertDialogContent>
-              </AlertDialog>
+              <PopoverItemDestructive
+                startContent={<FileX2 size={18} />}
+                onClick={handleOpenAlert}
+              >
+                Delete Maintenance
+              </PopoverItemDestructive>
             )}
           </PopoverContent>
         </Popover>
@@ -279,6 +269,23 @@ export default function MaintenanceDetails() {
           )}
         </div>
       ))}
+      <AlertDialog open={openAlert} onOpenChange={handleCloseAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete
+              maintenance and all its data!
+            </AlertDialogDescription>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDelete}>
+                Confirm
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogHeader>
+        </AlertDialogContent>
+      </AlertDialog>
       <EditMaintenance
         open={openEditMaintenance}
         onClose={handleCloseEditMaintenance}

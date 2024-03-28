@@ -2,9 +2,10 @@ import MaintenanceStatusHelper from '@/components/helper/MaintenanceStatusHelper
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 import { baseServerUrl } from '@/public/constant/url';
-import { User } from '@prisma/client';
+import { User, Users } from '@/types/user';
 import dayjs from 'dayjs';
 import Image from 'next/image';
+import { Loader } from '../ui/loader';
 
 export default function InfoTable() {
   const { maintenance } = useMaintenanceStore();
@@ -64,6 +65,8 @@ export default function InfoTable() {
 }
 
 function PersonInCharge({ personInCharge }: { personInCharge: User }) {
+  if (!personInCharge) return <Loader />;
+
   return (
     <div className="flex items-center space-x-2">
       {personInCharge.image ? (
@@ -84,7 +87,7 @@ function PersonInCharge({ personInCharge }: { personInCharge: User }) {
   );
 }
 
-function MaintenanceMember({ members }: { members: User[] }) {
+function MaintenanceMember({ members }: { members: Users }) {
   return (
     <div className="flex items-center -space-x-3 overflow-hidden">
       {members.map(member => (

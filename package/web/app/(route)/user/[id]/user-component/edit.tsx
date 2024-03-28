@@ -1,5 +1,4 @@
 import { useMediaQuery } from '@/hooks/use-media-query';
-import { User } from '@prisma/client';
 import { Button } from '@/components/ui/button';
 import {
   Drawer,
@@ -42,6 +41,7 @@ import { Loader } from '@/components/ui/loader';
 import { useTransition } from 'react';
 import { toast } from 'sonner';
 import { updateUserDetails } from '@/data/user.action';
+import { User } from '@/types/user';
 
 type EditUserProps = {
   open: boolean;
@@ -58,9 +58,9 @@ export default function EditUser({ user, open, onClose }: EditUserProps) {
   const form = useForm<UpdateUserDetailsForm>({
     resolver: zodResolver(UpdateUserDetailsSchema),
     defaultValues: {
-      name: user.name,
-      phone: user.phone || '',
-      departmentId: user.departmentId || '',
+      name: user?.name || '',
+      phone: user?.phone || '',
+      departmentId: user?.departmentId || '',
     },
   });
 

@@ -25,7 +25,7 @@ export default function UserDetails() {
         </TableRow>
         <TableRow>
           <TableCell className="font-semibold">Department</TableCell>
-          <TableCell>{convertToTitleCase(user.department)}</TableCell>
+          <TableCell>{user.departmentId}</TableCell>
         </TableRow>
         <TableRow>
           <TableCell className="font-semibold">Role</TableCell>

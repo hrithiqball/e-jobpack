@@ -27,13 +27,13 @@ import { useEffect, useState, useTransition } from 'react';
 import EditUser from './edit';
 import { Loader } from '@/components/ui/loader';
 import { useUserStore } from '@/hooks/use-user.store';
-import { User } from '@prisma/client';
 import UserDetails from './details';
 import { compare } from 'bcryptjs';
 import { toast } from 'sonner';
 import { updatePassword } from '@/data/user.action';
 import { useDepartmentTypeStore } from '@/hooks/use-department-type.store';
 import { DepartmentTypes } from '@/types/department-enum';
+import { User } from '@/types/user';
 
 type UserDetailsProps = { userData: User; departments: DepartmentTypes };
 
@@ -44,14 +44,14 @@ export default function UserComponent({
   const [transitioning, startTransition] = useTransition();
 
   const { user, setUser } = useUserStore();
-  const { setDepartments } = useDepartmentTypeStore();
+  const { setDepartmentTypes } = useDepartmentTypeStore();
 
   const [openEditUser, setOpenEditUser] = useState(false);
 
   useEffect(() => {
     setUser(userData);
-    setDepartments(departments);
-  }, [userData, setUser, departments, setDepartments]);
+    setDepartmentTypes(departments);
+  }, [userData, setUser, departments, setDepartmentTypes]);
 
   const form = useForm<UpdatePasswordForm>({
     resolver: zodResolver(UpdatePasswordFormSchema),

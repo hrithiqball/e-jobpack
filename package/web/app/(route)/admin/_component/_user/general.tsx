@@ -1,10 +1,10 @@
 import Image from 'next/image';
-import { User } from '@prisma/client';
 import { baseServerUrl } from '@/public/constant/url';
 import { convertToTitleCase } from '@/lib/function/string';
+import { User, Users } from '@/types/user';
 
 type UserGeneralProps = {
-  userData: User[];
+  userData: Users;
   handleOpenUserPreview: (user: User) => void;
 };
 
@@ -46,9 +46,7 @@ export default function General({
           <div className="grid grid-cols-2 divide-x divide-tremor-border border-t border-tremor-border dark:divide-dark-tremor-border dark:border-dark-tremor-border">
             <div className="truncate px-3 py-2">
               <p className="text-xs text-gray-400">Department</p>
-              <p className="text-medium">
-                {convertToTitleCase(user.department)}
-              </p>
+              <p className="text-medium">{user.department?.value}</p>
             </div>
             <div className="truncate px-3 py-2">
               <p className="text-xs text-gray-400">Role</p>

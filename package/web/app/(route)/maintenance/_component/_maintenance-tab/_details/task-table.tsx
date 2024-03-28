@@ -55,7 +55,7 @@ export default function TaskTable({ checklistId, taskList }: TaskTableProps) {
   const role = useCurrentRole();
 
   const { setCurrentTask } = useTaskStore();
-  const { removeTaskFromChecklist } = useMaintenanceStore();
+  const { removeTaskFromChecklist, maintenance } = useMaintenanceStore();
 
   const [openEditTask, setOpenEditTask] = useState(false);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
@@ -110,9 +110,16 @@ export default function TaskTable({ checklistId, taskList }: TaskTableProps) {
           row.original.taskAssignee && row.original.taskAssignee.length > 0
             ? row.original.taskAssignee.map(ta => ta.user)
             : [];
+        const maintenanceMember = maintenance
+          ? maintenance.maintenanceMember.map(mm => mm.user)
+          : [];
 
         return (
-          <TableAssigneeCell taskId={row.original.id} assignee={assignee} />
+          <TableAssigneeCell
+            taskId={row.original.id}
+            assignee={assignee}
+            maintenanceMember={maintenanceMember}
+          />
         );
       },
     },

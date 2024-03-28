@@ -1,5 +1,3 @@
-import { User } from '@prisma/client';
-
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -26,6 +24,7 @@ import {
   PopoverItemDestructive,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { User } from '@/types/user';
 
 type Section = 'general' | 'approve' | 'block';
 
@@ -87,7 +86,13 @@ export default function UserTab() {
 
   if (!userList || !userData) {
     router.push('/admin');
-    return <Loader />;
+
+    return (
+      <>
+        <p>jui</p>
+        <Loader />;
+      </>
+    );
   }
 
   return (

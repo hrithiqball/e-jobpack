@@ -25,9 +25,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { DepartmentEnum, RoleEnum } from '@/types/enum';
+import { RoleEnum } from '@/types/enum';
 import { useEffect, useState, useTransition } from 'react';
-import { Department, Role } from '@prisma/client';
+import { Role } from '@prisma/client';
 import { Label } from '@/components/ui/label';
 import {
   AlertDialog,
@@ -43,6 +43,8 @@ import {
 import { toast } from 'sonner';
 import { adminBlockUser, adminUpdateUser } from '@/data/user.action';
 import { AdminUpdateUser } from '@/lib/schemas/user';
+import { useDepartmentTypeStore } from '@/hooks/use-department-type.store';
+import { Loader } from '@/components/ui/loader';
 
 type UserPreviewProps = {
   open: boolean;
@@ -54,17 +56,18 @@ export default function UserPreview({ open, onClose }: UserPreviewProps) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
   const { currentUser } = useUserStore();
+  const { departmentTypes } = useDepartmentTypeStore();
 
   const [roleValue, setRoleValue] = useState(currentUser?.role);
   const [departmentValue, setDepartmentValue] = useState(
-    currentUser?.department,
+    currentUser?.departmentId,
   );
 
   useEffect(() => {
     if (!currentUser) return;
 
     setRoleValue(currentUser.role);
-    setDepartmentValue(currentUser.department);
+    setDepartmentValue(currentUser.departmentId);
   }, [currentUser, setRoleValue, setDepartmentValue]);
 
   function handleRoleChange(value: string) {
@@ -73,8 +76,7 @@ export default function UserPreview({ open, onClose }: UserPreviewProps) {
   }
 
   function handleDepartmentChange(value: string) {
-    const department = value as Department;
-    setDepartmentValue(department);
+    setDepartmentValue(value);
   }
 
   function handleBlockUser() {
@@ -123,6 +125,8 @@ export default function UserPreview({ open, onClose }: UserPreviewProps) {
   }
 
   if (!currentUser) return null;
+
+  if (!departmentTypes) return <Loader />;
 
   return isDesktop ? (
     <Sheet open={open} onOpenChange={handleClose}>
@@ -190,9 +194,9 @@ export default function UserPreview({ open, onClose }: UserPreviewProps) {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {DepartmentEnum.map(department => (
-                  <SelectItem key={department.value} value={department.value}>
-                    {department.label}
+                {departmentTypes.map(department => (
+                  <SelectItem key={department.id} value={department.id}>
+                    {department.value}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -228,7 +232,7 @@ export default function UserPreview({ open, onClose }: UserPreviewProps) {
           <Button
             variant="outline"
             disabled={
-              currentUser.department === departmentValue ||
+              currentUser.departmentId === departmentValue ||
               currentUser.role === roleValue ||
               transitioning
             }

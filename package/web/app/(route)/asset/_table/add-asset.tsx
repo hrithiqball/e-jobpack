@@ -1,6 +1,6 @@
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { AssetStatus, AssetType, User } from '@prisma/client';
+import { AssetStatus, AssetType } from '@prisma/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import Image from 'next/image';
@@ -47,16 +47,17 @@ import {
   CreateAssetSchema,
 } from '@/lib/schemas/asset';
 import { baseServerUrl } from '@/public/constant/url';
+import { Users } from '@/types/user';
 
 type AddAssetProps = {
   open: boolean;
   onClose: () => void;
-  userList: User[];
+  userList: Users;
   assetStatusList: AssetStatus[];
   assetTypeList: AssetType[];
 };
 
-export default function AddAssetModal({
+export default function AddAsset({
   open,
   onClose,
   userList,

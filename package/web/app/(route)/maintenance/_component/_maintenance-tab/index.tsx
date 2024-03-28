@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { User } from '@prisma/client';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import dayjs from 'dayjs';
@@ -66,8 +65,8 @@ import MaintenanceRecreate from './_recreate';
 import MaintenanceCreate from './_create';
 import MaintenancePreview from './preview';
 import MaintenanceDetails from './_details';
-import MaintenanceEdit from './edit';
 import { baseServerUrl } from '@/public/constant/url';
+import { User } from '@/types/user';
 
 type MaintenanceAllTabProps = {
   maintenanceList: MaintenanceList;
@@ -80,7 +79,6 @@ export default function MaintenanceTab({
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const isEdit = searchParams.get('isEdit') === 'true' || false;
   const details = searchParams.get('details') === 'true' || false;
 
   const { setMaintenance } = useMaintenanceStore();
@@ -189,7 +187,7 @@ export default function MaintenanceTab({
       header: 'Requested By',
       cell: ({ row }) => {
         const user: User | null = row.getValue('requestedBy');
-        const initials = user ? user.name.substring(0, 3) : 'N/A';
+        const initials = user?.name.substring(0, 3) ?? 'N/A';
 
         return user ? (
           <div className="flex items-center space-x-2">
@@ -218,9 +216,9 @@ export default function MaintenanceTab({
       header: 'Person In Charge',
       cell: ({ row }) => {
         const user: User = row.getValue('approvedBy');
-        const initials = user.name.substring(0, 3);
+        const initials = user?.name.substring(0, 3) ?? 'N/A';
 
-        return (
+        return user ? (
           <div className="flex items-center space-x-2">
             {user.image ? (
               <Image
@@ -237,6 +235,8 @@ export default function MaintenanceTab({
             )}
             <p>{user.name}</p>
           </div>
+        ) : (
+          <p>Not assigned</p>
         );
       },
     },
@@ -327,13 +327,6 @@ export default function MaintenanceTab({
   function handleCloseMaintenancePreview() {
     setOpenMaintenancePreview(false);
   }
-
-  if (isEdit)
-    return (
-      <Wrapper>
-        <MaintenanceEdit />
-      </Wrapper>
-    );
 
   if (details) {
     return (
@@ -485,7 +478,7 @@ export default function MaintenanceTab({
         <div className="flex flex-1 items-center justify-center">
           <div className="flex flex-col items-center justify-center space-y-4">
             <Image priority src={empty} alt="Empty list" width={100} />
-            <span className="ml-2">No assets found</span>
+            <span className="ml-2">No maintenances found</span>
           </div>
         </div>
       )}

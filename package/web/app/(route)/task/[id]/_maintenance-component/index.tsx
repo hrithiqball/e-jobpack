@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useEffect, Key } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChecklistLibrary, User } from '@prisma/client';
+import { ChecklistLibrary } from '@prisma/client';
 import dayjs from 'dayjs';
 
 import { Button } from '@/components/ui/button';
@@ -27,12 +27,13 @@ import InfoTable from '@/components/helper/info-table';
 import { useAssetStore } from '@/hooks/use-asset.store';
 import { AssetList } from '@/types/asset';
 import AddChecklist from '@/components/helper/add-checklist';
+import { Users } from '@/types/user';
 
 type MaintenanceComponentProps = {
   maintenance: MaintenanceItem;
   checklistLibraryList: ChecklistLibrary[];
   assetList: AssetList;
-  userList: User[];
+  userList: Users;
 };
 
 export default function MaintenanceComponent({

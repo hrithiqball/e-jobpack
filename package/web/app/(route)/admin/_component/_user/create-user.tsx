@@ -38,11 +38,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { DepartmentEnum, RoleEnum } from '@/types/enum';
+import { RoleEnum } from '@/types/enum';
 import { Label } from '@/components/ui/label';
 import { CreateUserAdminForm, CreateUserAdminSchema } from '@/lib/schemas/user';
 import { adminCreateUser } from '@/data/user.action';
-import { Department, Role } from '@prisma/client';
+import { Role } from '@prisma/client';
+import { useDepartmentTypeStore } from '@/hooks/use-department-type.store';
+import { Loader } from '@/components/ui/loader';
 
 type CreateUserProps = {
   open: boolean;
@@ -53,6 +55,8 @@ export default function CreateUser({ open, onClose }: CreateUserProps) {
   const [transitioning, startTransition] = useTransition();
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const user = useCurrentUser();
+
+  const { departmentTypes } = useDepartmentTypeStore();
 
   const [userRole, setUserRole] = useState('');
   const [userDepartment, setUserDepartment] = useState('');
@@ -80,14 +84,11 @@ export default function CreateUser({ open, onClose }: CreateUserProps) {
         return;
       }
 
-      toast.promise(
-        adminCreateUser(data, userRole as Role, userDepartment as Department),
-        {
-          loading: 'Creating user...',
-          success: 'User created',
-          error: 'Failed to create user',
-        },
-      );
+      toast.promise(adminCreateUser(data, userRole as Role, userDepartment), {
+        loading: 'Creating user...',
+        success: 'User created',
+        error: 'Failed to create user',
+      });
     });
   }
 
@@ -104,6 +105,8 @@ export default function CreateUser({ open, onClose }: CreateUserProps) {
   function handleClose() {
     onClose();
   }
+
+  if (!departmentTypes) return <Loader />;
 
   return isDesktop ? (
     <Sheet open={open} onOpenChange={handleClose}>
@@ -206,9 +209,9 @@ export default function CreateUser({ open, onClose }: CreateUserProps) {
                     <SelectValue placeholder="Choose" />
                   </SelectTrigger>
                   <SelectContent>
-                    {DepartmentEnum.map(role => (
-                      <SelectItem key={role.value} value={role.value}>
-                        {role.label}
+                    {departmentTypes.map(department => (
+                      <SelectItem key={department.id} value={department.id}>
+                        {department.value}
                       </SelectItem>
                     ))}
                   </SelectContent>
