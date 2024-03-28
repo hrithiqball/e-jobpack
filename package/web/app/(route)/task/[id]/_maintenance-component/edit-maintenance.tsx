@@ -48,7 +48,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { DateRange } from 'react-day-picker';
 import { CalendarIcon } from 'lucide-react';
 import dayjs from 'dayjs';
@@ -59,6 +59,9 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useCurrentUser } from '@/hooks/use-current-user';
+import { toast } from 'sonner';
+import { updateMaintenanceDetails } from '@/data/maintenance.action';
 
 type EditMaintenanceProps = {
   open: boolean;
@@ -69,7 +72,9 @@ export default function EditMaintenance({
   open,
   onClose,
 }: EditMaintenanceProps) {
+  const [transitioning, startTransition] = useTransition();
   const isDesktop = useMediaQuery('(min-width: 768px)');
+  const user = useCurrentUser();
 
   const { maintenance } = useMaintenanceStore();
   const { userList } = useUserStore();
@@ -98,7 +103,36 @@ export default function EditMaintenance({
   });
 
   function onSubmit(data: UpdateMaintenanceForm) {
-    console.log(data);
+    startTransition(() => {
+      if (!maintenance) {
+        toast.error('Maintenance not found');
+        return;
+      }
+
+      if (!user || !user.id) {
+        toast.error('Session expired');
+        return;
+      }
+
+      if (!dateRange) {
+        toast.error('Date is required');
+        return;
+      }
+
+      const memberList = maintenanceMemberValue?.map(user => ({
+        userId: user.id,
+        checked: user.checked!,
+      }));
+
+      toast.promise(
+        updateMaintenanceDetails(maintenance.id, data, dateRange, memberList),
+        {
+          loading: 'Updating maintenance...',
+          success: 'Maintenance updated successfully',
+          error: 'Failed to update maintenance',
+        },
+      );
+    });
   }
 
   function handleCheckChange(userId: string) {
@@ -245,7 +279,7 @@ export default function EditMaintenance({
                       Members
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent>
+                  <DropdownMenuContent className="w-full">
                     {maintenanceMemberValue?.map(user => (
                       <DropdownMenuCheckboxItem
                         key={user.id}
@@ -282,7 +316,14 @@ export default function EditMaintenance({
           </form>
         </Form>
         <SheetFooter>
-          <Button variant="outline">Update</Button>
+          <Button
+            type="submit"
+            form="update-maintenance-task"
+            variant="outline"
+            disabled={transitioning}
+          >
+            Update
+          </Button>
         </SheetFooter>
       </SheetContent>
     </Sheet>

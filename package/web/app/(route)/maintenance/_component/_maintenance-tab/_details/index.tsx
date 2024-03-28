@@ -47,7 +47,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { deleteMaintenance } from '@/data/maintenance.action';
-import InfoTable from '../../../../../../components/helper/info-table';
+import InfoTable from '@/components/helper/info-table';
 
 export default function MaintenanceDetails() {
   const [transitioning, startTransition] = useTransition();

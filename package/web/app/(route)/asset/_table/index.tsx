@@ -26,7 +26,6 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import {
-  Avatar,
   Checkbox,
   Chip,
   Dropdown,
@@ -69,7 +68,7 @@ import DeleteAssetModal from './delete-asset';
 import AddAsset from './add-asset';
 import AddMaintenanceModal from '@/components/add-maintenance';
 import { baseServerUrl } from '@/public/constant/url';
-import { User, Users } from '@/types/user';
+import { Users } from '@/types/user';
 
 type AssetTableProps = {
   assetList: AssetList;
@@ -441,33 +440,29 @@ export default function AssetTable({
         );
       },
       cell: ({ row }) => {
-        const pic: User = row.getValue('personInCharge');
-
-        return pic ? (
+        return row.original.personInCharge ? (
           <div className="flex items-center space-x-2">
-            {pic.image !== null && pic.image !== '' ? (
+            {row.original.personInCharge.image ? (
               <Image
-                src={`${baseServerUrl}/user/${pic.image}`}
-                alt={pic.name}
-                width={28}
-                height={28}
+                src={`${baseServerUrl}/user/${row.original.personInCharge.image}`}
+                alt={row.original.personInCharge.name}
+                width={24}
+                height={24}
                 quality={100}
-                className="size-7 rounded-full bg-teal-950 object-contain"
+                className="size-6 rounded-full bg-teal-950 object-contain"
               />
             ) : (
-              <Avatar name={pic.name} size="sm" />
+              <div className="flex size-6 items-center justify-center rounded-full bg-gray-400">
+                <p className="text-xs text-white">
+                  {row.original.personInCharge.name.substring(0, 1)}
+                </p>
+              </div>
             )}
-            <span>{pic.name}</span>
+            <span>{row.original.personInCharge.name}</span>
           </div>
         ) : (
           <div className="flex items-center space-x-2">
-            <Avatar
-              showFallback
-              name="Not Specified"
-              size="sm"
-              fallback={<UserIcon size={18} />}
-            />
-            <span>Not Specified</span>
+            <span>Not Assigned</span>
           </div>
         );
       },
@@ -702,7 +697,7 @@ export default function AssetTable({
     <div className="flex flex-1 flex-col space-y-4">
       <div className="flex flex-1 flex-col">
         {assetList.length > 0 ? (
-          <Fragment>
+          <div className="flex flex-1 flex-col space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <div className="flex items-center">
@@ -847,40 +842,42 @@ export default function AssetTable({
                 )}
               </div>
             </div>
-            <Table>
-              <TableHeader>
-                {table.getHeaderGroups().map(headerGroup => (
-                  <TableRow
-                    noHover
-                    key={headerGroup.id}
-                    className="bg-white dark:bg-gray-950"
-                  >
-                    {headerGroup.headers.map(header => (
-                      <TableHead key={header.id}>
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows.map(row => (
-                  <TableRow key={row.id}>
-                    {row.getVisibleCells().map(cell => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <div className="flex-1">
+              <Table>
+                <TableHeader>
+                  {table.getHeaderGroups().map(headerGroup => (
+                    <TableRow
+                      noHover
+                      key={headerGroup.id}
+                      className="bg-white dark:bg-gray-950"
+                    >
+                      {headerGroup.headers.map(header => (
+                        <TableHead key={header.id}>
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                        </TableHead>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableHeader>
+                <TableBody>
+                  {table.getRowModel().rows.map(row => (
+                    <TableRow key={row.id}>
+                      {row.getVisibleCells().map(cell => (
+                        <TableCell key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
             {table.getPaginationRowModel().rows.length === 0 && (
               <div className="flex flex-1 items-center justify-center">
                 <div className="flex flex-col items-center justify-center space-y-4">
@@ -931,7 +928,7 @@ export default function AssetTable({
               </div>
               <div className="flex-1"></div>
             </div>
-          </Fragment>
+          </div>
         ) : (
           <div className="flex flex-1 flex-col items-center justify-center">
             <div className="flex flex-1 flex-col items-center justify-center space-y-4">

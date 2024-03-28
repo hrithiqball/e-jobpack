@@ -128,12 +128,7 @@ export default function EditMaintenance({
         return;
       }
 
-      if (!maintenanceMemberValue) {
-        toast.error('Member is required');
-        return;
-      }
-
-      const memberList = maintenanceMemberValue.map(user => ({
+      const memberList = maintenanceMemberValue?.map(user => ({
         userId: user.id,
         checked: user.checked!,
       }));

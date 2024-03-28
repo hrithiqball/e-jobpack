@@ -78,8 +78,8 @@ function PersonInCharge({ personInCharge }: { personInCharge: User }) {
           className="size-5 rounded-full bg-teal-950 object-contain"
         />
       ) : (
-        <div className="size-5 rounded-full">
-          <span>{personInCharge.name.substring(0, 3)}</span>
+        <div className="flex size-5 items-center justify-center rounded-full bg-teal-950">
+          <span className="text-xs">{personInCharge.name.substring(0, 1)}</span>
         </div>
       )}
       <p>{personInCharge.name}</p>

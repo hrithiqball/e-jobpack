@@ -317,6 +317,7 @@ model User {
   isBlocked                                                   Boolean              @default(false) @map("is_blocked")
   isRejected                                                  Boolean              @default(false) @map("is_rejected")
   departmentId                                                String?              @map("department_id")
+  groupId                                                     String?              @map("group_id")
   account                                                     Account[]
   asset_asset_created_byTouser                                Asset[]              @relation("asset_created_byTouser")
   asset_asset_person_in_chargeTouser                          Asset[]              @relation("asset_person_in_chargeTouser")
@@ -344,6 +345,7 @@ model User {
   task_library_task_library_created_byTouser                  TaskLibrary[]        @relation("task_library_created_byTouser")
   task_library_task_library_updated_byTouser                  TaskLibrary[]        @relation("task_library_updated_byTouser")
   department                                                  DepartmentEnum?      @relation(fields: [departmentId], references: [id], map: "public_user_department_id_fkey")
+  group                                                       Group?               @relation(fields: [groupId], references: [id], map: "public_user_group_id_fkey")
 
   @@map("user")
   @@schema("public")
@@ -357,6 +359,15 @@ model TaskAssignee {
 
   @@id([taskId, userId])
   @@map("task_assignee")
+  @@schema("public")
+}
+
+model Group {
+  id   String @id @default(cuid())
+  name String
+  user User[]
+
+  @@map("group")
   @@schema("public")
 }
 

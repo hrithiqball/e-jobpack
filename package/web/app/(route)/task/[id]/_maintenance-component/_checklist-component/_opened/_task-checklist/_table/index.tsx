@@ -57,6 +57,7 @@ import EditTask from '@/components/edit-task';
 import TableTaskCompleteCell from '@/app/(route)/maintenance/_component/_maintenance-tab/_details/task-complete-cell';
 import ChecklistTaskDetails from './task-details';
 import { stopPropagation } from '@/lib/function/event';
+import { useCurrentRole } from '@/hooks/use-current-role';
 
 type TaskTableProps = {
   taskList: TaskList;
@@ -66,12 +67,14 @@ export default function TaskTable({ taskList }: TaskTableProps) {
   const [transitioning, startTransition] = useTransition();
   const isDesktop = useMediaQuery('(min-width: 768px');
   const user = useCurrentUser();
+  const role = useCurrentRole();
   const router = useRouter();
 
   const { setCurrentTask } = useTaskStore();
 
   const [openEditTask, setOpenEditTask] = useState(false);
   const [openTaskDetails, setOpenTaskDetails] = useState(false);
+  const [taskData, setTaskData] = useState(taskList);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
     issue: false,
     remarks: false,
@@ -83,6 +86,18 @@ export default function TaskTable({ taskList }: TaskTableProps) {
       remarks: isDesktop,
     });
   }, [isDesktop]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    if (role === 'TECHNICIAN') {
+      setTaskData(
+        taskList.filter(task =>
+          task.taskAssignee.some(assignee => assignee.userId === user.id),
+        ),
+      );
+    }
+  }, [taskList, setTaskData, role, user]);
 
   const columns: ColumnDef<TaskItem>[] = [
     {
@@ -97,7 +112,7 @@ export default function TaskTable({ taskList }: TaskTableProps) {
             <div className="flex flex-col">
               <p>{row.original.taskActivity}</p>
               <p className="text-xs text-gray-400">
-                {isNullOrEmpty(description) ? description : 'No description'}
+                {isNullOrEmpty(description) ?? 'No description'}
               </p>
             </div>
           </div>
@@ -279,7 +294,7 @@ export default function TaskTable({ taskList }: TaskTableProps) {
   ];
 
   const table = useReactTable({
-    data: taskList,
+    data: taskData,
     columns,
     getCoreRowModel: getCoreRowModel<TaskItem>(),
     onColumnVisibilityChange: setColumnVisibility,
