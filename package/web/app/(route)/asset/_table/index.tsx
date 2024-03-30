@@ -52,7 +52,6 @@ import {
   PackagePlus,
   Search,
   Trash2,
-  UserIcon,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -446,13 +445,13 @@ export default function AssetTable({
               <Image
                 src={`${baseServerUrl}/user/${row.original.personInCharge.image}`}
                 alt={row.original.personInCharge.name}
-                width={24}
-                height={24}
+                width={20}
+                height={20}
                 quality={100}
-                className="size-6 rounded-full bg-teal-950 object-contain"
+                className="size-5 rounded-full bg-teal-950 object-contain"
               />
             ) : (
-              <div className="flex size-6 items-center justify-center rounded-full bg-gray-400">
+              <div className="flex size-5 items-center justify-center rounded-full bg-teal-800">
                 <p className="text-xs text-white">
                   {row.original.personInCharge.name.substring(0, 1)}
                 </p>
@@ -491,14 +490,16 @@ export default function AssetTable({
               <Image
                 src={`${baseServerUrl}/user/${row.original.createdBy.image}`}
                 alt={row.original.createdBy.name}
-                width={28}
-                height={28}
+                width={20}
+                height={20}
                 quality={100}
-                className="size-7 rounded-full bg-teal-950 object-contain"
+                className="size-5 rounded-full bg-teal-800 object-contain"
               />
             ) : (
-              <div className="size-7 rounded-full bg-gray-500">
-                <UserIcon size={18} />
+              <div className="size-5 rounded-full bg-teal-800">
+                <p className="text-xs text-white">
+                  {row.original.createdBy.name.substring(0, 1)}
+                </p>
               </div>
             )}
             <span>{row.original.createdBy.name}</span>
@@ -531,14 +532,16 @@ export default function AssetTable({
               <Image
                 src={`${baseServerUrl}/user/${row.original.updatedBy.image}`}
                 alt={row.original.updatedBy.name}
-                width={28}
-                height={28}
+                width={20}
+                height={20}
                 quality={100}
-                className="size-7 rounded-full bg-teal-950 object-contain"
+                className="size-5 rounded-full bg-teal-800 object-contain"
               />
             ) : (
-              <div className="size-7 rounded-full bg-gray-500">
-                <UserIcon size={18} />
+              <div className="size-5 rounded-full bg-teal-800">
+                <p className="text-xs text-white">
+                  {row.original.updatedBy.name.substring(0, 1)}
+                </p>
               </div>
             )}
             <span>{row.original.updatedBy.name}</span>

@@ -9,10 +9,10 @@ type TableTaskCompleteCellProps = {
 export default function TableTaskCompleteCell({
   task,
 }: TableTaskCompleteCellProps) {
-  function ListChoiceTooltip() {
+  function ChoiceTooltip() {
     return (
       <div className="flex flex-col">
-        {task.listChoice.map((choice, i) => (
+        {task.taskSelected.map((choice, i) => (
           <p key={i}>{choice}</p>
         ))}
       </div>
@@ -33,20 +33,23 @@ export default function TableTaskCompleteCell({
 
     case 'NUMBER':
       return task.taskNumberVal ? (
-        <span>{task.taskNumberVal}</span>
+        <span className="text-green-500">{task.taskNumberVal}</span>
       ) : (
         <Incomplete />
       );
 
     case 'MULTIPLE_SELECT':
       return (
-        <Tooltip placement="right" content={<ListChoiceTooltip />}>
+        <Tooltip
+          placement="right"
+          radius="sm"
+          isDisabled={task.taskSelected.length === 0}
+          content={<ChoiceTooltip />}
+        >
           <div>
             {task.taskSelected.length > 0 ? (
-              <div className="flex items-center">
-                {task.taskSelected.map(choice => (
-                  <p key={choice}>{choice}</p>
-                ))}
+              <div className="flex items-center text-green-500">
+                {task.taskSelected.length} choice chosen
               </div>
             ) : (
               <Incomplete />
@@ -57,10 +60,15 @@ export default function TableTaskCompleteCell({
 
     case 'SINGLE_SELECT':
       return (
-        <Tooltip placement="right" content={<ListChoiceTooltip />}>
+        <Tooltip
+          placement="right"
+          radius="sm"
+          isDisabled={task.taskSelected.length === 0}
+          content={<ChoiceTooltip />}
+        >
           <div>
             {task.taskSelected.length > 0 ? (
-              <span>complete single</span>
+              <span className="text-green-500">{task.taskSelected[0]}</span>
             ) : (
               <Incomplete />
             )}
@@ -72,9 +80,9 @@ export default function TableTaskCompleteCell({
       return task.taskBool === null ? (
         <Incomplete />
       ) : task.taskBool ? (
-        <span>Yes</span>
+        <span className="text-green-500">Yes</span>
       ) : (
-        <span>No</span>
+        <span className="text-green-500">No</span>
       );
   }
 }

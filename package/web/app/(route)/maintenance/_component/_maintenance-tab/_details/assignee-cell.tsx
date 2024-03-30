@@ -105,12 +105,14 @@ export default function TableAssigneeCell({
                         alt={assigneeList[0]!.name}
                         width={20}
                         height={20}
-                        className="size-5 rounded-full bg-teal-950 object-contain"
+                        className="size-5 rounded-full bg-teal-800 object-contain"
                       />
                     ) : (
-                      <p className="text-xs">
-                        {assigneeList[0]!.name.substring(0, 1)}
-                      </p>
+                      <div className="flex size-5 items-center justify-center">
+                        <p className="text-xs">
+                          {assigneeList[0]!.name.substring(0, 1)}
+                        </p>
+                      </div>
                     )}
                   </div>
                   {assigneeList.length === 1 && <p>{assigneeList[0]!.name}</p>}
@@ -125,7 +127,7 @@ export default function TableAssigneeCell({
                           alt={user.name}
                           width={20}
                           height={20}
-                          className="inline-block size-5 rounded-full bg-teal-950 object-contain"
+                          className="inline-block size-5 rounded-full bg-teal-800 object-contain"
                         />
                       ) : (
                         <div className="flex size-5 items-center justify-center rounded-full bg-teal-800 text-white">
@@ -163,12 +165,12 @@ export default function TableAssigneeCell({
                 <Image
                   src={`${baseServerUrl}/user/${user.image}`}
                   alt={user.name}
-                  width={6}
-                  height={6}
-                  className="size-5 rounded-full bg-teal-950 object-contain"
+                  width={20}
+                  height={20}
+                  className="size-5 rounded-full bg-teal-800 object-contain"
                 />
               ) : (
-                <div className="flex size-5 items-center justify-center rounded-full bg-gray-400">
+                <div className="flex size-5 items-center justify-center rounded-full bg-teal-800">
                   <p className="text-xs text-white">
                     {user.name.substring(0, 1)}
                   </p>

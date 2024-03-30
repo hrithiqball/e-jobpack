@@ -60,14 +60,14 @@ export default function UserPreview({ open, onClose }: UserPreviewProps) {
 
   const [roleValue, setRoleValue] = useState(currentUser?.role);
   const [departmentValue, setDepartmentValue] = useState(
-    currentUser?.departmentId,
+    currentUser?.departmentId ?? '',
   );
 
   useEffect(() => {
     if (!currentUser) return;
 
     setRoleValue(currentUser.role);
-    setDepartmentValue(currentUser.departmentId);
+    setDepartmentValue(currentUser.departmentId ?? '');
   }, [currentUser, setRoleValue, setDepartmentValue]);
 
   function handleRoleChange(value: string) {
@@ -183,26 +183,28 @@ export default function UserPreview({ open, onClose }: UserPreviewProps) {
             </Select>
           </div>
         )}
-        {departmentValue && (
-          <div className="flex flex-col space-y-3">
-            <Label>Department</Label>
-            <Select
-              value={departmentValue}
-              onValueChange={handleDepartmentChange}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {departmentTypes.map(department => (
-                  <SelectItem key={department.id} value={department.id}>
-                    {department.value}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        )}
+        {currentUser.departmentId}
+        {departmentValue}
+        {/* {departmentValue && ( */}
+        <div className="flex flex-col space-y-3">
+          <Label>Department</Label>
+          <Select
+            value={departmentValue}
+            onValueChange={handleDepartmentChange}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {departmentTypes.map(department => (
+                <SelectItem key={department.id} value={department.id}>
+                  {department.value}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        {/* )} */}
         <SheetFooter>
           <AlertDialog>
             <AlertDialogTrigger>
@@ -231,11 +233,7 @@ export default function UserPreview({ open, onClose }: UserPreviewProps) {
           </AlertDialog>
           <Button
             variant="outline"
-            disabled={
-              currentUser.departmentId === departmentValue ||
-              currentUser.role === roleValue ||
-              transitioning
-            }
+            disabled={transitioning}
             onClick={handleUpdateUser}
           >
             Update

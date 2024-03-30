@@ -73,7 +73,7 @@ import emptyIcon from '@/public/image/empty.svg';
 
 import MaintenanceLibraryInfo from './library-info';
 import { baseServerUrl } from '@/public/constant/url';
-import { User } from '@/types/user';
+import { isNullOrEmpty } from '@/lib/function/string';
 
 type MaintenanceLibraryTableProps = {
   maintenanceLibraryList: MaintenanceLibraryList;
@@ -148,31 +148,40 @@ export default function MaintenanceLibraryTable({
       enableSorting: false,
       enableHiding: false,
     },
-    { accessorKey: 'title', header: 'Title' },
-    { accessorKey: 'description', header: 'Description' },
+    {
+      accessorKey: 'title',
+      header: 'Title',
+      cell: ({ row }) => {
+        return (
+          <div className="flex flex-col">
+            <p>{row.original.title}</p>
+            <p className="text-xs text-gray-500">
+              {isNullOrEmpty(row.original.description) ?? 'No description'}
+            </p>
+          </div>
+        );
+      },
+    },
     {
       accessorKey: 'createdBy',
       header: 'Created By',
       cell: ({ row }) => {
-        const user: User = row.original.createdBy;
-        const initials = user.name.substring(0, 3);
-
         return (
           <div className="flex items-center space-x-2">
-            {user.image ? (
+            {row.original.createdBy.image ? (
               <Image
-                src={`${baseServerUrl}/user/${user.image}`}
-                alt={user.name}
-                width={28}
-                height={28}
-                className="size-7 rounded-full bg-teal-950 object-contain"
+                src={`${baseServerUrl}/user/${row.original.createdBy.image}`}
+                alt={row.original.createdBy.name}
+                width={20}
+                height={20}
+                className="size-5 rounded-full bg-teal-800 object-contain"
               />
             ) : (
-              <div className="flex size-7 items-center justify-center rounded-full bg-gray-500 text-xs">
-                {initials}
+              <div className="flex size-5 items-center justify-center rounded-full bg-teal-800 text-xs">
+                <p>{row.original.createdBy.name.substring(0, 3)}</p>
               </div>
             )}
-            <p>{user.name}</p>
+            <p>{row.original.createdBy.name}</p>
           </div>
         );
       },
@@ -181,25 +190,24 @@ export default function MaintenanceLibraryTable({
       accessorKey: 'updatedBy',
       header: 'Updated By',
       cell: ({ row }) => {
-        const user: User = row.original.createdBy;
-        const initials = user.name.substring(0, 3);
-
         return (
           <div className="flex items-center space-x-2">
-            {user.image ? (
+            {row.original.createdBy.image ? (
               <Image
-                src={`${baseServerUrl}/user/${user.image}`}
-                alt={user.name}
-                width={28}
-                height={28}
-                className="size-7 rounded-full bg-teal-950 object-contain"
+                src={`${baseServerUrl}/user/${row.original.createdBy.image}`}
+                alt={row.original.createdBy.name}
+                width={20}
+                height={20}
+                className="size-5 rounded-full bg-teal-800 object-contain"
               />
             ) : (
-              <div className="flex size-7 items-center justify-center rounded-full bg-gray-500 text-xs">
-                {initials}
+              <div className="flex size-5 items-center justify-center rounded-full bg-teal-800">
+                <p className="text-xs text-white">
+                  {row.original.createdBy.name.substring(0, 1).toUpperCase()}
+                </p>
               </div>
             )}
-            <p>{user.name}</p>
+            <p>{row.original.createdBy.name}</p>
           </div>
         );
       },

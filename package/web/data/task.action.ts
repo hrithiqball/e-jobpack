@@ -9,6 +9,7 @@ import {
   UpdateTask,
   UpdateTaskDetailsForm,
 } from '@/lib/schemas/task';
+import { revalidatePath } from 'next/cache';
 
 export async function createTask(createTask: CreateTask, taskType: TaskType) {
   try {
@@ -163,7 +164,11 @@ export async function updateTaskDetails(
   }
 }
 
-export async function deleteTask(actionBy: string, id: string) {
+export async function deleteTask(
+  maintenanceId: string,
+  actionBy: string,
+  id: string,
+) {
   try {
     const target = await db.task.delete({
       where: { id },
@@ -199,6 +204,7 @@ export async function deleteTask(actionBy: string, id: string) {
       });
     }
 
+    revalidatePath(`/task/${maintenanceId}`);
     return target;
   } catch (error) {
     console.error(error);

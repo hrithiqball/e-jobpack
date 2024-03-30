@@ -6,6 +6,7 @@ import { User, Users } from '@/types/user';
 import dayjs from 'dayjs';
 import Image from 'next/image';
 import { Loader } from '../ui/loader';
+import { Tooltip } from '@nextui-org/react';
 
 export default function InfoTable() {
   const { maintenance } = useMaintenanceStore();
@@ -50,12 +51,13 @@ export default function InfoTable() {
         <TableRow>
           <TableCell className="font-semibold">Maintenance Members</TableCell>
           <TableCell>
+            {/* TODO: update view of members */}
             {maintenance.maintenanceMember.length > 0 ? (
               <MaintenanceMember
                 members={maintenance.maintenanceMember.map(u => u.user)}
               />
             ) : (
-              <div className="">No team member chosen</div>
+              <div>No team member chosen</div>
             )}
           </TableCell>
         </TableRow>
@@ -75,11 +77,13 @@ function PersonInCharge({ personInCharge }: { personInCharge: User }) {
           alt={personInCharge.name}
           width={20}
           height={20}
-          className="size-5 rounded-full bg-teal-950 object-contain"
+          className="size-5 rounded-full bg-teal-800 object-contain"
         />
       ) : (
-        <div className="flex size-5 items-center justify-center rounded-full bg-teal-950">
-          <span className="text-xs">{personInCharge.name.substring(0, 1)}</span>
+        <div className="flex size-5 items-center justify-center rounded-full bg-teal-800">
+          <span className="text-xs text-white">
+            {personInCharge.name.substring(0, 1)}
+          </span>
         </div>
       )}
       <p>{personInCharge.name}</p>
@@ -92,18 +96,23 @@ function MaintenanceMember({ members }: { members: Users }) {
     <div className="flex items-center -space-x-3 overflow-hidden">
       {members.map(member => (
         <div key={member.id} className="size-5">
-          {member.image ? (
-            <Image
-              src={`${baseServerUrl}/user/${member.image}`}
-              alt={member.name}
-              width={20}
-              height={20}
-            />
-          ) : (
-            <div className="flex size-5 items-center justify-center rounded-full bg-gray-400">
-              <p className="text-xs">{member.name.substring(0, 1)}</p>
-            </div>
-          )}
+          <Tooltip radius="sm" content={member.name}>
+            {member.image ? (
+              <Image
+                src={`${baseServerUrl}/user/${member.image}`}
+                alt={member.name}
+                width={20}
+                height={20}
+                className="size-5 rounded-full bg-teal-800 object-contain"
+              />
+            ) : (
+              <div className="flex size-5 items-center justify-center rounded-full bg-teal-800">
+                <p className="text-xs text-white">
+                  {member.name.substring(0, 1)}
+                </p>
+              </div>
+            )}
+          </Tooltip>
         </div>
       ))}
     </div>

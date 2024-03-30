@@ -126,10 +126,10 @@ export default function UserAvatar({ user }: UserAvatarProps) {
                 alt={user.name}
                 height={96}
                 width={96}
-                className="size-24 rounded-full bg-teal-950 object-contain"
+                className="size-24 rounded-full bg-teal-800 object-contain"
               />
             ) : (
-              <div className="flex size-24 items-center justify-center rounded-full bg-teal-950 text-teal-800">
+              <div className="flex size-24 items-center justify-center rounded-full bg-teal-800 text-teal-400">
                 <p className="text-lg">
                   {user.name.substring(0, 1).toUpperCase()}
                 </p>
@@ -162,7 +162,7 @@ export default function UserAvatar({ user }: UserAvatarProps) {
                   alt="Preview"
                   height={200}
                   width={500}
-                  className="bg-teal-950 object-contain"
+                  className="bg-teal-800 object-contain"
                 />
               ) : userImage ? (
                 <Image
@@ -170,7 +170,7 @@ export default function UserAvatar({ user }: UserAvatarProps) {
                   alt="Preview"
                   height={200}
                   width={500}
-                  className="rounded-md bg-teal-950 object-contain"
+                  className="rounded-md bg-teal-800 object-contain"
                 />
               ) : (
                 <div

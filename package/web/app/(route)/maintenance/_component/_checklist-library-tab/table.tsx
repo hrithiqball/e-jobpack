@@ -58,16 +58,11 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { stopPropagation } from '@/lib/function/event';
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from '@/components/ui/hover-card';
-import TaskTypeHelper from '@/components/helper/TaskTypeHelper';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useChecklistLibStore } from '@/hooks/use-checklist-lib.store';
 import ChecklistLibraryDetails from './details';
 import { baseServerUrl } from '@/public/constant/url';
+import { isNullOrEmpty } from '@/lib/function/string';
 
 type ChecklistLibraryTableProps = {
   checklistLibraryList: ChecklistLibraryList;
@@ -133,8 +128,20 @@ export default function ChecklistLibraryTable({
       enableSorting: false,
       enableHiding: false,
     },
-    { accessorKey: 'title', header: 'Title' },
-    { accessorKey: 'description', header: 'Description' },
+    {
+      accessorKey: 'title',
+      header: 'Title',
+      cell: ({ row }) => {
+        return (
+          <div className="flex flex-col">
+            <p>{row.original.title}</p>
+            <p className="text-xs text-gray-500">
+              {isNullOrEmpty(row.original.description) ?? 'No description'}
+            </p>
+          </div>
+        );
+      },
+    },
     {
       accessorKey: 'createdBy',
       header: 'Created By',
@@ -145,13 +152,15 @@ export default function ChecklistLibraryTable({
               <Image
                 src={`${baseServerUrl}/user/${row.original.createdBy.image}`}
                 alt={row.original.createdBy.name}
-                width={28}
-                height={28}
-                className="size-7 rounded-full bg-teal-950 object-contain"
+                width={20}
+                height={20}
+                className="size-5 rounded-full bg-teal-800 object-contain"
               />
             ) : (
-              <div className="flex size-7 items-center justify-center rounded-full bg-gray-500 text-xs">
-                {row.original.createdBy.name.substring(0, 3)}
+              <div className="flex size-5 items-center justify-center rounded-full bg-teal-800">
+                <p className="text-xs">
+                  {row.original.createdBy.name.substring(0, 3)}
+                </p>
               </div>
             )}
             <p>{row.original.createdBy.name}</p>
@@ -169,13 +178,15 @@ export default function ChecklistLibraryTable({
               <Image
                 src={`${baseServerUrl}/user/${row.original.createdBy.image}`}
                 alt={row.original.createdBy.name}
-                width={28}
-                height={28}
-                className="size-7 rounded-full bg-teal-950 object-contain"
+                width={20}
+                height={20}
+                className="size-5 rounded-full bg-teal-800 object-contain"
               />
             ) : (
-              <div className="flex size-7 items-center justify-center rounded-full bg-gray-500 text-xs">
-                {row.original.createdBy.name.substring(0, 3)}
+              <div className="flex size-5 items-center justify-center rounded-full bg-teal-800">
+                <p className="text-xs">
+                  {row.original.createdBy.name.substring(0, 3)}
+                </p>
               </div>
             )}
             <p>{row.original.createdBy.name}</p>
@@ -211,44 +222,44 @@ export default function ChecklistLibraryTable({
         );
       },
     },
-    {
-      accessorKey: 'taskLibrary',
-      header: 'Task Count',
-      cell: ({ row }) => {
-        <HoverCard>
-          <HoverCardTrigger asChild>
-            <motion.div
-              animate="rest"
-              whileHover="hover"
-              variants={containerMotion}
-              className="group flex items-center space-x-2"
-            >
-              <motion.span
-                variants={childMotion}
-                className="group-hover:text-blue-500"
-              >
-                <Package size={18} />
-              </motion.span>
-              <span>{row.original.taskLibrary.length}</span>
-            </motion.div>
-          </HoverCardTrigger>
-          <HoverCardContent>
-            <div className="flex flex-col">
-              {row.original.taskLibrary.map(task => (
-                <div key={task.id} className="flex flex-col px-2">
-                  <div className="flex items-center space-x-2">
-                    <TaskTypeHelper size={18} taskType={task.taskType} />
-                    <span className="text-sm font-medium">
-                      {task.taskActivity}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </HoverCardContent>
-        </HoverCard>;
-      },
-    },
+    // {
+    //   accessorKey: 'taskLibrary',
+    //   header: 'Task Count',
+    //   cell: ({ row }) => {
+    //     <HoverCard>
+    //       <HoverCardTrigger asChild>
+    //         <motion.div
+    //           animate="rest"
+    //           whileHover="hover"
+    //           variants={containerMotion}
+    //           className="group flex items-center space-x-2"
+    //         >
+    //           <motion.span
+    //             variants={childMotion}
+    //             className="group-hover:text-blue-500"
+    //           >
+    //             <Package size={18} />
+    //           </motion.span>
+    //           <span>{row.original.taskLibrary.length}</span>
+    //         </motion.div>
+    //       </HoverCardTrigger>
+    //       <HoverCardContent>
+    //         <div className="flex flex-col">
+    //           {row.original.taskLibrary.map(task => (
+    //             <div key={task.id} className="flex flex-col px-2">
+    //               <div className="flex items-center space-x-2">
+    //                 <TaskTypeHelper size={18} taskType={task.taskType} />
+    //                 <span className="text-sm font-medium">
+    //                   {task.taskActivity}
+    //                 </span>
+    //               </div>
+    //             </div>
+    //           ))}
+    //         </div>
+    //       </HoverCardContent>
+    //     </HoverCard>;
+    //   },
+    // },
     {
       id: 'actions',
       header: () => null,

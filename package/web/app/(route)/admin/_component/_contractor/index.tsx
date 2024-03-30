@@ -81,7 +81,7 @@ export default function ContractorComponent() {
                 />
               ) : (
                 <div className="flex size-12 items-center justify-center rounded-full bg-teal-100 text-teal-800">
-                  <p className="text-medium">
+                  <p className="text-medium text-white">
                     {contractor.name.substring(0, 1).toUpperCase()}
                   </p>
                 </div>

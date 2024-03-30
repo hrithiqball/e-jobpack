@@ -67,7 +67,6 @@ import MaintenanceCreate from './_create';
 import MaintenancePreview from './preview';
 import MaintenanceDetails from './_details';
 import { baseServerUrl } from '@/public/constant/url';
-import { User } from '@/types/user';
 import Link from 'next/link';
 
 type MaintenanceAllTabProps = {
@@ -193,28 +192,27 @@ export default function MaintenanceTab({
       accessorKey: 'requestedBy',
       header: 'Requested By',
       cell: ({ row }) => {
-        const user: User | null = row.getValue('requestedBy');
-        const initials = user?.name.substring(0, 1).toUpperCase() ?? 'N/A';
-
-        return user ? (
+        return row.original.requestedBy ? (
           <div className="flex items-center space-x-2">
-            {user.image ? (
+            {row.original.requestedBy.image ? (
               <Image
-                src={`${baseServerUrl}/user/${user.image}`}
-                alt={user.name}
-                width={24}
-                height={24}
-                className="size-6 rounded-full bg-teal-950 object-contain"
+                src={`${baseServerUrl}/user/${row.original.requestedBy.image}`}
+                alt={row.original.requestedBy?.name || ''}
+                width={20}
+                height={20}
+                className="size-5 rounded-full bg-teal-800 object-contain"
               />
             ) : (
-              <div className="flex size-6 items-center justify-center rounded-full bg-gray-500 text-xs">
-                {initials}
+              <div className="flex size-5 items-center justify-center rounded-full bg-teal-800">
+                <p className="text-xs">
+                  {row.original.requestedBy?.name.substring(0, 1).toUpperCase()}
+                </p>
               </div>
             )}
-            <p>{user.name}</p>
+            <p>{row.original.requestedBy.name}</p>
           </div>
         ) : (
-          <p>nobody</p>
+          <p>Not requested</p>
         );
       },
     },
@@ -222,25 +220,24 @@ export default function MaintenanceTab({
       accessorKey: 'approvedBy',
       header: 'Person In Charge',
       cell: ({ row }) => {
-        const user: User = row.getValue('approvedBy');
-        const initials = user?.name.substring(0, 1).toUpperCase() ?? 'N/A';
-
-        return user ? (
+        return row.original.approvedBy ? (
           <div className="flex items-center space-x-2">
-            {user.image ? (
+            {row.original.approvedBy.image ? (
               <Image
-                src={`${baseServerUrl}/user/${user.image}`}
-                alt={user.name}
+                src={`${baseServerUrl}/user/${row.original.approvedBy.image}`}
+                alt={row.original.approvedBy.name}
                 width={24}
                 height={24}
-                className="size-6 rounded-full bg-teal-950 object-contain"
+                className="size-6 rounded-full bg-teal-800 object-contain"
               />
             ) : (
-              <div className="flex size-6 items-center justify-center rounded-full bg-gray-500 text-xs">
-                {initials}
+              <div className="flex size-6 items-center justify-center rounded-full bg-teal-800">
+                <p className="text-xs text-white">
+                  {row.original.approvedBy.name.substring(0, 1).toUpperCase()}
+                </p>
               </div>
             )}
-            <p>{user.name}</p>
+            <p>{row.original.approvedBy.name}</p>
           </div>
         ) : (
           <p>Not assigned</p>

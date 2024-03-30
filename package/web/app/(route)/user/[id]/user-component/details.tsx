@@ -25,7 +25,7 @@ export default function UserDetails() {
         </TableRow>
         <TableRow>
           <TableCell className="font-semibold">Department</TableCell>
-          <TableCell>{user.departmentId}</TableCell>
+          <TableCell>{user.department?.value}</TableCell>
         </TableRow>
         <TableRow>
           <TableCell className="font-semibold">Role</TableCell>

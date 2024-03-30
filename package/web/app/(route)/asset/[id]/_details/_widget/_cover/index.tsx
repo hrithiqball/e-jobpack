@@ -26,6 +26,7 @@ import { useCurrentUser } from '@/hooks/use-current-user';
 import { updateAsset } from '@/data/asset.action';
 import { UpdateAsset } from '@/lib/schemas/asset';
 import { baseServerUrl } from '@/public/constant/url';
+import { isNullOrEmpty } from '@/lib/function/string';
 
 type AssetCoverProps = {
   open: boolean;
@@ -95,9 +96,9 @@ export default function AssetCover({ open, onClose }: AssetCoverProps) {
               },
             )}
           >
-            {assetCover !== '' ? (
+            {isNullOrEmpty(assetCover) ? (
               <Image
-                src={`${baseServerUrl}/asset${assetCover}`}
+                src={`${baseServerUrl}/asset/${assetCover}`}
                 alt={asset.name}
                 width={400}
                 height={200}
@@ -129,7 +130,7 @@ export default function AssetCover({ open, onClose }: AssetCoverProps) {
                           </div>
                         )}
                         <Image
-                          src={`${baseServerUrl}/asset${attachment}`}
+                          src={`${baseServerUrl}/asset/${attachment}`}
                           alt={attachment}
                           width={400}
                           height={200}

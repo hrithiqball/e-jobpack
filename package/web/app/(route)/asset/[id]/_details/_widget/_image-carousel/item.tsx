@@ -68,7 +68,7 @@ export default function ImageCarouselItem({
         )}
         <Image
           alt={attachment}
-          src={`${baseServerUrl}/asset${attachment}`}
+          src={`${baseServerUrl}/asset/${attachment}`}
           width={200}
           height={800}
           className="flex flex-1 rounded-md object-contain"

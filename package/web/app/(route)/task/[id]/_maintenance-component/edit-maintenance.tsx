@@ -205,10 +205,10 @@ export default function EditMaintenance({
                                     alt={user.name}
                                     width={20}
                                     height={20}
-                                    className="size-5 rounded-full bg-teal-950 object-contain"
+                                    className="size-5 rounded-full bg-teal-800 object-contain"
                                   />
                                 ) : (
-                                  <div className="flex size-5 items-center justify-center rounded-full bg-gray-500">
+                                  <div className="flex size-5 items-center justify-center rounded-full bg-teal-800">
                                     <span className="text-xs text-white">
                                       {user.name.substring(0, 1)}
                                     </span>
@@ -294,13 +294,13 @@ export default function EditMaintenance({
                             <Image
                               src={`${baseServerUrl}/user/${user.image}`}
                               alt={user.name}
-                              width={6}
-                              height={6}
-                              className="size-5 rounded-full bg-teal-950 object-contain"
+                              width={20}
+                              height={20}
+                              className="size-5 rounded-full bg-teal-800 object-contain"
                             />
                           ) : (
-                            <div className="flex size-5 items-center justify-center rounded-full bg-gray-400">
-                              <p className="text-xs">
+                            <div className="flex size-5 items-center justify-center rounded-full bg-teal-800">
+                              <p className="text-xs text-white">
                                 {user.name.substring(0, 1)}
                               </p>
                             </div>

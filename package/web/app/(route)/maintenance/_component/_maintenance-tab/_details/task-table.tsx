@@ -62,6 +62,7 @@ export default function TaskTable({ checklistId, taskList }: TaskTableProps) {
     issue: false,
     remarks: false,
   });
+  const [taskListData, setTaskListData] = useState(taskList);
 
   useEffect(() => {
     setColumnVisibility({
@@ -70,6 +71,10 @@ export default function TaskTable({ checklistId, taskList }: TaskTableProps) {
       taskAssignee: isDesktop,
     });
   }, [isDesktop]);
+
+  useEffect(() => {
+    setTaskListData(taskList);
+  }, [taskList]);
 
   // https://tanstack.com/table/v8/docs/framework/react/examples/sub-components
   const columns: ColumnDef<Task>[] = [
@@ -165,14 +170,22 @@ export default function TaskTable({ checklistId, taskList }: TaskTableProps) {
               return;
             }
 
-            toast.promise(deleteTask(user.id, row.original.id), {
-              loading: 'Deleting task...',
-              success: () => {
-                removeTaskFromChecklist(checklistId, row.original.id);
-                return 'Task successfully deleted!';
+            if (!maintenance) {
+              toast.error('Maintenance not found');
+              return;
+            }
+
+            toast.promise(
+              deleteTask(maintenance.id, user.id, row.original.id),
+              {
+                loading: 'Deleting task...',
+                success: () => {
+                  removeTaskFromChecklist(checklistId, row.original.id);
+                  return 'Task successfully deleted!';
+                },
+                error: 'Failed to delete task',
               },
-              error: 'Failed to delete task',
-            });
+            );
           });
         }
 
@@ -206,7 +219,7 @@ export default function TaskTable({ checklistId, taskList }: TaskTableProps) {
   }
 
   const table = useReactTable({
-    data: taskList,
+    data: taskListData,
     columns,
     getCoreRowModel: getCoreRowModel<Task>(),
     onColumnVisibilityChange: setColumnVisibility,
@@ -248,11 +261,11 @@ export default function TaskTable({ checklistId, taskList }: TaskTableProps) {
         })}
       >
         <Button
-          variant="ghost"
+          variant="outline"
           size="withIcon"
           onClick={toggleIssue}
           className={cn('max-w-min', {
-            'bg-teal-700 text-white dark:bg-teal-900': columnVisibility.issue,
+            'ring-1 ring-teal-700': columnVisibility.issue,
           })}
         >
           <MessageCircleWarning size={18} />
@@ -261,11 +274,11 @@ export default function TaskTable({ checklistId, taskList }: TaskTableProps) {
           )}
         </Button>
         <Button
-          variant="ghost"
+          variant="outline"
           size="withIcon"
           onClick={toggleRemarks}
           className={cn('max-w-min', {
-            'bg-teal-700 text-white dark:bg-teal-900': columnVisibility.remarks,
+            'ring-1 ring-teal-700': columnVisibility.remarks,
           })}
         >
           <MessageCircleMore size={18} />
@@ -275,12 +288,11 @@ export default function TaskTable({ checklistId, taskList }: TaskTableProps) {
         </Button>
         {!isDesktop && (
           <Button
-            variant="ghost"
+            variant="outline"
             size="withIcon"
             onClick={toggleAssignee}
             className={cn('max-w-min', {
-              'bg-teal-700 text-white dark:bg-teal-900':
-                columnVisibility.taskAssignee,
+              'ring-1 ring-teal-700': columnVisibility.taskAssignee,
             })}
           >
             <Contact2 size={18} />

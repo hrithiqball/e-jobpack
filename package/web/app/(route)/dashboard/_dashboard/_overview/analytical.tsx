@@ -1,39 +1,59 @@
 import { BarChart, DonutChart } from '@tremor/react';
 import { valueFormatter } from '@/lib/function/value-formatter';
 
-const chartdata = [
+const chartData = [
   {
-    name: 'Amphibians',
-    'Number of threatened species': 2488,
+    name: 'Jan',
+    'Maintenance Count': 2488,
   },
   {
-    name: 'Birds',
-    'Number of threatened species': 1445,
+    name: 'Feb',
+    'Maintenance Count': 1445,
   },
   {
-    name: 'Crustaceans',
-    'Number of threatened species': 743,
+    name: 'Mar',
+    'Maintenance Count': 743,
   },
   {
-    name: 'Ferns',
-    'Number of threatened species': 281,
+    name: 'Apr',
+    'Maintenance Count': 281,
   },
   {
-    name: 'Arachnids',
-    'Number of threatened species': 251,
+    name: 'May',
+    'Maintenance Count': 251,
   },
   {
-    name: 'Corals',
-    'Number of threatened species': 232,
+    name: 'Jun',
+    'Maintenance Count': 232,
   },
   {
-    name: 'Algae',
-    'Number of threatened species': 98,
+    name: 'Jul',
+    'Maintenance Count': 938,
+  },
+  {
+    name: 'Aug',
+    'Maintenance Count': 443,
+  },
+  {
+    name: 'Sep',
+    'Maintenance Count': 2443,
+  },
+  {
+    name: 'Oct',
+    'Maintenance Count': 1432,
+  },
+  {
+    name: 'Nov',
+    'Maintenance Count': 252,
+  },
+  {
+    name: 'Dec',
+    'Maintenance Count': 3232,
   },
 ];
-const datahero = [
+const dataHero = [
   {
-    name: 'Noche Holding AG',
+    name: 'Holding AG',
     value: 9800,
   },
   {
@@ -62,24 +82,26 @@ export default function GraphWidget() {
   return (
     <div className="flex grow flex-col">
       <div className="flex flex-1">
-        <div className="h-80 w-1/2">
+        <div className="h-80 w-2/3">
           <BarChart
-            data={chartdata}
+            data={chartData}
             index="name"
-            categories={['Number of threatened species']}
+            categories={['Maintenance Count']}
             colors={['teal']}
             valueFormatter={valueFormatter}
-            yAxisWidth={48}
+            yAxisWidth={72}
             onValueChange={v => console.log(v)}
           />
         </div>
-        <div className="h-80 w-1/2">
-          <DonutChart
-            data={datahero}
-            variant="pie"
-            valueFormatter={valueFormatter}
-            onValueChange={v => console.log(v)}
-          />
+        <div className="flex h-80 w-1/3">
+          <div className="flex flex-1 items-center justify-center">
+            <DonutChart
+              data={dataHero}
+              variant="pie"
+              valueFormatter={valueFormatter}
+              onValueChange={v => console.log(v)}
+            />
+          </div>
         </div>
       </div>
     </div>

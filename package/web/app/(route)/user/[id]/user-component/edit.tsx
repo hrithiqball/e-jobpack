@@ -77,7 +77,6 @@ export default function EditUser({ user, open, onClose }: EditUserProps) {
         error: 'Failed to update user details',
       });
     });
-    console.log(data);
   }
 
   function handleClose() {

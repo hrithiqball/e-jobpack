@@ -28,6 +28,12 @@ import { useAssetStore } from '@/hooks/use-asset.store';
 import { AssetList } from '@/types/asset';
 import AddChecklist from '@/components/helper/add-checklist';
 import { Users } from '@/types/user';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 
 type MaintenanceComponentProps = {
   maintenance: MaintenanceItem;
@@ -221,7 +227,7 @@ export default function MaintenanceComponent({
   }
 
   return (
-    <div className="flex-grow space-y-4 rounded-md">
+    <div className="flex-grow rounded-md">
       <div className="flex flex-row items-center justify-between">
         <div className="flex items-center space-x-4">
           <h2 className="text-medium font-semibold sm:text-xl">
@@ -243,7 +249,14 @@ export default function MaintenanceComponent({
           transitioning={transitioning}
         />
       )}
-      <InfoTable />
+      <Accordion type="single" collapsible className="mt-0 w-full pt-0">
+        <AccordionItem value="details">
+          <AccordionTrigger>Maintenance Details</AccordionTrigger>
+          <AccordionContent>
+            <InfoTable />
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
       <hr />
       <div className="mt-4 rounded-md">
         <div className="flex h-full flex-col overflow-y-auto">
