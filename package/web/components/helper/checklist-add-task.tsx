@@ -38,6 +38,14 @@ import { useMaintenanceStore } from '@/hooks/use-maintenance.store';
 import { AddTaskForm, AddTaskFormSchema, CreateTask } from '@/lib/schemas/task';
 import { createTask } from '@/data/task.action';
 import { cn } from '@/lib/utils';
+import { useMediaQuery } from '@/hooks/use-media-query';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from '../ui/drawer';
 
 type ChecklistAddTaskProps = {
   open: boolean;
@@ -48,6 +56,7 @@ export default function ChecklistAddTask({
   open,
   onClose,
 }: ChecklistAddTaskProps) {
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const router = useRouter();
 
   const { maintenance, currentChecklist, addTaskToChecklist } =
@@ -124,7 +133,7 @@ export default function ChecklistAddTask({
     onClose();
   }
 
-  return (
+  return isDesktop ? (
     <Sheet open={open} onOpenChange={handleClose}>
       <SheetContent className="space-y-4">
         <SheetHeader>
@@ -250,5 +259,16 @@ export default function ChecklistAddTask({
         </SheetFooter>
       </SheetContent>
     </Sheet>
+  ) : (
+    <Drawer open={open} onClose={handleClose}>
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>Add Task</DrawerTitle>
+        </DrawerHeader>
+        <DrawerFooter>
+          <Button>Add</Button>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
   );
 }

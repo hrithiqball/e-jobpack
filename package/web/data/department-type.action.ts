@@ -38,6 +38,7 @@ export async function getDepartmentTypes() {
       },
       include: {
         user: true,
+        asset: true,
       },
     });
   } catch (error) {

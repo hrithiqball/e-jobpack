@@ -38,7 +38,6 @@ import {
 } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Wrapper } from '@/components/ui/wrapper';
 import { Checkbox } from '@nextui-org/react';
 
 import {
@@ -333,11 +332,7 @@ export default function MaintenanceTab({
   }
 
   if (details) {
-    return (
-      <Wrapper>
-        <MaintenanceDetails />
-      </Wrapper>
-    );
+    return <MaintenanceDetails />;
   }
 
   return (

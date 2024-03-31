@@ -29,11 +29,13 @@ model Asset {
   isArchive        Boolean?           @default(false) @map("is_archive")
   attachmentPath   String[]           @default([]) @map("attachment_path")
   assetCover       String?            @map("asset_cover")
+  departmentId     String?            @map("department_id")
   createdBy        User               @relation("asset_created_byTouser", fields: [createdById], references: [id], onDelete: Cascade)
   personInCharge   User?              @relation("asset_person_in_chargeTouser", fields: [personInChargeId], references: [id], onDelete: Cascade)
   assetStatus      AssetStatus?       @relation(fields: [statusId], references: [id], onDelete: Cascade)
   assetType        AssetType?         @relation(fields: [type], references: [id], onDelete: Cascade)
   updatedBy        User               @relation("asset_updated_byTouser", fields: [updatedById], references: [id], onDelete: Cascade)
+  department       DepartmentEnum?    @relation(fields: [departmentId], references: [id], map: "public_asset_department_id_fkey")
   assetTags        AssetTag[]
   checklist        Checklist[]
   checklistLibrary ChecklistLibrary[]
@@ -383,8 +385,9 @@ model MaintenanceMember {
 }
 
 model DepartmentEnum {
-  id    String @id @default(cuid())
+  id    String  @id @default(cuid())
   value String
+  asset Asset[]
   user  User[]
 
   @@map("department_enum")

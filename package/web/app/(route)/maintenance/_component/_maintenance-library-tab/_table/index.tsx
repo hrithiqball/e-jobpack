@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -56,6 +56,7 @@ import {
   Package,
   Search,
   Trash,
+  RotateCcwSquare,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
@@ -74,6 +75,8 @@ import emptyIcon from '@/public/image/empty.svg';
 import MaintenanceLibraryInfo from './library-info';
 import { baseServerUrl } from '@/public/constant/url';
 import { isNullOrEmpty } from '@/lib/function/string';
+import RecreateMaintenance from './recreate-maintenance';
+import { useMaintenanceLibStore } from '@/hooks/use-maintenance-lib.store';
 
 type MaintenanceLibraryTableProps = {
   maintenanceLibraryList: MaintenanceLibraryList;
@@ -86,7 +89,10 @@ export default function MaintenanceLibraryTable({
   const router = useRouter();
   const pathname = usePathname();
 
+  const { setMaintenanceLib } = useMaintenanceLibStore();
+
   const [filterBy, setFilterBy] = useState('title');
+  const [openRecreateMaintenance, setOpenRecreateMaintenance] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [rowSelection, setRowSelection] = useState({});
@@ -263,7 +269,8 @@ export default function MaintenanceLibraryTable({
           mtn => mtn.id === row.original.id,
         );
 
-        function handleDuplicate() {
+        function handleDuplicate(event: React.MouseEvent) {
+          event.stopPropagation();
           toast.info('Duplicate action coming soon');
         }
 
@@ -279,7 +286,20 @@ export default function MaintenanceLibraryTable({
           );
         }
 
-        function handleDelete() {
+        function handleRecreateMaintenance(event: React.MouseEvent) {
+          event.stopPropagation();
+
+          if (!maintenanceLibraryItem) {
+            toast.error('Maintenance library not found');
+            return;
+          }
+
+          setMaintenanceLib(maintenanceLibraryItem);
+          setOpenRecreateMaintenance(true);
+        }
+
+        function handleDelete(event: React.MouseEvent) {
+          event.stopPropagation();
           toast.error('Delete action not implemented');
         }
 
@@ -292,6 +312,12 @@ export default function MaintenanceLibraryTable({
                 </Button>
               </PopoverTrigger>
               <PopoverContent align="end" className="w-56 rounded-lg p-2">
+                <PopoverItem
+                  onClick={handleRecreateMaintenance}
+                  startContent={<RotateCcwSquare size={18} />}
+                >
+                  Recreate Maintenance
+                </PopoverItem>
                 <PopoverItem
                   onClick={handleEdit}
                   startContent={<FilePen size={18} />}
@@ -356,6 +382,10 @@ export default function MaintenanceLibraryTable({
 
   function handleCloseMaintenanceLibraryInfo() {
     setOpenMaintenanceLibraryInfo(false);
+  }
+
+  function handleCloseRecreateMaintenance() {
+    setOpenRecreateMaintenance(false);
   }
 
   return maintenanceLibraryList.length > 0 ? (
@@ -507,6 +537,10 @@ export default function MaintenanceLibraryTable({
           handleEdit={handleEditLibraryRoute}
         />
       )}
+      <RecreateMaintenance
+        open={openRecreateMaintenance}
+        onClose={handleCloseRecreateMaintenance}
+      />
     </div>
   ) : (
     <div className="flex flex-1 flex-col items-center justify-center">

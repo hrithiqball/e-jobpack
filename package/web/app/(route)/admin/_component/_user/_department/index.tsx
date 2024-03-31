@@ -31,6 +31,7 @@ import {
 } from '@/components/ui/popover';
 import { DepartmentType } from '@/types/department-enum';
 import EditDepartment from './edit-department';
+import { Tooltip } from '@nextui-org/react';
 
 export default function DepartmentManagement() {
   const router = useRouter();
@@ -123,8 +124,37 @@ export default function DepartmentManagement() {
           {departmentData.map(department => (
             <TableRow key={department.id}>
               <TableCell>{department.value}</TableCell>
-              <TableCell>{department.user.length}</TableCell>
-              <TableCell>423</TableCell>
+              <TableCell>
+                <Tooltip
+                  radius="sm"
+                  placement="left"
+                  isDisabled={department.user.length === 0}
+                  content={
+                    <div className="flex flex-col">
+                      {department.user.map(user => (
+                        <p key={user.id}>{user.name}</p>
+                      ))}
+                    </div>
+                  }
+                >
+                  <p>{department.user.length}</p>
+                </Tooltip>
+              </TableCell>
+              <TableCell>
+                <Tooltip
+                  radius="sm"
+                  isDisabled={department.asset.length === 0}
+                  content={
+                    <div className="flex flex-col">
+                      {department.asset.map(asset => (
+                        <p key={asset.id}>{asset.name}</p>
+                      ))}
+                    </div>
+                  }
+                >
+                  <p>{department.asset.length}</p>
+                </Tooltip>
+              </TableCell>
               <TableCell className="text-right">
                 <Popover>
                   <PopoverTrigger asChild>

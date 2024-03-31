@@ -12,6 +12,7 @@ import AssetCover from './_cover';
 import { baseServerUrl } from '@/public/constant/url';
 import { isNullOrEmpty } from '@/lib/function/string';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 export default function DetailsWidget() {
   const { asset, assetImageSidebar } = useAssetStore();
@@ -50,7 +51,11 @@ export default function DetailsWidget() {
         <Card shadow="none" className="flex flex-1 p-4 dark:bg-card">
           <div className="flex min-w-min flex-1">
             <div className="flex flex-1 space-x-4">
-              <div className="flex w-1/3 flex-col space-y-4">
+              <div
+                className={cn('flex w-1/3 flex-col space-y-4', {
+                  hidden: assetImageSidebar,
+                })}
+              >
                 {!assetImageSidebar && (
                   <Fragment>
                     <div
@@ -90,7 +95,11 @@ export default function DetailsWidget() {
                   </Fragment>
                 )}
               </div>
-              <div className="w-2/3">
+              <div
+                className={cn('w-2/3', {
+                  'w-full flex-1': assetImageSidebar,
+                })}
+              >
                 <AssetDetailsInfo />
               </div>
             </div>

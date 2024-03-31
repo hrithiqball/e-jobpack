@@ -51,13 +51,36 @@ export default function InfoTable() {
         <TableRow>
           <TableCell className="font-semibold">Maintenance Members</TableCell>
           <TableCell>
-            {/* TODO: update view of members */}
-            {maintenance.maintenanceMember.length > 0 ? (
+            {maintenance.maintenanceMember.length === 0 && (
+              <div>No team member chosen</div>
+            )}
+            {maintenance.maintenanceMember.length === 1 && (
+              <div className="flex items-center space-x-2">
+                {maintenance.maintenanceMember[0]!.user.image ? (
+                  <Image
+                    src={`${baseServerUrl}/user/${maintenance.maintenanceMember[0]!.user.image}`}
+                    alt={maintenance.maintenanceMember[0]!.user.name}
+                    width={20}
+                    height={20}
+                    className="size-5 rounded-full bg-teal-800 object-contain"
+                  />
+                ) : (
+                  <div className="flex size-5 items-center justify-center rounded-full bg-teal-800">
+                    <p className="text-xs text-white">
+                      {maintenance.maintenanceMember[0]!.user.name.substring(
+                        0,
+                        1,
+                      )}
+                    </p>
+                  </div>
+                )}
+                <p>{maintenance.maintenanceMember[0]!.user.name}</p>
+              </div>
+            )}
+            {maintenance.maintenanceMember.length > 1 && (
               <MaintenanceMember
                 members={maintenance.maintenanceMember.map(u => u.user)}
               />
-            ) : (
-              <div>No team member chosen</div>
             )}
           </TableCell>
         </TableRow>

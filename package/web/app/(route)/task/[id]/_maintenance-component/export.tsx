@@ -279,7 +279,13 @@ export default function MaintenanceExport({
         </SheetHeader>
         <ExportMaintenanceForm />
         <SheetFooter>
-          <Button>Export</Button>
+          <Button
+            type="submit"
+            form="create-maintenance-lib"
+            disabled={transitioning}
+          >
+            Export
+          </Button>
         </SheetFooter>
       </SheetContent>
     </Sheet>

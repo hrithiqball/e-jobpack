@@ -63,6 +63,7 @@ export default function MaintenanceRecreateChecklistCell({
     <DropdownMenu open={open} onOpenChange={handleCloseMenu}>
       <DropdownMenuTrigger>
         <Button
+          type="button"
           variant="outline"
           size="sm"
           color="primary"

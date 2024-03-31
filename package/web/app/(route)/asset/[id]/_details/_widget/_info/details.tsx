@@ -1,23 +1,14 @@
-import { Fragment, Key, useTransition } from 'react';
+import { Fragment, useState, useTransition } from 'react';
 import dayjs from 'dayjs';
 
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import {
-  Avatar,
-  Button,
-  Chip,
-  Divider,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-} from '@nextui-org/react';
-import {
   BookImage,
   ChevronLeft,
+  Edit,
   MoreHorizontal,
-  PencilLine,
   Printer,
+  QrCode,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -29,13 +20,23 @@ import { useCurrentUser } from '@/hooks/use-current-user';
 
 import { updateAsset } from '@/data/asset.action';
 import { isNullOrEmpty } from '@/lib/function/string';
+import { Button } from '@/components/ui/button';
+import {
+  Popover,
+  PopoverContent,
+  PopoverItem,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import Image from 'next/image';
+import { baseServerUrl } from '@/public/constant/url';
+import QrCodeGenerator from './qr-code-download';
 
 type AssetDetailsStaticProps = {
-  handleAssetDetailsAction: (key: Key) => void;
+  startEditing: () => void;
 };
 
 export default function AssetDetailsStatic({
-  handleAssetDetailsAction,
+  startEditing,
 }: AssetDetailsStaticProps) {
   const [transitioning, startTransition] = useTransition();
   const role = useCurrentRole();
@@ -45,32 +46,31 @@ export default function AssetDetailsStatic({
   const { assetTypeList } = useAssetTypeStore();
   const { asset, assetImageSidebar, setAssetImageSidebar } = useAssetStore();
 
-  function handleStatusUpdate(key: Key) {
+  const [openQrCodeDownload, setOpenQrCodeDownload] = useState(false);
+
+  function handleStatusUpdate(statusId: string) {
     startTransition(() => {
-      if (user === undefined || user.id === undefined) {
+      if (!user || !user.id) {
         toast.error('Session expired');
         return;
       }
 
-      if (asset === null) {
+      if (!asset) {
         toast.error('Asset not found');
         return;
       }
 
-      toast.promise(
-        updateAsset(user.id, asset.id, { statusId: key as string }),
-        {
-          loading: 'Updating asset status...',
-          success: 'Status updated',
-          error: 'Failed to update asset status',
-        },
-      );
+      toast.promise(updateAsset(user.id, asset.id, { statusId }), {
+        loading: 'Updating asset status...',
+        success: 'Status updated',
+        error: 'Failed to update asset status',
+      });
     });
   }
 
-  function handleTypeUpdate(key: Key) {
+  function handleTypeUpdate(type: string) {
     startTransition(() => {
-      if (user === undefined || user.id === undefined) {
+      if (!user || !user.id) {
         toast.error('Session expired');
         return;
       }
@@ -80,12 +80,20 @@ export default function AssetDetailsStatic({
         return;
       }
 
-      toast.promise(updateAsset(user.id, asset.id, { type: key as string }), {
+      toast.promise(updateAsset(user.id, asset.id, { type }), {
         loading: 'Updating asset type...',
         success: 'Type updated',
         error: 'Failed to update asset type',
       });
     });
+  }
+
+  function handleOpenQrCodeDownload() {
+    setOpenQrCodeDownload(true);
+  }
+
+  function handleCloseQrCodeDownload() {
+    setOpenQrCodeDownload(false);
   }
 
   return asset ? (
@@ -105,37 +113,34 @@ export default function AssetDetailsStatic({
           )}
           <span className="text-3xl font-bold">{asset.name}</span>
         </div>
-        <Dropdown>
-          <DropdownTrigger>
-            <Button
-              isIconOnly
-              size="sm"
-              variant="light"
-              isDisabled={transitioning}
-            >
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button size="icon" variant="ghost" disabled={transitioning}>
               <MoreHorizontal size={18} />
             </Button>
-          </DropdownTrigger>
-          <DropdownMenu
-            disabledKeys={role === 'TECHNICIAN' ? ['edit-asset'] : []}
-            onAction={handleAssetDetailsAction}
-          >
-            <DropdownItem
-              key="edit-asset"
-              startContent={<PencilLine size={18} />}
-            >
-              Edit Asset
-            </DropdownItem>
-            <DropdownItem
-              key="print-asset"
-              startContent={<Printer size={18} />}
-            >
+          </PopoverTrigger>
+          <PopoverContent align="end" className="w-40 rounded-lg p-2">
+            {role !== 'TECHNICIAN' && (
+              <PopoverItem
+                onClick={startEditing}
+                startContent={<Edit size={18} />}
+              >
+                Edit
+              </PopoverItem>
+            )}
+            <PopoverItem startContent={<Printer size={18} />}>
               Print Details
-            </DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
+            </PopoverItem>
+            <PopoverItem
+              onClick={handleOpenQrCodeDownload}
+              startContent={<QrCode size={18} />}
+            >
+              Download QR
+            </PopoverItem>
+          </PopoverContent>
+        </Popover>
       </div>
-      <Divider />
+      <hr />
       <Table aria-label="Asset details">
         <TableBody>
           <TableRow>
@@ -159,84 +164,90 @@ export default function AssetDetailsStatic({
           <TableRow>
             <TableCell className="font-semibold">Status</TableCell>
             <TableCell>
-              <Dropdown>
-                <DropdownTrigger>
-                  <Chip
-                    size="sm"
-                    variant="faded"
-                    startContent={
+              <Popover>
+                <PopoverTrigger asChild>
+                  <div className="flex items-center">
+                    <div className="flex items-center space-x-1 rounded-lg bg-gray-200 px-2 py-1 dark:bg-gray-800">
                       <div
                         style={{
                           backgroundColor: asset.assetStatus?.color ?? 'grey',
                         }}
                         className="mx-1 w-1 rounded-full p-1"
                       ></div>
-                    }
-                    className="hover:cursor-pointer"
-                  >
-                    {isNullOrEmpty(asset.assetStatus?.title) || 'Not Specified'}
-                  </Chip>
-                </DropdownTrigger>
-                <DropdownMenu onAction={handleStatusUpdate}>
+                      <p className="pr-1 text-xs">
+                        {isNullOrEmpty(asset.assetStatus?.title) ||
+                          'Not specified'}
+                      </p>
+                    </div>
+                  </div>
+                </PopoverTrigger>
+                <PopoverContent align="start" className="w-full rounded-lg p-2">
                   {assetStatusList.map(status => (
-                    <DropdownItem key={status.id}>
-                      <Chip
-                        size="sm"
-                        variant="faded"
-                        startContent={
-                          <div
-                            style={{
-                              backgroundColor: status.color ?? 'grey',
-                            }}
-                            className="mx-1 w-1 rounded-full p-1"
-                          ></div>
-                        }
-                        className="hover:cursor-pointer"
-                      >
-                        {isNullOrEmpty(status.title) || 'Not Specified'}
-                      </Chip>
-                    </DropdownItem>
+                    <PopoverItem
+                      key={status.id}
+                      onClick={() => handleStatusUpdate(status.id)}
+                    >
+                      <div className="flex items-center space-x-2">
+                        <div
+                          style={{
+                            backgroundColor: status.color ?? 'grey',
+                          }}
+                          className="mx-1 size-1 rounded-full p-1"
+                        ></div>
+                        <p>{status.title}</p>
+                      </div>
+                    </PopoverItem>
                   ))}
-                </DropdownMenu>
-              </Dropdown>
+                </PopoverContent>
+              </Popover>
             </TableCell>
           </TableRow>
           <TableRow>
             <TableCell className="font-semibold">Type</TableCell>
             <TableCell>
-              <Dropdown>
-                <DropdownTrigger>
-                  <Chip
-                    size="sm"
-                    variant="faded"
-                    className="hover:cursor-pointer"
-                  >
-                    {asset.assetType?.title}
-                  </Chip>
-                </DropdownTrigger>
-                <DropdownMenu onAction={handleTypeUpdate}>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <div className="flex items-center">
+                    <div className="flex items-center space-x-1 rounded-lg bg-gray-200 px-2 py-1 dark:bg-gray-800">
+                      <p className="px-2 text-xs">
+                        {isNullOrEmpty(asset.assetType?.title) ||
+                          'Not specified'}
+                      </p>
+                    </div>
+                  </div>
+                </PopoverTrigger>
+                <PopoverContent align="start" className="w-full rounded-lg p-2">
                   {assetTypeList.map(type => (
-                    <DropdownItem key={type.id}>
-                      <Chip size="sm" variant="faded">
-                        {type.title}
-                      </Chip>
-                    </DropdownItem>
+                    <PopoverItem
+                      key={type.id}
+                      onClick={() => handleTypeUpdate(type.id)}
+                    >
+                      <div className="flex items-center space-x-2">
+                        <p>{type.title}</p>
+                      </div>
+                    </PopoverItem>
                   ))}
-                </DropdownMenu>
-              </Dropdown>
+                </PopoverContent>
+              </Popover>
             </TableCell>
           </TableRow>
           <TableRow>
             <TableCell className="font-semibold">Updated By</TableCell>
             <TableCell>
               <div className="flex items-center space-x-1">
-                <Avatar
-                  size="sm"
-                  showFallback
-                  src={asset.updatedBy.image ?? ''}
-                  name={asset.updatedBy.name}
-                  className="mr-1"
-                />
+                {asset.updatedBy.image ? (
+                  <Image
+                    src={`${baseServerUrl}/user/${asset.updatedBy.image}`}
+                    alt={asset.updatedBy.name}
+                    width={20}
+                    height={20}
+                    className="size-5 rounded-full bg-teal-800 object-contain"
+                  />
+                ) : (
+                  <div className="flex size-5 flex-col items-center justify-center bg-teal-800">
+                    <p className="text-xs text-white">{asset.updatedBy.name}</p>
+                  </div>
+                )}
                 <span>on</span>
                 <span>
                   {dayjs(asset.updatedOn).format('DD/MM/YYYY hh:mmA')}
@@ -248,13 +259,19 @@ export default function AssetDetailsStatic({
             <TableCell className="font-semibold">Created By</TableCell>
             <TableCell>
               <div className="flex items-center space-x-1">
-                <Avatar
-                  size="sm"
-                  showFallback
-                  src={asset.createdBy.image ?? ''}
-                  name={asset.createdBy.name}
-                  className="mr-1"
-                />
+                {asset.createdBy.image ? (
+                  <Image
+                    src={`${baseServerUrl}/user/${asset.createdBy.image}`}
+                    alt={asset.createdBy.name}
+                    width={20}
+                    height={20}
+                    className="size-5 rounded-full bg-teal-800 object-contain"
+                  />
+                ) : (
+                  <div className="flex size-5 flex-col items-center justify-center bg-teal-800">
+                    <p className="text-xs text-white">{asset.createdBy.name}</p>
+                  </div>
+                )}
                 <span>on</span>
                 <span>
                   {dayjs(asset.createdOn).format('DD/MM/YYYY hh:mmA')}
@@ -264,6 +281,11 @@ export default function AssetDetailsStatic({
           </TableRow>
         </TableBody>
       </Table>
+      <QrCodeGenerator
+        assetId={asset.id}
+        open={openQrCodeDownload}
+        onClose={handleCloseQrCodeDownload}
+      />
     </Fragment>
   ) : null;
 }
