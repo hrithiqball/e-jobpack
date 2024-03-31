@@ -183,9 +183,6 @@ export default function UserPreview({ open, onClose }: UserPreviewProps) {
             </Select>
           </div>
         )}
-        {currentUser.departmentId}
-        {departmentValue}
-        {/* {departmentValue && ( */}
         <div className="flex flex-col space-y-3">
           <Label>Department</Label>
           <Select

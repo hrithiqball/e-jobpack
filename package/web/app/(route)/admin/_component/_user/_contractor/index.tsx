@@ -1,13 +1,14 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useContractorStore } from '@/hooks/use-contractor.store';
-import { HardHat, Search } from 'lucide-react';
+import { ChevronLeft, HardHat, Search } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import RegisterContractor from './register';
 import { Loader } from '@/components/ui/loader';
 import Image from 'next/image';
 import { baseServerUrl } from '@/public/constant/url';
 import { isNullOrEmpty } from '@/lib/function/string';
+import Link from 'next/link';
 
 export default function ContractorComponent() {
   const { contractors } = useContractorStore();
@@ -40,18 +41,26 @@ export default function ContractorComponent() {
     <div className="flex flex-1 flex-col space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
-          <Search
-            size={18}
-            className="relative left-7 top-2 -translate-y-1/2"
-          />
-          <Input
-            placeholder="Search..."
-            type="search"
-            aria-label="Search contractor list"
-            value={searchInput}
-            onChange={handleSearchInputChange}
-            className="max-w-sm pl-8"
-          />
+          <Link href="/admin">
+            <Button variant="outline" size="withIcon">
+              <ChevronLeft size={18} />
+              <p>Back</p>
+            </Button>
+          </Link>
+          <div className="flex items-center">
+            <Search
+              size={18}
+              className="relative left-7 top-2 -translate-y-1/2"
+            />
+            <Input
+              placeholder="Search..."
+              type="search"
+              aria-label="Search contractor list"
+              value={searchInput}
+              onChange={handleSearchInputChange}
+              className="max-w-sm pl-8"
+            />
+          </div>
         </div>
         {contractorData.length > 0 && (
           <Button

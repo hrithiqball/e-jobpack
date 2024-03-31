@@ -1,60 +1,142 @@
-import Image from 'next/image';
-import { baseServerUrl } from '@/public/constant/url';
-import { convertToTitleCase } from '@/lib/function/string';
-import { User, Users } from '@/types/user';
+import {
+  AreaChart,
+  Building2,
+  DollarSign,
+  HardHat,
+  UserRoundCheck,
+  UserRoundPlus,
+  UserRoundX,
+  Users,
+} from 'lucide-react';
+import Link from 'next/link';
+import CreateUser from './create-user';
+import { useState } from 'react';
 
-type UserGeneralProps = {
-  userData: Users;
-  handleOpenUserPreview: (user: User) => void;
-};
+export default function General() {
+  const [openCreateUser, setOpenCreateUser] = useState(false);
 
-export default function General({
-  userData,
-  handleOpenUserPreview,
-}: UserGeneralProps) {
+  function handleOpenCreateUser() {
+    setOpenCreateUser(true);
+  }
+
+  function handleCloseCreateUser() {
+    setOpenCreateUser(false);
+  }
+
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-      {userData.map(user => (
+    <div className="flex flex-col">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+        <Link href="/admin?section=user">
+          <div className="group flex cursor-pointer flex-col space-y-12 rounded-md bg-white p-4 text-lg font-semibold dark:bg-card">
+            <div className="flex items-center justify-between">
+              <h1 className="group-hover:text-teal-600">User Management</h1>
+              <span className="group-hover:animate-appearance-in group-hover:text-teal-600">
+                <Users />
+              </span>
+            </div>
+            <p className="text-sm font-normal text-gray-500">
+              Manage user details info, search user
+            </p>
+          </div>
+        </Link>
+        <Link href="/admin?section=verify">
+          <div className="group flex cursor-pointer flex-col space-y-12 rounded-md bg-white p-4 text-lg font-semibold dark:bg-card">
+            <div className="flex items-center justify-between">
+              <h1 className="group-hover:text-teal-600">Verify User</h1>
+              <span className="group-hover:animate-appearance-in group-hover:text-teal-600">
+                <UserRoundCheck />
+              </span>
+            </div>
+            <p className="text-sm font-normal text-gray-500">
+              Verify newly registered users, verify role requested
+            </p>
+          </div>
+        </Link>
+        <Link href="/admin?section=block">
+          <div className="group flex cursor-pointer flex-col space-y-12 rounded-md bg-white p-4 text-lg font-semibold dark:bg-card">
+            <div className="flex items-center justify-between">
+              <h1 className="group-hover:text-teal-600">Block User</h1>
+              <span className="group-hover:animate-appearance-in group-hover:text-teal-600">
+                <UserRoundX />
+              </span>
+            </div>
+            <p className="text-sm font-normal text-gray-500">
+              Unblock blocked users, suspend user access
+            </p>
+          </div>
+        </Link>
         <div
-          key={user.id}
-          className="flex cursor-pointer flex-col space-y-4 rounded-md bg-white p-4 dark:bg-card"
-          onClick={() => handleOpenUserPreview(user)}
+          onClick={handleOpenCreateUser}
+          className="group flex cursor-pointer flex-col space-y-12 rounded-md bg-white p-4 text-lg font-semibold dark:bg-card"
         >
-          <div className="flex items-center space-x-4">
-            {user.image ? (
-              <Image
-                src={`${baseServerUrl}/user/${user.image}`}
-                alt={user.name}
-                height={48}
-                width={48}
-                className="size-12 rounded-full bg-teal-100 object-contain"
-              />
-            ) : (
-              <div className="flex size-12 items-center justify-center rounded-full bg-teal-100 text-teal-800">
-                <p className="text-medium text-white">
-                  {user.name.substring(0, 1).toUpperCase()}
-                </p>
-              </div>
-            )}
-            <div className="flex flex-col">
-              <div className="truncate">
-                <p>{user.name}</p>
-              </div>
-              <div className="truncate text-sm text-gray-400">{user.email}</div>
-            </div>
+          <div className="flex items-center justify-between">
+            <h1 className="group-hover:text-teal-600">Create User</h1>
+            <span className="group-hover:animate-appearance-in group-hover:text-teal-600">
+              <UserRoundPlus />
+            </span>
           </div>
-          <div className="grid grid-cols-2 divide-x divide-tremor-border border-t border-tremor-border dark:divide-dark-tremor-border dark:border-dark-tremor-border">
-            <div className="truncate px-3 py-2">
-              <p className="text-xs text-gray-400">Department</p>
-              <p className="text-medium">{user.department?.value}</p>
-            </div>
-            <div className="truncate px-3 py-2">
-              <p className="text-xs text-gray-400">Role</p>
-              <p className="text-medium">{convertToTitleCase(user.role)}</p>
-            </div>
-          </div>
+          <p className="text-sm font-normal text-gray-500">
+            Create new user and automatically approved
+          </p>
         </div>
-      ))}
+        <Link href="/admin?section=department">
+          <div className="group flex cursor-pointer flex-col space-y-12 rounded-md bg-white p-4 text-lg font-semibold dark:bg-card">
+            <div className="flex items-center justify-between">
+              <h1 className="group-hover:text-teal-600">
+                Department Management
+              </h1>
+              <span className="group-hover:animate-appearance-in group-hover:text-teal-600">
+                <Building2 />
+              </span>
+            </div>
+            <p className="text-sm font-normal text-gray-500">
+              Manage department by creating, updating and delete
+            </p>
+          </div>
+        </Link>
+        <Link href="/admin?section=contractor">
+          <div className="group flex cursor-pointer flex-col space-y-12 rounded-md bg-white p-4 text-lg font-semibold dark:bg-card">
+            <div className="flex items-center justify-between">
+              <h1 className="group-hover:text-teal-600">Contractor</h1>
+              <span className="group-hover:animate-appearance-in group-hover:text-teal-600">
+                <HardHat />
+              </span>
+            </div>
+            <p className="text-sm font-normal text-gray-500">
+              Manage contractor details, register new contractor
+            </p>
+          </div>
+        </Link>
+        <Link href="/admin?section=kpi">
+          <div className="group flex cursor-pointer flex-col space-y-12 rounded-md bg-white p-4 text-lg font-semibold dark:bg-card">
+            <div className="flex items-center justify-between">
+              <h1 className="group-hover:text-teal-600">
+                Key Performance Indicator (KPI)
+              </h1>
+              <span className="group-hover:animate-appearance-in group-hover:text-teal-600">
+                <AreaChart />
+              </span>
+            </div>
+            <p className="text-sm font-normal text-gray-500">
+              View technician performance in graphical charts
+            </p>
+          </div>
+        </Link>
+        <Link href="/admin?section=finance">
+          <div className="group flex cursor-pointer flex-col space-y-12 rounded-md bg-white p-4 text-lg font-semibold dark:bg-card">
+            <div className="flex items-center justify-between">
+              <h1 className="group-hover:text-teal-600">Financial</h1>
+              <span className="group-hover:animate-appearance-in group-hover:text-teal-600">
+                <DollarSign />
+              </span>
+            </div>
+            <p className="text-sm font-normal text-gray-500">
+              View reports and financial details
+            </p>
+          </div>
+        </Link>
+      </div>
+      <CreateUser open={openCreateUser} onClose={handleCloseCreateUser} />
     </div>
   );
 }

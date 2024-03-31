@@ -6,8 +6,6 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { Tab, Tabs } from '@nextui-org/react';
 
 import UserTab from './_user';
-import ContractorTab from './_contractor';
-import KpiTab from './_kpi';
 import AssetTab from './_asset';
 import { useUserStore } from '@/hooks/use-user.store';
 import { useAssetTypeStore } from '@/hooks/use-asset-type.store';
@@ -79,12 +77,6 @@ export default function AdminComponent({
     >
       <Tab key="user" title="User" className="flex flex-1 flex-col">
         <UserTab />
-      </Tab>
-      <Tab key="contractor" title="Contractor" className="flex flex-1 flex-col">
-        <ContractorTab />
-      </Tab>
-      <Tab key="kpi" title="KPI" className="flex flex-1 flex-col">
-        <KpiTab />
       </Tab>
       <Tab key="asset" title="Asset" className="flex flex-1 flex-col">
         <AssetTab />
