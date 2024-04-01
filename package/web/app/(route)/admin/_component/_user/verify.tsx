@@ -178,7 +178,7 @@ export default function Verify() {
             <div className="grid grid-cols-2 divide-x divide-tremor-border border-t border-tremor-border dark:divide-dark-tremor-border dark:border-dark-tremor-border">
               <div className="truncate px-3 py-2">
                 <p className="text-xs text-gray-400">Department</p>
-                <p className="text-sm">{user.departmentId}</p>
+                <p className="text-sm">{user.department?.value}</p>
               </div>
               <div className="truncate px-3 py-2">
                 <p className="text-xs text-gray-400">Role</p>

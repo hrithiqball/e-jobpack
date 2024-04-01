@@ -244,8 +244,10 @@ export default function AssetDetailsStatic({
                     className="size-5 rounded-full bg-teal-800 object-contain"
                   />
                 ) : (
-                  <div className="flex size-5 flex-col items-center justify-center bg-teal-800">
-                    <p className="text-xs text-white">{asset.updatedBy.name}</p>
+                  <div className="flex size-5 flex-col items-center justify-center rounded-full bg-teal-800">
+                    <p className="text-xs text-white">
+                      {asset.updatedBy.name.substring(0, 1).toUpperCase()}
+                    </p>
                   </div>
                 )}
                 <span>on</span>
@@ -268,8 +270,10 @@ export default function AssetDetailsStatic({
                     className="size-5 rounded-full bg-teal-800 object-contain"
                   />
                 ) : (
-                  <div className="flex size-5 flex-col items-center justify-center bg-teal-800">
-                    <p className="text-xs text-white">{asset.createdBy.name}</p>
+                  <div className="flex size-5 flex-col items-center justify-center rounded-full bg-teal-800">
+                    <p className="text-xs text-white">
+                      {asset.createdBy.name.substring(0, 1).toUpperCase()}
+                    </p>
                   </div>
                 )}
                 <span>on</span>

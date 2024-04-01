@@ -106,6 +106,8 @@ export async function createMaintenance2(
         });
       });
 
+    revalidatePath('/maintenance');
+    revalidatePath('/task');
     return maintenance;
   } catch (error) {
     console.error(error);
