@@ -63,23 +63,55 @@ export async function fetchMaintenanceLibraryList() {
         title: 'asc',
       },
       include: {
-        createdBy: true,
-        updatedBy: true,
+        createdBy: {
+          include: {
+            department: true,
+          },
+        },
+        updatedBy: {
+          include: {
+            department: true,
+          },
+        },
         checklistLibrary: {
           include: {
-            createdBy: true,
-            updatedBy: true,
+            createdBy: {
+              include: {
+                department: true,
+              },
+            },
+            updatedBy: {
+              include: {
+                department: true,
+              },
+            },
             asset: true,
             taskLibrary: {
               orderBy: { taskActivity: 'asc' },
               include: {
-                createdBy: true,
-                updatedBy: true,
+                createdBy: {
+                  include: {
+                    department: true,
+                  },
+                },
+                updatedBy: {
+                  include: {
+                    department: true,
+                  },
+                },
                 subtaskLibrary: {
                   orderBy: { taskActivity: 'asc' },
                   include: {
-                    createdBy: true,
-                    updatedBy: true,
+                    createdBy: {
+                      include: {
+                        department: true,
+                      },
+                    },
+                    updatedBy: {
+                      include: {
+                        department: true,
+                      },
+                    },
                   },
                 },
               },

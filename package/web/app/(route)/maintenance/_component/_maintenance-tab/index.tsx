@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { User } from '@prisma/client';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import dayjs from 'dayjs';
@@ -39,7 +38,6 @@ import {
 } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Wrapper } from '@/components/ui/wrapper';
 import { Checkbox } from '@nextui-org/react';
 
 import {
@@ -50,6 +48,7 @@ import {
   PenLine,
   RotateCw,
   Search,
+  Wrench,
 } from 'lucide-react';
 
 import { MaintenanceItem, MaintenanceList } from '@/types/maintenance';
@@ -66,9 +65,8 @@ import MaintenanceRecreate from './_recreate';
 import MaintenanceCreate from './_create';
 import MaintenancePreview from './preview';
 import MaintenanceDetails from './_details';
-import MaintenanceEdit from './edit';
-
-const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
+import { baseServerUrl } from '@/public/constant/url';
+import Link from 'next/link';
 
 type MaintenanceAllTabProps = {
   maintenanceList: MaintenanceList;
@@ -81,7 +79,6 @@ export default function MaintenanceTab({
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const isEdit = searchParams.get('isEdit') === 'true' || false;
   const details = searchParams.get('details') === 'true' || false;
 
   const { setMaintenance } = useMaintenanceStore();
@@ -101,8 +98,8 @@ export default function MaintenanceTab({
     setColumnVisibility({
       startDate: isDesktop,
       deadline: isDesktop,
-      requestedBy: isDesktop,
       approvedBy: isDesktop,
+      requestedBy: false,
     });
   }, [isDesktop]);
 
@@ -149,10 +146,15 @@ export default function MaintenanceTab({
           router.push('/maintenance?tab=maintenance&details=true');
         }
 
+        // TODO: use data specific id instead of passing data
         return (
-          <Button variant="link" onClick={handleOpenMaintenanceInfo}>
+          <Link
+            href="/maintenance?tab=maintenance&details=true"
+            onClick={handleOpenMaintenanceInfo}
+            className="text-gray-900 underline-offset-4 hover:text-blue-500 hover:underline dark:text-gray-50 dark:hover:text-blue-300"
+          >
             {row.original.id}
-          </Button>
+          </Link>
         );
       },
     },
@@ -189,28 +191,27 @@ export default function MaintenanceTab({
       accessorKey: 'requestedBy',
       header: 'Requested By',
       cell: ({ row }) => {
-        const user: User | null = row.getValue('requestedBy');
-        const initials = user ? user.name.substring(0, 3) : 'N/A';
-
-        return user ? (
+        return row.original.requestedBy ? (
           <div className="flex items-center space-x-2">
-            {user.image ? (
+            {row.original.requestedBy.image ? (
               <Image
-                src={`${baseServerUrl}/user/${user.image}`}
-                alt={user.name}
-                width={28}
-                height={28}
-                className="size-7 rounded-full"
+                src={`${baseServerUrl}/user/${row.original.requestedBy.image}`}
+                alt={row.original.requestedBy?.name || ''}
+                width={20}
+                height={20}
+                className="size-5 rounded-full bg-teal-800 object-contain"
               />
             ) : (
-              <div className="flex size-7 items-center justify-center rounded-full bg-gray-500 text-xs">
-                {initials}
+              <div className="flex size-5 items-center justify-center rounded-full bg-teal-800">
+                <p className="text-xs">
+                  {row.original.requestedBy?.name.substring(0, 1).toUpperCase()}
+                </p>
               </div>
             )}
-            <p>{user.name}</p>
+            <p>{row.original.requestedBy.name}</p>
           </div>
         ) : (
-          <p>nobody</p>
+          <p>Not requested</p>
         );
       },
     },
@@ -218,26 +219,27 @@ export default function MaintenanceTab({
       accessorKey: 'approvedBy',
       header: 'Person In Charge',
       cell: ({ row }) => {
-        const user: User = row.getValue('approvedBy');
-        const initials = user.name.substring(0, 3);
-
-        return (
+        return row.original.approvedBy ? (
           <div className="flex items-center space-x-2">
-            {user.image ? (
+            {row.original.approvedBy.image ? (
               <Image
-                src={`${baseServerUrl}/user/${user.image}`}
-                alt={user.name}
-                width={28}
-                height={28}
-                className="size-7 rounded-full"
+                src={`${baseServerUrl}/user/${row.original.approvedBy.image}`}
+                alt={row.original.approvedBy.name}
+                width={24}
+                height={24}
+                className="size-6 rounded-full bg-teal-800 object-contain"
               />
             ) : (
-              <div className="flex size-7 items-center justify-center rounded-full bg-gray-500 text-xs">
-                {initials}
+              <div className="flex size-6 items-center justify-center rounded-full bg-teal-800">
+                <p className="text-xs text-white">
+                  {row.original.approvedBy.name.substring(0, 1).toUpperCase()}
+                </p>
               </div>
             )}
-            <p>{user.name}</p>
+            <p>{row.original.approvedBy.name}</p>
           </div>
+        ) : (
+          <p>Not assigned</p>
         );
       },
     },
@@ -329,165 +331,176 @@ export default function MaintenanceTab({
     setOpenMaintenancePreview(false);
   }
 
-  if (isEdit)
-    return (
-      <Wrapper>
-        <MaintenanceEdit />
-      </Wrapper>
-    );
-
   if (details) {
-    return (
-      <Wrapper>
-        <MaintenanceDetails />
-      </Wrapper>
-    );
+    return <MaintenanceDetails />;
   }
 
   return (
     <div className="flex flex-1 flex-col space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <div className="flex items-center">
-            <Search
-              size={18}
-              className="relative left-7 top-2 -translate-y-1/2"
-            />
-            <Input
-              placeholder="Search"
-              type="search"
-              value={table.getColumn(filterBy)?.getFilterValue() as string}
-              onChange={event =>
-                table.getColumn(filterBy)?.setFilterValue(event.target.value)
-              }
-              className="max-w-sm pl-8"
-            />
-          </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button size="icon" variant="outline">
-                <Filter size={18} />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuRadioGroup
-                value={filterBy}
-                onValueChange={setFilterBy}
-              >
-                {table
-                  .getVisibleFlatColumns()
-                  .filter(column => column.getCanFilter())
-                  .map(column => (
-                    <DropdownMenuRadioItem
-                      key={column.id}
-                      value={column.id}
-                      className="w-full"
-                    >
-                      {column.id === 'id' ? (
-                        'ID'
-                      ) : (
-                        <span>
-                          {column.id
-                            .replace(/([a-z])([A-Z])/g, '$1 $2')
-                            .replace(/\b\w/g, c => c.toUpperCase())}
-                        </span>
-                      )}
-                    </DropdownMenuRadioItem>
-                  ))}
-              </DropdownMenuRadioGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button size="icon" variant="outline">
-                <Columns2 size={18} />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              {table
-                .getAllColumns()
-                .filter(column => column.getCanHide())
-                .map(column => (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    checked={column.getIsVisible()}
-                    onCheckedChange={value =>
-                      column.toggleVisibility(Boolean(value))
-                    }
-                    className="w-full"
+      {maintenanceList.length > 0 ? (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <div className="flex items-center">
+                <Search
+                  size={18}
+                  className="relative left-7 top-2 -translate-y-1/2"
+                />
+                <Input
+                  placeholder="Search"
+                  type="search"
+                  value={table.getColumn(filterBy)?.getFilterValue() as string}
+                  onChange={event =>
+                    table
+                      .getColumn(filterBy)
+                      ?.setFilterValue(event.target.value)
+                  }
+                  className="max-w-sm pl-8"
+                />
+              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="icon" variant="outline">
+                    <Filter size={18} />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuRadioGroup
+                    value={filterBy}
+                    onValueChange={setFilterBy}
                   >
-                    {column.id === 'id' ? (
-                      'ID'
-                    ) : (
-                      <span>
-                        {column.id
-                          .replace(/([a-z])([A-Z])/g, '$1 $2')
-                          .replace(/\b\w/g, c => c.toUpperCase())}
-                      </span>
-                    )}
-                  </DropdownMenuCheckboxItem>
-                ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-        <div className="flex items-center space-x-1">
-          {isDesktop ? (
-            <Button
-              variant="outline"
-              onClick={handleCreateMaintenance}
-              className="space-x-2 px-3"
-            >
-              <FilePlus2 size={18} />
-              <span>Create Maintenance</span>
-            </Button>
-          ) : (
-            <Button variant="outline" size="icon">
-              <FilePlus2 size={18} />
-            </Button>
+                    {table
+                      .getVisibleFlatColumns()
+                      .filter(column => column.getCanFilter())
+                      .map(column => (
+                        <DropdownMenuRadioItem
+                          key={column.id}
+                          value={column.id}
+                          className="w-full"
+                        >
+                          {column.id === 'id' ? (
+                            'ID'
+                          ) : (
+                            <span>
+                              {column.id
+                                .replace(/([a-z])([A-Z])/g, '$1 $2')
+                                .replace(/\b\w/g, c => c.toUpperCase())}
+                            </span>
+                          )}
+                        </DropdownMenuRadioItem>
+                      ))}
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="icon" variant="outline">
+                    <Columns2 size={18} />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  {table
+                    .getAllColumns()
+                    .filter(column => column.getCanHide())
+                    .map(column => (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        checked={column.getIsVisible()}
+                        onCheckedChange={value =>
+                          column.toggleVisibility(Boolean(value))
+                        }
+                        className="w-full"
+                      >
+                        {column.id === 'id' ? (
+                          'ID'
+                        ) : (
+                          <span>
+                            {column.id
+                              .replace(/([a-z])([A-Z])/g, '$1 $2')
+                              .replace(/\b\w/g, c => c.toUpperCase())}
+                          </span>
+                        )}
+                      </DropdownMenuCheckboxItem>
+                    ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            <div className="flex items-center space-x-1">
+              {isDesktop ? (
+                <Button
+                  variant="outline"
+                  onClick={handleCreateMaintenance}
+                  className="space-x-2 px-3"
+                >
+                  <FilePlus2 size={18} />
+                  <span>Create Maintenance</span>
+                </Button>
+              ) : (
+                <Button variant="outline" size="icon">
+                  <FilePlus2 size={18} />
+                </Button>
+              )}
+            </div>
+          </div>
+          <Table aria-label="Maintenance Library Table">
+            <TableHeader>
+              {table.getHeaderGroups().map(headerGroup => (
+                <TableRow
+                  noHover
+                  key={headerGroup.id}
+                  className="bg-white dark:bg-gray-950"
+                >
+                  {headerGroup.headers.map(header => (
+                    <TableHead key={header.id}>
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows.map(row => (
+                <TableRow
+                  key={row.id}
+                  onClick={() => handleOpenRowInfo(row.original)}
+                  className="cursor-pointer"
+                >
+                  {row.getVisibleCells().map(cell => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          {table.getPaginationRowModel().rows.length === 0 && (
+            <div className="flex flex-1 items-center justify-center">
+              <div className="flex flex-col items-center justify-center space-y-4">
+                <Image priority src={empty} alt="Empty list" width={100} />
+                <span className="ml-2">No maintenances</span>
+              </div>
+            </div>
           )}
         </div>
-      </div>
-      <Table aria-label="Maintenance Library Table">
-        <TableHeader>
-          {table.getHeaderGroups().map(headerGroup => (
-            <TableRow
-              noHover
-              key={headerGroup.id}
-              className="bg-white dark:bg-gray-950"
-            >
-              {headerGroup.headers.map(header => (
-                <TableHead key={header.id}>
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext(),
-                  )}
-                </TableHead>
-              ))}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows.map(row => (
-            <TableRow
-              key={row.id}
-              onClick={() => handleOpenRowInfo(row.original)}
-              className="cursor-pointer"
-            >
-              {row.getVisibleCells().map(cell => (
-                <TableCell key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      {table.getPaginationRowModel().rows.length === 0 && (
-        <div className="flex flex-1 items-center justify-center">
-          <div className="flex flex-col items-center justify-center space-y-4">
-            <Image priority src={empty} alt="Empty list" width={100} />
-            <span className="ml-2">No assets found</span>
-          </div>
+      ) : (
+        <div className="flex flex-1 flex-col items-center justify-center space-y-4">
+          <Wrench size={56} className="animate-bounce" />
+          <p>No maintenance created</p>
+          <Button
+            variant="outline"
+            size="withIcon"
+            onClick={handleCreateMaintenance}
+          >
+            <FilePlus2 size={18} />
+            <span>Create Maintenance</span>
+          </Button>
         </div>
       )}
       <MaintenanceCreate

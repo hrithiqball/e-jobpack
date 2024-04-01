@@ -115,6 +115,10 @@ export default function ChecklistActions({ checklist }: AssetActionsProps) {
     setOpenImportChecklist(true);
   }
 
+  function handleOpenChecklistExport() {
+    setExportChecklist(true);
+  }
+
   function handleOpenSaveAsLibrary() {
     setExportChecklist(true);
   }
@@ -146,6 +150,12 @@ export default function ChecklistActions({ checklist }: AssetActionsProps) {
                 Import Checklist
               </PopoverItem>
               <PopoverItem
+                onClick={handleOpenChecklistExport}
+                startContent={<FileBox size={18} />}
+              >
+                Export Checklist
+              </PopoverItem>
+              <PopoverItem
                 onClick={handleOpenSaveAsLibrary}
                 startContent={<LibraryBig size={18} />}
               >
@@ -169,11 +179,6 @@ export default function ChecklistActions({ checklist }: AssetActionsProps) {
           )}
         </PopoverContent>
       </Popover>
-      {/* <AddTask
-        open={openAddTask}
-        onClose={handleCloseTaskAddModal}
-        checklist={checklist}
-      /> */}
       <ChecklistAddTask open={openAddTask} onClose={handleCloseAddTask} />
       <ChecklistExport
         open={openExportChecklist}

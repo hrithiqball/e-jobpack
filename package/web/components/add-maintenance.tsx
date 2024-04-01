@@ -2,7 +2,6 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { User } from '@prisma/client';
 import dayjs from 'dayjs';
 
 import {
@@ -26,12 +25,13 @@ import { toast } from 'sonner';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { createMaintenance2 } from '@/data/maintenance.action';
 import { CreateMaintenance } from '@/lib/schemas/maintenance';
+import { Users } from '@/types/user';
 
 type AddMaintenanceModalProps = {
   isOpen: boolean;
   onClose: () => void;
   assetIds: string[] | [];
-  userList: User[];
+  userList: Users;
 };
 
 export default function AddMaintenanceModal({

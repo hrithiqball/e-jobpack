@@ -26,8 +26,7 @@ import { uploadMaintenanceImage } from '@/data/maintenance.action';
 import { cn } from '@/lib/utils';
 
 import MaintenanceAddAttachmentDialog from './add-attachment-dialog';
-
-const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
+import { baseServerUrl } from '@/public/constant/url';
 
 type MaintenanceAddAttachmentProps = {
   open: boolean;
@@ -192,7 +191,7 @@ export default function MaintenanceAddAttachment({
                             alt={attachment}
                             width={100}
                             height={100}
-                            className="rounded-md"
+                            className="rounded-md bg-teal-950 object-contain"
                           />
                         </div>
                       </CarouselItem>
@@ -240,7 +239,7 @@ export default function MaintenanceAddAttachment({
                               alt={attachment}
                               width={400}
                               height={200}
-                              className="flex flex-1 rounded-md object-cover"
+                              className="flex flex-1 rounded-md bg-teal-950 object-contain"
                             />
                           </div>
                         </CarouselItem>

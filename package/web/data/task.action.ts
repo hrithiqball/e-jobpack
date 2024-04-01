@@ -9,6 +9,7 @@ import {
   UpdateTask,
   UpdateTaskDetailsForm,
 } from '@/lib/schemas/task';
+import { revalidatePath } from 'next/cache';
 
 export async function createTask(createTask: CreateTask, taskType: TaskType) {
   try {
@@ -70,7 +71,15 @@ export async function fetchTaskList(checklistId?: string) {
         AND: filters,
       },
       include: {
-        taskAssignee: { include: { user: true } },
+        taskAssignee: {
+          include: {
+            user: {
+              include: {
+                department: true,
+              },
+            },
+          },
+        },
         subtask: true,
       },
     });
@@ -137,7 +146,15 @@ export async function updateTaskDetails(
     return await db.task.findUniqueOrThrow({
       where: { id },
       include: {
-        taskAssignee: { include: { user: true } },
+        taskAssignee: {
+          include: {
+            user: {
+              include: {
+                department: true,
+              },
+            },
+          },
+        },
         subtask: true,
       },
     });
@@ -147,7 +164,11 @@ export async function updateTaskDetails(
   }
 }
 
-export async function deleteTask(actionBy: string, id: string) {
+export async function deleteTask(
+  maintenanceId: string,
+  actionBy: string,
+  id: string,
+) {
   try {
     const target = await db.task.delete({
       where: { id },
@@ -183,6 +204,7 @@ export async function deleteTask(actionBy: string, id: string) {
       });
     }
 
+    revalidatePath(`/task/${maintenanceId}`);
     return target;
   } catch (error) {
     console.error(error);

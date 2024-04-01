@@ -1,12 +1,11 @@
-import { User } from '@prisma/client';
-
 import MaintenanceWidget from './maintenance';
 import ChecklistWidget from './checklist';
 import DetailsWidget from './_widget';
 import TeamWidget from './team';
+import { Users } from '@/types/user';
 
 type AssetDetailsProps = {
-  userList: User[];
+  userList: Users;
 };
 
 export default function AssetDetails({ userList }: AssetDetailsProps) {

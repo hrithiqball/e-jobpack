@@ -1,7 +1,6 @@
 'use client';
 
 import { FormEvent, useCallback, useState } from 'react';
-import { User } from '@prisma/client';
 import Image from 'next/image';
 import { useDropzone } from 'react-dropzone';
 
@@ -13,13 +12,15 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Avatar } from '@nextui-org/react';
 
 import { ImagePlus, Replace } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { deleteUserImage, uploadUserImage } from '@/data/user.action';
 import { cn } from '@/lib/utils';
+import { baseServerUrl } from '@/public/constant/url';
+import { User } from '@/types/user';
+import { Loader } from '@/components/ui/loader';
 
 type UserAvatarProps = {
   user: User;
@@ -27,8 +28,10 @@ type UserAvatarProps = {
 
 export default function UserAvatar({ user }: UserAvatarProps) {
   const [file, setFile] = useState<File | null>(null);
-  const [userImage, setUserImage] = useState<string | null>(user.image);
-  const [haveImage, setHaveImage] = useState(user.image !== null);
+  const [userImage, setUserImage] = useState<string | null | undefined>(
+    user?.image,
+  );
+  const [haveImage, setHaveImage] = useState(user?.image !== null);
   const [isDirty, setIsDirty] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -64,6 +67,7 @@ export default function UserAvatar({ user }: UserAvatarProps) {
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsLoading(true);
+    if (!user) return;
 
     if (file) {
       const formData = new FormData();
@@ -100,6 +104,8 @@ export default function UserAvatar({ user }: UserAvatarProps) {
   }
 
   function resetImage() {
+    if (!user) return;
+
     if (user.image) {
       setIsDirty(false);
       setHaveImage(true);
@@ -107,21 +113,29 @@ export default function UserAvatar({ user }: UserAvatarProps) {
     }
   }
 
+  if (!user) return <Loader />;
+
   return (
     <div className="flex flex-1 flex-col items-center justify-center">
       <Dialog>
         <DialogTrigger>
-          <Avatar
-            showFallback
-            size="lg"
-            name={user.name}
-            src={
-              user.image
-                ? `${process.env.NEXT_PUBLIC_IMAGE_SERVER_URL}/user/${user.image}`
-                : ''
-            }
-            onClick={resetImage}
-          />
+          <div className="" onClick={resetImage}>
+            {user.image ? (
+              <Image
+                src={`${baseServerUrl}/user/${user.image}`}
+                alt={user.name}
+                height={96}
+                width={96}
+                className="size-24 rounded-full bg-teal-800 object-contain"
+              />
+            ) : (
+              <div className="flex size-24 items-center justify-center rounded-full bg-teal-800 text-teal-400">
+                <p className="text-lg">
+                  {user.name.substring(0, 1).toUpperCase()}
+                </p>
+              </div>
+            )}
+          </div>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>Change Profile Picture</DialogHeader>
@@ -144,10 +158,11 @@ export default function UserAvatar({ user }: UserAvatarProps) {
               </form>
               {haveImage ? (
                 <Image
-                  src={`${process.env.NEXT_PUBLIC_IMAGE_SERVER_URL}/user/${user.image}`}
+                  src={`${baseServerUrl}/user/${user.image}`}
                   alt="Preview"
                   height={200}
                   width={500}
+                  className="bg-teal-800 object-contain"
                 />
               ) : userImage ? (
                 <Image
@@ -155,7 +170,7 @@ export default function UserAvatar({ user }: UserAvatarProps) {
                   alt="Preview"
                   height={200}
                   width={500}
-                  className="rounded-md"
+                  className="rounded-md bg-teal-800 object-contain"
                 />
               ) : (
                 <div

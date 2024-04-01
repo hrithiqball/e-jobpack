@@ -58,6 +58,14 @@ export const UpdateTaskSchema = z.object({
   taskCheck: z.boolean().optional(),
 });
 
+export const UpdateTaskIssueFormSchema = z.object({
+  issue: z.string().optional(),
+});
+
+export const UpdateTaskRemarksFormSchema = z.object({
+  remarks: z.string().optional(),
+});
+
 export const UpdateTaskFormSchema = z.object({
   taskActivity: z.string({ required_error: 'Task name is required' }),
   description: z.string().optional(),
@@ -90,6 +98,8 @@ export const UpdateTaskLibrarySchema = z.object({
 });
 
 export type CreateTask = z.infer<typeof CreateTaskSchema>;
+export type UpdateTaskIssueForm = z.infer<typeof UpdateTaskIssueFormSchema>;
+export type UpdateTaskRemarksForm = z.infer<typeof UpdateTaskRemarksFormSchema>;
 export type AddTaskForm = z.infer<typeof AddTaskFormSchema>;
 export type UpdateTask = z.infer<typeof UpdateTaskSchema>;
 export type UpdateTaskForm = z.infer<typeof UpdateTaskFormSchema>;

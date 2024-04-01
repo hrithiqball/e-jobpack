@@ -25,8 +25,8 @@ import { useMediaQuery } from '@/hooks/use-media-query';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { updateAsset } from '@/data/asset.action';
 import { UpdateAsset } from '@/lib/schemas/asset';
-
-const baseUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
+import { baseServerUrl } from '@/public/constant/url';
+import { isNullOrEmpty } from '@/lib/function/string';
 
 type AssetCoverProps = {
   open: boolean;
@@ -96,12 +96,13 @@ export default function AssetCover({ open, onClose }: AssetCoverProps) {
               },
             )}
           >
-            {assetCover !== '' ? (
+            {isNullOrEmpty(assetCover) ? (
               <Image
-                src={`${baseUrl}/asset${assetCover}`}
+                src={`${baseServerUrl}/asset/${assetCover}`}
                 alt={asset.name}
                 width={400}
                 height={200}
+                className="object-contain"
               />
             ) : (
               <div className="flex items-center justify-center space-x-4">
@@ -129,7 +130,7 @@ export default function AssetCover({ open, onClose }: AssetCoverProps) {
                           </div>
                         )}
                         <Image
-                          src={`${baseUrl}/asset${attachment}`}
+                          src={`${baseServerUrl}/asset/${attachment}`}
                           alt={attachment}
                           width={400}
                           height={200}

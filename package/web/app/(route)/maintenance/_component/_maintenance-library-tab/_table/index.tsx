@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { User } from '@prisma/client';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -57,6 +56,7 @@ import {
   Package,
   Search,
   Trash,
+  RotateCcwSquare,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
@@ -73,8 +73,10 @@ import { stopPropagation } from '@/lib/function/event';
 import emptyIcon from '@/public/image/empty.svg';
 
 import MaintenanceLibraryInfo from './library-info';
-
-const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
+import { baseServerUrl } from '@/public/constant/url';
+import { isNullOrEmpty } from '@/lib/function/string';
+import RecreateMaintenance from './recreate-maintenance';
+import { useMaintenanceLibStore } from '@/hooks/use-maintenance-lib.store';
 
 type MaintenanceLibraryTableProps = {
   maintenanceLibraryList: MaintenanceLibraryList;
@@ -87,7 +89,10 @@ export default function MaintenanceLibraryTable({
   const router = useRouter();
   const pathname = usePathname();
 
+  const { setMaintenanceLib } = useMaintenanceLibStore();
+
   const [filterBy, setFilterBy] = useState('title');
+  const [openRecreateMaintenance, setOpenRecreateMaintenance] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [rowSelection, setRowSelection] = useState({});
@@ -149,31 +154,40 @@ export default function MaintenanceLibraryTable({
       enableSorting: false,
       enableHiding: false,
     },
-    { accessorKey: 'title', header: 'Title' },
-    { accessorKey: 'description', header: 'Description' },
+    {
+      accessorKey: 'title',
+      header: 'Title',
+      cell: ({ row }) => {
+        return (
+          <div className="flex flex-col">
+            <p>{row.original.title}</p>
+            <p className="text-xs text-gray-500">
+              {isNullOrEmpty(row.original.description) ?? 'No description'}
+            </p>
+          </div>
+        );
+      },
+    },
     {
       accessorKey: 'createdBy',
       header: 'Created By',
       cell: ({ row }) => {
-        const user: User = row.original.createdBy;
-        const initials = user.name.substring(0, 3);
-
         return (
           <div className="flex items-center space-x-2">
-            {user.image ? (
+            {row.original.createdBy.image ? (
               <Image
-                src={`${baseServerUrl}/user/${user.image}`}
-                alt={user.name}
-                width={28}
-                height={28}
-                className="size-7 rounded-full"
+                src={`${baseServerUrl}/user/${row.original.createdBy.image}`}
+                alt={row.original.createdBy.name}
+                width={20}
+                height={20}
+                className="size-5 rounded-full bg-teal-800 object-contain"
               />
             ) : (
-              <div className="flex size-7 items-center justify-center rounded-full bg-gray-500 text-xs">
-                {initials}
+              <div className="flex size-5 items-center justify-center rounded-full bg-teal-800 text-xs">
+                <p>{row.original.createdBy.name.substring(0, 3)}</p>
               </div>
             )}
-            <p>{user.name}</p>
+            <p>{row.original.createdBy.name}</p>
           </div>
         );
       },
@@ -182,25 +196,24 @@ export default function MaintenanceLibraryTable({
       accessorKey: 'updatedBy',
       header: 'Updated By',
       cell: ({ row }) => {
-        const user: User = row.original.createdBy;
-        const initials = user.name.substring(0, 3);
-
         return (
           <div className="flex items-center space-x-2">
-            {user.image ? (
+            {row.original.createdBy.image ? (
               <Image
-                src={`${baseServerUrl}/user/${user.image}`}
-                alt={user.name}
-                width={28}
-                height={28}
-                className="size-7 rounded-full"
+                src={`${baseServerUrl}/user/${row.original.createdBy.image}`}
+                alt={row.original.createdBy.name}
+                width={20}
+                height={20}
+                className="size-5 rounded-full bg-teal-800 object-contain"
               />
             ) : (
-              <div className="flex size-7 items-center justify-center rounded-full bg-gray-500 text-xs">
-                {initials}
+              <div className="flex size-5 items-center justify-center rounded-full bg-teal-800">
+                <p className="text-xs text-white">
+                  {row.original.createdBy.name.substring(0, 1).toUpperCase()}
+                </p>
               </div>
             )}
-            <p>{user.name}</p>
+            <p>{row.original.createdBy.name}</p>
           </div>
         );
       },
@@ -256,7 +269,8 @@ export default function MaintenanceLibraryTable({
           mtn => mtn.id === row.original.id,
         );
 
-        function handleDuplicate() {
+        function handleDuplicate(event: React.MouseEvent) {
+          event.stopPropagation();
           toast.info('Duplicate action coming soon');
         }
 
@@ -272,7 +286,20 @@ export default function MaintenanceLibraryTable({
           );
         }
 
-        function handleDelete() {
+        function handleRecreateMaintenance(event: React.MouseEvent) {
+          event.stopPropagation();
+
+          if (!maintenanceLibraryItem) {
+            toast.error('Maintenance library not found');
+            return;
+          }
+
+          setMaintenanceLib(maintenanceLibraryItem);
+          setOpenRecreateMaintenance(true);
+        }
+
+        function handleDelete(event: React.MouseEvent) {
+          event.stopPropagation();
           toast.error('Delete action not implemented');
         }
 
@@ -285,6 +312,12 @@ export default function MaintenanceLibraryTable({
                 </Button>
               </PopoverTrigger>
               <PopoverContent align="end" className="w-56 rounded-lg p-2">
+                <PopoverItem
+                  onClick={handleRecreateMaintenance}
+                  startContent={<RotateCcwSquare size={18} />}
+                >
+                  Recreate Maintenance
+                </PopoverItem>
                 <PopoverItem
                   onClick={handleEdit}
                   startContent={<FilePen size={18} />}
@@ -349,6 +382,10 @@ export default function MaintenanceLibraryTable({
 
   function handleCloseMaintenanceLibraryInfo() {
     setOpenMaintenanceLibraryInfo(false);
+  }
+
+  function handleCloseRecreateMaintenance() {
+    setOpenRecreateMaintenance(false);
   }
 
   return maintenanceLibraryList.length > 0 ? (
@@ -500,6 +537,10 @@ export default function MaintenanceLibraryTable({
           handleEdit={handleEditLibraryRoute}
         />
       )}
+      <RecreateMaintenance
+        open={openRecreateMaintenance}
+        onClose={handleCloseRecreateMaintenance}
+      />
     </div>
   ) : (
     <div className="flex flex-1 flex-col items-center justify-center">

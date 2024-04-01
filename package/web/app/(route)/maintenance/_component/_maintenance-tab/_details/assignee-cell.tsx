@@ -1,5 +1,4 @@
 import { useState, useTransition } from 'react';
-import { User } from '@prisma/client';
 import Image from 'next/image';
 
 import {
@@ -13,34 +12,33 @@ import { Button } from '@/components/ui/button';
 
 import { toast } from 'sonner';
 
-import { useUserStore } from '@/hooks/use-user.store';
 import { assignTask } from '@/data/task-assignee.action';
-
-const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
+import { baseServerUrl } from '@/public/constant/url';
+import { Users } from '@/types/user';
 
 type TableAssigneeCellProps = {
-  assignee: User[];
+  assignee: Users;
   taskId: string;
+  maintenanceMember: Users;
 };
 
 export default function TableAssigneeCell({
   assignee,
   taskId,
+  maintenanceMember,
 }: TableAssigneeCellProps) {
   const [transitioning, startTransition] = useTransition();
 
-  const { userList } = useUserStore();
-
   const [assigneeList, setAssigneeList] = useState(assignee);
   const [userListValue, setUserListValue] = useState(
-    userList.map(user => ({
+    maintenanceMember?.map(user => ({
       ...user,
       checked: assignee.some(au => au.id === user.id),
     })),
   );
 
   function handleCheckChange(userId: string) {
-    const updatedUserList = userListValue.map(user =>
+    const updatedUserList = userListValue?.map(user =>
       user.id === userId ? { ...user, checked: !user.checked } : user,
     );
 
@@ -48,6 +46,8 @@ export default function TableAssigneeCell({
   }
 
   function updateAssignee() {
+    if (!userListValue) return;
+
     const updateAssigneeList = userListValue
       .filter(user => user.checked)
       .map(
@@ -63,11 +63,13 @@ export default function TableAssigneeCell({
   function handleClose(opened: boolean) {
     if (opened) return;
 
-    const checkedCount = userListValue.filter(user => user.checked).length;
+    const checkedCount = userListValue?.filter(user => user.checked).length;
 
     if (checkedCount === assigneeList.length) return;
 
     startTransition(() => {
+      if (!userListValue) return;
+
       toast.promise(
         assignTask(
           taskId,
@@ -96,19 +98,21 @@ export default function TableAssigneeCell({
             <div className="flex items-center space-x-2">
               {assigneeList.length === 1 ? (
                 <div className="flex items-center space-x-1">
-                  <div className="flex size-6 items-center justify-center rounded-full bg-gray-400">
+                  <div className="flex size-5 items-center justify-center rounded-full bg-teal-800 text-white">
                     {assigneeList[0]!.image ? (
                       <Image
                         src={`${baseServerUrl}/user/${assigneeList[0]!.image}`}
                         alt={assigneeList[0]!.name}
-                        width={6}
-                        height={6}
-                        className="size-6 rounded-full"
+                        width={20}
+                        height={20}
+                        className="size-5 rounded-full bg-teal-800 object-contain"
                       />
                     ) : (
-                      <p className="text-xs">
-                        {assigneeList[0]!.name.substring(0, 1)}
-                      </p>
+                      <div className="flex size-5 items-center justify-center">
+                        <p className="text-xs">
+                          {assigneeList[0]!.name.substring(0, 1)}
+                        </p>
+                      </div>
                     )}
                   </div>
                   {assigneeList.length === 1 && <p>{assigneeList[0]!.name}</p>}
@@ -121,12 +125,12 @@ export default function TableAssigneeCell({
                         <Image
                           src={`${baseServerUrl}/user/${user.image}`}
                           alt={user.name}
-                          width={6}
-                          height={6}
-                          className="inline-block size-6 rounded-full ring-1 ring-white"
+                          width={20}
+                          height={20}
+                          className="inline-block size-5 rounded-full bg-teal-800 object-contain"
                         />
                       ) : (
-                        <div className="flex size-6 items-center justify-center rounded-full bg-gray-400 ring-1 ring-white">
+                        <div className="flex size-5 items-center justify-center rounded-full bg-teal-800 text-white">
                           <p className="text-xs">{user.name.substring(0, 1)}</p>
                         </div>
                       )}
@@ -146,7 +150,7 @@ export default function TableAssigneeCell({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="center" className="w-56 rounded-lg p-2">
-        {userListValue.map(user => (
+        {userListValue?.map(user => (
           <DropdownMenuCheckboxItem
             key={user.id}
             checked={user.checked}
@@ -161,13 +165,15 @@ export default function TableAssigneeCell({
                 <Image
                   src={`${baseServerUrl}/user/${user.image}`}
                   alt={user.name}
-                  width={6}
-                  height={6}
-                  className="size-5 rounded-full"
+                  width={20}
+                  height={20}
+                  className="size-5 rounded-full bg-teal-800 object-contain"
                 />
               ) : (
-                <div className="flex size-5 items-center justify-center rounded-full bg-gray-400">
-                  <p className="text-xs">{user.name.substring(0, 1)}</p>
+                <div className="flex size-5 items-center justify-center rounded-full bg-teal-800">
+                  <p className="text-xs text-white">
+                    {user.name.substring(0, 1)}
+                  </p>
                 </div>
               )}
               <span>{user.name}</span>

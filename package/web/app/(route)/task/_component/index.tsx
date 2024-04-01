@@ -45,7 +45,7 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
                   as={Link}
                   href={`/task/${maintenance.id}`}
                   shadow="none"
-                  className="my-4 w-full bg-zinc-200 dark:bg-zinc-900"
+                  className="my-4 w-full bg-slate-100 dark:bg-zinc-900"
                 >
                   <CardHeader>
                     <MyTaskBoardHelper maintenance={maintenance} />
@@ -75,7 +75,7 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
                   as={Link}
                   href={`/task/${maintenance.id}`}
                   shadow="none"
-                  className="my-4 w-full bg-zinc-200 dark:bg-zinc-900"
+                  className="my-4 w-full bg-slate-100 dark:bg-zinc-900"
                 >
                   <CardHeader>
                     <MyTaskBoardHelper maintenance={maintenance} />
@@ -105,7 +105,7 @@ export default function TaskComponent({ maintenanceList }: TaskComponentProps) {
                   as={Link}
                   href={`/task/${maintenance.id}`}
                   shadow="none"
-                  className="my-4 w-full"
+                  className="my-4 w-full bg-slate-100 dark:bg-zinc-900"
                 >
                   <CardHeader>
                     <MyTaskBoardHelper maintenance={maintenance} />

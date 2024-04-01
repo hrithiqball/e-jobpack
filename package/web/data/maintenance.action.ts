@@ -106,6 +106,8 @@ export async function createMaintenance2(
         });
       });
 
+    revalidatePath('/maintenance');
+    revalidatePath('/task');
     return maintenance;
   } catch (error) {
     console.error(error);
@@ -248,20 +250,60 @@ export async function fetchMaintenanceItem(id: string) {
     return await db.maintenance.findUniqueOrThrow({
       where: { id },
       include: {
-        approvedBy: true,
-        closedBy: true,
-        rejectedBy: true,
-        requestedBy: true,
-        maintenanceMember: { include: { user: true } },
+        approvedBy: {
+          include: {
+            department: true,
+          },
+        },
+        closedBy: {
+          include: {
+            department: true,
+          },
+        },
+        rejectedBy: {
+          include: {
+            department: true,
+          },
+        },
+        requestedBy: {
+          include: {
+            department: true,
+          },
+        },
+        maintenanceMember: {
+          include: {
+            user: {
+              include: {
+                department: true,
+              },
+            },
+          },
+        },
         checklist: {
           include: {
             asset: true,
-            createdBy: true,
-            updatedBy: true,
+            createdBy: {
+              include: {
+                department: true,
+              },
+            },
+            updatedBy: {
+              include: {
+                department: true,
+              },
+            },
             task: {
               orderBy: { taskOrder: 'asc' },
               include: {
-                taskAssignee: { include: { user: true } },
+                taskAssignee: {
+                  include: {
+                    user: {
+                      include: {
+                        department: true,
+                      },
+                    },
+                  },
+                },
                 subtask: {
                   orderBy: { taskOrder: 'asc' },
                 },
@@ -284,20 +326,60 @@ export async function fetchMaintenanceList() {
         date: 'desc',
       },
       include: {
-        approvedBy: true,
-        closedBy: true,
-        rejectedBy: true,
-        requestedBy: true,
-        maintenanceMember: { include: { user: true } },
+        approvedBy: {
+          include: {
+            department: true,
+          },
+        },
+        closedBy: {
+          include: {
+            department: true,
+          },
+        },
+        rejectedBy: {
+          include: {
+            department: true,
+          },
+        },
+        requestedBy: {
+          include: {
+            department: true,
+          },
+        },
+        maintenanceMember: {
+          include: {
+            user: {
+              include: {
+                department: true,
+              },
+            },
+          },
+        },
         checklist: {
           include: {
             asset: true,
-            createdBy: true,
-            updatedBy: true,
+            createdBy: {
+              include: {
+                department: true,
+              },
+            },
+            updatedBy: {
+              include: {
+                department: true,
+              },
+            },
             task: {
               orderBy: { taskOrder: 'asc' },
               include: {
-                taskAssignee: { include: { user: true } },
+                taskAssignee: {
+                  include: {
+                    user: {
+                      include: {
+                        department: true,
+                      },
+                    },
+                  },
+                },
                 subtask: {
                   orderBy: { taskOrder: 'asc' },
                 },
@@ -342,43 +424,45 @@ export async function updateMaintenanceDetails(
   maintenanceId: string,
   data: UpdateMaintenanceForm,
   dateRange: DateRange,
-  memberList: { userId: string; checked: boolean }[],
+  memberList: { userId: string; checked: boolean }[] | undefined,
 ) {
   try {
-    const deleteTarget: string[] = [];
+    if (memberList) {
+      const deleteTarget: string[] = [];
 
-    for (const ml of memberList.filter(ml => !ml.checked)) {
-      const record = await db.maintenanceMember.findUnique({
-        where: {
-          maintenanceId_userId: { maintenanceId, userId: ml.userId },
-        },
-      });
-
-      if (record) {
-        deleteTarget.push(record.userId);
-      }
-    }
-
-    const removeOperations = deleteTarget.map(userId =>
-      db.maintenanceMember.delete({
-        where: { maintenanceId_userId: { maintenanceId, userId } },
-      }),
-    );
-
-    const upsertOperations = memberList
-      .filter(ml => ml.checked)
-      .map(ml =>
-        db.maintenanceMember.upsert({
+      for (const ml of memberList.filter(ml => !ml.checked)) {
+        const record = await db.maintenanceMember.findUnique({
           where: {
             maintenanceId_userId: { maintenanceId, userId: ml.userId },
           },
-          update: { userId: ml.userId },
-          create: { maintenanceId, userId: ml.userId },
+        });
+
+        if (record) {
+          deleteTarget.push(record.userId);
+        }
+      }
+
+      const removeOperations = deleteTarget.map(userId =>
+        db.maintenanceMember.delete({
+          where: { maintenanceId_userId: { maintenanceId, userId } },
         }),
       );
 
-    const operations = [...removeOperations, ...upsertOperations];
-    await Promise.all(operations);
+      const upsertOperations = memberList
+        .filter(ml => ml.checked)
+        .map(ml =>
+          db.maintenanceMember.upsert({
+            where: {
+              maintenanceId_userId: { maintenanceId, userId: ml.userId },
+            },
+            update: { userId: ml.userId },
+            create: { maintenanceId, userId: ml.userId },
+          }),
+        );
+
+      const operations = [...removeOperations, ...upsertOperations];
+      await Promise.all(operations);
+    }
 
     return await db.maintenance.update({
       where: { id: maintenanceId },

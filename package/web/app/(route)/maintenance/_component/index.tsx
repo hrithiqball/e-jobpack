@@ -2,7 +2,6 @@
 
 import { Key, useEffect } from 'react';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
-import { User } from '@prisma/client';
 
 import { Tab, Tabs } from '@nextui-org/react';
 
@@ -16,13 +15,14 @@ import { AssetList } from '@/types/asset';
 import MaintenanceTab from './_maintenance-tab';
 import MaintenanceLibraryTab from './_maintenance-library-tab';
 import MaintenanceChecklistTab from './_checklist-library-tab';
+import { Users } from '@/types/user';
 
 type MaintenanceLibraryComponentProps = {
   maintenanceList: MaintenanceList;
   maintenanceLibraryList: MaintenanceLibraryList;
   taskLibraryList: TaskLibraryList;
   checklistLibrary: ChecklistLibraryList;
-  userList: User[];
+  userList: Users;
   assetList: AssetList;
 };
 

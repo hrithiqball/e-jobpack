@@ -9,8 +9,7 @@ import { useAssetStore } from '@/hooks/use-asset.store';
 import { deleteAssetImage } from '@/data/asset.action';
 
 import DeleteConfirmation from '@/components/delete-confirmation';
-
-const baseUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
+import { baseServerUrl } from '@/public/constant/url';
 
 type AssetImageCarouselProps = {
   attachment: string;
@@ -69,10 +68,10 @@ export default function ImageCarouselItem({
         )}
         <Image
           alt={attachment}
-          src={`${baseUrl}/asset${attachment}`}
+          src={`${baseServerUrl}/asset/${attachment}`}
           width={200}
           height={800}
-          className="flex flex-1 rounded-md object-cover"
+          className="flex flex-1 rounded-md object-contain"
         />
       </div>
       <DeleteConfirmation

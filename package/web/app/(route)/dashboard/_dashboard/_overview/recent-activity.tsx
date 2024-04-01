@@ -1,19 +1,15 @@
-import Link from 'next/link';
-
-import {
-  Avatar,
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from '@nextui-org/react';
-import { Activity, ExternalLink } from 'lucide-react';
+import { Activity, Package, User, Wrench } from 'lucide-react';
+import { useHistoryStore } from '@/hooks/use-history.store';
+import { Loader } from '@/components/ui/loader';
+import { Histories } from '@/types/history';
 
 export default function RecentActivity() {
+  const { histories } = useHistoryStore();
+
+  if (!histories) return <Loader />;
+
   return (
-    <div className="flex grow flex-col">
+    <div className="flex grow flex-col space-y-4">
       <div className="flex flex-col space-y-4">
         <div className="flex items-center space-x-2">
           <Activity />
@@ -21,53 +17,30 @@ export default function RecentActivity() {
         </div>
       </div>
       <div className="flex flex-1">
-        <div className="flex flex-col space-y-2">
-          <Table removeWrapper hideHeader>
-            <TableHeader>
-              <TableColumn>USER</TableColumn>
-              <TableColumn>ACTIVITY</TableColumn>
-            </TableHeader>
-            <TableBody>
-              <TableRow key="1">
-                <TableCell>
-                  <Avatar src="https://i.pravatar.cc/150?u=a042581f4e29026024d" />
-                </TableCell>
-                <TableCell>Created a new maintenance request</TableCell>
-              </TableRow>
-              <TableRow key="2">
-                <TableCell>
-                  <Avatar name="Harith" />
-                </TableCell>
-                <TableCell>
-                  <span>Closed maintenance</span>
-                  <Link
-                    className="hover: flex items-center space-x-2 underline hover:text-blue-500"
-                    href="/task"
-                  >
-                    <span>WO-34857647893754</span>
-                    <ExternalLink size={18} />
-                  </Link>
-                </TableCell>
-              </TableRow>
-              <TableRow key="3">
-                <TableCell>
-                  <Avatar src="https://i.pravatar.cc/150?u=a042581f4e29026704d" />
-                </TableCell>
-                <TableCell>
-                  <span>Approved maintenance request</span>
-                  <Link
-                    className="hover: flex items-center space-x-2 underline hover:text-blue-500"
-                    href="/task"
-                  >
-                    <span>WO-2385426354267</span>
-                    <ExternalLink size={18} />
-                  </Link>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+        <div className="flex flex-col divide-y-2">
+          {histories.map(history => (
+            <div key={history.id} className="flex items-center space-x-4 py-2">
+              <div className="">
+                <HistoryMetaIcon history={history} />
+              </div>
+              <p className="text-sm">
+                {history.user.name} {history.activity}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
     </div>
   );
+}
+
+function HistoryMetaIcon({ history }: { history: Histories[0] }) {
+  switch (history.historyMeta) {
+    case 'ASSET':
+      return <Package size={18} />;
+    case 'USER':
+      return <User size={18} />;
+    case 'MAINTENANCE':
+      return <Wrench size={18} />;
+  }
 }

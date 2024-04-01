@@ -29,11 +29,13 @@ model Asset {
   isArchive        Boolean?           @default(false) @map("is_archive")
   attachmentPath   String[]           @default([]) @map("attachment_path")
   assetCover       String?            @map("asset_cover")
+  departmentId     String?            @map("department_id")
   createdBy        User               @relation("asset_created_byTouser", fields: [createdById], references: [id], onDelete: Cascade)
   personInCharge   User?              @relation("asset_person_in_chargeTouser", fields: [personInChargeId], references: [id], onDelete: Cascade)
   assetStatus      AssetStatus?       @relation(fields: [statusId], references: [id], onDelete: Cascade)
   assetType        AssetType?         @relation(fields: [type], references: [id], onDelete: Cascade)
   updatedBy        User               @relation("asset_updated_byTouser", fields: [updatedById], references: [id], onDelete: Cascade)
+  department       DepartmentEnum?    @relation(fields: [departmentId], references: [id], map: "public_asset_department_id_fkey")
   assetTags        AssetTag[]
   checklist        Checklist[]
   checklistLibrary ChecklistLibrary[]
@@ -162,7 +164,7 @@ model Maintenance {
   rejectedReason    String?             @map("rejected_reason")
   attachmentPath    String[]            @default([]) @map("attachment_path")
   checklist         Checklist[]
-  acceptedBy        User?               @relation("maintenance_accepted_by_idTouser", fields: [acceptedById], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  acceptedBy        User?               @relation("maintenance_accepted_by_idTouser", fields: [acceptedById], references: [id], onDelete: Cascade)
   approvedBy        User                @relation("maintenance_approved_byTouser", fields: [approvedById], references: [id], onDelete: Cascade)
   closedBy          User?               @relation("maintenance_closed_byTouser", fields: [closedById], references: [id], onDelete: Cascade)
   rejectedBy        User?               @relation("maintenance_reject_byTouser", fields: [rejectedById], references: [id], onDelete: Cascade)
@@ -308,15 +310,16 @@ model User {
   name                                                        String
   createdAt                                                   DateTime             @default(now()) @map("created_at")
   updatedAt                                                   DateTime             @default(now()) @map("updated_at")
-  department                                                  Department           @default(MANAGEMENT)
   role                                                        Role                 @default(TECHNICIAN)
   email                                                       String               @unique
-  isRejected                                                  Boolean              @default(false) @map("is_rejected")
-  isBlocked                                                   Boolean              @default(false) @map("is_blocked")
   password                                                    String
   emailVerified                                               DateTime?            @map("email_verified")
   image                                                       String?
   phone                                                       String?
+  isBlocked                                                   Boolean              @default(false) @map("is_blocked")
+  isRejected                                                  Boolean              @default(false) @map("is_rejected")
+  departmentId                                                String?              @map("department_id")
+  groupId                                                     String?              @map("group_id")
   account                                                     Account[]
   asset_asset_created_byTouser                                Asset[]              @relation("asset_created_byTouser")
   asset_asset_person_in_chargeTouser                          Asset[]              @relation("asset_person_in_chargeTouser")
@@ -327,6 +330,8 @@ model User {
   checklist_checklist_updated_byTouser                        Checklist[]          @relation("checklist_updated_byTouser")
   checklist_library_checklist_library_created_byTouser        ChecklistLibrary[]   @relation("checklist_library_created_byTouser")
   checklist_library_checklist_library_updated_byTouser        ChecklistLibrary[]   @relation("checklist_library_updated_byTouser")
+  contractor_type_contractor_type_created_by_idTouser         ContractorType[]     @relation("contractor_type_created_by_idTouser")
+  contractor_type_contractor_type_updated_by_idTouser         ContractorType[]     @relation("contractor_type_updated_by_idTouser")
   history                                                     History[]
   maintenance_maintenance_accepted_by_idTouser                Maintenance[]        @relation("maintenance_accepted_by_idTouser")
   maintenance_maintenance_approved_byTouser                   Maintenance[]        @relation("maintenance_approved_byTouser")
@@ -341,6 +346,8 @@ model User {
   taskAssignee                                                TaskAssignee[]
   task_library_task_library_created_byTouser                  TaskLibrary[]        @relation("task_library_created_byTouser")
   task_library_task_library_updated_byTouser                  TaskLibrary[]        @relation("task_library_updated_byTouser")
+  department                                                  DepartmentEnum?      @relation(fields: [departmentId], references: [id], map: "public_user_department_id_fkey")
+  group                                                       Group?               @relation(fields: [groupId], references: [id], map: "public_user_group_id_fkey")
 
   @@map("user")
   @@schema("public")
@@ -357,6 +364,15 @@ model TaskAssignee {
   @@schema("public")
 }
 
+model Group {
+  id   String @id @default(cuid())
+  name String
+  user User[]
+
+  @@map("group")
+  @@schema("public")
+}
+
 model MaintenanceMember {
   maintenanceId String
   userId        String
@@ -368,12 +384,41 @@ model MaintenanceMember {
   @@schema("public")
 }
 
-enum Department {
-  INSTRUMENT
-  ELECTRICAL
-  MECHANICAL
-  MANAGEMENT
+model DepartmentEnum {
+  id    String  @id @default(cuid())
+  value String
+  asset Asset[]
+  user  User[]
 
+  @@map("department_enum")
+  @@schema("public")
+}
+
+model Contractor {
+  id               String          @id @default(cuid())
+  name             String
+  contact          String?
+  company          String?
+  icon             String?
+  color            String?
+  contractorTypeId String?         @map("contractor_type_id")
+  contractorType   ContractorType? @relation(fields: [contractorTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "public_contractor_contractor_type_id_fkey")
+
+  @@map("contractor")
+  @@schema("public")
+}
+
+model ContractorType {
+  id          String       @id @default(cuid())
+  createdOn   DateTime?    @default(now()) @map("created_on")
+  createdById String       @map("created_by_id")
+  updatedById String       @map("updated_by_id")
+  title       String
+  contractor  Contractor[]
+  createdBy   User         @relation("contractor_type_created_by_idTouser", fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "public_contractor_type_created_by_id_fkey")
+  updatedBy   User         @relation("contractor_type_updated_by_idTouser", fields: [updatedById], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "public_contractor_type_updated_by_id_fkey")
+
+  @@map("contractor_type")
   @@schema("public")
 }
 

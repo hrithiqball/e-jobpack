@@ -48,7 +48,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { DateRange } from 'react-day-picker';
 import { CalendarIcon } from 'lucide-react';
 import dayjs from 'dayjs';
@@ -59,6 +59,9 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useCurrentUser } from '@/hooks/use-current-user';
+import { toast } from 'sonner';
+import { updateMaintenanceDetails } from '@/data/maintenance.action';
 
 type EditMaintenanceProps = {
   open: boolean;
@@ -69,7 +72,9 @@ export default function EditMaintenance({
   open,
   onClose,
 }: EditMaintenanceProps) {
+  const [transitioning, startTransition] = useTransition();
   const isDesktop = useMediaQuery('(min-width: 768px)');
+  const user = useCurrentUser();
 
   const { maintenance } = useMaintenanceStore();
   const { userList } = useUserStore();
@@ -80,7 +85,7 @@ export default function EditMaintenance({
   });
   const [maintenanceMemberValue, setMaintenanceMemberValue] = useState(
     userList
-      .filter(user => user.role === 'TECHNICIAN')
+      ?.filter(user => user.role === 'TECHNICIAN')
       .map(user => ({
         ...user,
         checked: maintenance?.maintenanceMember.some(
@@ -98,10 +103,41 @@ export default function EditMaintenance({
   });
 
   function onSubmit(data: UpdateMaintenanceForm) {
-    console.log(data);
+    startTransition(() => {
+      if (!maintenance) {
+        toast.error('Maintenance not found');
+        return;
+      }
+
+      if (!user || !user.id) {
+        toast.error('Session expired');
+        return;
+      }
+
+      if (!dateRange) {
+        toast.error('Date is required');
+        return;
+      }
+
+      const memberList = maintenanceMemberValue?.map(user => ({
+        userId: user.id,
+        checked: user.checked!,
+      }));
+
+      toast.promise(
+        updateMaintenanceDetails(maintenance.id, data, dateRange, memberList),
+        {
+          loading: 'Updating maintenance...',
+          success: 'Maintenance updated successfully',
+          error: 'Failed to update maintenance',
+        },
+      );
+    });
   }
 
   function handleCheckChange(userId: string) {
+    if (!maintenanceMemberValue) return;
+
     const updatedMemberList = maintenanceMemberValue.map(user =>
       user.id === userId ? { ...user, checked: !user.checked } : user,
     );
@@ -113,7 +149,7 @@ export default function EditMaintenance({
     onClose();
   }
 
-  if (!maintenance) return <Loader />;
+  if (!maintenance || !userList) return <Loader />;
 
   return isDesktop ? (
     <Sheet open={open} onOpenChange={handleClose}>
@@ -169,10 +205,10 @@ export default function EditMaintenance({
                                     alt={user.name}
                                     width={20}
                                     height={20}
-                                    className="size-5 rounded-full"
+                                    className="size-5 rounded-full bg-teal-800 object-contain"
                                   />
                                 ) : (
-                                  <div className="flex size-5 items-center justify-center rounded-full bg-gray-500">
+                                  <div className="flex size-5 items-center justify-center rounded-full bg-teal-800">
                                     <span className="text-xs text-white">
                                       {user.name.substring(0, 1)}
                                     </span>
@@ -243,8 +279,8 @@ export default function EditMaintenance({
                       Members
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    {maintenanceMemberValue.map(user => (
+                  <DropdownMenuContent className="w-full">
+                    {maintenanceMemberValue?.map(user => (
                       <DropdownMenuCheckboxItem
                         key={user.id}
                         checked={user.checked}
@@ -258,13 +294,13 @@ export default function EditMaintenance({
                             <Image
                               src={`${baseServerUrl}/user/${user.image}`}
                               alt={user.name}
-                              width={6}
-                              height={6}
-                              className="size-5 rounded-full"
+                              width={20}
+                              height={20}
+                              className="size-5 rounded-full bg-teal-800 object-contain"
                             />
                           ) : (
-                            <div className="flex size-5 items-center justify-center rounded-full bg-gray-400">
-                              <p className="text-xs">
+                            <div className="flex size-5 items-center justify-center rounded-full bg-teal-800">
+                              <p className="text-xs text-white">
                                 {user.name.substring(0, 1)}
                               </p>
                             </div>
@@ -280,7 +316,14 @@ export default function EditMaintenance({
           </form>
         </Form>
         <SheetFooter>
-          <Button variant="outline">Update</Button>
+          <Button
+            type="submit"
+            form="update-maintenance-task"
+            variant="outline"
+            disabled={transitioning}
+          >
+            Update
+          </Button>
         </SheetFooter>
       </SheetContent>
     </Sheet>

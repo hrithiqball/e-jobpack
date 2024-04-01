@@ -3,8 +3,10 @@ import { Loader2 } from 'lucide-react';
 
 export const Loader = ({ className }: { className?: string }) => {
   return (
-    <Loader2
-      className={cn('my-28 h-16 w-16 animate-spin text-primary/60', className)}
-    />
+    <div className="flex flex-1 flex-col items-center justify-center">
+      <Loader2
+        className={cn('my-28 size-8 animate-spin text-primary/60', className)}
+      />
+    </div>
   );
 };

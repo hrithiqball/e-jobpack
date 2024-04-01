@@ -1,7 +1,7 @@
 'use client';
 
 import { Fragment, Key, useState, useTransition, useEffect } from 'react';
-import { Asset, AssetStatus, AssetType, User } from '@prisma/client';
+import { Asset, AssetStatus, AssetType } from '@prisma/client';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -26,7 +26,6 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import {
-  Avatar,
   Checkbox,
   Chip,
   Dropdown,
@@ -48,11 +47,11 @@ import {
   FilePlus2,
   Filter,
   MoreHorizontal,
+  Package,
   PackageMinus,
   PackagePlus,
   Search,
   Trash2,
-  UserIcon,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -64,18 +63,16 @@ import { useCurrentRole } from '@/hooks/use-current-role';
 
 import { updateAsset } from '@/data/asset.action';
 
-import emptyIcon from '@/public/image/empty.svg';
-
 import DeleteAssetModal from './delete-asset';
-import AddAssetModal from './add-asset';
+import AddAsset from './add-asset';
 import AddMaintenanceModal from '@/components/add-maintenance';
-
-const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
+import { baseServerUrl } from '@/public/constant/url';
+import { Users } from '@/types/user';
 
 type AssetTableProps = {
   assetList: AssetList;
   assetStatusList: AssetStatus[];
-  userList: User[];
+  userList: Users;
   assetTypeList: AssetType[];
 };
 
@@ -98,7 +95,7 @@ export default function AssetTable({
   const [filterBy, setFilterBy] = useState('name');
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [currentAssetId, setCurrentAssetId] = useState('');
-  const [openAddAssetModal, setOpenAddAssetModal] = useState(false);
+  const [openAddAsset, setOpenAddAsset] = useState(false);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
     location: false,
     description: false,
@@ -442,33 +439,29 @@ export default function AssetTable({
         );
       },
       cell: ({ row }) => {
-        const pic: User = row.getValue('personInCharge');
-
-        return pic ? (
+        return row.original.personInCharge ? (
           <div className="flex items-center space-x-2">
-            {pic.image !== null && pic.image !== '' ? (
+            {row.original.personInCharge.image ? (
               <Image
-                src={`${baseServerUrl}/user/${pic.image}`}
-                alt={pic.name}
-                width={28}
-                height={28}
+                src={`${baseServerUrl}/user/${row.original.personInCharge.image}`}
+                alt={row.original.personInCharge.name}
+                width={20}
+                height={20}
                 quality={100}
-                className="size-7 rounded-full"
+                className="size-5 rounded-full bg-teal-950 object-contain"
               />
             ) : (
-              <Avatar name={pic.name} size="sm" />
+              <div className="flex size-5 items-center justify-center rounded-full bg-teal-800">
+                <p className="text-xs text-white">
+                  {row.original.personInCharge.name.substring(0, 1)}
+                </p>
+              </div>
             )}
-            <span>{pic.name}</span>
+            <span>{row.original.personInCharge.name}</span>
           </div>
         ) : (
           <div className="flex items-center space-x-2">
-            <Avatar
-              showFallback
-              name="Not Specified"
-              size="sm"
-              fallback={<UserIcon size={18} />}
-            />
-            <span>Not Specified</span>
+            <span>Not Assigned</span>
           </div>
         );
       },
@@ -491,25 +484,25 @@ export default function AssetTable({
         );
       },
       cell: ({ row }) => {
-        const user: User = row.getValue('createdBy');
-
         return (
           <div className="flex items-center space-x-2">
-            {user.image ? (
+            {row.original.createdBy.image ? (
               <Image
-                src={`${baseServerUrl}/user/${user.image}`}
-                alt={user.name}
-                width={28}
-                height={28}
+                src={`${baseServerUrl}/user/${row.original.createdBy.image}`}
+                alt={row.original.createdBy.name}
+                width={20}
+                height={20}
                 quality={100}
-                className="size-7 rounded-full"
+                className="size-5 rounded-full bg-teal-800 object-contain"
               />
             ) : (
-              <div className="size-7 rounded-full bg-gray-500">
-                <UserIcon size={18} />
+              <div className="size-5 rounded-full bg-teal-800">
+                <p className="text-xs text-white">
+                  {row.original.createdBy.name.substring(0, 1)}
+                </p>
               </div>
             )}
-            <span>{user?.name}</span>
+            <span>{row.original.createdBy.name}</span>
           </div>
         );
       },
@@ -533,25 +526,25 @@ export default function AssetTable({
         );
       },
       cell: ({ row }) => {
-        const user: User = row.getValue('updatedBy');
-
         return (
           <div className="flex items-center space-x-2">
-            {user.image ? (
+            {row.original.updatedBy.image ? (
               <Image
-                src={`${baseServerUrl}/user/${user.image}`}
-                alt={user.name}
-                width={28}
-                height={28}
+                src={`${baseServerUrl}/user/${row.original.updatedBy.image}`}
+                alt={row.original.updatedBy.name}
+                width={20}
+                height={20}
                 quality={100}
-                className="size-7 rounded-full"
+                className="size-5 rounded-full bg-teal-800 object-contain"
               />
             ) : (
-              <div className="size-7 rounded-full bg-gray-500">
-                <UserIcon size={18} />
+              <div className="size-5 rounded-full bg-teal-800">
+                <p className="text-xs text-white">
+                  {row.original.updatedBy.name.substring(0, 1)}
+                </p>
               </div>
             )}
-            <span>{user?.name}</span>
+            <span>{row.original.updatedBy.name}</span>
           </div>
         );
       },
@@ -695,232 +688,263 @@ export default function AssetTable({
     setOpenAddMaintenanceModal(true);
   }
 
+  function handleOpenAddAsset() {
+    setOpenAddAsset(true);
+  }
+
+  function handleCloseAddAsset() {
+    setOpenAddAsset(false);
+  }
+
   return (
     <div className="flex flex-1 flex-col space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <div className="flex items-center">
-            <Search
-              size={18}
-              className="relative left-7 top-2 -translate-y-1/2 transform"
-            />
-            <Input
-              placeholder="Search"
-              type="search"
-              value={
-                (table.getColumn(filterBy)?.getFilterValue() as string) ?? ''
-              }
-              onChange={event =>
-                table.getColumn(filterBy)?.setFilterValue(event.target.value)
-              }
-              className="max-w-sm pl-8"
-            />
-          </div>
-          <Dropdown>
-            <DropdownTrigger>
-              <Button variant="outline" size="icon">
-                <Filter />
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu
-              disallowEmptySelection
-              selectionMode="single"
-              closeOnSelect={true}
-            >
-              {table
-                .getVisibleFlatColumns()
-                .filter(column => column.getCanFilter())
-                .map(column => (
-                  <DropdownItem key={column.id} className="w-full">
-                    <Checkbox
-                      isSelected={column.id === filterBy}
-                      onValueChange={() => setFilterBy(column.id)}
-                      className="w-full"
-                    >
-                      {column.id
-                        .replace(/([a-z])([A-Z])/g, '$1 $2')
-                        .replace(/\b\w/g, c => c.toUpperCase())}
-                    </Checkbox>
-                  </DropdownItem>
-                ))}
-            </DropdownMenu>
-          </Dropdown>
-          <Dropdown>
-            <DropdownTrigger>
-              <Button variant="outline" size="icon">
-                <Columns2 size={18} />
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu disallowEmptySelection closeOnSelect={false}>
-              {table
-                .getAllColumns()
-                .filter(column => column.getCanHide())
-                .map(column => (
-                  <DropdownItem key={column.id} className="w-full">
-                    <Checkbox
-                      isSelected={column.getIsVisible()}
-                      onValueChange={value =>
-                        column.toggleVisibility(Boolean(value))
-                      }
-                      className="w-full"
-                    >
-                      {column.id
-                        .replace(/([a-z])([A-Z])/g, '$1 $2')
-                        .replace(/\b\w/g, c => c.toUpperCase())}
-                    </Checkbox>
-                  </DropdownItem>
-                ))}
-            </DropdownMenu>
-          </Dropdown>
-        </div>
-        <div className="flex items-center space-x-2">
-          {table.getIsSomeRowsSelected() || table.getIsAllRowsSelected() ? (
-            isDesktop ? (
-              <Fragment>
-                <Button
-                  variant="outline"
-                  onClick={handleOpenAddMaintenanceModal}
-                  className="space-x-2 px-3"
-                >
-                  <FilePlus2 size={18} />
-                  <span>Create Maintenance</span>
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={handleMe}
-                  className="space-x-2 px-3"
-                >
-                  <Archive size={18} />
-                  <span>Archive</span>
-                </Button>
-                <Button
-                  color="danger"
-                  variant="destructive"
-                  onClick={handleMe}
-                  className="space-x-2 px-3"
-                >
-                  <Trash2 size={18} />
-                  <span>Delete</span>
-                </Button>
-              </Fragment>
-            ) : (
-              <Fragment>
-                <Button size="icon" onClick={handleOpenAddMaintenanceModal}>
-                  <FilePlus2 />
-                </Button>
-                <Button size="icon" onClick={handleMe}>
-                  <Archive />
-                </Button>
-                <Button size="icon" variant="destructive" onClick={handleMe}>
-                  <Trash2 />
-                </Button>
-              </Fragment>
-            )
-          ) : (
-            role !== 'TECHNICIAN' &&
-            (isDesktop ? (
-              <Button
-                variant="outline"
-                size="withIcon"
-                onClick={() => setOpenAddAssetModal(!openAddAssetModal)}
-              >
-                <PackagePlus size={18} />
-                <span>Add Asset</span>
-              </Button>
-            ) : (
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => setOpenAddAssetModal(!openAddAssetModal)}
-              >
-                <PackagePlus />
-              </Button>
-            ))
-          )}
-        </div>
-      </div>
       <div className="flex flex-1 flex-col">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map(headerGroup => (
-              <TableRow
-                noHover
-                key={headerGroup.id}
-                className="bg-white dark:bg-gray-950"
-              >
-                {headerGroup.headers.map(header => (
-                  <TableHead key={header.id}>
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows.map(row => (
-              <TableRow key={row.id}>
-                {row.getVisibleCells().map(cell => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        {table.getPaginationRowModel().rows.length === 0 && (
-          <div className="flex flex-1 items-center justify-center">
-            <div className="flex flex-col items-center justify-center space-y-4">
-              <Image priority src={emptyIcon} alt="Empty list" width={70} />
+        {assetList.length > 0 ? (
+          <div className="flex flex-1 flex-col space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center">
+                  <Search
+                    size={18}
+                    className="relative left-7 top-2 -translate-y-1/2 transform"
+                  />
+                  <Input
+                    placeholder="Search"
+                    type="search"
+                    value={
+                      (table.getColumn(filterBy)?.getFilterValue() as string) ??
+                      ''
+                    }
+                    onChange={event =>
+                      table
+                        .getColumn(filterBy)
+                        ?.setFilterValue(event.target.value)
+                    }
+                    className="max-w-sm pl-8"
+                  />
+                </div>
+                <Dropdown>
+                  <DropdownTrigger>
+                    <Button variant="outline" size="icon">
+                      <Filter />
+                    </Button>
+                  </DropdownTrigger>
+                  <DropdownMenu
+                    disallowEmptySelection
+                    selectionMode="single"
+                    closeOnSelect={true}
+                  >
+                    {table
+                      .getVisibleFlatColumns()
+                      .filter(column => column.getCanFilter())
+                      .map(column => (
+                        <DropdownItem key={column.id} className="w-full">
+                          <Checkbox
+                            isSelected={column.id === filterBy}
+                            onValueChange={() => setFilterBy(column.id)}
+                            className="w-full"
+                          >
+                            {column.id
+                              .replace(/([a-z])([A-Z])/g, '$1 $2')
+                              .replace(/\b\w/g, c => c.toUpperCase())}
+                          </Checkbox>
+                        </DropdownItem>
+                      ))}
+                  </DropdownMenu>
+                </Dropdown>
+                <Dropdown>
+                  <DropdownTrigger>
+                    <Button variant="outline" size="icon">
+                      <Columns2 size={18} />
+                    </Button>
+                  </DropdownTrigger>
+                  <DropdownMenu disallowEmptySelection closeOnSelect={false}>
+                    {table
+                      .getAllColumns()
+                      .filter(column => column.getCanHide())
+                      .map(column => (
+                        <DropdownItem key={column.id} className="w-full">
+                          <Checkbox
+                            isSelected={column.getIsVisible()}
+                            onValueChange={value =>
+                              column.toggleVisibility(Boolean(value))
+                            }
+                            className="w-full"
+                          >
+                            {column.id
+                              .replace(/([a-z])([A-Z])/g, '$1 $2')
+                              .replace(/\b\w/g, c => c.toUpperCase())}
+                          </Checkbox>
+                        </DropdownItem>
+                      ))}
+                  </DropdownMenu>
+                </Dropdown>
+              </div>
+              <div className="flex items-center space-x-2">
+                {table.getIsSomeRowsSelected() ||
+                table.getIsAllRowsSelected() ? (
+                  isDesktop ? (
+                    <Fragment>
+                      <Button
+                        variant="outline"
+                        onClick={handleOpenAddMaintenanceModal}
+                        className="space-x-2 px-3"
+                      >
+                        <FilePlus2 size={18} />
+                        <span>Create Maintenance</span>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={handleMe}
+                        className="space-x-2 px-3"
+                      >
+                        <Archive size={18} />
+                        <span>Archive</span>
+                      </Button>
+                      <Button
+                        color="danger"
+                        variant="destructive"
+                        onClick={handleMe}
+                        className="space-x-2 px-3"
+                      >
+                        <Trash2 size={18} />
+                        <span>Delete</span>
+                      </Button>
+                    </Fragment>
+                  ) : (
+                    <Fragment>
+                      <Button
+                        size="icon"
+                        onClick={handleOpenAddMaintenanceModal}
+                      >
+                        <FilePlus2 />
+                      </Button>
+                      <Button size="icon" onClick={handleMe}>
+                        <Archive />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="destructive"
+                        onClick={handleMe}
+                      >
+                        <Trash2 />
+                      </Button>
+                    </Fragment>
+                  )
+                ) : (
+                  role !== 'TECHNICIAN' && (
+                    <Button
+                      variant="outline"
+                      size="withIcon"
+                      onClick={handleOpenAddAsset}
+                    >
+                      <PackagePlus size={18} />
+                      <span>Add Asset</span>
+                    </Button>
+                  )
+                )}
+              </div>
+            </div>
+            <div className="flex-1">
+              <Table>
+                <TableHeader>
+                  {table.getHeaderGroups().map(headerGroup => (
+                    <TableRow
+                      noHover
+                      key={headerGroup.id}
+                      className="bg-white dark:bg-gray-950"
+                    >
+                      {headerGroup.headers.map(header => (
+                        <TableHead key={header.id}>
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                        </TableHead>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableHeader>
+                <TableBody>
+                  {table.getRowModel().rows.map(row => (
+                    <TableRow key={row.id}>
+                      {row.getVisibleCells().map(cell => (
+                        <TableCell key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+            {table.getPaginationRowModel().rows.length === 0 && (
+              <div className="flex flex-1 items-center justify-center">
+                <div className="flex flex-col items-center justify-center space-y-4">
+                  <Package size={56} className="animate-bounce" />
+                  <span className="ml-2">No assets found</span>
+                </div>
+              </div>
+            )}
+            <div className="flex items-center justify-between">
+              <div className="flex-1 text-sm text-gray-600">
+                {`${table.getSelectedRowModel().flatRows.length} of ${table.getCoreRowModel().flatRows.length} row(s) selected.`}
+              </div>
+              <div className="flex justify-center space-x-2">
+                <Button
+                  size="icon"
+                  onClick={() => table.previousPage()}
+                  disabled={!table.getCanPreviousPage()}
+                  className={`${
+                    table.getCanPreviousPage()
+                      ? 'hover:opacity-75'
+                      : 'cursor-not-allowed opacity-50'
+                  } focus:outline-none`}
+                >
+                  <ChevronLeft size={18} />
+                </Button>
+                {table.getPageCount() !== 0 && (
+                  <div className="flex items-center justify-center">
+                    <Pagination
+                      color="primary"
+                      onChange={value => table.setPageIndex(value - 1)}
+                      total={table.getPageCount()}
+                      page={table.getState().pagination.pageIndex + 1}
+                    />
+                  </div>
+                )}
+                <Button
+                  size="icon"
+                  onClick={() => table.nextPage()}
+                  disabled={!table.getCanNextPage()}
+                  className={`${
+                    table.getCanNextPage()
+                      ? 'hover:opacity-75'
+                      : 'cursor-not-allowed opacity-50'
+                  } focus:outline-none`}
+                >
+                  <ChevronRight size={18} />
+                </Button>
+              </div>
+              <div className="flex-1"></div>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-1 flex-col items-center justify-center">
+            <div className="flex flex-1 flex-col items-center justify-center space-y-4">
+              <Package size={56} className="animate-bounce" />
               <span className="ml-2">No assets found</span>
+              {role !== 'TECHNICIAN' && (
+                <Button variant="outline" onClick={handleOpenAddAsset}>
+                  <span>Add Asset</span>
+                </Button>
+              )}
             </div>
           </div>
         )}
-      </div>
-      <div className="flex items-center justify-between">
-        <div className="flex-1 text-sm text-gray-600">
-          {`${table.getSelectedRowModel().flatRows.length} of ${table.getCoreRowModel().flatRows.length} row(s) selected.`}
-        </div>
-        <div className="flex justify-center space-x-2">
-          <Button
-            size="icon"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-            className={`${
-              table.getCanPreviousPage()
-                ? 'hover:opacity-75'
-                : 'cursor-not-allowed opacity-50'
-            } focus:outline-none`}
-          >
-            <ChevronLeft size={18} />
-          </Button>
-          {table.getPageCount() !== 0 && (
-            <div className="flex items-center justify-center">
-              <Pagination
-                color="primary"
-                onChange={value => table.setPageIndex(value - 1)}
-                total={table.getPageCount()}
-                page={table.getState().pagination.pageIndex + 1}
-              />
-            </div>
-          )}
-          <Button
-            size="icon"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-            className={`${
-              table.getCanNextPage()
-                ? 'hover:opacity-75'
-                : 'cursor-not-allowed opacity-50'
-            } focus:outline-none`}
-          >
-            <ChevronRight size={18} />
-          </Button>
-        </div>
-        <div className="flex-1"></div>
       </div>
       <DeleteAssetModal
         isOpen={openDeleteModal}
@@ -933,9 +957,9 @@ export default function AssetTable({
         assetIds={assetIds}
         userList={userList}
       />
-      <AddAssetModal
-        open={openAddAssetModal}
-        onClose={() => setOpenAddAssetModal(false)}
+      <AddAsset
+        open={openAddAsset}
+        onClose={handleCloseAddAsset}
         assetStatusList={assetStatusList}
         assetTypeList={assetTypeList}
         userList={userList}

@@ -41,6 +41,13 @@ export const UpdateChecklistSchema = z.object({
   isClose: z.boolean().optional(),
 });
 
+export const ExportChecklistFormSchema = z.object({
+  title: z
+    .string({ required_error: 'Title is required' })
+    .min(1, { message: 'Title is required' }),
+  description: z.string().optional(),
+});
+
 export const CreateChecklistLibrarySchema = z.object({
   title: z.string().min(1, { message: 'Missing title' }),
   description: z.string().optional(),
@@ -48,6 +55,7 @@ export const CreateChecklistLibrarySchema = z.object({
 
 export type CreateChecklist = z.infer<typeof CreateChecklistSchema>;
 export type UpdateChecklist = z.infer<typeof UpdateChecklistSchema>;
+export type ExportChecklistForm = z.infer<typeof ExportChecklistFormSchema>;
 export type CreateChecklistLibrary = z.infer<
   typeof CreateChecklistLibrarySchema
 >;

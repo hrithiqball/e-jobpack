@@ -34,7 +34,8 @@
     "prettier"
   ],
   "rules": {
-    "react/prop-types": "off"
+    "react/prop-types": "off",
+    "@next/next/no-img-element": "off"
   },
   "ignorePatterns": ["types/**/*.d.ts", "lib/db.ts"]
 }

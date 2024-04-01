@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useEffect, Key } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChecklistLibrary, User } from '@prisma/client';
+import { ChecklistLibrary } from '@prisma/client';
 import dayjs from 'dayjs';
 
 import { Button } from '@/components/ui/button';
@@ -27,12 +27,19 @@ import InfoTable from '@/components/helper/info-table';
 import { useAssetStore } from '@/hooks/use-asset.store';
 import { AssetList } from '@/types/asset';
 import AddChecklist from '@/components/helper/add-checklist';
+import { Users } from '@/types/user';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 
 type MaintenanceComponentProps = {
   maintenance: MaintenanceItem;
   checklistLibraryList: ChecklistLibrary[];
   assetList: AssetList;
-  userList: User[];
+  userList: Users;
 };
 
 export default function MaintenanceComponent({
@@ -220,7 +227,7 @@ export default function MaintenanceComponent({
   }
 
   return (
-    <div className="flex-grow space-y-4 rounded-md">
+    <div className="flex-grow rounded-md">
       <div className="flex flex-row items-center justify-between">
         <div className="flex items-center space-x-4">
           <h2 className="text-medium font-semibold sm:text-xl">
@@ -242,7 +249,14 @@ export default function MaintenanceComponent({
           transitioning={transitioning}
         />
       )}
-      <InfoTable />
+      <Accordion type="single" collapsible className="mt-0 w-full pt-0">
+        <AccordionItem value="details">
+          <AccordionTrigger>Maintenance Details</AccordionTrigger>
+          <AccordionContent>
+            <InfoTable />
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
       <hr />
       <div className="mt-4 rounded-md">
         <div className="flex h-full flex-col overflow-y-auto">

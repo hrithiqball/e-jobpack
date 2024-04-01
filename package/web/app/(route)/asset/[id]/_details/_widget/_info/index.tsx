@@ -1,36 +1,25 @@
-import { Key, useState } from 'react';
-
-import { toast } from 'sonner';
+import { useState } from 'react';
 
 import AssetDetailsForm from './update-form';
 import AssetDetailsStatic from './details';
 
 export default function AssetDetailsInfo() {
-  const [isUpdating, setIsUpdating] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
-  function handleAssetDetailsAction(key: Key) {
-    switch (key) {
-      case 'edit-asset':
-        setIsUpdating(true);
-        break;
-      case 'print-asset':
-        toast('features coming soon');
-        break;
-    }
+  function handleCloseEdit() {
+    setIsEditing(false);
   }
 
-  function handleCancel() {
-    setIsUpdating(false);
+  function handleStartEditing() {
+    setIsEditing(true);
   }
 
   return (
     <div className="flex flex-1 flex-col space-y-4">
-      {isUpdating ? (
-        <AssetDetailsForm onClose={handleCancel} />
+      {isEditing ? (
+        <AssetDetailsForm onClose={handleCloseEdit} />
       ) : (
-        <AssetDetailsStatic
-          handleAssetDetailsAction={handleAssetDetailsAction}
-        />
+        <AssetDetailsStatic startEditing={handleStartEditing} />
       )}
     </div>
   );

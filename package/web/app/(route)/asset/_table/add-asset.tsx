@@ -1,6 +1,6 @@
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { AssetStatus, AssetType, User } from '@prisma/client';
+import { AssetStatus, AssetType } from '@prisma/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import Image from 'next/image';
@@ -46,18 +46,18 @@ import {
   CreateAssetFormSchema,
   CreateAssetSchema,
 } from '@/lib/schemas/asset';
-
-const baseServerUrl = process.env.NEXT_PUBLIC_IMAGE_SERVER_URL;
+import { baseServerUrl } from '@/public/constant/url';
+import { Users } from '@/types/user';
 
 type AddAssetProps = {
   open: boolean;
   onClose: () => void;
-  userList: User[];
+  userList: Users;
   assetStatusList: AssetStatus[];
   assetTypeList: AssetType[];
 };
 
-export default function AddAssetModal({
+export default function AddAsset({
   open,
   onClose,
   userList,
@@ -213,7 +213,7 @@ export default function AddAssetModal({
                                       alt={user.name}
                                       width={20}
                                       height={20}
-                                      className="size-5 rounded-full"
+                                      className="size-5 rounded-full object-contain"
                                     />
                                   ) : (
                                     <div className="flex size-5 items-center justify-center rounded-full bg-gray-500">
